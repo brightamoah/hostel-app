@@ -1,0 +1,30 @@
+{
+  "name": "nuxt-app",
+  "type": "module",
+  "private": true,
+  "packageManager": "pnpm@10.16.1+sha512.0e155aa2629db8672b49e8475da6226aa4bdea85fdcdfdc15350874946d4f3c91faaf64cbdc4a5d1ab8002f473d5c3fcedcd197989cf0390f9badd3c04678706",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
+  },
+  "dependencies": {
+    "@nuxt/eslint": "1.9.0",
+    "@nuxt/image": "1.11.0",
+    "@nuxt/ui": "4.0.0-alpha.1",
+    "eslint-plugin-format": "^1.0.1",
+    "nuxt": "^4.1.1",
+    "vue": "^3.5.21",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^5.3.0",
+    "@iconify-json/lucide": "^1.2.67",
+    "@pinia/nuxt": "^0.11.2",
+    "eslint": "^9.35.0"
+  }
+}
