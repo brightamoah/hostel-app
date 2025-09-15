@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useAuthStore } from "~/stores/authStore";
+// import { useAuthStore } from "~/stores/authStore";
 
 definePageMeta({
   layout: "auth",
 });
 
-const authStore = useAuthStore;
+const authStore = useAuthStore();
 const { isLoading } = storeToRefs(authStore);
 const { loginSchema, loginFields, login } = authStore;
 
