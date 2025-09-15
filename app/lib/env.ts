@@ -6,6 +6,11 @@ const EnvSchema = z.object({
   NUXT_SESSION_PASSWORD: z.string(),
   NUXT_SESSION_NAME: z.string(),
   NUXT_DATABASE_URL: z.string(),
+  NUXT_NODEMAILER_FROM: z.string(),
+  NUXT_NODEMAILER_HOST: z.string(),
+  NUXT_NODEMAILER_PORT: z.coerce.number(),
+  NUXT_NODEMAILER_AUTH_USER: z.string(),
+  NUXT_NODEMAILER_AUTH_PASS: z.string(),
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;

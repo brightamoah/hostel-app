@@ -39,27 +39,38 @@ export const useAuthStore = defineStore("authStore", () => {
     },
   ]);
 
-  const signupSchema = z
-    .object({
-      name: nameSchema,
-      email: emailSchema,
-      password: passwordSchema,
-      confirmPassword: confirmPasswordSchema,
-    })
-    .refine(data => data.password === data.confirmPassword, {
-      error: "Passwords don't match",
-      path: ["confirmPassword"],
-    });
+  // const signupSchema = z
+  //   .object({
+  //     name: nameSchema,
+  //     email: emailSchema,
+  //     password: passwordSchema,
+  //     confirmPassword: confirmPasswordSchema,
+  //   })
+  //   .refine(data => data.password === data.confirmPassword, {
+  //     error: "Passwords don't match",
+  //     path: ["confirmPassword"],
+  //   });
 
-  type SignupSchema = z.output<typeof signupSchema>;
+  // type SignupSchema = z.output<typeof signupSchema>;
 
   const signup = async (payload: FormSubmitEvent<SignupSchema>) => {
-    // console.log(payload);
-    return {
-      success: true,
-      message: "Signup successful",
-      payload,
-    };
+    isLoading.value = true;
+    try {
+      await $fetch("/api/auth/signup", {
+        method: "POST",
+        body: {
+          name: payload.data.name,
+          email: payload.data.email,
+          password: payload.data.password,
+        },
+      });
+    }
+    catch (error) {
+      console.error("Error signing up", error);
+    }
+    finally {
+      isLoading.value = false;
+    }
   };
 
   const loginFields = ref<AuthFormField[]>([
@@ -84,21 +95,31 @@ export const useAuthStore = defineStore("authStore", () => {
     },
   ]);
 
-  const loginSchema = z.object({
-    email: emailSchema,
-    password: passwordSchema,
-    rememberMe: rememberMeSchema,
-  });
+  // const loginSchema = z.object({
+  //   email: emailSchema,
+  //   password: passwordSchema,
+  //   rememberMe: rememberMeSchema,
+  // });
 
-  type LoginSchema = z.output<typeof loginSchema>;
+  // type LoginSchema = z.output<typeof loginSchema>;
 
   const login = async (payload: FormSubmitEvent<LoginSchema>) => {
-    // console.log(payload);
-    return {
-      success: true,
-      message: "Login successful",
-      payload,
-    };
+    isLoading.value = true;
+    try {
+      await $fetch("/api/auth/login", {
+        method: "POST",
+        body: {
+          email: payload.data.email,
+          password: payload.data.password,
+        },
+      });
+    }
+    catch (error) {
+      console.error("Error logging user in", error);
+    }
+    finally {
+      isLoading.value = false;
+    }
   };
 
   return {

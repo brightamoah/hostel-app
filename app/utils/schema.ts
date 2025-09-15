@@ -36,4 +36,35 @@ const emailSchema = z.email({
 
 const confirmPasswordSchema = z.string({ error: "Confirm Password is required" });
 
-export { confirmPasswordSchema, emailSchema, nameSchema, passwordSchema, rememberMeSchema, roleSchema };
+const signupSchema = z
+  .object({
+    name: nameSchema,
+    email: emailSchema,
+    password: passwordSchema,
+    confirmPassword: confirmPasswordSchema,
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    error: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
+export type SignupSchema = z.output<typeof signupSchema>;
+
+const loginSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+  rememberMe: rememberMeSchema,
+});
+
+export type LoginSchema = z.output<typeof loginSchema>;
+
+export {
+  confirmPasswordSchema,
+  emailSchema,
+  loginSchema,
+  nameSchema,
+  passwordSchema,
+  rememberMeSchema,
+  roleSchema,
+  signupSchema,
+};

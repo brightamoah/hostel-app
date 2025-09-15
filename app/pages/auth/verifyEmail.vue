@@ -4,7 +4,7 @@
 
 <template>
   <div>
-    <h1>verifyEmail</h1>
+    <UAlert>verifyEmail</UAlert>
   </div>
 </template>
 

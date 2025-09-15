@@ -36,7 +36,7 @@ export default withNuxt(
       }],
       "unicorn/filename-case": ["error", {
         case: "camelCase",
-        ignore: ["README.md"],
+        ignore: ["README.md", "pnpm-workspace.yaml"],
       }],
     },
   }),
