@@ -1,12 +1,27 @@
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { RouteLocationRaw } from "vue-router";
 
 import { acceptHMRUpdate, defineStore } from "pinia";
-import z from "zod";
 
 import type { AuthFormField } from "~/types";
 
 export const useAuthStore = defineStore("authStore", () => {
+  const toast = useToast();
+
   const isLoading = ref<boolean>(false);
+  const errorMessage = ref<string | null>(null);
+
+  const { user, loggedIn: isLoggedIn, session, fetch: refreshSession, clear: clearUserSession } = useUserSession();
+
+  const refreshSessionWithFreshData = async () => {
+    try {
+      await $fetch("/api/auth/refreshSession", { method: "POST" });
+      await refreshSession();
+    }
+    catch (error) {
+      console.error("Failed to refresh session:", error);
+    }
+  };
 
   const signupFields = ref<AuthFormField[]>([
     {
@@ -39,24 +54,10 @@ export const useAuthStore = defineStore("authStore", () => {
     },
   ]);
 
-  // const signupSchema = z
-  //   .object({
-  //     name: nameSchema,
-  //     email: emailSchema,
-  //     password: passwordSchema,
-  //     confirmPassword: confirmPasswordSchema,
-  //   })
-  //   .refine(data => data.password === data.confirmPassword, {
-  //     error: "Passwords don't match",
-  //     path: ["confirmPassword"],
-  //   });
-
-  // type SignupSchema = z.output<typeof signupSchema>;
-
   const signup = async (payload: FormSubmitEvent<SignupSchema>) => {
     isLoading.value = true;
     try {
-      await $fetch("/api/auth/signup", {
+      const response = await $fetch("/api/auth/signup", {
         method: "POST",
         body: {
           name: payload.data.name,
@@ -64,9 +65,25 @@ export const useAuthStore = defineStore("authStore", () => {
           password: payload.data.password,
         },
       });
+      toast.add({
+        title: "Signup Successful",
+        description: response.message || "Please check your email for a verification link to complete registration.",
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+
+      await navigateTo({ name: "auth-login" });
     }
-    catch (error) {
-      console.error("Error signing up", error);
+    catch (error: any) {
+      const message = error?.data?.message || "Signup failed. Please try again.";
+      errorMessage.value = message;
+      toast.add({
+        title: "Signup Failed",
+        description: message,
+        color: "error",
+        icon: "i-lucide-alert-circle",
+        duration: 8000,
+      });
     }
     finally {
       isLoading.value = false;
@@ -95,31 +112,56 @@ export const useAuthStore = defineStore("authStore", () => {
     },
   ]);
 
-  // const loginSchema = z.object({
-  //   email: emailSchema,
-  //   password: passwordSchema,
-  //   rememberMe: rememberMeSchema,
-  // });
-
-  // type LoginSchema = z.output<typeof loginSchema>;
-
   const login = async (payload: FormSubmitEvent<LoginSchema>) => {
     isLoading.value = true;
     try {
-      await $fetch("/api/auth/login", {
+      const response = await $fetch("/api/auth/login", {
         method: "POST",
         body: {
           email: payload.data.email,
           password: payload.data.password,
         },
       });
+      toast.add({
+        title: "Login Successful",
+        description: response.message || "Welcome back! Redirecting to your dashboard.",
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+
+      await refreshSession();
+
+      const userDashboardRoute: RouteLocationRaw = user.value!.role === "admin"
+        ? { name: "admin-dashboard" }
+        : { name: "student-dashboard" };
+
+      await navigateTo(userDashboardRoute);
     }
-    catch (error) {
-      console.error("Error logging user in", error);
+    catch (error: any) {
+      const message = error?.data?.message || "Login failed. Please check your credentials.";
+      errorMessage.value = message;
+      toast.add({
+        title: "Login Failed",
+        description: message,
+        color: "error",
+        icon: "i-lucide-alert-circle",
+        duration: 8000,
+      });
     }
     finally {
       isLoading.value = false;
     }
+  };
+
+  const clearStateAndErrors = () => {
+    errorMessage.value = null;
+    isLoading.value = false;
+  };
+
+  const signout = async () => {
+    clearStateAndErrors();
+    await clearUserSession();
+    return navigateTo({ name: "auth-login" });
   };
 
   return {
@@ -128,8 +170,16 @@ export const useAuthStore = defineStore("authStore", () => {
     loginFields,
     loginSchema,
     signupSchema,
+    user,
+    isLoggedIn,
+    session,
+    errorMessage,
     login,
     signup,
+    signout,
+    clearStateAndErrors,
+    refreshSession,
+    refreshSessionWithFreshData,
   };
 });
 

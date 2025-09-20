@@ -3,6 +3,12 @@ import { useWindowScroll } from "@vueuse/core";
 
 import type { NavItem } from "~/types";
 
+const authStore = useAuthStore();
+const { user, isLoggedIn } = storeToRefs(authStore);
+const { signout } = authStore;
+
+const avatarBgColor = generateUserColor(user.value?.id || "default");
+
 const items = ref<NavItem[]>([
   {
     label: "Home",
@@ -81,13 +87,14 @@ const { y } = useWindowScroll();
     </section>
 
     <section class="flex items-center gap-2">
-      <UColorModeButton />
+      <AppThemeToggle />
 
-      <!-- <NavUserButton
-          :is-logged-in
-          :user="user! "
-          :handle-sign-out="signout"
-        /> -->
+      <NavUserButton
+        :avatar-bg-color
+        :is-logged-in
+        :user
+        :handle-sign-out="signout"
+      />
     </section>
   </nav>
 </template>

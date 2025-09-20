@@ -36,17 +36,18 @@ const emailSchema = z.email({
 
 const confirmPasswordSchema = z.string({ error: "Confirm Password is required" });
 
-const signupSchema = z
-  .object({
-    name: nameSchema,
-    email: emailSchema,
-    password: passwordSchema,
-    confirmPassword: confirmPasswordSchema,
-  })
-  .refine(data => data.password === data.confirmPassword, {
-    error: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+const baseSignupSchema = z.object({
+  name: nameSchema,
+  email: emailSchema,
+  password: passwordSchema,
+});
+
+const signupSchema = baseSignupSchema.extend({
+  confirmPassword: confirmPasswordSchema,
+}).refine(data => data.password === data.confirmPassword, {
+  error: "Passwords don't match",
+  path: ["confirmPassword"],
+});
 
 export type SignupSchema = z.output<typeof signupSchema>;
 
@@ -58,7 +59,13 @@ const loginSchema = z.object({
 
 export type LoginSchema = z.output<typeof loginSchema>;
 
+const verifyEmailSchema = z.object({
+  email: emailSchema,
+});
+export type VerifyEmailSchema = z.output<typeof verifyEmailSchema>;
+
 export {
+  baseSignupSchema,
   confirmPasswordSchema,
   emailSchema,
   loginSchema,
@@ -67,4 +74,5 @@ export {
   rememberMeSchema,
   roleSchema,
   signupSchema,
+  verifyEmailSchema,
 };

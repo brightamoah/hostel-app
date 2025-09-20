@@ -1,5 +1,8 @@
 <script setup lang="ts">
-
+definePageMeta({
+  middleware: ["requires-auth", "admin"],
+  layout: "dashboard",
+});
 </script>
 
 <template>

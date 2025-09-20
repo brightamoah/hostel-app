@@ -1,4 +1,5 @@
-import type db from "~~/server/db/index";
+import type { DropdownMenuItem } from "@nuxt/ui";
+import type { randomUUID } from "uncrypto";
 import type { RouteLocationRaw } from "vue-router";
 // import type { FormSubmitEvent } from "@nuxt/ui";
 
@@ -19,7 +20,13 @@ export type NavItem = {
   icon: string;
 };
 
-export type DB = typeof db;
+export type DB = ReturnType<typeof useDB>["db"];
+
+export type UserMenuItem = DropdownMenuItem & {
+  to?: RouteLocationRaw;
+};
+
+export type VerificationToken = ReturnType<typeof randomUUID>;
 
 // export type Signup = FormSubmitEvent<SignupSchema>
 
@@ -32,16 +39,4 @@ export type AuthError = {
   title: string;
   message: string;
   icon?: string;
-};
-
-export type User = {
-  id: number;
-  email: string;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-  emailVerified: boolean;
-  image: string | null;
-  role: string;
-  lastLogin?: Date;
 };

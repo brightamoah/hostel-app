@@ -1,49 +1,44 @@
 import { user } from "~~/server/db/schema/index";
 import { eq } from "drizzle-orm";
-import { randomUUID } from "node:crypto";
+import { randomUUID } from "uncrypto";
 
-import type { User } from "~/types";
-
-import { db } from "~/db/index";
 import { getEmailTemplate } from "~/utils/emailTemplate";
+import { baseSignupSchema } from "~/utils/schema";
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
-  const { name, email, password } = body;
+  await clearUserSession(event);
 
-  if (!email || !password) {
-    throw createError({ statusCode: 400, message: "Email and password required" });
+  const { db } = useDB();
+
+  const body = await readValidatedBody(event, body => baseSignupSchema.safeParse(body));
+
+  if (!body.success)
+    throw body.error.issues;
+
+  const { email, name, password } = body.data;
+
+  if (!email || !password || !name) {
+    throw createError({ statusCode: 400, message: "Name, email, and password are required" });
   }
 
   const existingUser = await db.query.user.findFirst({ where: eq(user.email, email) });
   if (existingUser) {
-    throw createError({ statusCode: 409, message: "User already exists" });
+    throw createError({ statusCode: 409, message: "An account with this email already exists" });
   }
 
   const passwordHash = await hashPassword(password);
 
   const verificationToken = randomUUID();
 
+  const verificationTokenExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 from now
+
   const [newUser] = await db.insert(user).values({
     email,
     password: passwordHash,
     verificationToken,
+    verificationTokenExpiresAt,
     name,
   }).returning();
-
-  await setUserSession(event, {
-    user: {
-      id: newUser.id,
-      email: newUser.email,
-      role: newUser.role,
-      image: newUser.image,
-      name: newUser.name,
-      emailVerified: newUser.emailVerified,
-      updatedAt: newUser.updatedAt,
-      lastLogin: newUser.lastLogin,
-    } as User,
-    loggedInAt: Date.now(),
-  });
 
   const verificationUrl = `${event.headers.get("origin")}/auth/verifyEmail?token=${verificationToken}`;
   const { sendMail } = useNodeMailer();
@@ -56,5 +51,5 @@ export default defineEventHandler(async (event) => {
     text: textTemplate,
   });
 
-  return sendRedirect(event, "/auth/verifyEmail");
+  return { success: true, message: "Signup successful. Please check your email for verification." };
 });

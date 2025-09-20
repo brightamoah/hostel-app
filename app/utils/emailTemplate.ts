@@ -1,6 +1,6 @@
-import type { User } from "~/types";
+import type { User } from "#auth-utils";
 
-export function getEmailTemplate(verificationUrl: string, user: Omit<User, "lastLogin" | "role" >) {
+export function getEmailTemplate(verificationUrl: string, user: Omit<User, "lastLogin" | "role">) {
   const htmlTemplate = `
       <!DOCTYPE html>
       <html>

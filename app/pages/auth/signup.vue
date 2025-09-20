@@ -3,11 +3,16 @@ import { useAuthStore } from "~/stores/authStore";
 
 definePageMeta({
   layout: "auth",
+  middleware: ["auth-redirect"],
 });
 
 const authStore = useAuthStore();
-const { isLoading } = storeToRefs(authStore);
-const { signup, signupFields, signupSchema } = authStore;
+const { isLoading, errorMessage } = storeToRefs(authStore);
+const { signup, signupFields, signupSchema, clearStateAndErrors } = authStore;
+
+onMounted(() => {
+  clearStateAndErrors();
+});
 </script>
 
 <template>
@@ -34,7 +39,14 @@ const { signup, signupFields, signupSchema } = authStore;
       >
         Login
       </ULink>
-      .
+
+      <UAlert
+        v-if="errorMessage"
+        color="error"
+        :title="errorMessage"
+        class="mt-4"
+        variant="subtle"
+      />
     </template>
 
     <template #footer>

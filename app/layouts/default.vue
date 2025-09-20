@@ -1,5 +1,8 @@
 <script lang="ts" setup>
+const authStore = useAuthStore();
+const { refreshSession } = authStore;
 
+await refreshSession();
 </script>
 
 <template>

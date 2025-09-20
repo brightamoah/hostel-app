@@ -1,14 +1,23 @@
+import type { User } from "#auth-utils";
+
+import { userQueries } from "~~/server/db/queries/user";
 import { user } from "~~/server/db/schema";
 import { eq } from "drizzle-orm";
 
-import type { User } from "~/types";
-
-import { db } from "~/db";
+import { loginSchema } from "~/utils/schema";
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
+  const { session, nodeEnv } = useRuntimeConfig();
 
-  const { email, password } = body;
+  const { db } = useDB();
+  const { updateUserLastLogin } = await userQueries(event);
+
+  const body = await readValidatedBody(event, body => loginSchema.safeParse(body));
+
+  if (!body.success)
+    throw body.error.issues;
+
+  const { email, password, rememberMe } = body.data;
 
   if (!email || !password) {
     throw createError({ statusCode: 400, message: "Email and password required" });
@@ -16,12 +25,12 @@ export default defineEventHandler(async (event) => {
 
   const currentUser = await db.query.user.findFirst({ where: eq(user.email, email) });
   if (!currentUser) {
-    throw createError({ statusCode: 401, message: "Invalid credentials" });
+    throw createError({ statusCode: 401, message: "Invalid email or password" });
   }
 
   const isValid = await verifyPassword(currentUser!.password, password);
   if (!isValid) {
-    throw createError({ statusCode: 401, message: "Invalid credentials" });
+    throw createError({ statusCode: 401, message: "Invalid email or password" });
   }
 
   if (!currentUser.emailVerified) {
@@ -42,7 +51,27 @@ export default defineEventHandler(async (event) => {
     loggedInAt: Date.now(),
   });
 
-  const userDashboardRoute = currentUser.role === "admin" ? "/admin/dashboard" : "/student/dashboard";
+  if (rememberMe) {
+    const sessionCookieName = session.name!;
+    const currentSessionCookie = getCookie(event, sessionCookieName);
 
-  return sendRedirect(event, userDashboardRoute);
+    if (currentSessionCookie) {
+      setCookie(event, sessionCookieName, currentSessionCookie, {
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: nodeEnv === "production",
+      });
+    }
+  }
+
+  await updateUserLastLogin(currentUser.id);
+
+  const userRole = currentUser.role;
+
+  return {
+    success: true,
+    message: `Login successful. Redirecting to your ${userRole} dashboard`,
+  };
 });

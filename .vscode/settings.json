@@ -1,0 +1,142 @@
+{
+  "terminal.integrated.localEchoLatencyThreshold": -1,
+  "terminal.integrated.localEchoEnabled": "off",
+  "terminal.integrated.fontSize": 13,
+  "workbench.startupEditor": "none",
+  "editor.fontFamily": "JetBrains Mono",
+  "editor.fontWeight": "normal",
+  "editor.fontSize": 13,
+  "editor.lineHeight": 1.5,
+  "editor.letterSpacing": 0,
+  "debug.console.fontSize": 13,
+  "window.commandCenter": false,
+  "workbench.preferredDarkColorTheme": "Anysphere",
+  "workbench.preferredLightColorTheme": "Default Dark Modern",
+  "workbench.iconTheme": "material-icon-theme",
+  "window.autoDetectColorScheme": true,
+  "workbench.layoutControl.enabled": false,
+  "git.autofetch": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "indentRainbow.indicatorStyle": "light",
+  "indentRainbow.lightIndicatorStyleLineWidth": 2,
+  "indentRainbow.colors": [
+    "rgba(70, 236, 45, 0.8)",
+    "rgba(245, 71, 72,1)",
+    "rgba(155, 0, 221, 1)",
+    "rgba(233, 219, 16, 0.83)"
+  ],
+  "indentRainbow.indentSetter": {},
+  "indentRainbow.updateDelay": 10,
+  "indentRainbow.colorOnWhiteSpaceOnly": false,
+  "indentRainbow.ignoreErrorLanguages": [
+    "*",
+    "markdown"
+  ],
+  // Disable the default formatter, use eslint instead
+  "prettier.enable": false,
+  "editor.formatOnSave": false,
+  // Auto fix
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  },
+  // Silent the stylistic rules in you IDE, but still auto fix them
+  "eslint.rules.customizations": [
+    {
+      "rule": "style/*",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "format/*",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*-indent",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*-spacing",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*-spaces",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*-order",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*-dangle",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*-newline",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*quotes",
+      "severity": "off",
+      "fixable": true
+    },
+    {
+      "rule": "*semi",
+      "severity": "off",
+      "fixable": true
+    }
+  ],
+  // Enable eslint for all supported languages
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+    "html",
+    "markdown",
+    "json",
+    "jsonc",
+    "yaml",
+    "toml",
+    "xml",
+    "gql",
+    "graphql",
+    "astro",
+    "svelte",
+    "css",
+    "less",
+    "scss",
+    "pcss",
+    "postcss"
+  ],
+  "explorer.compactFolders": false,
+  "workbench.activityBar.location": "default",
+  "editor.minimap.enabled": false,
+  "editor.inlayHints.padding": true,
+  "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "javascript.inlayHints.parameterTypes.enabled": true,
+  "javascript.inlayHints.propertyDeclarationTypes.enabled": true,
+  "javascript.inlayHints.variableTypes.enabled": true,
+  "typescript.inlayHints.enumMemberValues.enabled": true,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "typescript.inlayHints.parameterNames.enabled": "all",
+  "typescript.inlayHints.parameterTypes.enabled": true,
+  "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+  "vue.inlayHints.destructuredProps": true,
+  "vue.inlayHints.missingProps": true,
+  "vue.inlayHints.optionsWrapper": true,
+  "vue.inlayHints.vBindShorthand": true,
+  "vue.inlayHints.inlineHandlerLeading": true,
+  "typescript.inlayHints.variableTypes.enabled": true,
+  "workbench.sideBar.location": "right"
+}

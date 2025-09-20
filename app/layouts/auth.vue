@@ -17,7 +17,9 @@
       </AppSpotlightButton>
     </div>
 
-    <UColorModeButton class="top-8 right-8 z-10 fixed" />
+    <div class="top-8 right-8 z-10 absolute">
+      <AppThemeToggle />
+    </div>
 
     <UPageCard
       variant="subtle"

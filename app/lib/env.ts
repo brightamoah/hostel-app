@@ -3,6 +3,7 @@ import { z } from "zod";
 import tryParseEnv from "./tryParseEnv";
 
 const EnvSchema = z.object({
+  NODE_ENV: z.enum(["development", "production"]).default("development"),
   NUXT_SESSION_PASSWORD: z.string(),
   NUXT_SESSION_NAME: z.string(),
   NUXT_DATABASE_URL: z.string(),

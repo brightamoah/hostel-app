@@ -43,6 +43,7 @@ export default defineNuxtConfig({
     nodemailerPort: env.NUXT_NODEMAILER_PORT,
     nodemailerAuthUser: env.NUXT_NODEMAILER_AUTH_USER,
     nodemailerAuthPass: env.NUXT_NODEMAILER_AUTH_PASS,
+    nodeEnv: env.NODE_ENV,
   },
 
   nodemailer: {
