@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { randomUUID } from "uncrypto";
+import { useRoleBasedRoute } from "~/composables/useRoleBasedRoutes";
 
-const id = randomUUID();
-const color = generateUserColor(id);
+const roleRoutes = useRoleBasedRoute();
+console.log(roleRoutes.value);
 </script>
 
 <template>
   <div>
     <h1>about</h1>
     <ULink
-      :to="{ name: 'index' }"
+      :to="roleRoutes?.profile"
       label="Go to home"
-    />
-
-    <div
-      class="flex justify-center items-center min-h-screen"
-      :style="{ backgroundColor: color }"
     >
-      {{ color }}
-      {{ id }}
-    </div>
+      {{ roleRoutes?.profile.name }}
+    </ULink>
+
+    <pre
+      class="flex justify-center items-center min-h-screen"
+    >
+      {{ roleRoutes }}
+    </pre>
   </div>
 </template>
 

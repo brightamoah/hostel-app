@@ -1,6 +1,7 @@
 import type { UserSession } from "#auth-utils";
 
 import { user } from "~~/server/db/schema";
+import { useDB } from "~~/server/utils/db";
 import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {

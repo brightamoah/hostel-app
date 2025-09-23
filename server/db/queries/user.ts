@@ -1,3 +1,4 @@
+import { useDB } from "~~/server/utils/db";
 import { and, eq, isNotNull, lt } from "drizzle-orm";
 
 import { user } from "../schema";

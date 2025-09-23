@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <UColorModeButton>
+  <UColorModeButton class="cursor-pointer">
     <template #fallback>
       <UButton
         loading

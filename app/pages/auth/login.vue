@@ -1,5 +1,6 @@
 <script setup lang="ts">
-// import { useAuthStore } from "~/stores/authStore";
+import { useAuthStore } from "~/stores/authStore";
+import { loginSchema } from "~/utils/schema";
 
 definePageMeta({
   layout: "auth",
@@ -10,7 +11,7 @@ const route = useRoute();
 
 const authStore = useAuthStore();
 const { isLoading, errorMessage } = storeToRefs(authStore);
-const { loginSchema, loginFields, login, clearStateAndErrors } = authStore;
+const { loginFields, login, clearStateAndErrors } = authStore;
 
 onMounted(() => {
   clearStateAndErrors();

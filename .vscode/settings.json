@@ -138,5 +138,6 @@
   "vue.inlayHints.vBindShorthand": true,
   "vue.inlayHints.inlineHandlerLeading": true,
   "typescript.inlayHints.variableTypes.enabled": true,
-  "workbench.sideBar.location": "right"
+  "workbench.sideBar.location": "right",
+  "oxc.enable": true
 }

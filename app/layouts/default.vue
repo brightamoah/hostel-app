@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { useAuthStore } from "~/stores/authStore";
+
 const authStore = useAuthStore();
 const { refreshSession } = authStore;
 

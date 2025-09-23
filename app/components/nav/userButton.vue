@@ -4,24 +4,13 @@ import type { NavigationFailure, RouteLocationRaw } from "vue-router";
 
 import type { UserMenuItem } from "~/types";
 
-const { handleSignOut, isLoggedIn, user, avatarBgColor } = defineProps<{
+const { handleSignOut, isLoggedIn, user } = defineProps<{
   isLoggedIn: boolean;
   user: User | null;
-  avatarBgColor: string;
   handleSignOut: () => Promise<false | void | RouteLocationRaw | NavigationFailure>;
 }>();
 
-const userBadgeColor = computed(() => {
-  if (!user)
-    return "neutral";
-  return user.role === "admin" ? "success" : "secondary";
-});
-
-const userInitials = computed(() => {
-  if (!user?.name)
-    return "KH";
-  return generateInitials(user.name);
-});
+const { userInitials, userBadgeColor, avatarBgColor } = useUseUserItems();
 
 const dashboardIcon = computed(() =>
   user?.role === "admin" ? "i-lucide-shield" : "i-lucide-graduation-cap",
@@ -65,7 +54,7 @@ const userMenuItems = computed<UserMenuItem[][]>(() => {
     ],
     [
       {
-        label: "Sign out",
+        label: "Log Out",
         icon: "i-lucide-log-out",
         onSelect: () => handleSignOut(),
       },

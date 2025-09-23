@@ -3,6 +3,9 @@ import { useWindowScroll } from "@vueuse/core";
 
 import type { NavItem } from "~/types";
 
+import { useAuthStore } from "~/stores/authStore";
+import { generateUserColor } from "~/utils/generateUserColor";
+
 const authStore = useAuthStore();
 const { user, isLoggedIn } = storeToRefs(authStore);
 const { signout } = authStore;

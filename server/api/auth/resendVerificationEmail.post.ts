@@ -1,5 +1,6 @@
 import { userQueries } from "~~/server/db/queries/user";
 import { user } from "~~/server/db/schema";
+import { useDB } from "~~/server/utils/db";
 import { eq } from "drizzle-orm";
 import { randomUUID } from "uncrypto";
 

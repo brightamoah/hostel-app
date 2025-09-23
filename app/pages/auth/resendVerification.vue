@@ -2,6 +2,9 @@
 import type { FormSubmitEvent } from "@nuxt/ui";
 
 import type { AuthFormField } from "~/types";
+import type { VerifyEmailSchema } from "~/utils/schema";
+
+import { verifyEmailSchema } from "~/utils/schema";
 
 definePageMeta({
   layout: "auth",

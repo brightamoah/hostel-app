@@ -1,4 +1,5 @@
 import { user } from "~~/server/db/schema/index";
+import { useDB } from "~~/server/utils/db";
 import { eq } from "drizzle-orm";
 import { randomUUID } from "uncrypto";
 

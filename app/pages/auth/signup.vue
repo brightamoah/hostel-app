@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from "~/stores/authStore";
+import { signupSchema } from "~/utils/schema";
 
 definePageMeta({
   layout: "auth",
@@ -8,7 +9,7 @@ definePageMeta({
 
 const authStore = useAuthStore();
 const { isLoading, errorMessage } = storeToRefs(authStore);
-const { signup, signupFields, signupSchema, clearStateAndErrors } = authStore;
+const { signup, signupFields, clearStateAndErrors } = authStore;
 
 onMounted(() => {
   clearStateAndErrors();

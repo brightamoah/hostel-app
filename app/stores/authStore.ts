@@ -4,9 +4,11 @@ import type { RouteLocationRaw } from "vue-router";
 import { acceptHMRUpdate, defineStore } from "pinia";
 
 import type { AuthFormField } from "~/types";
+import type { LoginSchema, SignupSchema } from "~/utils/schema";
 
 export const useAuthStore = defineStore("authStore", () => {
   const toast = useToast();
+  const route = useRoute();
 
   const isLoading = ref<boolean>(false);
   const errorMessage = ref<string | null>(null);
@@ -112,30 +114,91 @@ export const useAuthStore = defineStore("authStore", () => {
     },
   ]);
 
-  const login = async (payload: FormSubmitEvent<LoginSchema>) => {
+  // const login = async (payload: FormSubmitEvent<LoginSchema>) => {
+  //   isLoading.value = true;
+  //   try {
+  //     const response = await $fetch("/api/auth/login", {
+  //       method: "POST",
+  //       body: {
+  //         email: payload.data.email,
+  //         password: payload.data.password,
+  //       },
+  //     });
+  //     toast.add({
+  //       title: "Login Successful",
+  //       description: response.message || "Welcome back! Redirecting to your dashboard.",
+  //       color: "success",
+  //       icon: "i-lucide-check-circle",
+  //     });
+
+  //     await refreshSession();
+
+  //     const redirectPath = route.query.redirect as string;
+
+  //     let targetRoute: RouteLocationRaw;
+
+  //     const userRole = user.value!.role;
+
+  //     if (redirectPath) {
+  //       const requiresAdmin = redirectPath.startsWith('/admin');
+  //       if (requiresAdmin && userRole !== 'admin') {
+  //         // User doesn't have permission, redirect to their dashboard
+  //         targetRoute = user.value!.role === "admin"
+  //           ? { name: "admin-dashboard" }
+  //           : { name: "student-dashboard" };
+  //       } else {
+  //         // User can access the redirect
+  //         targetRoute = redirectPath;
+  //       }
+  //     }
+  //     else {
+  //       // No redirect, go to dashboard
+  //       targetRoute = user.value!.role === "admin"
+  //         ? { name: "admin-dashboard" }
+  //         : { name: "student-dashboard" };
+  //     }
+
+  //     await navigateTo(targetRoute);
+  //   }
+  //   catch (error: any) {
+  //     const message = error?.data?.message || "Login failed. Please check your credentials.";
+  //     errorMessage.value = message;
+  //     toast.add({
+  //       title: "Login Failed",
+  //       description: message,
+  //       color: "error",
+  //       icon: "i-lucide-alert-circle",
+  //       duration: 8000,
+  //     });
+  //   }
+  //   finally {
+  //     isLoading.value = false;
+  //   }
+  // };
+
+  const login = async ({ data: { email, password, rememberMe } }: FormSubmitEvent<LoginSchema>) => {
     isLoading.value = true;
+    errorMessage.value = null;
     try {
-      const response = await $fetch("/api/auth/login", {
-        method: "POST",
-        body: {
-          email: payload.data.email,
-          password: payload.data.password,
-        },
-      });
+      const { message } = await $fetch("/api/auth/login", { method: "POST", body: { email, password, rememberMe } });
       toast.add({
         title: "Login Successful",
-        description: response.message || "Welcome back! Redirecting to your dashboard.",
+        description: message || "Welcome back! Redirecting to your dashboard.",
         color: "success",
         icon: "i-lucide-check-circle",
       });
 
       await refreshSession();
 
-      const userDashboardRoute: RouteLocationRaw = user.value!.role === "admin"
-        ? { name: "admin-dashboard" }
-        : { name: "student-dashboard" };
+      const role = user.value!.role;
+      const dashboard = { name: role === "admin" ? "admin-dashboard" : "student-dashboard" } as RouteLocationRaw;
+      const redirectPath = route.query.redirect as string | undefined;
 
-      await navigateTo(userDashboardRoute);
+      const target = redirectPath && !(redirectPath.startsWith("/admin") && role !== "admin")
+        ? redirectPath
+        : dashboard;
+
+      await navigateTo(target);
     }
     catch (error: any) {
       const message = error?.data?.message || "Login failed. Please check your credentials.";
@@ -148,9 +211,7 @@ export const useAuthStore = defineStore("authStore", () => {
         duration: 8000,
       });
     }
-    finally {
-      isLoading.value = false;
-    }
+    finally { isLoading.value = false; }
   };
 
   const clearStateAndErrors = () => {
@@ -168,8 +229,6 @@ export const useAuthStore = defineStore("authStore", () => {
     isLoading,
     signupFields,
     loginFields,
-    loginSchema,
-    signupSchema,
     user,
     isLoggedIn,
     session,

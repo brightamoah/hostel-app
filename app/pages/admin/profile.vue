@@ -1,13 +1,13 @@
 <script setup lang="ts">
 definePageMeta({
-  middleware: ["requires-auth"],
-  layout: "student-dashboard",
+  middleware: ["requires-auth", "admin"],
+  layout: "admin-dashboard",
 });
 </script>
 
 <template>
   <div>
-    <h1>dashboard</h1>
+    <h1>profile</h1>
   </div>
 </template>
 
