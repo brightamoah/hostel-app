@@ -8,40 +8,37 @@ defineProps<{
 
 <template>
   <UPageGrid class="gap-4 sm:gap-6 lg:gap-6 lg:grid-cols-4">
-    <div
+    <UCard
       v-for="card in cards"
       :key="card.id"
-      class="bg-accented shadow-sm p-6 border-b-1 hover:border-b-3 rounded-xl transition-all duration-300 ease-in-out"
-      :class="{
-        'border-b-primary': card.color === 'primary',
-        'border-b-error': card.color === 'error',
-        'border-b-warning': card.color === 'warning',
-        'border-b-info': card.color === 'info',
-        'border-b-success': card.color === 'success',
-        'border-b-neutral': card.color === 'neutral',
-      }"
+      variant="subtle"
+      class="border-b-1 hover:border-b-4 rounded-xl transition-all duration-300 ease-in-out"
+      :class="getColorClass(card.color, 'border-b', 10)"
     >
-      <div class="flex justify-between items-center mb-4">
-        <div>
-          <h3 class="font-semibold text-gray-900 dark:text-white text-lg">
+      <div class="flex justify-between items-center">
+        <div class="space-y-2">
+          <h3 class="font-semibold text-toned text-base capitalize">
             {{ card.title }}
           </h3>
-          <p class="font-bold text-gray-700 dark:text-gray-300 text-3xl">
+          <p class="font-bold text-highlighted text-2xl">
             {{ card.value }}
           </p>
-          <p
+          <UBadge
             v-if="card.percentage"
+            color="neutral"
+            variant="outline"
             class="text-sm"
             :class="card.percentage > 0 ? 'text-green-600' : 'text-red-600'"
           >
             {{ card.percentage > 0 ? '+' : '' }}{{ card.percentage }}% from last {{ card.period }}
-          </p>
+          </UBadge>
         </div>
         <UIcon
           :name="card.icon"
-          class="size-10 text-muted"
+          class="size-7"
+          :class="getColorClass(card.color, 'text')"
         />
       </div>
-    </div>
+    </UCard>
   </UPageGrid>
 </template>

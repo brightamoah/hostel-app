@@ -16,10 +16,10 @@ const title = ref("Announcements");
       <template #body>
         <div class="p-4">
           <h1 class="mb-4 font-bold text-2xl">
-            Announcements
+            Student Dashboard
           </h1>
           <!-- Analytics content goes here -->
-          <p>This is where you can display various announcements.</p>
+          <p>This is where you can display various dashboard data.</p>
         </div>
       </template>
     </UDashboardPanel>

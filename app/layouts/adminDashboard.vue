@@ -163,15 +163,22 @@ onMounted(async () => {
 <template>
   <UDashboardGroup unit="rem">
     <UDashboardSidebar
-      id="default"
+      id="admin-sidebar"
       v-model:open="open"
       collapsible
       resizable
       class="bg-elevated/25"
-      :ui="{ footer: 'lg:border-t lg:border-default' }"
+      :menu="{
+        transition: true,
+      }"
+      :ui="{ footer: 'lg:border-t lg:border-default',
+      }"
     >
       <template #header="{ collapsed }">
-        <div class="flex justify-center items-center gap-2">
+        <NuxtLink
+          :to="{ name: 'admin-dashboard' }"
+          class="flex justify-center items-center gap-2"
+        >
           <AppLogo
             class="size-6 md:size-8"
             :class="{
@@ -185,7 +192,7 @@ onMounted(async () => {
           >
             Kings Hostel
           </h2>
-        </div>
+        </NuxtLink>
       </template>
 
       <template #default="{ collapsed }">

@@ -145,20 +145,23 @@ onMounted(async () => {
 <template>
   <UDashboardGroup unit="rem">
     <UDashboardSidebar
-      id="default"
+      id="student-sidebar"
       v-model:open="open"
       collapsible
       resizable
       class="bg-elevated/25"
+      :menu="{
+        transition: true,
+      }"
       :ui="{
-        footer: 'lg:border-t border-2 lg:border-default',
+        footer: 'lg:border-t lg:border-default',
 
       }"
     >
       <template #header="{ collapsed }">
         <NuxtLink
           :to="{ name: 'student-dashboard' }"
-          class="flex justify-center items-center gap-3"
+          class="flex justify-center items-center gap-2"
         >
           <AppLogo
             class="size-6 md:size-8"
@@ -169,7 +172,7 @@ onMounted(async () => {
           />
           <h2
             v-if="!collapsed"
-            class="hidden md:block font-newsreader font-semibold text-2xl"
+            class="font-newsreader font-semibold text-2xl"
           >
             Kings Hostel
           </h2>
@@ -191,7 +194,7 @@ onMounted(async () => {
           :ui="{
             item: 'py-2 last:py-0 last:mt-2',
             linkLabel: 'text-base',
-            linkLeadingIcon: 'size-6',
+            linkLeadingIcon: 'size-5',
           }"
         />
       </template>
@@ -205,6 +208,6 @@ onMounted(async () => {
 
     <slot />
 
-    <!-- <NotificationsSlideover /> -->
+    <DashboardNotificationSlideOver />
   </UDashboardGroup>
 </template>
