@@ -3,10 +3,29 @@ import {
   pgTable,
 } from "drizzle-orm/pg-core";
 
-export const rolesEnum = pgEnum("roles", ["student", "admin"]);
-export const genderEnum = pgEnum("gender", ["male", "female"]);
-export const residencyStatusEnum = pgEnum("residency_status", ["active", "inactive", "suspended", "graduated", "withdrawn"]);
-export const accessLevelEnum = pgEnum("access_level", ["regular", "super", "support"]);
+export const rolesEnum = pgEnum("roles", [
+  "student",
+  "admin",
+]);
+
+export const genderEnum = pgEnum("gender", [
+  "male",
+  "female",
+]);
+
+export const residencyStatusEnum = pgEnum("residency_status", [
+  "active",
+  "inactive",
+  "suspended",
+  "graduated",
+  "withdrawn",
+]);
+
+export const accessLevelEnum = pgEnum("access_level", [
+  "regular",
+  "super",
+  "support",
+]);
 
 export const user = pgTable("user", t => ({
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),

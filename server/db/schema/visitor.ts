@@ -3,8 +3,8 @@ import { pgEnum, pgTable } from "drizzle-orm/pg-core";
 import { student } from "./user";
 
 export const visitorStatusEnum = pgEnum("visitor_status", [
-  "checked_in",
-  "checked_out",
+  "checked-in",
+  "checked-out",
   "pending",
   "cancelled",
   "denied",

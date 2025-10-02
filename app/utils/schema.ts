@@ -64,6 +64,36 @@ const verifyEmailSchema = z.object({
 });
 export type VerifyEmailSchema = z.output<typeof verifyEmailSchema>;
 
+const phoneNumberSchema = z.string({ error: "Phone Number is required" })
+  .regex(/^(?:\d{10}|\+\d{12})$/, "Phone number must be 10 digits (e.g., 0234567890) or 13 digits starting with + (e.g., +233234567890)")
+  .min(1, "Phone Number is required")
+  .refine(
+    val => /^(?:\+233\d{9}|0\d{9})$/.test(val),
+    "Phone number must be in the format +233XXXXXXXXX or 0XXXXXXXXXX",
+  );
+
+const genderSchema = z.union([
+  z.enum(["male", "female"], {
+    error: "Gender is required",
+  }),
+  z.literal(""),
+]).refine(val => val !== "", "Gender is required");
+
+const addressSchema = z.string().min(1, "Address is required").min(5, "Address is too short");
+
+const personalDetailsSchema = z.object({
+  gender: genderSchema,
+  dateOfBirth: z.date({ error: "Date of Birth is required" }).nullable(),
+  phoneNumber: phoneNumberSchema,
+  address: addressSchema,
+  emergencyContactName: nameSchema,
+  emergencyContactPhoneNumber: phoneNumberSchema,
+  emergencyContactEmail: emailSchema,
+  healthConditions: z.string().optional(),
+});
+
+export type PersonalDetailsSchema = z.output<typeof personalDetailsSchema>;
+
 export {
   baseSignupSchema,
   confirmPasswordSchema,
@@ -71,6 +101,7 @@ export {
   loginSchema,
   nameSchema,
   passwordSchema,
+  personalDetailsSchema,
   rememberMeSchema,
   roleSchema,
   signupSchema,

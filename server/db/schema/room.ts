@@ -1,8 +1,15 @@
-import { pgEnum, pgTable } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { check, pgEnum, pgTable, unique } from "drizzle-orm/pg-core";
 
 import { student } from "./user";
 
-export const roomTypeEnum = pgEnum("room_type", ["single", "double", "triple", "quad"]);
+export const roomTypeEnum = pgEnum("room_type", [
+  "single",
+  "double",
+  "triple",
+  "quad",
+]);
+
 export const roomStatusEnum = pgEnum("room_status", [
   "vacant",
   "fully occupied",
@@ -11,7 +18,11 @@ export const roomStatusEnum = pgEnum("room_status", [
   "reserved",
 ]);
 
-export const hostelStatusEnum = pgEnum("hostel_status", ["active", "inactive", "under renovation"]);
+export const hostelStatusEnum = pgEnum("hostel_status", [
+  "active",
+  "inactive",
+  "under renovation",
+]);
 
 export const allocationStatusEnum = pgEnum("allocation_status", ["active", "expired", "pending", "cancelled"]);
 
@@ -26,8 +37,11 @@ export const room = pgTable("room", t => ({
   features: t.text(),
   amountPerYear: t.numeric({ precision: 10, scale: 2 }).notNull(),
   status: roomStatusEnum().default("vacant").notNull(),
-}
-));
+}), table => [
+  unique("unique_room").on(table.roomNumber, table.building),
+  check("chk_capacity", sql`capacity > 0`),
+  check("chk_occupancy", sql`current_occupancy >= 0 AND current_occupancy <= capacity`),
+]);
 
 export const hostel = pgTable("hostel", t => ({
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -51,4 +65,7 @@ export const allocation = pgTable("allocation", t => ({
   allocationDate: t.date().notNull(),
   endDate: t.date(),
   status: allocationStatusEnum().default("pending").notNull(),
-}));
+}), table => [
+  unique("unique_active_allocation").on(table.studentId, table.status),
+  check("chk_dates", sql`end_date IS NULL OR end_date >= allocation_date`),
+]);

@@ -68,7 +68,7 @@ MCP (Model Context Protocol) is a standard for exposing structured project data 
 
 #### General
 
-- Always use the latest MCP server URL: `https://ui4.nuxt.com/mcp`
+- Always use the latest MCP server URL: `https://ui.nuxt.com/mcp`
 - No authentication required for public endpoints
 
 #### VS Code
@@ -80,7 +80,7 @@ MCP (Model Context Protocol) is a standard for exposing structured project data 
      "servers": {
        "nuxt-ui": {
          "type": "http",
-         "url": "https://ui4.nuxt.com/mcp"
+         "url": "https://ui.nuxt.com/mcp"
        }
      }
    }
@@ -94,7 +94,7 @@ MCP (Model Context Protocol) is a standard for exposing structured project data 
      "mcpServers": {
        "nuxt-ui": {
          "type": "http",
-         "url": "https://ui4.nuxt.com/mcp"
+         "url": "https://ui.nuxt.com/mcp"
        }
      }
    }
@@ -105,7 +105,7 @@ MCP (Model Context Protocol) is a standard for exposing structured project data 
 Run:
 
 ```bash
-claude mcp add --transport http nuxt-ui-remote https://ui4.nuxt.com/mcp
+claude mcp add --transport http nuxt-ui-remote https://ui.nuxt.com/mcp
 ```
 
 #### Other Editors (Windsurf, Zed, Le Chat, etc.)
