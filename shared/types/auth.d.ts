@@ -29,6 +29,7 @@ declare module "#auth-utils" {
     loggedInAt: Date;
     secure?: SecureSessionData;
     expiresAt: Date;
+    onboarded: boolean;
   }
 }
 

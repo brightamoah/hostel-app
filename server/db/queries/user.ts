@@ -1,7 +1,7 @@
 import { useDB } from "~~/server/utils/db";
 import { and, eq, isNotNull, lt } from "drizzle-orm";
 
-import { user } from "../schema";
+import { student, user } from "../schema";
 
 export const userQueries = defineEventHandler(async () => {
   const { db } = useDB();
@@ -37,5 +37,25 @@ export const userQueries = defineEventHandler(async () => {
     return existingUser;
   };
 
-  return { updateUserLastLogin, cleanupExpiredVerificationTokens, getUserByEmail };
+  const getUserById = async (id: number) => {
+    const existingUser = await db.query.user.findFirst({
+      where: eq(user.id, id),
+    });
+    return existingUser;
+  };
+
+  const getOnboardedStudent = async (id: number) => {
+    const existingStudent = await db.query.student.findFirst({
+      where: eq(student.userId, id),
+    });
+    return existingStudent;
+  };
+
+  return {
+    updateUserLastLogin,
+    cleanupExpiredVerificationTokens,
+    getUserByEmail,
+    getUserById,
+    getOnboardedStudent,
+  };
 });

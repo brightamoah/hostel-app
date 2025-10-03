@@ -20,6 +20,13 @@ const title = ref("Student Dashboard");
           </h1>
           <!-- Analytics content goes here -->
           <p>This is where you can display various announcements.</p>
+          <UButton
+            color="primary"
+            class="mt-4 px-4 py-2 rounded-md cursor-pointer"
+            :to="{ name: 'auth-onboarding' }"
+          >
+            View Announcements
+          </UButton>
         </div>
       </template>
     </UDashboardPanel>

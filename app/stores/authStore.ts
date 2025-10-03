@@ -114,81 +114,30 @@ export const useAuthStore = defineStore("authStore", () => {
     },
   ]);
 
-  // const login = async (payload: FormSubmitEvent<LoginSchema>) => {
-  //   isLoading.value = true;
-  //   try {
-  //     const response = await $fetch("/api/auth/login", {
-  //       method: "POST",
-  //       body: {
-  //         email: payload.data.email,
-  //         password: payload.data.password,
-  //       },
-  //     });
-  //     toast.add({
-  //       title: "Login Successful",
-  //       description: response.message || "Welcome back! Redirecting to your dashboard.",
-  //       color: "success",
-  //       icon: "i-lucide-check-circle",
-  //     });
-
-  //     await refreshSession();
-
-  //     const redirectPath = route.query.redirect as string;
-
-  //     let targetRoute: RouteLocationRaw;
-
-  //     const userRole = user.value!.role;
-
-  //     if (redirectPath) {
-  //       const requiresAdmin = redirectPath.startsWith('/admin');
-  //       if (requiresAdmin && userRole !== 'admin') {
-  //         // User doesn't have permission, redirect to their dashboard
-  //         targetRoute = user.value!.role === "admin"
-  //           ? { name: "admin-dashboard" }
-  //           : { name: "student-dashboard" };
-  //       } else {
-  //         // User can access the redirect
-  //         targetRoute = redirectPath;
-  //       }
-  //     }
-  //     else {
-  //       // No redirect, go to dashboard
-  //       targetRoute = user.value!.role === "admin"
-  //         ? { name: "admin-dashboard" }
-  //         : { name: "student-dashboard" };
-  //     }
-
-  //     await navigateTo(targetRoute);
-  //   }
-  //   catch (error: any) {
-  //     const message = error?.data?.message || "Login failed. Please check your credentials.";
-  //     errorMessage.value = message;
-  //     toast.add({
-  //       title: "Login Failed",
-  //       description: message,
-  //       color: "error",
-  //       icon: "i-lucide-alert-circle",
-  //       duration: 8000,
-  //     });
-  //   }
-  //   finally {
-  //     isLoading.value = false;
-  //   }
-  // };
-
   const login = async ({ data: { email, password, rememberMe } }: FormSubmitEvent<LoginSchema>) => {
     isLoading.value = true;
     errorMessage.value = null;
     try {
       const { message } = await $fetch("/api/auth/login", { method: "POST", body: { email, password, rememberMe } });
+
+      await refreshSession();
+
+      if (user.value!.role === "student") {
+        const studentDetails = await $fetch("/api/auth/checkStudentDetails", {
+          method: "GET",
+        });
+        if (!studentDetails.exists) {
+          await navigateTo({ name: "auth-onboarding" });
+          return;
+        }
+      }
+
       toast.add({
         title: "Login Successful",
         description: message || "Welcome back! Redirecting to your dashboard.",
         color: "success",
         icon: "i-lucide-check-circle",
       });
-
-      await refreshSession();
 
       const role = user.value!.role;
       const dashboard = { name: role === "admin" ? "admin-dashboard" : "student-dashboard" } as RouteLocationRaw;

@@ -66,3 +66,10 @@ export const admin = pgTable("admin", t => ({
   department: t.text().notNull(),
   accessLevel: accessLevelEnum().default("regular").notNull(),
 }));
+
+// to be run manually in the database to set the starting value of the sequences
+// ALTER SEQUENCE user_id_seq INCREMENT BY 1 MINVALUE 10000000 MAXVALUE 99999999 START WITH 10000000 CYCLE RESTART WITH 10000000
+
+// ALTER SEQUENCE student_id_seq INCREMENT BY 1 MINVALUE 10000000 MAXVALUE 99999999 START WITH 10000000 CYCLE RESTART WITH 10000000
+
+// ALTER SEQUENCE admin_id_seq INCREMENT BY 1 MINVALUE 10000000 MAXVALUE 99999999 START WITH 10000000 CYCLE RESTART WITH 10000000

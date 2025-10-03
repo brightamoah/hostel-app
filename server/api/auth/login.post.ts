@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
     const { session, nodeEnv } = useRuntimeConfig();
 
     const { db } = useDB();
-    const { updateUserLastLogin } = await userQueries(event);
+    const { updateUserLastLogin, getOnboardedStudent } = await userQueries(event);
 
     const body = await readValidatedBody(event, body => loginSchema.safeParse(body));
 
@@ -53,6 +53,17 @@ export default defineEventHandler(async (event) => {
       } as User,
       loggedInAt: Date.now(),
     });
+
+    if (currentUser.role === "student") {
+      const existingStudent = await getOnboardedStudent(currentUser.id);
+      if (existingStudent) {
+        // Update session to mark as onboarded
+        await setUserSession(event, {
+          ...session,
+          onboarded: true,
+        });
+      }
+    }
 
     if (rememberMe) {
       const sessionCookieName = session.name!;

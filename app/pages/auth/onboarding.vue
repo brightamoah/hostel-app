@@ -4,10 +4,14 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 
 import { DateFormatter, getLocalTimeZone } from "@internationalized/date";
 import { useMediaQuery } from "@vueuse/core";
+import { handleAuthError } from "~~/server/utils/authErrorHandler";
 
 definePageMeta({
   layout: "onboard",
+  middleware: ["onboard-redirect"],
 });
+
+const toast = useToast();
 
 const isMobile = useMediaQuery("(max-width: 640px)");
 
@@ -55,7 +59,7 @@ const state = ref<PersonalDetailsSchema>({
 
 watch(dateVal, (newVal) => {
   state.value.dateOfBirth = newVal
-    ? newVal.toDate(getLocalTimeZone())
+    ? new Date(newVal.toDate(getLocalTimeZone()))
     : null;
 });
 
@@ -71,9 +75,60 @@ const isFormValid = computed(() => {
   );
 });
 
-function submitForm(payload: FormSubmitEvent<PersonalDetailsSchema>) {
-  payload.preventDefault();
+function clearState() {
+  state.value = {
+    gender: "",
+    dateOfBirth: null,
+    phoneNumber: "",
+    address: "",
+    emergencyContactName: "",
+    emergencyContactPhoneNumber: "",
+    emergencyContactEmail: "",
+    healthConditions: "",
+  };
 }
+
+const isLoading = ref(false);
+async function submitForm(payload: FormSubmitEvent<typeof state.value>) {
+  payload.preventDefault();
+
+  isLoading.value = true;
+  if (!isFormValid.value) {
+    isLoading.value = false;
+    return;
+  };
+
+  try {
+    const response = await $fetch("/api/auth/onboarding", {
+      method: "POST",
+      body: payload.data,
+    });
+
+    if (response.success) {
+      toast.add({
+        title: "Onboarding Successful",
+        description: "Your profile has been completed. Welcome to the hostel app!",
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+      await navigateTo({ name: "student-dashboard" });
+      clearState();
+    }
+    else {
+      console.error("Onboarding failed:", response.message);
+    }
+  }
+  catch (error) {
+    handleAuthError(error);
+  }
+  finally {
+    isLoading.value = false;
+  }
+}
+
+onMounted(() => {
+  clearState();
+});
 </script>
 
 <template>
@@ -100,7 +155,6 @@ function submitForm(payload: FormSubmitEvent<PersonalDetailsSchema>) {
     <div class="flex flex-col sm:justify-between sm:items-center md:-mt-6">
       <UForm
         :schema="personalDetailsSchema"
-        :validate-on="['input', 'blur', 'focus', 'change']"
         :state
         class="bg-transparent shadow-md backdrop-blur-xl p-2 md:p-4 border border-muted rounded-lg w-full max-w-4xl"
         @submit="submitForm"
@@ -248,13 +302,13 @@ function submitForm(payload: FormSubmitEvent<PersonalDetailsSchema>) {
         <div class="flex justify-center mt-6 mb-2">
           <UButton
             color="primary"
+            label="Complete Profile"
             size="xl"
             class="justify-center items-center rounded-xl w-[70%] text-center cursor-pointer"
             type="submit"
             :disabled="!isFormValid"
-          >
-            Complete Profile
-          </UButton>
+            :loading="isLoading"
+          />
         </div>
       </UForm>
     </div>

@@ -10,5 +10,11 @@ export function useDB() {
     casing: "snake_case",
   });
 
+  if (!db) {
+    throw new Error("Database not initialized");
+  }
+
   return { db };
 }
+
+export type DB = ReturnType<typeof useDB>["db"];

@@ -1,38 +1,93 @@
-CREATE TYPE "public"."announcement_priority" AS ENUM('low', 'medium', 'high', 'emergency');
+CREATE TYPE "public"."announcement_priority" AS ENUM ('low', 'medium', 'high', 'emergency');
 --> statement-breakpoint
-CREATE TYPE "public"."target_audience" AS ENUM('all', 'students', 'admins', 'specific');
+CREATE TYPE "public"."target_audience" AS ENUM ('all', 'students', 'admins', 'specific');
 --> statement-breakpoint
-CREATE TYPE "public"."complaint_action_taken" AS ENUM('assigned', 'updated', 'resolved', 'rejected');
+CREATE TYPE "public"."billing_status" AS ENUM (
+	'unpaid',
+	'fully paid',
+	'partially paid',
+	'overdue',
+	'cancelled'
+);
 --> statement-breakpoint
-CREATE TYPE "public"."complaint_priority" AS ENUM('low', 'medium', 'high', 'emergency');
+CREATE TYPE "public"."payment_method" AS ENUM ('card', 'mobile money', 'bank transfer', 'cash');
 --> statement-breakpoint
-CREATE TYPE "public"."complaint_status" AS ENUM('pending', 'in-progress', 'resolved', 'rejected');
+CREATE TYPE "public"."payment_status" AS ENUM ('completed', 'failed', 'pending', 'refunded');
 --> statement-breakpoint
-CREATE TYPE "public"."complaint_type" AS ENUM('room condition', 'staff behavior', 'amenities', 'noise', 'security', 'billing issue', 'other');
+CREATE TYPE "public"."complaint_action_taken" AS ENUM ('assigned', 'updated', 'resolved', 'rejected');
 --> statement-breakpoint
-CREATE TYPE "public"."maintenance_issue_type" AS ENUM('plumbing', 'electrical', 'furniture', 'cleaning', 'appliance', 'structural', 'pest control', 'internet/Wi-Fi', 'other');
+CREATE TYPE "public"."complaint_priority" AS ENUM ('low', 'medium', 'high', 'emergency');
 --> statement-breakpoint
-CREATE TYPE "public"."maintenance_priority" AS ENUM('low', 'medium', 'high', 'emergency');
+CREATE TYPE "public"."complaint_status" AS ENUM ('pending', 'in-progress', 'resolved', 'rejected');
 --> statement-breakpoint
-CREATE TYPE "public"."maintenance_status" AS ENUM('pending', 'assigned', 'in-progress', 'completed', 'rejected');
+CREATE TYPE "public"."complaint_type" AS ENUM (
+	'room condition',
+	'staff behavior',
+	'amenities',
+	'noise',
+	'security',
+	'billing issue',
+	'other'
+);
 --> statement-breakpoint
-CREATE TYPE "public"."allocation_status" AS ENUM('active', 'expired', 'pending', 'cancelled');
+CREATE TYPE "public"."maintenance_issue_type" AS ENUM (
+	'plumbing',
+	'electrical',
+	'furniture',
+	'cleaning',
+	'appliance',
+	'structural',
+	'pest control',
+	'internet/Wi-Fi',
+	'other'
+);
 --> statement-breakpoint
-CREATE TYPE "public"."hostel_status" AS ENUM('active', 'inactive', 'under renovation');
+CREATE TYPE "public"."maintenance_priority" AS ENUM ('low', 'medium', 'high', 'emergency');
 --> statement-breakpoint
-CREATE TYPE "public"."room_status" AS ENUM('vacant', 'fully occupied', 'partially occupied', 'under maintenance', 'reserved');
+CREATE TYPE "public"."maintenance_status" AS ENUM (
+	'pending',
+	'assigned',
+	'in-progress',
+	'completed',
+	'rejected'
+);
 --> statement-breakpoint
-CREATE TYPE "public"."room_type" AS ENUM('single', 'double', 'triple', 'quad');
+CREATE TYPE "public"."allocation_status" AS ENUM ('active', 'expired', 'pending', 'cancelled');
 --> statement-breakpoint
-CREATE TYPE "public"."access_level" AS ENUM('regular', 'super', 'support');
+CREATE TYPE "public"."hostel_status" AS ENUM ('active', 'inactive', 'under renovation');
 --> statement-breakpoint
-CREATE TYPE "public"."gender" AS ENUM('male', 'female');
+CREATE TYPE "public"."room_status" AS ENUM (
+	'vacant',
+	'fully occupied',
+	'partially occupied',
+	'under maintenance',
+	'reserved'
+);
 --> statement-breakpoint
-CREATE TYPE "public"."residency_status" AS ENUM('active', 'inactive', 'suspended', 'graduated', 'withdrawn');
+CREATE TYPE "public"."room_type" AS ENUM ('single', 'double', 'triple', 'quad');
 --> statement-breakpoint
-CREATE TYPE "public"."roles" AS ENUM('student', 'admin');
+CREATE TYPE "public"."access_level" AS ENUM ('regular', 'super', 'support');
 --> statement-breakpoint
-CREATE TYPE "public"."visitor_status" AS ENUM('checked-in', 'checked-out', 'pending', 'cancelled', 'denied', 'approved');
+CREATE TYPE "public"."gender" AS ENUM ('male', 'female');
+--> statement-breakpoint
+CREATE TYPE "public"."residency_status" AS ENUM (
+	'active',
+	'inactive',
+	'suspended',
+	'graduated',
+	'withdrawn'
+);
+--> statement-breakpoint
+CREATE TYPE "public"."roles" AS ENUM ('student', 'admin');
+--> statement-breakpoint
+CREATE TYPE "public"."visitor_status" AS ENUM (
+	'checked-in',
+	'checked-out',
+	'pending',
+	'cancelled',
+	'denied',
+	'approved'
+);
 --> statement-breakpoint
 CREATE TABLE "announcement" (
     "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (
@@ -59,6 +114,46 @@ CREATE TABLE "announcement_reads" (
     "user_id" integer NOT NULL,
     "read_date" timestamp DEFAULT now() NOT NULL,
     CONSTRAINT "unique_announcement_student" UNIQUE ("announcement_id", "user_id")
+);
+--> statement-breakpoint
+CREATE TABLE "billing" (
+    "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (
+        sequence name "billing_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START
+        WITH
+            1 CACHE 1
+    ),
+    "student_id" integer NOT NULL,
+    "allocation_id" integer NOT NULL,
+    "hostel_id" integer NOT NULL,
+    "amount" numeric(10, 2) NOT NULL,
+    "description" text NOT NULL,
+    "date_issued" timestamp DEFAULT now() NOT NULL,
+    "due_date" date NOT NULL,
+    "status" "billing_status" DEFAULT 'unpaid' NOT NULL,
+    "late_fee" numeric(10, 2) DEFAULT '0.00',
+    "paid_amount" numeric(10, 2) DEFAULT '0.00',
+    "created_at" timestamp DEFAULT now() NOT NULL,
+    "updated_at" timestamp DEFAULT now() NOT NULL,
+    CONSTRAINT "chk_paid_amount" CHECK (
+        paid_amount >= 0
+        AND paid_amount <= amount
+    )
+);
+--> statement-breakpoint
+CREATE TABLE "payment" (
+    "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (
+        sequence name "payment_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START
+        WITH
+            1 CACHE 1
+    ),
+    "student_id" integer NOT NULL,
+    "billing_id" integer NOT NULL,
+    "amount" numeric(10, 2) NOT NULL,
+    "payment_date" timestamp DEFAULT now() NOT NULL,
+    "transaction_reference" text NOT NULL,
+    "payment_method" "payment_method" NOT NULL,
+    "status" "payment_status" DEFAULT 'pending' NOT NULL,
+    CONSTRAINT "payment_transactionReference_unique" UNIQUE ("transaction_reference")
 );
 --> statement-breakpoint
 CREATE TABLE "complaint" (
@@ -283,6 +378,21 @@ ADD CONSTRAINT "announcement_reads_announcement_id_announcement_id_fk" FOREIGN K
 ALTER TABLE "announcement_reads"
 ADD CONSTRAINT "announcement_reads_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE cascade ON UPDATE no action;
 --> statement-breakpoint
+ALTER TABLE "billing"
+ADD CONSTRAINT "billing_student_id_student_id_fk" FOREIGN KEY ("student_id") REFERENCES "public"."student" ("id") ON DELETE cascade ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "billing"
+ADD CONSTRAINT "billing_allocation_id_allocation_id_fk" FOREIGN KEY ("allocation_id") REFERENCES "public"."allocation" ("id") ON DELETE set null ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "billing"
+ADD CONSTRAINT "billing_hostel_id_hostel_id_fk" FOREIGN KEY ("hostel_id") REFERENCES "public"."hostel" ("id") ON DELETE set null ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "payment"
+ADD CONSTRAINT "payment_student_id_student_id_fk" FOREIGN KEY ("student_id") REFERENCES "public"."student" ("id") ON DELETE cascade ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "payment"
+ADD CONSTRAINT "payment_billing_id_billing_id_fk" FOREIGN KEY ("billing_id") REFERENCES "public"."billing" ("id") ON DELETE cascade ON UPDATE no action;
+--> statement-breakpoint
 ALTER TABLE "complaint"
 ADD CONSTRAINT "complaint_student_id_student_id_fk" FOREIGN KEY ("student_id") REFERENCES "public"."student" ("id") ON DELETE cascade ON UPDATE no action;
 --> statement-breakpoint
@@ -331,6 +441,3 @@ ADD CONSTRAINT "visitor_student_id_student_id_fk" FOREIGN KEY ("student_id") REF
 ALTER TABLE "visitor_logs"
 ADD CONSTRAINT "visitor_logs_visitor_id_visitor_id_fk" FOREIGN KEY ("visitor_id") REFERENCES "public"."visitor" ("id") ON DELETE cascade ON UPDATE no action;
 
-ALTER SEQUENCE user_id_seq RESTART WITH 10000000;
-ALTER SEQUENCE admin_id_seq RESTART WITH 10000000;
-ALTER SEQUENCE student_id_seq RESTART WITH 10000000;

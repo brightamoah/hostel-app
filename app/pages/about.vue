@@ -2,7 +2,6 @@
 import { useRoleBasedRoute } from "~/composables/useRoleBasedRoutes";
 
 const roleRoutes = useRoleBasedRoute();
-console.log(roleRoutes.value);
 </script>
 
 <template>
