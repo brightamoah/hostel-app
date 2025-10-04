@@ -50,7 +50,7 @@ export function getEmailTemplate(verificationUrl: string, user: Omit<User, "last
       
       ${verificationUrl}
       
-      This link will expire in 24 hours for security reasons.
+      This link will expire in 10 minutes for security reasons.
       
       If you didn't create an account with us, please ignore this email.
       
@@ -59,4 +59,19 @@ export function getEmailTemplate(verificationUrl: string, user: Omit<User, "last
     `;
 
   return { htmlTemplate, textTemplate };
+}
+
+export function getResetPasswordTemplate(resetUrl: string, userName: string) {
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2>Reset Your Password</h2>
+      <p>Hi ${userName},</p>
+      <p>You requested a password reset for your Kings Hostel Management account. Click the link below to reset your password:</p>
+      <a href="${resetUrl}" style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
+      <p>This link will expire in 10 minutes. If you didn't request this, ignore this email.</p>
+      <p>Best,<br>Kings Hostel Management Team</p>
+    </div>
+  `;
+  const text = `Hi ${userName},\n\nYou requested a password reset. Click here to reset: ${resetUrl}\n\nThis link expires in 10 minutes.\n\nBest,\nKings Hostel Management Team`;
+  return { html, text };
 }

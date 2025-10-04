@@ -94,15 +94,34 @@ const personalDetailsSchema = z.object({
 
 export type PersonalDetailsSchema = z.output<typeof personalDetailsSchema>;
 
+const resetPasswordSchema = z.object({
+  newPassword: passwordSchema,
+  confirmPassword: confirmPasswordSchema,
+  email: emailSchema,
+}).refine(data => data.newPassword === data.confirmPassword, {
+  error: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+export type ResetPasswordSchema = z.output<typeof resetPasswordSchema>;
+
+const passwordResetSchema = z.object({
+  email: emailSchema,
+  token: z.string({ error: "Token is required" }),
+  newPassword: passwordSchema,
+});
+
 export {
   baseSignupSchema,
   confirmPasswordSchema,
   emailSchema,
   loginSchema,
   nameSchema,
+  passwordResetSchema,
   passwordSchema,
   personalDetailsSchema,
   rememberMeSchema,
+  resetPasswordSchema,
   roleSchema,
   signupSchema,
   verifyEmailSchema,

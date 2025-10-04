@@ -37,6 +37,8 @@ export const user = pgTable("user", t => ({
   emailVerified: t.boolean().default(false).notNull(),
   verificationToken: t.text(),
   verificationTokenExpiresAt: t.timestamp(),
+  resetToken: t.text(),
+  resetTokenExpiresAt: t.timestamp(),
   createdAt: t.timestamp().defaultNow().notNull(),
   updatedAt: t.timestamp()
     .defaultNow()

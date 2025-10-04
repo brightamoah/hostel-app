@@ -1,10 +1,10 @@
 import type { User } from "#auth-utils";
 
 import { userQueries } from "~~/server/db/queries/user";
-import { user } from "~~/server/db/schema";
+// import { user } from "~~/server/db/schema";
 import { handleAuthError } from "~~/server/utils/authErrorHandler";
-import { useDB } from "~~/server/utils/db";
-import { eq } from "drizzle-orm";
+// import { useDB } from "~~/server/utils/db";
+// import { eq } from "drizzle-orm";
 
 import { loginSchema } from "~/utils/schema";
 
@@ -12,8 +12,8 @@ export default defineEventHandler(async (event) => {
   try {
     const { session, nodeEnv } = useRuntimeConfig();
 
-    const { db } = useDB();
-    const { updateUserLastLogin, getOnboardedStudent } = await userQueries(event);
+    // const { db } = useDB();
+    const { updateUserLastLogin, getOnboardedStudent, getUserByEmail } = await userQueries(event);
 
     const body = await readValidatedBody(event, body => loginSchema.safeParse(body));
 
@@ -26,7 +26,9 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 400, message: "Email and password required" });
     }
 
-    const currentUser = await db.query.user.findFirst({ where: eq(user.email, email) });
+    // const currentUser = await db.query.user.findFirst({ where: eq(user.email, email) });
+    const currentUser = await getUserByEmail(email);
+
     if (!currentUser) {
       throw createError({ statusCode: 401, message: "Invalid email or password" });
     }

@@ -53,7 +53,7 @@ onMounted(() => {
       </template>
       <template #password-hint>
         <ULink
-          :to="{ name: 'auth-login' }"
+          :to="{ name: 'auth-forgotPassword' }"
           class="font-medium text-primary"
           tabindex="-1"
         >
