@@ -11,6 +11,7 @@ pnpm install
 ```
 
 Set up environment variables in `.env` (copy from `.env.example` if available):
+
 - Database URL (Neon PostgreSQL)
 - Session secrets
 - Email configuration (Nodemailer)

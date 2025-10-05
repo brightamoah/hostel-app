@@ -37,12 +37,17 @@ export async function verifyHashedValue(storedHash: string, rawValue: string) {
   return new Promise<boolean>((resolve, reject) => {
     const [salt, hashKey] = storedHash.split(".");
 
-    const hashKeyBuffer = Buffer.from(hashKey, "hex");
+    const hashKeyBuffer = Buffer.from(hashKey!, "hex");
 
-    scrypt(rawValue, salt, keyLength, (err, derivedKey) => {
-      if (err)
-        reject(err);
-      resolve(timingSafeEqual(hashKeyBuffer, derivedKey));
-    });
+    scrypt(
+      rawValue,
+      salt!,
+      keyLength,
+      (err, derivedKey) => {
+        if (err)
+          reject(err);
+        resolve(timingSafeEqual(hashKeyBuffer, derivedKey));
+      },
+    );
   });
 }

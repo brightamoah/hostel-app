@@ -45,6 +45,13 @@ export default defineEventHandler(async (event) => {
       name,
     }).returning();
 
+    if (!newUser) {
+      throw createError({
+        statusCode: 500,
+        message: "Failed to create user",
+      });
+    }
+
     const verificationUrl = `${event.headers.get("origin")}/auth/verifyEmail?token=${verificationToken}&id=${newUser.id}`;
 
     const { sendMail } = useNodeMailer();
