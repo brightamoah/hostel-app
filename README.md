@@ -1,75 +1,66 @@
-# Nuxt Minimal Starter
+# Hostel Management App
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A Nuxt 4 application for managing hostel operations, built with TypeScript, Drizzle ORM, and Nuxt UI.
 
 ## Setup
 
-Make sure to install dependencies:
+Install dependencies with PNPM:
 
 ```bash
-# npm
-npm install
-
-# pnpm
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+Set up environment variables in `.env` (copy from `.env.example` if available):
+- Database URL (Neon PostgreSQL)
+- Session secrets
+- Email configuration (Nodemailer)
 
-Start the development server on `http://localhost:3000`:
+## Development
+
+Start the development server:
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
 pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+The app runs on `http://localhost:3000`.
 
-Build the application for production:
+## Database
+
+This app uses PostgreSQL with Drizzle ORM.
+
+Generate and run migrations:
 
 ```bash
-# npm
-npm run build
+pnpm drizzle-kit generate
+pnpm drizzle-kit migrate
+```
 
-# pnpm
+## Features
+
+- User authentication (signup, login, email verification)
+- Password reset via email
+- Student onboarding with profile details
+- Role-based access (students and admins)
+- Dashboards for students and admins
+- Complaint, maintenance, and visitor management
+- Announcements and billing
+
+## Build
+
+Build for production:
+
+```bash
 pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
-Locally preview production build:
+Preview locally:
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
 pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Scripts
+
+- `pnpm lint` - Run ESLint
+- `pnpm lint:fix` - Fix ESLint issues
