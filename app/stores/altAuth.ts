@@ -33,13 +33,7 @@ export const useAltAuth = defineStore("altAuth", () => {
   ]);
 
   const resetPasswordFields = ref<AuthFormField[]>([
-    {
-      name: "email",
-      type: "email",
-      label: "Email",
-      placeholder: "Enter Your Email",
-      required: true,
-    },
+
     {
       name: "newPassword",
       type: "password",
@@ -147,14 +141,14 @@ export const useAltAuth = defineStore("altAuth", () => {
     }
   }
 
-  async function resetPassword(payload: FormSubmitEvent<ResetPasswordSchema>, token: string) {
+  async function resetPassword(payload: FormSubmitEvent<ResetPasswordSchema>, token: string, id: IDSchema) {
     isLoading.value = true;
     try {
       const response = await $fetch("/api/auth/resetPassword", {
         method: "POST",
         body: {
           token,
-          email: payload.data.email,
+          id,
           newPassword: payload.data.newPassword,
         },
       });

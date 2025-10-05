@@ -7,6 +7,7 @@ const toast = useToast();
 const route = useRoute();
 const router = useRouter();
 const token = route.query.token as string;
+const id = Number(route.query.id);
 
 const altAuthStore = useAltAuth();
 const { resetPasswordFields, isLoading } = storeToRefs(altAuthStore);
@@ -41,7 +42,7 @@ onMounted(async () => {
       loading: isLoading,
       disabled: isLoading,
     }"
-    @submit="resetPassword($event, token)"
+    @submit="resetPassword($event, token, id)"
   >
     <template #footer>
       <div class="text-muted text-sm text-center">

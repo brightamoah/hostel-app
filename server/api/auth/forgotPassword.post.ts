@@ -12,8 +12,14 @@ export default defineEventHandler(async (event) => {
     const { db } = useDB();
     const body = await readValidatedBody(event, body => verifyEmailSchema.safeParse(body));
 
-    if (!body.success)
-      throw createError({ statusCode: 400, message: `Invalid email: ${body.error.issues}` });
+    if (!body.success) {
+      throw createError({
+        statusCode: 400,
+        message: `Invalid request: ${body.error.issues
+          .map(i => i.message)
+          .join(", ")}`,
+      });
+    }
 
     const { email } = body.data;
     const { getUserByEmail } = await userQueries(event);
@@ -35,7 +41,7 @@ export default defineEventHandler(async (event) => {
       })
       .where(eq(user.id, existingUser.id));
 
-    const resetUrl = `${event.headers.get("origin")}/auth/resetPassword?token=${resetToken}`;
+    const resetUrl = `${event.headers.get("origin")}/auth/resetPassword?token=${resetToken}&id=${existingUser.id}`;
 
     const { html, text } = getResetPasswordTemplate(resetUrl, existingUser.name);
     const { sendMail } = useNodeMailer();

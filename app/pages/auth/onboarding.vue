@@ -4,16 +4,17 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 
 import { DateFormatter, getLocalTimeZone } from "@internationalized/date";
 import { useMediaQuery } from "@vueuse/core";
-import { handleAuthError } from "~~/server/utils/authErrorHandler";
 
 definePageMeta({
   layout: "onboard",
-  middleware: ["onboard-redirect"],
 });
 
 const toast = useToast();
+const router = useRouter();
+const { fetch: refreshSession } = useUserSession();
 
 const isMobile = useMediaQuery("(max-width: 640px)");
+const errorMessage = ref<string | null>(null);
 
 const desktopDateFormat = new DateFormatter("en-GH", {
   dateStyle: "full",
@@ -104,22 +105,34 @@ async function submitForm(payload: FormSubmitEvent<typeof state.value>) {
       body: payload.data,
     });
 
-    if (response.success) {
-      toast.add({
-        title: "Onboarding Successful",
-        description: "Your profile has been completed. Welcome to the hostel app!",
-        color: "success",
-        icon: "i-lucide-check-circle",
+    if (!response.success) {
+      errorMessage.value = response.errorMessage.value;
+      throw createError({
+        statusCode: 500,
+        statusMessage: response.errorMessage.value || "Onboarding failed to complete",
       });
-      await navigateTo({ name: "student-dashboard" });
-      clearState();
     }
-    else {
-      console.error("Onboarding failed:", response.message);
-    }
+
+    await refreshSession();
+
+    toast.add({
+      title: "Onboarding Successful",
+      description: response.message || "Your profile has been completed. Welcome to the hostel app!",
+      color: "success",
+      icon: "i-lucide-check-circle",
+    });
+    clearState();
+    return router.push({ name: "student-dashboard" });
   }
-  catch (error) {
-    handleAuthError(error);
+  catch (error: any) {
+    console.error("Onboarding failed:", error);
+    errorMessage.value = error?.message;
+    toast.add({
+      title: "Onboarding Failed",
+      description: errorMessage.value!,
+      color: "error",
+      icon: "i-lucide-x-circle",
+    });
   }
   finally {
     isLoading.value = false;
@@ -157,7 +170,7 @@ onMounted(() => {
         :schema="personalDetailsSchema"
         :state
         class="bg-transparent shadow-md backdrop-blur-xl p-2 md:p-4 border border-muted rounded-lg w-full max-w-4xl"
-        @submit="submitForm"
+        @submit="submitForm!"
       >
         <div class="flex md:flex-row flex-col justify-between gap-5 mb-4 px-4">
           <UFormField

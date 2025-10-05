@@ -9,6 +9,7 @@ const router = useRouter();
 const toast = useToast();
 
 const token = route.query.token as string;
+const id = Number(route.query.id);
 
 onMounted(async () => {
   if (!token) {
@@ -26,14 +27,15 @@ onMounted(async () => {
   }
 
   try {
-    await $fetch("/api/auth/verifyEmail", {
+    const response = await $fetch("/api/auth/verifyEmail", {
       method: "POST",
-      body: { token },
+      body: { token, id },
     });
     toast.add({
-      title: "Email Verified",
-      description: "Your email has been successfully verified. You can now log in.",
+      title: "Email Verified Successfully",
+      description: response.message,
       color: "success",
+      icon: "i-lucide-check-circle",
     });
     return router.push({ name: "auth-login" });
   }

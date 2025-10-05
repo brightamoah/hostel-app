@@ -9,9 +9,14 @@ export function useUseUserItems() {
     return generateInitials(user.value.name);
   });
 
-  const avatarBgColor = computed(() =>
-    generateUserColor(user.value?.id ?? "default"),
-  );
+  const avatarBgColor = computed(() => {
+    if (!user.value || !user.value.id)
+      return "gray";
+
+    const color = generateUserColor(user.value?.id);
+    return color;
+  });
+
   const userBadgeColor = computed(() => {
     if (!user.value)
       return "neutral";

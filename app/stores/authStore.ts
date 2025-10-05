@@ -10,8 +10,11 @@ export const useAuthStore = defineStore("authStore", () => {
   const toast = useToast();
   const route = useRoute();
 
+  const { exists, studentData } = useStudentData();
+
   const isLoading = ref<boolean>(false);
   const errorMessage = ref<string | null>(null);
+  const isOnboarded = computed(() => !!exists.value);
 
   const { user, loggedIn: isLoggedIn, session, fetch: refreshSession, clear: clearUserSession } = useUserSession();
 
@@ -114,7 +117,13 @@ export const useAuthStore = defineStore("authStore", () => {
     },
   ]);
 
-  const login = async ({ data: { email, password, rememberMe } }: FormSubmitEvent<LoginSchema>) => {
+  const login = async ({
+    data: {
+      email,
+      password,
+      rememberMe,
+    },
+  }: FormSubmitEvent<LoginSchema>) => {
     isLoading.value = true;
     errorMessage.value = null;
     try {
@@ -182,6 +191,8 @@ export const useAuthStore = defineStore("authStore", () => {
     isLoggedIn,
     session,
     errorMessage,
+    isOnboarded,
+    studentData,
     login,
     signup,
     signout,

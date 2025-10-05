@@ -1,31 +1,52 @@
+import { userQueries } from "~~/server/db/queries/user";
 import { user } from "~~/server/db/schema";
 import { handleAuthError } from "~~/server/utils/authErrorHandler";
 import { useDB } from "~~/server/utils/db";
 import { eq } from "drizzle-orm";
 
-import type { VerificationToken } from "~/types";
+import { emailVerificationSchema } from "~/utils/schema";
 
 export default defineEventHandler(async (event) => {
   try {
     const { db } = useDB();
+    const { getUserById } = await userQueries(event);
 
-    const body = await readBody(event);
-    const { token } = body as { token?: VerificationToken };
+    const body = await readValidatedBody(event, body =>
+      emailVerificationSchema.safeParse(body));
 
-    if (!token) {
-      throw createError({ statusCode: 400, message: "Valid token required" });
+    if (!body.success) {
+      throw createError({
+        statusCode: 400,
+        message: `Invalid request: ${body.error.issues
+          .map(i => i.message)
+          .join(", ")}`,
+      });
     }
 
-    const userToVerify = await db.query.user.findFirst({
-      where: eq(user.verificationToken, token),
-    });
+    const { token, id } = body.data;
 
-    if (!userToVerify) {
-      throw createError({ statusCode: 404, message: "Invalid or expired verification token" });
+    if (!token || !id) {
+      throw createError({
+        statusCode: 400,
+        message: "Valid token and id required",
+      });
+    }
+
+    const userToVerify = await getUserById(id);
+
+    if (
+      !userToVerify
+      || !userToVerify.verificationToken
+      || !userToVerify.verificationTokenExpiresAt
+    ) {
+      throw createError({
+        statusCode: 400,
+        message: "Invalid verification request token",
+      });
     }
 
     const now = new Date();
-    if (userToVerify.verificationTokenExpiresAt && now > userToVerify.verificationTokenExpiresAt) {
+    if (userToVerify.verificationTokenExpiresAt < now) {
       // Clean up expired token
       await db.update(user).set({
         verificationToken: null,
@@ -38,12 +59,29 @@ export default defineEventHandler(async (event) => {
       });
     }
 
+    const isTokenValid = await verifyHashedValue(
+      userToVerify.verificationToken!,
+      token,
+    );
+
+    if (!isTokenValid) {
+      throw createError({
+        statusCode: 400,
+        message: "Invalid or expired verification token",
+      });
+    }
+
     await db.update(user).set({
       emailVerified: true,
       verificationToken: null,
+      verificationTokenExpiresAt: null,
     }).where(eq(user.id, userToVerify.id));
 
-    return { message: "Email verified successfully" };
+    return {
+      success: true,
+      statusCode: 200,
+      message: "Your email has been successfully verified. You can now log in.",
+    };
   }
   catch (error) {
     handleAuthError(error);

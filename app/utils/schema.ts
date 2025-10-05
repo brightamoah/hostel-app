@@ -81,6 +81,10 @@ const genderSchema = z.union([
 
 const addressSchema = z.string().min(1, "Address is required").min(5, "Address is too short");
 
+const idSchema = z.int().min(10000000, "Invalid id: less than required length").max(99999999, "Invalid id: exceeds maximum length");
+
+export type IDSchema = z.output<typeof idSchema>;
+
 const personalDetailsSchema = z.object({
   gender: genderSchema,
   dateOfBirth: z.date({ error: "Date of Birth is required" }).nullable(),
@@ -97,7 +101,6 @@ export type PersonalDetailsSchema = z.output<typeof personalDetailsSchema>;
 const resetPasswordSchema = z.object({
   newPassword: passwordSchema,
   confirmPassword: confirmPasswordSchema,
-  email: emailSchema,
 }).refine(data => data.newPassword === data.confirmPassword, {
   error: "Passwords don't match",
   path: ["confirmPassword"],
@@ -106,15 +109,21 @@ const resetPasswordSchema = z.object({
 export type ResetPasswordSchema = z.output<typeof resetPasswordSchema>;
 
 const passwordResetSchema = z.object({
-  email: emailSchema,
+  id: idSchema,
   token: z.string({ error: "Token is required" }),
   newPassword: passwordSchema,
+});
+
+const emailVerificationSchema = z.object({
+  id: idSchema,
+  token: z.uuidv4({ error: "Valid token is required" }),
 });
 
 export {
   baseSignupSchema,
   confirmPasswordSchema,
   emailSchema,
+  emailVerificationSchema,
   loginSchema,
   nameSchema,
   passwordResetSchema,

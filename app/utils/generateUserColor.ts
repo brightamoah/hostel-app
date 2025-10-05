@@ -1,18 +1,19 @@
 export function generateUserColor(userId: string | number): string {
-  // Convert userId to string and create a simple hash
   const str = userId.toString();
-  let hash = 0;
 
+  // A simple but consistent hash from the user ID (FNV-1a inspired)
+  let hash = 2166136261;
   for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
+    hash ^= str.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
   }
 
-  // Use the hash to generate HSL values for better color distribution
-  const hue = Math.abs(hash) % 360;
-  const saturation = 65 + (Math.abs(hash) % 20); // 65-85% saturation
-  const lightness = 45 + (Math.abs(hash) % 15); // 45-60% lightness
+  // Use the hash to spread hues evenly across the color wheel
+  // The golden angle (137.508) helps avoid colors that look too similar
+  const hue = (hash * 137.508) % 360;
 
-  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  const saturation = 65 + (hash % 25); // range 65–90%
+  const lightness = 45 + (hash % 15); // range 45–60%
+
+  return `hsl(${Math.abs(hue)}, ${saturation}%, ${lightness}%)`;
 }

@@ -33,17 +33,20 @@ export default defineEventHandler(async (event) => {
 
     const verificationToken = randomUUID();
 
-    const verificationTokenExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 from now
+    const hashedVerificationToken = await hash(verificationToken);
+
+    const verificationTokenExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 mins from now
 
     const [newUser] = await db.insert(user).values({
       email,
       password: passwordHash,
-      verificationToken,
+      verificationToken: hashedVerificationToken,
       verificationTokenExpiresAt,
       name,
     }).returning();
 
-    const verificationUrl = `${event.headers.get("origin")}/auth/verifyEmail?token=${verificationToken}`;
+    const verificationUrl = `${event.headers.get("origin")}/auth/verifyEmail?token=${verificationToken}&id=${newUser.id}`;
+
     const { sendMail } = useNodeMailer();
     const { htmlTemplate, textTemplate } = getEmailTemplate(verificationUrl, newUser!);
 
@@ -54,7 +57,10 @@ export default defineEventHandler(async (event) => {
       text: textTemplate,
     });
 
-    return { success: true, message: "Signup successful. Please check your email for verification." };
+    return {
+      success: true,
+      message: "Signup successful. Please check your email for verification.",
+    };
   }
   catch (error) {
     handleAuthError(error);

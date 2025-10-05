@@ -1,13 +1,16 @@
 import { student } from "~~/server/db/schema";
 import { eq } from "drizzle-orm";
+import { ref } from "vue";
 
 import { personalDetailsSchema } from "~/utils/schema";
 
 export default defineEventHandler(async (event) => {
   try {
     const session = await getUserSession(event);
+    const errorMessage = ref<string | null>(null);
 
     if (!session.user || session.user.role !== "student" || !session.user.emailVerified) {
+      errorMessage.value = "Forbidden: Must be a verified student";
       throw createError({
         statusCode: 403,
         message: "Forbidden: Must be a verified student",
@@ -24,6 +27,7 @@ export default defineEventHandler(async (event) => {
 
     const parsed = personalDetailsSchema.safeParse(rawBody);
     if (!parsed.success) {
+      errorMessage.value = `Invalid data: ${parsed.error.issues.map(i => i.message).join(", ")}`;
       throw createError({
         statusCode: 400,
         message: `Invalid data: ${parsed.error.issues}`,
@@ -46,11 +50,18 @@ export default defineEventHandler(async (event) => {
       where: eq(student.userId, session.user.id),
     });
     if (existingStudent) {
-      throw createError({ statusCode: 409, message: "Student details already exist" });
+      errorMessage.value = "Student details already exist";
+      throw createError({
+        statusCode: 409,
+        message: "Student details already exist",
+      });
     }
 
     if (!gender || !dateOfBirth || !phoneNumber || !address || !emergencyContactName || !emergencyContactPhoneNumber || !emergencyContactEmail) {
-      throw createError({ statusCode: 400, message: "All fields are required" });
+      throw createError({
+        statusCode: 400,
+        message: "All fields are required",
+      });
     }
 
     // Insert student details
@@ -69,7 +80,11 @@ export default defineEventHandler(async (event) => {
     } as any).returning();
 
     if (!newStudent) {
-      throw createError({ statusCode: 500, message: "Failed to save student details" });
+      errorMessage.value = "Failed to save student details";
+      throw createError({
+        statusCode: 500,
+        message: "Failed to save student details",
+      });
     }
 
     // Update user's onboarded status
@@ -78,7 +93,11 @@ export default defineEventHandler(async (event) => {
       onboarded: true,
     });
 
-    return { success: true, message: "Onboarding completed successfully" };
+    return {
+      success: true,
+      message: "Onboarding completed successfully",
+      errorMessage,
+    };
   }
   catch (error) {
     handleAuthError(error);

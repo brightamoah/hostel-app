@@ -29,7 +29,7 @@ export function getEmailTemplate(verificationUrl: string, user: Omit<User, "last
             <hr style="border: none; height: 1px; background: #ddd; margin: 30px 0;">
             
             <p style="font-size: 14px; color: #666;">
-              This link will expire in 24 hours for security reasons. If you didn't create an account with us, please ignore this email.
+              This link will expire in 10 minutes for security reasons. If you didn't create an account with us, please ignore this email.
             </p>
             
             <p style="font-size: 14px; color: #666;">

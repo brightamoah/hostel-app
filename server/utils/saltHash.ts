@@ -25,13 +25,21 @@ export async function hash(valueToHash: string) {
   });
 }
 
-export async function verifyHashedValue(storedHash: string, inputValue: string) {
+/**
+ * Verifies a raw value against a stored hashed value using scrypt and timing-safe comparison.
+ *
+ * @param storedHash - The stored hash string in the format "salt.hashKey".
+ * @param rawValue - The raw value to verify against the stored hash.
+ * @returns A promise that resolves to true if the raw value matches the stored hash, false otherwise.
+ * @throws Will reject with an error if the scrypt operation fails.
+ */
+export async function verifyHashedValue(storedHash: string, rawValue: string) {
   return new Promise<boolean>((resolve, reject) => {
     const [salt, hashKey] = storedHash.split(".");
 
     const hashKeyBuffer = Buffer.from(hashKey, "hex");
 
-    scrypt(inputValue, salt, keyLength, (err, derivedKey) => {
+    scrypt(rawValue, salt, keyLength, (err, derivedKey) => {
       if (err)
         reject(err);
       resolve(timingSafeEqual(hashKeyBuffer, derivedKey));

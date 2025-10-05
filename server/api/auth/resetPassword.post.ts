@@ -7,32 +7,51 @@ import { passwordResetSchema } from "~/utils/schema";
 export default defineEventHandler(async (event) => {
   try {
     const { db } = useDB();
-    const { getUserByEmail } = await userQueries(event);
+    const { getUserById } = await userQueries(event);
 
     const body = await readValidatedBody(event, body => passwordResetSchema.safeParse(body));
 
     if (!body.success) {
       throw createError({
         statusCode: 400,
-        message: `Invalid email: ${body.error.issues}`,
+        message: `Invalid request: ${body.error.issues
+          .map(i => i.message)
+          .join(", ")}`,
       });
     }
 
-    const { token, newPassword, email } = body.data;
+    const { token, newPassword, id } = body.data;
 
-    if (!token || !newPassword || !email) {
+    if (!token || !newPassword || !id) {
       throw createError({
         statusCode: 400,
-        message: "Email, token and new password required",
+        message: "ID, token and new password required",
       });
     }
 
-    const existingUser = await getUserByEmail(email);
+    const existingUser = await getUserById(id);
 
-    if (!existingUser || !existingUser.resetTokenExpiresAt || existingUser.resetTokenExpiresAt < new Date()) {
+    if (
+      !existingUser
+      || !existingUser.resetToken
+      || !existingUser.resetTokenExpiresAt
+    ) {
       throw createError({
         statusCode: 400,
-        message: "Invalid or expired token",
+        message: "Invalid password reset token",
+      });
+    }
+
+    const now = new Date();
+    if (existingUser.resetTokenExpiresAt < now) {
+      await db.update(user).set({
+        resetToken: null,
+        resetTokenExpiresAt: null,
+      }).where(eq(user.id, existingUser.id));
+
+      throw createError({
+        statusCode: 410,
+        message: "Password reset token has expired. Please request a new one.",
       });
     }
 
@@ -41,7 +60,7 @@ export default defineEventHandler(async (event) => {
     if (!isTokenValid) {
       throw createError({
         statusCode: 400,
-        message: "Invalid or expired token - please request a new one",
+        message: "Invalid or expired token reset token",
       });
     }
 

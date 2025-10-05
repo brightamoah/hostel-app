@@ -1,5 +1,7 @@
 <script lang="ts" setup>
+const { fetch: refreshSession } = useUserSession();
 
+await refreshSession();
 </script>
 
 <template>

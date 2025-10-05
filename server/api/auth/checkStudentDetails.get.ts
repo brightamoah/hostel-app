@@ -1,6 +1,4 @@
 import { userQueries } from "~~/server/db/queries/user";
-// import { student } from "~~/server/db/schema";
-// import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -11,12 +9,11 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 403, message: "Forbidden" });
     }
 
-    // const { db } = useDB();
     const existingStudent = await getOnboardedStudent(session.user.id);
 
     return {
       exists: !!existingStudent,
-      // student: existingStudent || null,
+      student: existingStudent || null,
     };
   }
   catch (error) {

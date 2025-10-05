@@ -47,15 +47,17 @@ export default defineEventHandler(async (event) => {
     }
 
     const verificationToken = randomUUID();
+    const hashedVerificationToken = await hash(verificationToken);
     const tokenExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
     // Update user with new token
     await db.update(user).set({
-      verificationToken,
+      verificationToken: hashedVerificationToken,
       verificationTokenExpiresAt: tokenExpiresAt,
     }).where(eq(user.id, existingUser.id));
 
-    const verificationUrl = `${event.headers.get("origin")}/auth/verifyEmail?token=${verificationToken}`;
+    const verificationUrl = `${event.headers.get("origin")}/auth/verifyEmail?token=${verificationToken}&id=${existingUser.id}`;
+
     const { sendMail } = useNodeMailer();
     const { htmlTemplate, textTemplate } = getEmailTemplate(verificationUrl, existingUser);
 
