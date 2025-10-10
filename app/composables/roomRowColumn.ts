@@ -4,6 +4,8 @@ import type { ComputedOptions, ConcreteComponent, MethodOptions } from "vue";
 
 import type { Room } from "~/types";
 
+import DetailsModal from "~/components/room/detailsModal.vue";
+
 type Toast = ReturnType<typeof useToast>;
 // eslint-disable-next-line ts/no-empty-object-type
 type Component = string | ConcreteComponent<{}, any, any, ComputedOptions, MethodOptions, {}, any>;
@@ -16,6 +18,14 @@ export function useRoomRowColumn(
   UCheckbox: Component,
   UTooltip: Component,
 ) {
+  const overlay = useOverlay();
+
+  const openDetailsModal = (roomId: number) => {
+    overlay.create(DetailsModal).open({
+      roomId,
+    });
+  };
+
   function getRowItems(row: Row<Room>) {
     return [
       {
@@ -36,7 +46,9 @@ export function useRoomRowColumn(
       {
         label: "View Details",
         icon: "i-lucide-eye",
-        // to: `/admin/rooms/${row.original.id}`
+        onSelect() {
+          openDetailsModal(row.original.id);
+        },
       },
       {
         label: "Edit Room",

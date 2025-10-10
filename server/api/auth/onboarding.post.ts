@@ -45,7 +45,6 @@ export default defineEventHandler(async (event) => {
       healthConditions,
     } = parsed.data;
 
-    // Check if student details already exist
     const existingStudent = await db.query.student.findFirst({
       where: eq(student.userId, session.user.id),
     });

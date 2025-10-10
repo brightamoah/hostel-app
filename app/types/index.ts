@@ -63,11 +63,13 @@ export interface Stat {
   color?: string;
 }
 
+export type ColorType = "primary" | "error" | "warning" | "info" | "success" | "neutral";
+
 export interface StatsCard {
   id: number | string;
   title: string;
   icon: string;
-  color: "primary" | "error" | "warning" | "info" | "success" | "neutral";
+  color: ColorType;
   value: number;
   percentage?: number;
   period?: Period;
@@ -97,6 +99,10 @@ export type RoomDataResponse = {
     building: string;
   }[];
 };
+
+export interface RoomDetailResponse {
+  room: Room;
+}
 
 export type StatusFilterOptions = {
   label: string;

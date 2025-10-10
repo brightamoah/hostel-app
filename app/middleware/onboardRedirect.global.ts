@@ -11,6 +11,10 @@ export default defineNuxtRouteMiddleware((to) => {
     "auth-signup",
     "auth-forgotPassword",
     "auth-resetPassword",
+    "index",
+    "about",
+    "contact",
+    "faq",
   ];
 
   if (authRoutes.includes(to.name)) {
@@ -38,8 +42,4 @@ export default defineNuxtRouteMiddleware((to) => {
   ) {
     return navigateTo({ name: "auth-onboarding" });
   }
-  // const target = roleRoutes.value!.dashboard;
-  // if (to.name !== target.name) {
-  //   return navigateTo(target);
-  // }
 });
