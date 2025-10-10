@@ -29,7 +29,7 @@ export const allocationStatusEnum = pgEnum("allocation_status", ["active", "expi
 export const room = pgTable("room", t => ({
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
   roomNumber: t.varchar({ length: 10 }).notNull().unique(),
-  building: t.varchar({ length: 100 }).notNull().unique(),
+  building: t.varchar({ length: 100 }).notNull(),
   floor: t.integer().notNull(),
   capacity: t.integer().notNull(),
   roomType: roomTypeEnum().notNull(),

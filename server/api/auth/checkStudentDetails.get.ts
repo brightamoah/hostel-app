@@ -5,8 +5,11 @@ export default defineEventHandler(async (event) => {
     const session = await getUserSession(event);
     const { getOnboardedStudent } = await userQueries(event);
 
-    if (!session.user || session.user.role !== "student") {
-      throw createError({ statusCode: 403, message: "Forbidden" });
+    if (!session.user || !session.user.emailVerified || session.user.role !== "student") {
+      return {
+        exists: false,
+        student: null,
+      };
     }
 
     const existingStudent = await getOnboardedStudent(session.user.id);

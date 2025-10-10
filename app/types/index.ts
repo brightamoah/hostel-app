@@ -1,7 +1,9 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
+import type { Table } from "@tanstack/table-core";
 import type { User } from "#auth-utils";
 import type { useDB } from "~~/server/utils/db";
 import type { randomUUID } from "uncrypto";
+import type { ShallowRef, ShallowUnwrapRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 type FormFieldType = "select" | "checkbox" | "password" | "otp" | "email" | "text";
@@ -70,4 +72,58 @@ export interface StatsCard {
   percentage?: number;
   period?: Period;
   to?: RouteLocationRaw;
+}
+
+export type Room = {
+  id: number;
+  roomNumber: string;
+  building: string;
+  floor: number;
+  roomType: "single" | "double" | "triple" | "quad";
+  capacity: number;
+  currentOccupancy: number;
+  features: string[];
+  amountPerYear: number;
+  status: "vacant" | "fully occupied" | "partially occupied" | "under maintenance" | "reserved";
+};
+
+export type RoomDataResponse = {
+  rooms: Room[];
+  totalRooms: number;
+  totalOccupiedRooms: number;
+  totalAvailableRooms: number;
+  totalUnderMaintenance: number;
+  buildings: {
+    building: string;
+  }[];
+};
+
+export type StatusFilterOptions = {
+  label: string;
+  value: string;
+}[];
+
+export type StatusFilter = string | string;
+
+export type BuildingFilter = string | string;
+export type BuildingFilterOptions = {
+  label: string;
+  value: string;
+}[];
+
+export type FloorFilter = string | number;
+
+export type FloorFilterOptions = ({
+  label: string;
+  value: number;
+} | { label: string; value: string })[];
+
+export type TableType = Readonly<ShallowRef<ShallowUnwrapRef<{
+  tableRef: Ref<HTMLTableElement | null, HTMLTableElement | null>;
+  tableApi: Table<Room>;
+}> | null>>;
+
+export interface FilterOption {
+  label: string;
+  value: string | number;
 }

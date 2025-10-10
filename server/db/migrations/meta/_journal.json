@@ -15,6 +15,13 @@
       "when": 1759480699609,
       "tag": "0001_omniscient_mariko_yashida",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1759833495086,
+      "tag": "0002_workable_mystique",
+      "breakpoints": true
     }
   ]
 }

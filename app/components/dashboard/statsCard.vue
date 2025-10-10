@@ -12,7 +12,7 @@ defineProps<{
       v-for="card in cards"
       :key="card.id"
       variant="subtle"
-      class="border-b-1 hover:border-b-4 rounded-xl transition-all duration-300 ease-in-out"
+      class="border-b-1 hover:border-b-2 rounded-xl transition-all duration-300 ease-in-out"
       :class="getColorClass(card.color, 'border-b', 10)"
     >
       <div class="flex justify-between items-center">

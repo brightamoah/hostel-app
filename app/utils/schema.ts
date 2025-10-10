@@ -119,6 +119,42 @@ const emailVerificationSchema = z.object({
   token: z.uuidv4({ error: "Valid token is required" }),
 });
 
+const roomTypeSchema = z.union([
+  z.enum(["single", "double", "triple", "quad"], {
+    error: "Room Type is required",
+  }),
+  z.literal(""),
+]).refine(val => val !== "", "Room Type is required");
+
+const roomStatusSchema = z.union([
+  z.enum(["vacant", "fully occupied", "partially occupied", "under maintenance", "reserved"], {
+    error: "Status is required",
+  }),
+  z.literal(""),
+]).refine(val => val !== "", "Status is required");
+
+const roomNumberSchema = z
+  .string()
+  .min(1, "Room number is required")
+  .max(10, "Room number cannot exceed 10 characters")
+  .regex(/^(?=.*\d)[A-Z0-9]+$/, "Room number must contain at least one number and can include uppercase letters, but cannot be letters only");
+
+export const addRoomSchema = z.object({
+  roomNumber: roomNumberSchema,
+  building: z.string("Building is required").min(1, "Building is required").max(100, "Building cannot exceed 100 characters"),
+  floor: z.number("Floor is required").min(1, "Floor cannot be negative"),
+  capacity: z.number("Capacity is required").min(1, "Capacity must be at least 1").max(4, "Capacity cannot exceed 4"),
+  roomType: roomTypeSchema,
+  features: z.string("Features is required").nonempty("Features is required"),
+  amountPerYear: z.number("Amount per Year is required").min(1, "Amount per Year cannot be negative"),
+  status: roomStatusSchema,
+  currentOccupancy: z.number("Current Occupancy is required").min(0, "Current Occupancy cannot be negative").max(4, "Current Occupancy cannot exceed 4"),
+});
+
+export type AddRoomSchema = z.output<typeof addRoomSchema>;
+
+// create a schema for room number it should contain number only, number and string but not letters only
+
 export {
   baseSignupSchema,
   confirmPasswordSchema,

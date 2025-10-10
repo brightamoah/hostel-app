@@ -5,7 +5,7 @@ const toast = useToast();
 
 const open = ref(false);
 
-// const {user} = useUserSession();
+const { refreshSession } = useAuthStore();
 
 const links = [[
   {
@@ -135,6 +135,8 @@ const groups = computed(() => [{
 }]);
 
 onMounted(async () => {
+  await refreshSession();
+
   const cookie = useCookie("cookie-consent");
   if (cookie.value === "accepted") {
     return;
@@ -166,6 +168,7 @@ onMounted(async () => {
       id="admin-sidebar"
       v-model:open="open"
       collapsible
+      collapsed
       resizable
       class="bg-elevated/25"
       :menu="{
@@ -198,7 +201,7 @@ onMounted(async () => {
       <template #default="{ collapsed }">
         <UDashboardSearchButton
           :collapsed="collapsed"
-          class="bg-transparent ring-default"
+          class="bg-transparent ring-default cursor-pointer"
         />
 
         <UNavigationMenu
