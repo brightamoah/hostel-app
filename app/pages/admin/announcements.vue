@@ -13,6 +13,7 @@ const title = ref("Announcements");
       <template #header>
         <DashboardNav :title />
       </template>
+
       <template #body>
         <div class="p-4">
           <h1 class="mb-4 font-bold text-2xl">

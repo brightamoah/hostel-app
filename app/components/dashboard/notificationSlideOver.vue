@@ -74,6 +74,7 @@ const notifications = ref<Notification[]>([
           <p class="text-dimmed">
             {{ notification.body }}
           </p>
+
           <USeparator class="my-2" />
         </div>
       </NuxtLink>

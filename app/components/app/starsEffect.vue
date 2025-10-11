@@ -1,7 +1,9 @@
 <template>
   <div class="top-0 -z-1 absolute inset-x-0 opacity-75 size-full pointer-events-none stars">
     <div class="bg-transparent rounded-full size-0.5" />
+
     <div class="bg-transparent rounded-full size-0.5" />
+
     <div class="bg-transparent rounded-full size-0.5" />
   </div>
 </template>

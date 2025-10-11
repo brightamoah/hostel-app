@@ -74,9 +74,7 @@ const features = ref([
       }"
     >
       <template #top>
-        <div
-          class="left-1/2 absolute dark:bg-primary blur-[300px] rounded-full size-60 sm:size-80 -translate-x-1/2 -translate-y-80 transform"
-        />
+        <div class="left-1/2 absolute dark:bg-primary blur-[300px] rounded-full size-60 sm:size-80 -translate-x-1/2 -translate-y-80 transform" />
 
         <AppStarsEffect />
 
@@ -120,6 +118,7 @@ const features = ref([
       <template #headline>
         <div class="text-center animate-fade-in-up animation-delay-1600">
           <div class="mb-6 linebreak" />
+
           <UBadge
             variant="subtle"
             class="justify-center items-center"
@@ -137,6 +136,7 @@ const features = ref([
           spotlight
         />
       </UPageGrid>
+
       <AppStarsEffect />
     </UPageSection>
 

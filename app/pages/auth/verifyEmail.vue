@@ -68,6 +68,7 @@ onMounted(async () => {
       <h1 class="font-bold text-highlighted text-2xl">
         Verifying Your Email
       </h1>
+
       <p class="max-w-md text-toned text-sm">
         Please wait while we verify your email address. This may take a few moments.
       </p>
@@ -78,6 +79,7 @@ onMounted(async () => {
         name="i-lucide-loader"
         class="size-5 text-primary animate-spin"
       />
+
       <span class="text-toned text-sm">
         Processing verification...
       </span>

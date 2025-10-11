@@ -43,6 +43,7 @@ onMounted(() => {
         >
           Sign up.
         </ULink>
+
         <UAlert
           v-if="errorMessage"
           color="error"
@@ -51,6 +52,7 @@ onMounted(() => {
           variant="subtle"
         />
       </template>
+
       <template #password-hint>
         <ULink
           :to="{ name: 'auth-forgotPassword' }"
@@ -60,6 +62,7 @@ onMounted(() => {
           Forgot password?
         </ULink>
       </template>
+
       <template #footer>
         <div class="space-y-3">
           <UAlert

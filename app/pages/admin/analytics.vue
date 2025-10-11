@@ -13,11 +13,13 @@ const title = ref("Analytics Dashboard");
       <template #header>
         <DashboardNav :title />
       </template>
+
       <template #body>
         <div class="p-4">
           <h1 class="mb-4 font-bold text-2xl">
             Analytics Dashboard
           </h1>
+
           <p>This is where you can display various analytics charts and data.</p>
         </div>
       </template>

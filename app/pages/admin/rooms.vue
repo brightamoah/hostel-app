@@ -19,7 +19,7 @@ const UTooltip = resolveComponent("UTooltip");
 
 const table = useTemplateRef("tableRef");
 
-const columnVisibility = ref();
+const columnVisibility = ref<{ [key: string | number]: boolean }>({ id: false });
 
 const rowSelection = ref({});
 
@@ -121,9 +121,11 @@ const pagination = ref({
       <template #header>
         <DashboardNav :title />
       </template>
+
       <template #body>
         <div class="p-2 md:p-4">
           <RoomCardSkeleton v-if="status === 'pending'" />
+
           <DashboardStatsCard
             v-else
             :cards
@@ -219,6 +221,7 @@ const pagination = ref({
               {{ table?.tableApi.getFilteredSelectedRowModel().rows.length }} of
               {{ rooms.length }} row(s) selected.
             </template>
+
             <template v-else-if="rooms.length > 0 && table?.tableApi">
               Showing
               {{ (table!.tableApi.getState().pagination.pageIndex * table!.tableApi.getState().pagination.pageSize) + 1
@@ -231,6 +234,7 @@ const pagination = ref({
               of
               {{ rooms.length }} rows.
             </template>
+
             <template v-else>
               No data available.
             </template>

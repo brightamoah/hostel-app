@@ -10,9 +10,11 @@ await refreshSession();
 <template>
   <UContainer>
     <AppNavbar />
+
     <UMain>
       <slot />
     </UMain>
+
     <AppStarsEffect />
   </UContainer>
 </template>

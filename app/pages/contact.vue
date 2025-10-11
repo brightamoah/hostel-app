@@ -105,10 +105,12 @@ useSeoMeta({
     <h1 class="text-white-shadow font-newsreader text-4xl text-center italic">
       Get In Touch With Us
     </h1>
+
     <h2 class="font-extralight text-muted text-lg text-center italic">
       Have questions about accommodation, payments, or maintenance? We're
       here to help.
     </h2>
+
     <div class="mt-2 mb-8 linebreak" />
 
     <div class="flex flex-col sm:justify-between sm:items-center">
@@ -188,6 +190,7 @@ useSeoMeta({
             placeholder="Lets work together!"
           />
         </UFormField>
+
         <div class="flex justify-center mt-2">
           <UTooltip
             :disabled="isResendEnabled"
@@ -206,10 +209,10 @@ useSeoMeta({
           </UTooltip>
         </div>
       </UForm>
+
       <div class="my-10 linebreak" />
-      <div
-        class="flex sm:flex-row flex-col justify-between items-center gap-4 w-full"
-      >
+
+      <div class="flex sm:flex-row flex-col justify-between items-center gap-4 w-full">
         <div class="flex flex-col gap-3">
           <dd class="flex items-center gap-3 text-neutral-400">
             <UIcon
@@ -217,16 +220,19 @@ useSeoMeta({
               class="size-6"
               aria-hidden="true"
             />
+
             <span>
               {{ profile.phone }}
             </span>
           </dd>
+
           <dd class="flex items-center gap-3 text-neutral-400">
             <UIcon
               name="i-lucide-mail"
               class="size-6"
               aria-hidden="true"
             />
+
             <UTooltip
               text="Send an email"
               :shortcuts="['⌘', 'O']"
@@ -243,6 +249,7 @@ useSeoMeta({
             </UTooltip>
           </dd>
         </div>
+
         <div>
           <!-- <HomeMeeting /> -->
         </div>

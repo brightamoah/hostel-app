@@ -30,9 +30,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
       v-if="props.animate"
       class="absolute inset-0 flex items-center [container-type:inline-size]"
     >
-      <div
-        class="absolute bg-[conic-gradient(from_0_at_50%_50%,rgba(0,0,0,0.2)_0deg,transparent_60deg,transparent_300deg,rgba(0,0,0,0.2)_360deg)] dark:bg-[conic-gradient(from_0_at_50%_50%,rgba(255,255,255,0.5)_0deg,transparent_60deg,transparent_300deg,rgba(255,255,255,0.5)_360deg)] opacity-0 group-hover:opacity-100 size-[100cqw] transition animate-spin duration-300"
-      />
+      <div class="absolute bg-[conic-gradient(from_0_at_50%_50%,rgba(0,0,0,0.2)_0deg,transparent_60deg,transparent_300deg,rgba(0,0,0,0.2)_360deg)] dark:bg-[conic-gradient(from_0_at_50%_50%,rgba(255,255,255,0.5)_0deg,transparent_60deg,transparent_300deg,rgba(255,255,255,0.5)_360deg)] opacity-0 group-hover:opacity-100 size-[100cqw] transition animate-spin duration-300" />
     </div>
 
     <!-- Button overlay background -->

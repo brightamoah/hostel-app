@@ -209,6 +209,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
       >
         <template #description>
           <p>{{ currentUser?.email }}</p>
+
           <UBadge
             :label="currentUser?.role"
             :color="userBadgeColor"

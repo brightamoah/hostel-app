@@ -15,6 +15,7 @@ const isMobileMenuOpen = ref(false);
       variant="ghost"
       class="transition-transform duration-300 cursor-pointer"
     />
+
     <template #body>
       <AppPlaceholder class="h-full min-h-48" />
     </template>

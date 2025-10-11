@@ -53,6 +53,7 @@ const cards = computed<StatsCard[]>(() => [
       <template #header>
         <DashboardNav :title />
       </template>
+
       <template #body>
         <div class="p-4">
           <h1 class="mb-4 font-bold text-2xl">
@@ -60,9 +61,8 @@ const cards = computed<StatsCard[]>(() => [
           </h1>
           <!-- Analytics content goes here -->
           <p>This is where you can display various maintenance requests.</p>
-          <DashboardStatsCard
-            :cards
-          />
+
+          <DashboardStatsCard :cards />
         </div>
       </template>
     </UDashboardPanel>

@@ -65,9 +65,7 @@ const starLayers = computed(() => [
 </script>
 
 <template>
-  <div
-    class="z-[-1] absolute inset-x-5 inset-y-0 sm:inset-x-7 lg:inset-x-9 overflow-hidden pointer-events-none"
-  >
+  <div class="z-[-1] absolute inset-x-5 inset-y-0 sm:inset-x-7 lg:inset-x-9 overflow-hidden pointer-events-none">
     <div class="top-0 absolute inset-x-0 size-full stars">
       <div
         v-for="(layer, index) in starLayers"

@@ -32,6 +32,7 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(room);
       size="xl"
       class="cursor-pointer"
     />
+
     <template #body>
       <div
         v-if="status === 'pending'"
@@ -41,6 +42,7 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(room);
           name="i-lucide-loader"
           class="w-10 h-10 text-primary animate-spin"
         />
+
         <p class="mt-4 text-muted">
           Loading room details...
         </p>
@@ -54,6 +56,7 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(room);
           name="i-lucide-alert-triangle"
           class="w-10 h-10 text-error"
         />
+
         <p class="mt-4 text-error">
           Error loading data: {{ error?.message }}
         </p>
@@ -72,6 +75,7 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(room);
                 {{ room.building }}, Floor {{ room.floor }}
               </span>
             </h3>
+
             <UBadge
               :label="room.roomType"
               color="primary"
@@ -81,6 +85,7 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(room);
             />
           </div>
         </UCard>
+
         <div class="gap-4 grid grid-cols-1 md:grid-cols-2 mt-4">
           <UCard class="border-1 border-muted">
             <template #header>
@@ -89,30 +94,36 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(room);
                   name="i-lucide-info"
                   class="size-5"
                 />
+
                 <h4 class="font-semibold text-base">
                   Room Information
                 </h4>
               </div>
             </template>
+
             <template #default>
               <div class="gap-4 grid grid-cols-2">
                 <RoomDetailItem
                   label="Room Number"
                   :value="room.roomNumber"
                 />
+
                 <RoomDetailItem
                   label="Building"
                   :value="room.building"
                 />
+
                 <RoomDetailItem
                   label="Amount Per Year"
                   :value="formatCurrency(Number(room.amountPerYear))"
                 />
+
                 <RoomDetailItem
                   label="Room Type"
                   :value="room.roomType"
                   class="capitalize"
                 />
+
                 <RoomDetailItem
                   label="Floor"
                   :value="room.floor"
@@ -120,6 +131,7 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(room);
               </div>
             </template>
           </UCard>
+
           <UCard class="border-1 border-muted">
             <template #header>
               <div class="flex items-center gap-2">
@@ -127,6 +139,7 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(room);
                   name="i-lucide-users"
                   class="size-5"
                 />
+
                 <h4 class="font-semibold text-base">
                   Room Occupancy
                 </h4>
@@ -138,6 +151,7 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(room);
                 <p class="pb-1 text-muted text-sm">
                   Status
                 </p>
+
                 <UBadge
                   :label="room.status"
                   :color="statusColorMap[room.status] || 'neutral'"
@@ -152,11 +166,13 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(room);
                   label="Total Capacity"
                   :value="room.capacity"
                 />
+
                 <RoomDetailItem
                   label="Current Occupants"
                   :value="room.currentOccupancy"
                 />
               </div>
+
               <UProgress
                 v-model="room.currentOccupancy"
                 size="lg"
@@ -185,11 +201,13 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(room);
                 name="i-lucide-list-checks"
                 class="size-6"
               />
+
               <h4 class="font-semibold text-base">
                 Room Features & Amenities
               </h4>
             </div>
           </template>
+
           <div class="flex flex-wrap gap-3">
             <UBadge
               v-for="feature in featureIcons"

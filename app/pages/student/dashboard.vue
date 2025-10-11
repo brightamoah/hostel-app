@@ -13,6 +13,7 @@ const title = ref("Student Dashboard");
       <template #header>
         <DashboardNav :title />
       </template>
+
       <template #body>
         <div class="p-4">
           <h1 class="mb-4 font-bold text-2xl">
@@ -20,6 +21,7 @@ const title = ref("Student Dashboard");
           </h1>
           <!-- Analytics content goes here -->
           <p>This is where you can display various announcements.</p>
+
           <UButton
             color="primary"
             class="mt-4 px-4 py-2 rounded-md cursor-pointer"

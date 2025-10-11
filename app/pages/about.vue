@@ -20,9 +20,7 @@ const parse = emailVerificationSchema.safeParse({ id: id.value, token: token.val
       {{ roleRoutes?.profile.name }}
     </ULink>
 
-    <pre
-      class="flex justify-center items-center min-h-screen"
-    >
+    <pre class="flex justify-center items-center min-h-screen">
       {{ roleRoutes }}
     </pre>
   </div>

@@ -170,6 +170,7 @@ onMounted(async () => {
               'mx-0': !collapsed,
             }"
           />
+
           <h2
             v-if="!collapsed"
             class="font-newsreader font-semibold text-2xl"

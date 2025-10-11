@@ -2,7 +2,9 @@
   <div>
     <UApp :toaster="{ position: 'bottom-right', duration: 5000 }">
       <NuxtRouteAnnouncer />
+
       <NuxtLoadingIndicator />
+
       <NuxtLayout>
         <NuxtPage />
       </NuxtLayout>

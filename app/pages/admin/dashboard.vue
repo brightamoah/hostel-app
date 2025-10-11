@@ -22,6 +22,7 @@ const period = ref<Period>("daily");
     <UDashboardPanel id="home">
       <template #header>
         <DashboardNav :title />
+
         <UDashboardToolbar>
           <template #left>
             <!-- NOTE: The `-ms-1` class is used to align with the `DashboardSidebarCollapse` button here. -->
@@ -37,6 +38,7 @@ const period = ref<Period>("daily");
           </template>
         </UDashboardToolbar>
       </template>
+
       <template #body>
         <DashboardStats
           :period="period"

@@ -20,9 +20,11 @@ defineProps<{
           <h3 class="font-semibold text-toned text-base capitalize">
             {{ card.title }}
           </h3>
+
           <p class="font-bold text-highlighted text-2xl">
             {{ card.value }}
           </p>
+
           <UBadge
             v-if="card.percentage"
             color="neutral"
@@ -33,6 +35,7 @@ defineProps<{
             {{ card.percentage > 0 ? '+' : '' }}{{ card.percentage }}% from last {{ card.period }}
           </UBadge>
         </div>
+
         <UIcon
           :name="card.icon"
           class="size-7"

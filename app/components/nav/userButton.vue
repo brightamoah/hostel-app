@@ -71,9 +71,13 @@ const userMenuItems = computed<UserMenuItem[][]>(() => {
   <div>
     <div class="-z-10 absolute opacity-0 pointer-events-none">
       <UIcon name="i-lucide-user" />
+
       <UIcon name="i-lucide-settings" />
+
       <UIcon name="i-lucide-shield" />
+
       <UIcon name="i-lucide-graduation-cap" />
+
       <UIcon name="i-lucide-log-out" />
     </div>
 
@@ -110,6 +114,7 @@ const userMenuItems = computed<UserMenuItem[][]>(() => {
         >
           <template #description>
             <p>{{ user?.email }}</p>
+
             <UBadge
               :label="user?.role"
               :color="userBadgeColor"
@@ -133,6 +138,7 @@ const userMenuItems = computed<UserMenuItem[][]>(() => {
         block
         size="sm"
       />
+
       <UButton
         label="Signup"
         color="neutral"
@@ -142,11 +148,13 @@ const userMenuItems = computed<UserMenuItem[][]>(() => {
         size="sm"
       />
     </div>
+
     <div
       v-else
       class="flex gap-2"
     >
       <USkeleton class="rounded w-16 h-8" />
+
       <USkeleton class="rounded w-16 h-8" />
     </div>
   </div>

@@ -54,9 +54,11 @@ const cards = ref<StatsCard[]>([
       <template #header>
         <DashboardNav :title />
       </template>
+
       <template #body>
         <div class="p-4">
           <DashboardStatsCard :cards />
+
           <h1 class="mb-4 font-bold text-2xl">
             Rooms Dashboard
           </h1>

@@ -54,11 +54,13 @@ const { y } = useWindowScroll();
   >
     <section class="flex items-center gap-2">
       <NavMobileToggle />
+
       <NuxtLink
         :to="{ name: 'index' }"
         class="flex items-center gap-2"
       >
         <AppLogo class="size-6 md:size-8" />
+
         <h2 class="hidden md:block font-newsreader font-semibold text-2xl">
           Kings Hostel
         </h2>
@@ -83,6 +85,7 @@ const { y } = useWindowScroll();
               :name="item.icon"
               class="size-5"
             />
+
             <span>{{ item.label }}</span>
           </ULink>
         </li>
