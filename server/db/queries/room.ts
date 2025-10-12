@@ -1,4 +1,4 @@
-import { asc, eq, gt, or } from "drizzle-orm";
+import { asc, eq, gt, inArray, or } from "drizzle-orm";
 
 import { room } from "../schema";
 
@@ -36,16 +36,30 @@ export const roomQueries = defineEventHandler(async () => {
   };
 
   const getAvailableRooms = async () => {
-    const rooms = await db.query.room.findMany({ where: or(
-      eq(room.status, "vacant"),
-      eq(room.status, "partially occupied"),
-    ) });
+    const rooms = await db.query.room.findMany({
+      where: or(
+        eq(room.status, "vacant"),
+        eq(room.status, "partially occupied"),
+      ),
+    });
     return rooms;
   };
 
   const getUniqueBuildings = async () => {
     const buildings = await db.selectDistinct({ building: room.building }).from(room).orderBy(asc(room.building));
     return buildings;
+  };
+
+  const deleteRoomsByIds = async (ids: number[]) => {
+    if (ids.length === 0)
+      return [];
+
+    const deletedRooms = await db
+      .delete(room)
+      .where(inArray(room.id, ids))
+      .returning();
+
+    return deletedRooms;
   };
 
   return {
@@ -57,5 +71,6 @@ export const roomQueries = defineEventHandler(async () => {
     getOccupiedRooms,
     getAvailableRooms,
     getUniqueBuildings,
+    deleteRoomsByIds,
   };
 });

@@ -153,11 +153,18 @@ export const addRoomSchema = z.object({
 
 export type AddRoomSchema = z.output<typeof addRoomSchema>;
 
+const deleteRoomSchema = z.object({
+  ids: z.array(z.number().min(1, "Invalid room ID")).min(1, "At least one room ID is required"),
+});
+
+export type DeleteRoomSchema = z.output<typeof deleteRoomSchema>;
+
 // create a schema for room number it should contain number only, number and string but not letters only
 
 export {
   baseSignupSchema,
   confirmPasswordSchema,
+  deleteRoomSchema,
   emailSchema,
   emailVerificationSchema,
   loginSchema,

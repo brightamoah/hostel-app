@@ -352,6 +352,11 @@ export function useRoomRowColumn(
         ),
     },
   ];
+
   const columnsRef = ref<TableColumn<Room>[]>(columns);
-  return { columns: columnsRef, getRowItems };
+
+  return {
+    columns: columnsRef,
+    getRowItems,
+  };
 }

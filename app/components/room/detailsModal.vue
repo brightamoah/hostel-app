@@ -12,6 +12,10 @@ const { data, error, status } = useFetch<RoomDetailResponse>(`/api/room/${roomId
 const room = computed(() => data.value?.room);
 
 const { featureIcons, statusColorMap } = useRoomColorIcon(room);
+
+const { getErrorMessage } = getSpecificRoomError();
+
+const errorInfo = computed(() => getErrorMessage(error.value));
 </script>
 
 <template>
@@ -53,12 +57,12 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(room);
         class="flex flex-col justify-center items-center py-16"
       >
         <UIcon
-          name="i-lucide-alert-triangle"
+          :name="errorInfo.icon ?? 'i-lucide-alert-triangle'"
           class="w-10 h-10 text-error"
         />
 
         <p class="mt-4 text-error">
-          Error loading data: {{ error?.message }}
+          Error loading data: {{ errorInfo.message }}
         </p>
       </div>
 

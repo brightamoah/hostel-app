@@ -91,7 +91,10 @@ const cards = computed<StatsCard[]>(() => [
   },
 ]);
 
-const { columns, getRowItems } = useRoomRowColumn(
+const {
+  columns,
+  getRowItems,
+} = useRoomRowColumn(
   toast,
   UButton,
   UBadge,
@@ -101,12 +104,19 @@ const { columns, getRowItems } = useRoomRowColumn(
 );
 
 const {
+  selectedRoomsLength,
+  defaultPage,
+  itemsPerPage,
+  totalRooms,
   statusFilter,
   statusFilterOptions,
   buildingFilter,
   buildingFilterOptions,
   floorFilter,
   floorFilterOptions,
+  currentRoomsShowing,
+  lastRoomShowing,
+  updatePage,
 } = useRoomFilters(table, data);
 
 const pagination = ref({
@@ -143,21 +153,35 @@ const pagination = ref({
             <template #actions>
               <RoomAddModal />
 
-              <UButton
-                v-if="table?.tableApi?.getFilteredSelectedRowModel().rows.length"
-                label="Delete Selected Rooms"
-                icon="i-lucide-trash-2"
-                variant="subtle"
-                color="error"
-                size="lg"
-                class="justify-center items-center w-full sm:w-auto cursor-pointer"
+              <DashboardConfirmationModal
+                v-if="selectedRoomsLength"
+                :title="`Delete ${selectedRoomsLength} Rooms`"
+                @confirm="console.log(deleteRoomSchema.safeParse({ ids: table?.tableApi?.getFilteredSelectedRowModel().rows.map(r => r.original.id) }))"
               >
-                <template #trailing>
-                  <UKbd>
-                    {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length ?? 0 }}
-                  </UKbd>
+                <template #trigger="{ show }">
+                  <UButton
+                    label="Delete Selected Rooms"
+                    icon="i-lucide-trash-2"
+                    variant="subtle"
+                    color="error"
+                    size="lg"
+                    class="justify-center items-center w-full sm:w-auto cursor-pointer"
+                    @click="show()"
+                  >
+                    <template #trailing>
+                      <UKbd>
+                        {{ selectedRoomsLength }}
+                      </UKbd>
+                    </template>
+                  </UButton>
                 </template>
-              </UButton>
+
+                <template #default>
+                  <p class="">
+                    Are you sure you want to delete the selected room(s)? This action cannot be undone.
+                  </p>
+                </template>
+              </DashboardConfirmationModal>
 
               <UDropdownMenu
                 :items="table?.tableApi
@@ -217,20 +241,16 @@ const pagination = ref({
 
         <div class="flex justify-between items-center gap-3 mt-auto pt-4 border-default border-t">
           <div class="text-muted text-sm">
-            <template v-if="table?.tableApi?.getFilteredSelectedRowModel().rows.length">
-              {{ table?.tableApi.getFilteredSelectedRowModel().rows.length }} of
+            <template v-if="selectedRoomsLength">
+              {{ selectedRoomsLength }} of
               {{ rooms.length }} row(s) selected.
             </template>
 
             <template v-else-if="rooms.length > 0 && table?.tableApi">
               Showing
-              {{ (table!.tableApi.getState().pagination.pageIndex * table!.tableApi.getState().pagination.pageSize) + 1
-              }}
+              {{ currentRoomsShowing }}
               -
-              {{ Math.min(
-                (table!.tableApi.getState().pagination.pageIndex + 1) * table!.tableApi.getState().pagination.pageSize,
-                rooms.length,
-              ) }}
+              {{ lastRoomShowing }}
               of
               {{ rooms.length }} rows.
             </template>
@@ -242,10 +262,10 @@ const pagination = ref({
 
           <div class="flex items-center gap-1.5">
             <UPagination
-              :default-page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
-              :items-per-page="table?.tableApi?.getState().pagination.pageSize"
-              :total="table?.tableApi?.getFilteredRowModel().rows.length"
-              @update:page="(p: number) => table?.tableApi?.setPageIndex(p - 1)"
+              :default-page
+              :items-per-page
+              :total="totalRooms"
+              @update:page="updatePage"
             />
           </div>
         </div>
