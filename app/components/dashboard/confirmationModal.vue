@@ -1,10 +1,11 @@
 <script setup lang="ts">
-const { title, description, confirmLabel, cancelLabel, confirmColor } = defineProps<{
+const { title, description, confirmLabel, cancelLabel, confirmColor, isLoading } = defineProps<{
   title?: string;
   description?: string;
   confirmLabel?: string;
   cancelLabel?: string;
   confirmColor?: "primary" | "error" | "warning" | "info" | "success" | "neutral";
+  isLoading?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -17,12 +18,22 @@ const confirmLabelProp = computed(() => confirmLabel ?? "Confirm");
 const cancelLabelProp = computed(() => cancelLabel ?? "Cancel");
 const confirmColorProp = computed(() => confirmColor ?? "error");
 
-function onConfirm(close: () => void) {
+const instance = getCurrentInstance();
+const hasIsLoading = computed(() => {
+  const vnodeProps = instance?.vnode?.props ?? {};
+  return Object.prototype.hasOwnProperty.call(vnodeProps, "isLoading");
+});
+
+const confirmButtonLabel = computed(() =>
+  hasIsLoading.value && isLoading ? " " : confirmLabelProp.value,
+);
+
+function onConfirm(/* close: () => void */) {
   emit("confirm");
 
-  if (typeof close === "function")
-    close();
-  open.value = false;
+  // if (typeof close === "function")
+  //   close();
+  // open.value = false;
 }
 
 function show() {
@@ -68,20 +79,21 @@ function toggle() {
       </slot>
     </template>
 
-    <template #footer="{ close }">
+    <template #footer>
       <UButton
         :label="cancelLabelProp"
         color="neutral"
         variant="outline"
         class="cursor-pointer"
-        @click="close"
+        @click="open = false"
       />
 
       <UButton
-        :label="confirmLabelProp"
+        :label="confirmButtonLabel"
         :color="confirmColorProp"
+        :loading="isLoading"
         class="ml-2 cursor-pointer"
-        @click="onConfirm(close)"
+        @click="onConfirm()"
       />
     </template>
   </UModal>

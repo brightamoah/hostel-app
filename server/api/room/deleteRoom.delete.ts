@@ -1,9 +1,11 @@
 import { roomQueries } from "~~/server/db/queries/room";
 
+import { getSpecificRoomError } from "~/utils/roomErrors";
 import { deleteRoomSchema } from "~/utils/schema";
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event);
+  const { getErrorMessage } = getSpecificRoomError();
 
   if (!session || !session.user || session.user.role !== "admin") {
     throw createError({
@@ -18,7 +20,7 @@ export default defineEventHandler(async (event) => {
     if (!body.success) {
       throw createError({
         statusCode: 400,
-        message: `Invalid request: ${body.error.issues
+        message: `${body.error.issues
           .map(i => i.message)
           .join(", ")}`,
       });
@@ -42,14 +44,17 @@ export default defineEventHandler(async (event) => {
       message: `${deletedRooms.length} room(s) successfully deleted.`,
     };
   }
-  catch (error) {
+  catch (error: any) {
     if (error && typeof error === "object" && "statusCode" in error) {
       throw error;
     }
 
+    const errorMessage = getErrorMessage(error);
+
     throw createError({
       statusCode: 500,
-      message: `Server error: ${(error as Error).message || "An unknown server error occurred."}`,
+      message: errorMessage.message,
+      cause: error.cause,
     });
   }
 });

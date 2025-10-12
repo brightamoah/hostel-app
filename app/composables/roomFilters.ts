@@ -129,6 +129,11 @@ export function useRoomFilters(table: TableType, data: DataType) {
     }
   });
 
+  const selectedRoomIds = computed(() => {
+    const tableApi = safeTableApi();
+    return { ids: tableApi?.getFilteredSelectedRowModel().rows.map(r => r.original.id) ?? [] };
+  });
+
   watch(() => [statusFilter.value, buildingFilter.value, floorFilter.value], async ([newStatus, newBuilding, newFloor]) => {
     await nextTick();
     const tableApi = safeTableApi();
@@ -182,6 +187,7 @@ export function useRoomFilters(table: TableType, data: DataType) {
     totalRooms,
     currentRoomsShowing,
     lastRoomShowing,
+    selectedRoomIds,
     updatePage,
   };
 }

@@ -65,12 +65,16 @@ export const useRoomStore = defineStore("roomStore", () => {
         body: payload.data,
       });
 
+      const { refresh } = await useFetchRoomData();
+
       toast.add({
         title: response.message,
         description: "The room has been added successfully.",
         color: "success",
         icon: "i-lucide-check-circle",
       });
+
+      await refresh();
       isModalOpen.value = false;
       resetAddRoomState();
     }
@@ -103,13 +107,55 @@ export const useRoomStore = defineStore("roomStore", () => {
     };
   };
 
+  const deleteModalOpen = ref<boolean>(false);
+
+  const deleteRoom = async (payload: DeleteRoomSchema) => {
+    if (!payload.ids)
+      return;
+
+    isLoading.value = true;
+
+    try {
+      const response = await $fetch("/api/room/deleteRoom", {
+        method: "DELETE",
+        body: payload,
+      });
+
+      const { refresh } = await useFetchRoomData();
+
+      toast.add({
+        title: response.message,
+        description: "The room has been deleted successfully.",
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+      await refresh();
+      deleteModalOpen.value = false;
+    }
+    catch (error) {
+      const message = (error as any)?.data?.message;
+      toast.add({
+        title: "Failed to Delete Room",
+        description: message,
+        color: "error",
+        icon: "i-lucide-alert-circle",
+        duration: 8000,
+      });
+    }
+    finally {
+      isLoading.value = false;
+    }
+  };
+
   return {
     addRoomState,
     isFormValid,
     isLoading,
     isModalOpen,
+    deleteModalOpen,
     resetAddRoomState,
     addNewRoom,
+    deleteRoom,
   };
 });
 
