@@ -25,7 +25,15 @@ const rowSelection = ref({});
 
 const globalFilter = ref("");
 
-const { data, status, rooms } = await useFetchRoomData();
+const {
+  data,
+  status,
+  rooms,
+  isLoading: refreshIsLoading,
+  canResend,
+  coolDownTime,
+  handleRefresh,
+} = await useFetchRoomData();
 
 const cards = computed<StatsCard[]>(() => [
   {
@@ -154,6 +162,18 @@ const pagination = ref({
             :floor-filter-options
           >
             <template #actions>
+              <UButton
+                :label="refreshIsLoading ? 'Refreshing...' : canResend ? 'Refresh' : `Wait ${coolDownTime}s`"
+                icon="i-lucide-refresh-cw"
+                :loading="refreshIsLoading"
+                :disabled="!canResend || refreshIsLoading"
+                size="lg"
+                variant="outline"
+                color="primary"
+                class="justify-center items-center w-full md:max-w-sm cursor-pointer"
+                @click="handleRefresh()"
+              />
+
               <RoomAddModal />
 
               <DashboardConfirmationModal
