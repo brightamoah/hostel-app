@@ -87,6 +87,10 @@ export default defineEventHandler(async (event) => {
     };
   }
   catch (error) {
+    if (error && typeof error === "object" && "statusCode" in error) {
+      throw error;
+    }
+
     handleAuthError(error);
   }
 });

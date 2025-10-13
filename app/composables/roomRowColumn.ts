@@ -4,6 +4,7 @@ import type { ComputedOptions, ConcreteComponent, MethodOptions } from "vue";
 
 import type { Room } from "~/types";
 
+import ConfirmationModal from "~/components/dashboard/confirmationModal.vue";
 import DetailsModal from "~/components/room/detailsModal.vue";
 
 type Toast = ReturnType<typeof useToast>;
@@ -19,10 +20,35 @@ export function useRoomRowColumn(
   UTooltip: Component,
 ) {
   const overlay = useOverlay();
+  const roomStore = useRoomStore();
+  const { isLoading } = storeToRefs(roomStore);
 
   const openDetailsModal = (roomId: number) => {
     overlay.create(DetailsModal).open({
       roomId,
+    });
+  };
+
+  const openDeleteModal = (roomId: number, roomNumber: string) => {
+    const modal = overlay.create(ConfirmationModal);
+    const close = modal.close;
+    modal.open({
+      title: `Delete Room ${roomNumber}`,
+      confirmLabel: "Delete Room",
+      isLoading,
+      description: `This will delete room ${roomNumber}.`,
+      renderTrigger: false,
+      body: `Are you sure you want to delete room ${roomNumber}? This action cannot be undone.`,
+      onConfirm: async () => {
+        try {
+          await roomStore.deleteRoom({ ids: [roomId] });
+          close();
+        }
+        catch (error) {
+          console.warn("Delete failed:", error);
+          close();
+        }
+      },
     });
   };
 
@@ -59,7 +85,9 @@ export function useRoomRowColumn(
         label: "Delete Room",
         icon: "i-lucide-trash-2",
         color: "error",
-        // to: `/admin/rooms/${row.original.id}/delete`
+        onSelect() {
+          openDeleteModal(row.original.id, row.original.roomNumber);
+        },
       },
     ];
   }

@@ -31,12 +31,6 @@ const errorInfo = computed(() => getErrorMessage(error.value));
       close: 'cursor-pointer',
     }"
   >
-    <UButton
-      label="open"
-      size="xl"
-      class="cursor-pointer"
-    />
-
     <template #body>
       <div
         v-if="status === 'pending'"

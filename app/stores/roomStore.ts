@@ -116,10 +116,15 @@ export const useRoomStore = defineStore("roomStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch("/api/room/deleteRoom", {
-        method: "DELETE",
-        body: payload,
-      });
+      // const response = await $fetch("/api/room/deleteRoom", {
+      //   method: "DELETE",
+      //   body: payload,
+      // });
+
+      // Simulate network request (3s delay) returning { message, success }
+      const response = await new Promise<{ message: string; success: boolean }>(resolve =>
+        setTimeout(() => resolve({ message: "Mock Room(s) deleted successfully.", success: true }), 3000),
+      );
 
       const { refresh } = await useFetchRoomData();
 
@@ -130,7 +135,6 @@ export const useRoomStore = defineStore("roomStore", () => {
         icon: "i-lucide-check-circle",
       });
       await refresh();
-      deleteModalOpen.value = false;
     }
     catch (error) {
       const message = (error as any)?.data?.message;

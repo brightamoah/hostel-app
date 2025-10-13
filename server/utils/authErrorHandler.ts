@@ -46,6 +46,30 @@ export function handleAuthError(error: unknown, event?: H3Event): never {
     throw error;
   }
 
+  const rawMessage = String(err?.data?.message ?? err?.message ?? "").trim();
+  const lower = rawMessage.toLowerCase();
+
+  const serverPatterns = [
+    "failed query",
+    "syntax error",
+    "duplicate key",
+    "relation",
+    "internal server error",
+    "null value in column",
+    "permission denied",
+  ];
+
+  if (serverPatterns.some(p => lower.includes(p))) {
+    // keep original error in server console for debugging
+    console.error("Auth error (server):", err);
+
+    throw createError({
+      statusCode: 500,
+      message: "Server error. Please check your network and try again later.",
+      statusMessage: "Server Network Unavailable",
+    });
+  }
+
   // Generic fallback for unhandled errors
   throw createError({
     statusCode: 500,

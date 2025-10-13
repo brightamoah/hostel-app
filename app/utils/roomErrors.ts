@@ -44,7 +44,7 @@ export function getSpecificRoomError() {
       // console.error("Room details fetch error (server):", err);
       return {
         icon: "i-lucide-server-crash",
-        message: "Server error while loading room details. Please try again later.",
+        message: "Server error while loading room details. Network unavailable. Please try again later.",
       };
     }
 
