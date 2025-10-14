@@ -1,5 +1,5 @@
 {
-  "id": "3d5d38ae-a26a-4b7a-8ba1-d4850481985b",
+  "id": "292de529-3f26-41e3-9c79-96d5cb4b04f9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1190,9 +1190,10 @@
         },
         "features": {
           "name": "features",
-          "type": "text",
+          "type": "text[]",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "ARRAY[]::text[]"
         },
         "amount_per_year": {
           "name": "amount_per_year",
@@ -1218,13 +1219,6 @@
           "nullsNotDistinct": false,
           "columns": [
             "room_number"
-          ]
-        },
-        "room_building_unique": {
-          "name": "room_building_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "building"
           ]
         },
         "unique_room": {
@@ -1494,6 +1488,18 @@
         },
         "verification_token_expires_at": {
           "name": "verification_token_expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reset_token": {
+          "name": "reset_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reset_token_expires_at": {
+          "name": "reset_token_expires_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false

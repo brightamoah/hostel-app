@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1759463511730,
-      "tag": "0000_unknown_karen_page",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1759480699609,
-      "tag": "0001_omniscient_mariko_yashida",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1759833495086,
-      "tag": "0002_workable_mystique",
+      "when": 1760440637599,
+      "tag": "0000_youthful_sleeper",
       "breakpoints": true
     }
   ]

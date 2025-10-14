@@ -139,19 +139,31 @@ const roomNumberSchema = z
   .max(10, "Room number cannot exceed 10 characters")
   .regex(/^(?=.*\d)[A-Z0-9]+$/, "Room number must contain at least one number and can include uppercase letters, but cannot be letters only");
 
+const roomFeatureSchema = z.union([
+  z.string("Features is required")
+    .nonempty("Features is required")
+    .refine(s => s.split(",").map(item => item.trim()).filter(Boolean).length > 0, "Features is required")
+    .transform(s => s.split(",").map(item => item.trim()).filter(Boolean)),
+  z.array(z.string("Features is required").nonempty("Features is required")),
+]).refine(arr => arr.length > 0, { message: "Features is required" });
+
 export const addRoomSchema = z.object({
   roomNumber: roomNumberSchema,
   building: z.string("Building is required").min(1, "Building is required").max(100, "Building cannot exceed 100 characters"),
   floor: z.number("Floor is required").min(1, "Floor cannot be negative"),
   capacity: z.number("Capacity is required").min(1, "Capacity must be at least 1").max(4, "Capacity cannot exceed 4"),
   roomType: roomTypeSchema,
-  features: z.string("Features is required").nonempty("Features is required"),
+  features: roomFeatureSchema,
   amountPerYear: z.number("Amount per Year is required").min(1, "Amount per Year cannot be negative"),
   status: roomStatusSchema,
   currentOccupancy: z.number("Current Occupancy is required").min(0, "Current Occupancy cannot be negative").max(4, "Current Occupancy cannot exceed 4"),
 });
 
 export type AddRoomSchema = z.output<typeof addRoomSchema>;
+export type AddRoomSchemaInput = z.input<typeof addRoomSchema>;
+export type RoomFormState = Omit<AddRoomSchemaInput, "features"> & {
+  features: string;
+};
 
 const deleteRoomSchema = z.object({
   ids: z.array(z.number().min(1, "Invalid room ID")).min(1, "At least one room ID is required"),
@@ -175,6 +187,7 @@ export {
   rememberMeSchema,
   resetPasswordSchema,
   roleSchema,
+  roomFeatureSchema,
   signupSchema,
   verifyEmailSchema,
 };

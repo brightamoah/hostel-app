@@ -9,7 +9,7 @@ export const useRoomStore = defineStore("roomStore", () => {
 
   const isLoading = ref<boolean>(false);
 
-  const addRoomState = ref<AddRoomSchema>({
+  const addRoomState = ref<RoomFormState>({
     amountPerYear: 0,
     building: "",
     capacity: 0,
@@ -47,7 +47,7 @@ export const useRoomStore = defineStore("roomStore", () => {
       && addRoomState.value.floor > 0
       && addRoomState.value.capacity >= 1
       && addRoomState.value.roomType.trim() !== ""
-      && addRoomState.value.features.trim() !== ""
+      && addRoomState.value.features !== ""
       && addRoomState.value.amountPerYear > 0
       && addRoomState.value.status.trim() !== ""
       && addRoomState.value.currentOccupancy >= 0

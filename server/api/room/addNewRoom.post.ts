@@ -40,44 +40,6 @@ export default defineEventHandler(async (event) => {
       status,
     } = body.data;
 
-    const missingFields: string[] = [];
-    switch (true) {
-      case !amountPerYear:
-        missingFields.push("amountPerYear");
-        break;
-      case !building:
-        missingFields.push("building");
-        break;
-      case !capacity:
-        missingFields.push("capacity");
-        break;
-      case currentOccupancy === undefined:
-        missingFields.push("currentOccupancy");
-        break;
-      case !features:
-        missingFields.push("features");
-        break;
-      case !floor:
-        missingFields.push("floor");
-        break;
-      case !roomNumber:
-        missingFields.push("roomNumber");
-        break;
-      case !roomType:
-        missingFields.push("roomType");
-        break;
-      case !status:
-        missingFields.push("status");
-        break;
-    }
-
-    if (missingFields.length > 0) {
-      throw createError({
-        statusCode: 400,
-        message: `Missing required fields: ${missingFields.join(", ")}`,
-      });
-    }
-
     const existingRoom = await db.query.room.findFirst({
       where: eq(room.roomNumber, roomNumber),
     });

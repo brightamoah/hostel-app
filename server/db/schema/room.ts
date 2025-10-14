@@ -34,7 +34,7 @@ export const room = pgTable("room", t => ({
   capacity: t.integer().notNull(),
   roomType: roomTypeEnum().notNull(),
   currentOccupancy: t.integer().default(0).notNull(),
-  features: t.text(),
+  features: t.text().array().default(sql`ARRAY[]::text[]`),
   amountPerYear: t.numeric({ precision: 10, scale: 2 }).notNull(),
   status: roomStatusEnum().default("vacant").notNull(),
 }), table => [

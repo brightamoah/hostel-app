@@ -69,7 +69,7 @@ watch(
             class="w-full"
           >
             <UInput
-              v-model="addRoomState.roomNumber"
+              v-model.trim="addRoomState.roomNumber"
               placeholder="Enter room number"
               class="w-[100%]"
               :size="isMobile ? 'lg' : 'xl'"
@@ -83,7 +83,7 @@ watch(
             class="w-full"
           >
             <UInput
-              v-model="addRoomState.building"
+              v-model.trim="addRoomState.building"
               placeholder="Enter building name"
               class="w-[100%]"
               :size="isMobile ? 'lg' : 'xl'"
@@ -206,7 +206,7 @@ watch(
           class="w-full"
         >
           <UTextarea
-            v-model="addRoomState.features"
+            v-model.trim="addRoomState.features"
             placeholder="Enter room features (comma separated)"
             class="w-[100%]"
             :size="isMobile ? 'lg' : 'xl'"

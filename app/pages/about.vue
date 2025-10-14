@@ -13,6 +13,8 @@ const parse = emailVerificationSchema.safeParse({ id: id.value, token: token.val
   <div>
     <h1>{{ parse }}</h1>
 
+    <!-- <RoomEditModal room-number="Q102" /> -->
+
     <ULink
       :to="roleRoutes?.profile"
       label="Go to home"

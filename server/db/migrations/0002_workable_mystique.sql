@@ -1,1 +1,0 @@
-ALTER TABLE "room" DROP CONSTRAINT "room_building_unique";

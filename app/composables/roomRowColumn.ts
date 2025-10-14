@@ -52,6 +52,15 @@ export function useRoomRowColumn(
     });
   };
 
+  const openEditModal = (roomData: AddRoomSchema) => {
+    const EditModal = defineAsyncComponent(() => import("~/components/room/editModal.vue"));
+    const modal = overlay.create(EditModal);
+
+    modal.open({
+      roomData,
+    });
+  };
+
   function getRowItems(row: Row<Room>) {
     return [
       {
@@ -79,7 +88,9 @@ export function useRoomRowColumn(
       {
         label: "Edit Room",
         icon: "i-heroicons-pencil-square",
-        // to: `/admin/rooms/${row.original.id}/edit`
+        onSelect() {
+          openEditModal(row.original);
+        },
       },
       {
         label: "Delete Room",

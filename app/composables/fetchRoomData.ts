@@ -25,18 +25,7 @@ export async function useFetchRoomData() {
   const isLoading = ref<boolean>(false);
   const canResend = computed(() => coolDownTime.value === 0 && !isLoading.value);
 
-  const rooms = computed<Room[]>(() => {
-    const raw = data.value?.rooms ?? [];
-    return (raw as any[]).map(r => ({
-      ...r,
-      features:
-        typeof r.features === "string" && r.features
-          ? [r.features]
-          : Array.isArray(r.features)
-            ? r.features
-            : [],
-    })) as Room[];
-  });
+  const rooms = computed<Room[]>(() => data.value?.rooms ?? []);
 
   let timer: ReturnType<typeof setInterval> | null = null;
 
