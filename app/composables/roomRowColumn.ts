@@ -52,7 +52,7 @@ export function useRoomRowColumn(
     });
   };
 
-  const openEditModal = (roomData: AddRoomSchema) => {
+  const openEditModal = (roomData: RoomFormState) => {
     const EditModal = defineAsyncComponent(() => import("~/components/room/editModal.vue"));
     const modal = overlay.create(EditModal);
 
@@ -89,7 +89,12 @@ export function useRoomRowColumn(
         label: "Edit Room",
         icon: "i-heroicons-pencil-square",
         onSelect() {
-          openEditModal(row.original);
+          const roomForEditForm: RoomFormState = {
+            ...row.original,
+            amountPerYear: Number.isFinite(Number(row.original.amountPerYear)) ? Number(row.original.amountPerYear) : 0,
+            features: Array.isArray(row.original.features) ? row.original.features.join(", ") : "",
+          };
+          openEditModal(roomForEditForm);
         },
       },
       {
