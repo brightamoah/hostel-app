@@ -9,6 +9,21 @@ export const useRoomStore = defineStore("roomStore", () => {
 
   const isLoading = ref<boolean>(false);
 
+  const roomType = ref<AddRoomSchema["roomType"][]>([
+    "single",
+    "double",
+    "triple",
+    "quad",
+  ]);
+
+  const roomStatus = ref<AddRoomSchema["status"][]>([
+    "vacant",
+    "fully occupied",
+    "partially occupied",
+    "under maintenance",
+    "reserved",
+  ]);
+
   const addRoomState = ref<RoomFormState>({
     amountPerYear: 0,
     building: "",
@@ -65,7 +80,7 @@ export const useRoomStore = defineStore("roomStore", () => {
         body: payload.data,
       });
 
-      const { refresh } = await useFetchRoomData();
+      await refreshNuxtData("roomData");
 
       toast.add({
         title: response.message,
@@ -74,7 +89,6 @@ export const useRoomStore = defineStore("roomStore", () => {
         icon: "i-lucide-check-circle",
       });
 
-      await refresh();
       isModalOpen.value = false;
       resetAddRoomState();
     }
@@ -121,15 +135,13 @@ export const useRoomStore = defineStore("roomStore", () => {
         body: payload,
       });
 
-      const { refresh } = await useFetchRoomData();
-
       toast.add({
         title: response.message,
         description: "The room has been deleted successfully.",
         color: "success",
         icon: "i-lucide-check-circle",
       });
-      await refresh();
+      await refreshNuxtData("roomData"); ;
     }
     catch (error) {
       const message = (error as any)?.data?.message;
@@ -148,6 +160,9 @@ export const useRoomStore = defineStore("roomStore", () => {
 
   return {
     addRoomState,
+    roomType,
+    roomStatus,
+    getRoomCapacity,
     isFormValid,
     isLoading,
     isModalOpen,
@@ -157,7 +172,6 @@ export const useRoomStore = defineStore("roomStore", () => {
     deleteRoom,
   };
 });
-
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useRoomStore, import.meta.hot));
 }

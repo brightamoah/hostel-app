@@ -33,7 +33,7 @@ const {
   canResend,
   coolDownTime,
   handleRefresh,
-} = await useFetchRoomData();
+} = useFetchRoomData();
 
 const cards = computed<StatsCard[]>(() => [
   {

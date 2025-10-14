@@ -2,7 +2,7 @@ import type { Room, RoomDataResponse } from "~/types";
 
 const REFRESH_COOL_DOWN_SECONDS = 120;
 
-export async function useFetchRoomData() {
+export function useFetchRoomData() {
   const { data, status, refresh } = useFetch<RoomDataResponse>("/api/room/getRoomData", {
     method: "get",
     key: "roomData",

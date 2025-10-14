@@ -206,7 +206,7 @@ watch(
           class="w-full"
         >
           <UTextarea
-            v-model.trim="addRoomState.features"
+            v-model="addRoomState.features"
             placeholder="Enter room features (comma separated)"
             class="w-[100%]"
             :size="isMobile ? 'lg' : 'xl'"
