@@ -5,11 +5,13 @@ import type { ComputedOptions, ConcreteComponent, MethodOptions } from "vue";
 import type { Room } from "~/types";
 
 import ConfirmationModal from "~/components/dashboard/confirmationModal.vue";
-import DetailsModal from "~/components/room/detailsModal.vue";
 
 type Toast = ReturnType<typeof useToast>;
 // eslint-disable-next-line ts/no-empty-object-type
 type Component = string | ConcreteComponent<{}, any, any, ComputedOptions, MethodOptions, {}, any>;
+
+const DetailsModal = defineAsyncComponent(() => import("~/components/room/detailsModal.vue"));
+const EditModal = defineAsyncComponent(() => import("~/components/room/editModal.vue"));
 
 export function useRoomRowColumn(
   toast: Toast,
@@ -53,7 +55,6 @@ export function useRoomRowColumn(
   };
 
   const openEditModal = (roomData: RoomFormState) => {
-    const EditModal = defineAsyncComponent(() => import("~/components/room/editModal.vue"));
     const modal = overlay.create(EditModal);
 
     modal.open({

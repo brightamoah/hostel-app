@@ -26,7 +26,10 @@ export default defineEventHandler(async (event) => {
 
     const room = await getRoomById(roomId);
     if (!room) {
-      throw createError({ statusCode: 404, message: "Room not found" });
+      throw createError({
+        statusCode: 404,
+        message: "Room not found",
+      });
     }
 
     return { room };

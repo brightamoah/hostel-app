@@ -159,11 +159,27 @@ export const addRoomSchema = z.object({
   currentOccupancy: z.number("Current Occupancy is required").min(0, "Current Occupancy cannot be negative").max(4, "Current Occupancy cannot exceed 4"),
 });
 
+const editRoomData = addRoomSchema.partial().omit({ roomType: true, status: true });
+
+// const updateAmountSchema = z.string("Amount per Year is required") // Change to string
+//   .min(1, "Amount per Year is required")
+//   .refine(val => !Number.isNaN(Number.parseFloat(val))
+//     && Number.parseFloat(val) > 0, "Amount per Year must be a positive number");
+
+const editRoomSchema = z.object({
+  roomId: z.number().min(1, "Invalid room ID"),
+  data: editRoomData.extend({
+    status: z.enum(["vacant", "fully occupied", "partially occupied", "under maintenance", "reserved"], "Status is required").optional(),
+    roomType: z.enum(["single", "double", "triple", "quad"], "Room Type is required").optional(),
+  }),
+});
+
 export type AddRoomSchema = z.output<typeof addRoomSchema>;
 export type AddRoomSchemaInput = z.input<typeof addRoomSchema>;
 export type RoomFormState = Omit<AddRoomSchemaInput, "features"> & {
   features: string;
 };
+export type EditRoomDataSchema = z.output<typeof editRoomData>;
 
 const deleteRoomSchema = z.object({
   ids: z.array(z.number().min(1, "Invalid room ID")).min(1, "At least one room ID is required"),
@@ -171,12 +187,11 @@ const deleteRoomSchema = z.object({
 
 export type DeleteRoomSchema = z.output<typeof deleteRoomSchema>;
 
-// create a schema for room number it should contain number only, number and string but not letters only
-
 export {
   baseSignupSchema,
   confirmPasswordSchema,
   deleteRoomSchema,
+  editRoomSchema,
   emailSchema,
   emailVerificationSchema,
   loginSchema,
