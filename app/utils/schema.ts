@@ -180,6 +180,7 @@ export type RoomFormState = Omit<AddRoomSchemaInput, "features"> & {
   features: string;
 };
 export type EditRoomDataSchema = z.output<typeof editRoomData>;
+export type EditRoomSchema = z.output<typeof editRoomSchema>;
 
 const deleteRoomSchema = z.object({
   ids: z.array(z.number().min(1, "Invalid room ID")).min(1, "At least one room ID is required"),

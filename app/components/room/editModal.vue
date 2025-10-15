@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useMediaQuery } from "@vueuse/core";
 
-const { roomData } = defineProps<{
-  // roomId: number;
+const { roomData, roomId } = defineProps<{
+  roomId: number;
   roomData: RoomFormState;
 }>();
 
@@ -12,6 +12,8 @@ const {
   roomType: roomTypeItems,
   isLoading,
 } = storeToRefs(roomStore);
+
+const toast = useToast();
 
 const isMobile = useMediaQuery("(max-width: 640px)");
 const isEditModalOpen = ref(false);
@@ -40,6 +42,124 @@ const editRoomState = ref<RoomFormState>(
     floor: floor.value,
   },
 );
+
+const getChangedFields = computed(() => {
+  const original = roomData;
+  const current = editRoomState.value;
+  const changed: Partial<AddRoomSchema> = {};
+
+  const fieldsToCompare: (keyof AddRoomSchema)[] = [
+    "roomNumber",
+    "building",
+    "floor",
+    "capacity",
+    "amountPerYear",
+    "currentOccupancy",
+  ];
+
+  fieldsToCompare.forEach((field) => {
+    if (current[field] !== original[field]) {
+      changed[field] = current[field] as any;
+    }
+  });
+
+  if (current.roomType !== original.roomType && current.roomType !== "") {
+    changed.roomType = current.roomType;
+  }
+  if (current.status !== original.status && current.status !== "") {
+    changed.status = current.status;
+  }
+
+  if (current.features !== original.features) {
+    changed.features = current.features
+      .split(",")
+      .map(f => f.trim())
+      .filter(Boolean);
+  }
+
+  return changed;
+});
+
+// const getChangedFields = computed(() => {
+//   const original = roomData;
+//   const current = editRoomState.value;
+//   const changed: Partial<AddRoomSchema> = {};
+
+//   if (current.roomNumber !== original.roomNumber)
+//     changed.roomNumber = current.roomNumber;
+//   if (current.building !== original.building)
+//     changed.building = current.building;
+//   if (current.floor !== original.floor)
+//     changed.floor = current.floor;
+//   if (current.roomType !== original.roomType && current.roomType !== "")
+//     changed.roomType = current.roomType;
+//   if (current.status !== original.status && current.status !== "")
+//     changed.status = current.status;
+//   if (current.features !== original.features) {
+//     changed.features = current.features.split(",").map(f => f.trim()).filter(Boolean);
+//   }
+//   if (current.capacity !== original.capacity)
+//     changed.capacity = current.capacity;
+//   if (current.amountPerYear !== original.amountPerYear)
+//     changed.amountPerYear = current.amountPerYear;
+//   if (current.currentOccupancy !== original.currentOccupancy)
+//     changed.currentOccupancy = current.currentOccupancy;
+
+//   return changed;
+// });
+
+async function submitUpdate() {
+  const changed = getChangedFields.value;
+
+  if (Object.keys(changed).length === 0) {
+    toast.add({
+      title: "No Changes",
+      description: "No fields have been modified.",
+      color: "warning",
+      icon: "i-lucide-alert-triangle",
+    });
+    isEditModalOpen.value = false;
+    return;
+  }
+
+  const payload = {
+    roomId,
+    data: changed,
+  };
+
+  isLoading.value = true;
+
+  try {
+    const { refresh } = useFetchRoomData();
+
+    const response = await $fetch(`/api/room/${roomId}`, {
+      method: "PATCH",
+      body: payload,
+    });
+
+    await refresh();
+    toast.add({
+      title: response.message,
+      description: "The room details have been updated successfully.",
+      color: "success",
+      icon: "i-lucide-check-circle",
+    });
+    isEditModalOpen.value = false;
+  }
+  catch (error) {
+    const message = (error as any)?.data?.message || "Failed to update room";
+    toast.add({
+      title: "Update Failed",
+      description: message,
+      color: "error",
+      icon: "i-lucide-alert-circle",
+      duration: 8000,
+    });
+  }
+  finally {
+    isLoading.value = false;
+  }
+}
 </script>
 
 <template>
@@ -62,6 +182,7 @@ const editRoomState = ref<RoomFormState>(
         ref="editRoomFormRef"
         :state="editRoomState"
         :schema="addRoomSchema"
+        @submit="submitUpdate"
       >
         <div class="flex md:flex-row flex-col justify-between gap-5 mb-4 px-4">
           <UFormField
@@ -228,12 +349,11 @@ const editRoomState = ref<RoomFormState>(
         />
 
         <UButton
-          :label=" isLoading ? 'Submitting...' : 'Submit'"
+          :label="isLoading ? 'Submitting...' : 'Submit'"
           color="primary"
           icon="i-lucide-send"
           class="cursor-pointer"
           :loading="isLoading"
-
           @click="editRoomFormRef?.submit()"
         />
       </div>
@@ -241,6 +361,4 @@ const editRoomState = ref<RoomFormState>(
   </UModal>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

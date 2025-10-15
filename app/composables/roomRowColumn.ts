@@ -54,11 +54,12 @@ export function useRoomRowColumn(
     });
   };
 
-  const openEditModal = (roomData: RoomFormState) => {
+  const openEditModal = (roomData: RoomFormState, roomId: number) => {
     const modal = overlay.create(EditModal);
 
     modal.open({
       roomData,
+      roomId,
     });
   };
 
@@ -95,7 +96,7 @@ export function useRoomRowColumn(
             amountPerYear: Number.isFinite(Number(row.original.amountPerYear)) ? Number(row.original.amountPerYear) : 0,
             features: Array.isArray(row.original.features) ? row.original.features.join(", ") : "",
           };
-          openEditModal(roomForEditForm);
+          openEditModal(roomForEditForm, row.original.id);
         },
       },
       {
