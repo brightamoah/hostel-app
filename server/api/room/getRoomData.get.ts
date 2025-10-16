@@ -1,4 +1,5 @@
 import { roomQueries } from "~~/server/db/queries/room";
+import { handleError } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event);
@@ -57,9 +58,6 @@ export default defineEventHandler(async (event) => {
       throw error;
     }
 
-    throw createError({
-      statusCode: 500,
-      message: `Server error: ${(error as Error).message}`,
-    });
+    handleError(error, "Get Room Data", event);
   }
 });

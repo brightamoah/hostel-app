@@ -1,5 +1,6 @@
 import { userQueries } from "~~/server/db/queries/user";
 import { user } from "~~/server/db/schema";
+import { handleError } from "~~/server/utils/errorHandler";
 import { hash } from "~~/server/utils/saltHash";
 import { eq } from "drizzle-orm";
 import { randomUUID } from "uncrypto";
@@ -59,6 +60,6 @@ export default defineEventHandler(async (event) => {
     };
   }
   catch (error) {
-    handleAuthError(error);
+    handleError(error, "Forgot Password", event);
   }
 });

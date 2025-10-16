@@ -141,7 +141,7 @@ export const useRoomStore = defineStore("roomStore", () => {
         color: "success",
         icon: "i-lucide-check-circle",
       });
-      await refreshNuxtData("roomData"); ;
+      await refreshNuxtData("roomData");
     }
     catch (error) {
       const message = (error as any)?.data?.message;

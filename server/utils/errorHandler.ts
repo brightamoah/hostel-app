@@ -6,11 +6,15 @@ interface StructuredError extends Error {
   data?: any;
 }
 
-export function handleAuthError(error: unknown, event?: H3Event): never {
+export function handleError(
+  error: unknown,
+  context: string,
+  event?: H3Event,
+): never {
   const runtimeConfig = useRuntimeConfig();
   const err = error as StructuredError;
 
-  console.error(`[Auth Error] (Path: ${event?.path || "N/A"})`, {
+  console.error(`[${context} Error] (Path: ${event?.path || "N/A"})`, {
     name: err.name,
     message: err.message,
     code: (error as any)?.code, // For Drizzle/Postgres codes
@@ -22,7 +26,7 @@ export function handleAuthError(error: unknown, event?: H3Event): never {
     case "23505": // unique_violation
       throw createError({
         statusCode: 409,
-        message: "This record already exists. Please use a different email or username.",
+        message: "A record with one or more of the provided values already exists.",
         statusMessage: "Conflict",
       });
 
@@ -61,7 +65,7 @@ export function handleAuthError(error: unknown, event?: H3Event): never {
 
   if (serverPatterns.some(p => lower.includes(p))) {
     // keep original error in server console for debugging
-    console.error("Auth error (server):", err);
+    console.error(`Error (${context}):`, err);
 
     throw createError({
       statusCode: 500,

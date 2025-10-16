@@ -1,4 +1,5 @@
 import { userQueries } from "~~/server/db/queries/user";
+import { handleError } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -20,6 +21,6 @@ export default defineEventHandler(async (event) => {
     };
   }
   catch (error) {
-    handleAuthError(error);
+    handleError(error, "Check Student Details", event);
   }
 });

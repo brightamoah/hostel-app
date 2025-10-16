@@ -1,4 +1,5 @@
 import { roomQueries } from "~~/server/db/queries/room";
+import { handleError } from "~~/server/utils/errorHandler";
 
 import { editRoomSchema } from "~/utils/schema";
 
@@ -77,9 +78,6 @@ export default defineEventHandler(async (event) => {
       throw error;
     }
 
-    throw createError({
-      statusCode: 500,
-      message: `Server error: ${(error as Error).message || "An unknown server error occurred."}`,
-    });
+    handleError(error, "Edit Room", event);
   }
 });

@@ -1,7 +1,7 @@
 import type { User } from "#auth-utils";
 
 import { userQueries } from "~~/server/db/queries/user";
-import { handleAuthError } from "~~/server/utils/authErrorHandler";
+import { handleError } from "~~/server/utils/errorHandler";
 
 import { loginSchema } from "~/utils/schema";
 
@@ -91,6 +91,6 @@ export default defineEventHandler(async (event) => {
       throw error;
     }
 
-    handleAuthError(error);
+    handleError(error, "User Login", event);
   }
 });

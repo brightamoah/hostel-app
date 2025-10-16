@@ -1,4 +1,5 @@
 import { student } from "~~/server/db/schema";
+import { handleError } from "~~/server/utils/errorHandler";
 import { eq } from "drizzle-orm";
 import { ref } from "vue";
 
@@ -99,6 +100,6 @@ export default defineEventHandler(async (event) => {
     };
   }
   catch (error) {
-    handleAuthError(error);
+    handleError(error, "Onboarding", event);
   }
 });

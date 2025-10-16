@@ -175,7 +175,7 @@ export const useAltAuth = defineStore("altAuth", () => {
         icon: "i-lucide-alert-circle",
         duration: 8000,
       });
-      handleAuthError(error);
+      handleError(error, "Reset Password");
     }
     finally {
       isLoading.value = false;

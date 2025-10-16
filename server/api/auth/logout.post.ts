@@ -1,4 +1,4 @@
-import { handleAuthError } from "~~/server/utils/authErrorHandler";
+import { handleError } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -6,6 +6,6 @@ export default defineEventHandler(async (event) => {
     return sendRedirect(event, "/auth/login");
   }
   catch (error) {
-    handleAuthError(error);
+    handleError(error, "User Logout", event);
   }
 });

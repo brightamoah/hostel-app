@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useMediaQuery } from "@vueuse/core";
 
-const { roomData, roomId } = defineProps<{
+const { roomData, roomId, closeModal } = defineProps<{
   roomId: number;
   roomData: RoomFormState;
+  closeModal: () => void;
 }>();
 
 const roomStore = useRoomStore();
@@ -80,45 +81,17 @@ const getChangedFields = computed(() => {
   return changed;
 });
 
-// const getChangedFields = computed(() => {
-//   const original = roomData;
-//   const current = editRoomState.value;
-//   const changed: Partial<AddRoomSchema> = {};
-
-//   if (current.roomNumber !== original.roomNumber)
-//     changed.roomNumber = current.roomNumber;
-//   if (current.building !== original.building)
-//     changed.building = current.building;
-//   if (current.floor !== original.floor)
-//     changed.floor = current.floor;
-//   if (current.roomType !== original.roomType && current.roomType !== "")
-//     changed.roomType = current.roomType;
-//   if (current.status !== original.status && current.status !== "")
-//     changed.status = current.status;
-//   if (current.features !== original.features) {
-//     changed.features = current.features.split(",").map(f => f.trim()).filter(Boolean);
-//   }
-//   if (current.capacity !== original.capacity)
-//     changed.capacity = current.capacity;
-//   if (current.amountPerYear !== original.amountPerYear)
-//     changed.amountPerYear = current.amountPerYear;
-//   if (current.currentOccupancy !== original.currentOccupancy)
-//     changed.currentOccupancy = current.currentOccupancy;
-
-//   return changed;
-// });
-
 async function submitUpdate() {
   const changed = getChangedFields.value;
 
   if (Object.keys(changed).length === 0) {
     toast.add({
-      title: "No Changes",
+      title: "No Changes Made",
       description: "No fields have been modified.",
       color: "warning",
       icon: "i-lucide-alert-triangle",
     });
-    isEditModalOpen.value = false;
+    closeModal?.();
     return;
   }
 
@@ -130,21 +103,19 @@ async function submitUpdate() {
   isLoading.value = true;
 
   try {
-    const { refresh } = useFetchRoomData();
-
     const response = await $fetch(`/api/room/${roomId}`, {
       method: "PATCH",
       body: payload,
     });
 
-    await refresh();
+    await refreshNuxtData("roomData");
     toast.add({
       title: response.message,
       description: "The room details have been updated successfully.",
       color: "success",
       icon: "i-lucide-check-circle",
     });
-    isEditModalOpen.value = false;
+    closeModal?.();
   }
   catch (error) {
     const message = (error as any)?.data?.message || "Failed to update room";

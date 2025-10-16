@@ -1,13 +1,11 @@
 import { room } from "~~/server/db/schema";
+import { handleError } from "~~/server/utils/errorHandler";
 import { eq } from "drizzle-orm";
 
-import { getSpecificRoomError } from "~/utils/roomErrors";
 import { addRoomSchema } from "~/utils/schema";
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event);
-
-  const { getErrorMessage } = getSpecificRoomError();
 
   if (!session || !session.user || session.user.role !== "admin") {
     throw createError({
@@ -85,12 +83,6 @@ export default defineEventHandler(async (event) => {
       throw error;
     }
 
-    const errorMessage = getErrorMessage(error);
-
-    throw createError({
-      statusCode: 500,
-      message: errorMessage.message,
-      cause: error.cause,
-    });
+    handleError(error, "Add New Room", event);
   }
 });

@@ -60,6 +60,7 @@ export function useRoomRowColumn(
     modal.open({
       roomData,
       roomId,
+      closeModal: () => modal.close(),
     });
   };
 
