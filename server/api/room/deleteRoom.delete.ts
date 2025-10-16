@@ -26,16 +26,60 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const ids = body.data.ids;
+    const { ids } = body.data;
 
-    const { deleteRoomsByIds } = await roomQueries(event);
+    const { deleteRoomsByIds, getRoomsByIds } = await roomQueries(event);
+
+    const roomsToDelete = await getRoomsByIds(ids);
+
+    if (roomsToDelete.length !== ids.length) {
+      const foundIds = roomsToDelete.map(r => r.id);
+      const notFoundIds = ids.filter(id => !foundIds.includes(id));
+      throw createError({
+        statusCode: 404,
+        message: `One or more rooms not found. Could not find rooms with IDs: ${notFoundIds.join(", ")}.`,
+      });
+    }
+
+    const occupiedRooms = roomsToDelete.filter(
+      room => room.currentOccupancy > 0,
+    );
+
+    if (occupiedRooms.length > 0) {
+      throw createError({
+        statusCode: 409,
+        message: `Cannot delete rooms that are occupied. The following rooms have occupants: ${occupiedRooms.map(r => r.roomNumber).join(", ")}.`,
+      });
+    }
+
+    const reservedRooms = roomsToDelete.filter(
+      room => room.status === "reserved",
+    );
+
+    if (reservedRooms.length > 0) {
+      throw createError({
+        statusCode: 409,
+        message: `Cannot delete rooms that are reserved. The following rooms are reserved: ${reservedRooms.map(r => r.roomNumber).join(", ")}.`,
+      });
+    }
+
+    const roomsUnderMaintenance = roomsToDelete.filter(
+      room => room.status === "under maintenance",
+    );
+
+    if (roomsUnderMaintenance.length > 0) {
+      throw createError({
+        statusCode: 409,
+        message: `Cannot delete rooms that are under maintenance. The following rooms are under maintenance: ${roomsUnderMaintenance.map(r => r.roomNumber).join(", ")}.`,
+      });
+    }
 
     const deletedRooms = await deleteRoomsByIds(ids);
 
     if (deletedRooms.length === 0) {
       throw createError({
         statusCode: 404,
-        message: `No rooms found with the provided IDs: ${ids.join(", ")}`,
+        message: `Deletion failed. No rooms were deleted for the provided IDs: ${ids.join(", ")}.`,
       });
     }
 

@@ -21,6 +21,14 @@ export const roomQueries = defineEventHandler(async () => {
     return existingRoom;
   };
 
+  const getRoomsByIds = async (ids: number[]) => {
+    const rooms = await db
+      .query
+      .room
+      .findMany({ where: inArray(room.id, ids) });
+    return rooms;
+  };
+
   const getRoomsCount = async () => {
     const count = await db
       .query
@@ -119,5 +127,6 @@ export const roomQueries = defineEventHandler(async () => {
     deleteRoomsByIds,
     editRoomById,
     getRoomByNumberAndBuilding,
+    getRoomsByIds,
   };
 });
