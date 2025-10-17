@@ -1,9 +1,10 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Table } from "@tanstack/table-core";
 import type { User } from "#auth-utils";
+import type { user as userSchema } from "~~/server/db/schema";
 import type { useDB } from "~~/server/utils/db";
 import type { randomUUID } from "uncrypto";
-import type { ShallowRef, ShallowUnwrapRef } from "vue";
+import type { ComputedOptions, ConcreteComponent, MethodOptions, ShallowRef, ShallowUnwrapRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 type FormFieldType = "select" | "checkbox" | "password" | "otp" | "email" | "text";
@@ -28,6 +29,9 @@ export type DB = ReturnType<typeof useDB>["db"];
 export type UserMenuItem = DropdownMenuItem & {
   to?: RouteLocationRaw;
 };
+
+// eslint-disable-next-line ts/no-empty-object-type
+export type Component = string | ConcreteComponent<{}, any, any, ComputedOptions, MethodOptions, {}, any>;
 
 export type VerificationToken = ReturnType<typeof randomUUID>;
 
@@ -100,6 +104,14 @@ export type RoomDataResponse = {
   }[];
 };
 
+export interface UserDataResponse {
+  users: UserType[];
+  totalUsers: number;
+  totalStudents: number;
+  totalAdmins: number;
+  activeStudents: number;
+};
+
 export interface RoomDetailResponse {
   room: Room;
 }
@@ -132,4 +144,30 @@ export type TableType = Readonly<ShallowRef<ShallowUnwrapRef<{
 export interface FilterOption {
   label: string;
   value: string | number;
+}
+
+export type Student = {
+  id: number;
+  gender: "male" | "female";
+  dateOfBirth: Date;
+  phoneNumber: string;
+  address: string;
+  emergencyContactName: string;
+  emergencyContactPhoneNumber: string;
+  healthConditions: string;
+  enrollmentDate: Date;
+  residencyStatus: "N/A" | "active" | "inactive" | "suspended" | "graduated" | "withdrawn";
+};
+
+export type Admin = {
+  id: number;
+  phoneNumber: string;
+  department: string;
+  accessLevel: "regular" | "super" | "support";
+};
+
+export interface UserType extends Omit<User, "emailVerified"> {
+  student: Student | null;
+  admin?: Admin | null;
+  isEmailVerified: boolean;
 }

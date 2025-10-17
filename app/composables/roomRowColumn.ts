@@ -1,14 +1,11 @@
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/table-core";
-import type { ComputedOptions, ConcreteComponent, MethodOptions } from "vue";
 
-import type { Room } from "~/types";
+import type { Component, Room } from "~/types";
 
 import ConfirmationModal from "~/components/dashboard/confirmationModal.vue";
 
 type Toast = ReturnType<typeof useToast>;
-// eslint-disable-next-line ts/no-empty-object-type
-type Component = string | ConcreteComponent<{}, any, any, ComputedOptions, MethodOptions, {}, any>;
 
 const DetailsModal = defineAsyncComponent(() => import("~/components/room/detailsModal.vue"));
 const EditModal = defineAsyncComponent(() => import("~/components/room/editModal.vue"));

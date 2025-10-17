@@ -11,7 +11,7 @@ definePageMeta({
 
 const toast = useToast();
 const router = useRouter();
-const { fetch: refreshSession } = useUserSession();
+const { fetch: refreshSession, user: loggedInUser } = useUserSession();
 
 const isMobile = useMediaQuery("(max-width: 640px)");
 const errorMessage = ref<string | null>(null);
@@ -33,7 +33,7 @@ const formattedDate = computed(() => {
 });
 
 const user = ref({
-  name: "John Doe",
+  name: loggedInUser.value?.name,
   email: "HbOgM@example.com",
   avatar: "https://github.com/benjamincanac.png",
   role: "student",
