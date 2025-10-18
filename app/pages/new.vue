@@ -54,9 +54,7 @@ const state = ref<PersonalDetailsSchema>({
 });
 
 watch(dateVal, (newVal) => {
-  state.value.dateOfBirth = newVal
-    ? newVal.toDate(getLocalTimeZone())
-    : null;
+  state.value.dateOfBirth = newVal ? newVal.toDate(getLocalTimeZone()) : null;
 });
 
 const isFormValid = computed(() => {
@@ -82,7 +80,8 @@ function submitForm(payload: FormSubmitEvent<PersonalDetailsSchema>) {
     :description
     class="bg-transparent -mt-5 md:-mt-10 w-full"
     :ui="{
-      title: 'font-newsreader capitalize text-2xl md:text-3xl lg:text-4xl italics',
+      title:
+        'font-newsreader capitalize text-2xl md:text-3xl lg:text-4xl italics',
       description: ' -mt-0.5',
     }"
   >
@@ -134,7 +133,7 @@ function submitForm(payload: FormSubmitEvent<PersonalDetailsSchema>) {
                 :size="isMobile ? 'lg' : 'xl'"
                 class="bg-transparent w-[100%] text-muted cursor-pointer"
               >
-                {{ dateVal ? formattedDate : 'Select your date of birth' }}
+                {{ dateVal ? formattedDate : "Select your date of birth" }}
               </UButton>
 
               <template #content>
@@ -260,6 +259,4 @@ function submitForm(payload: FormSubmitEvent<PersonalDetailsSchema>) {
   </UPageSection>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

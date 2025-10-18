@@ -1,7 +1,6 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Table } from "@tanstack/table-core";
 import type { User } from "#auth-utils";
-import type { user as userSchema } from "~~/server/db/schema";
 import type { useDB } from "~~/server/utils/db";
 import type { randomUUID } from "uncrypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, ShallowRef, ShallowUnwrapRef } from "vue";
@@ -136,9 +135,14 @@ export type FloorFilterOptions = ({
   value: number;
 } | { label: string; value: string })[];
 
-export type TableType = Readonly<ShallowRef<ShallowUnwrapRef<{
+export type RoomTableType = Readonly<ShallowRef<ShallowUnwrapRef<{
   tableRef: Ref<HTMLTableElement | null, HTMLTableElement | null>;
   tableApi: Table<Room>;
+}> | null>>;
+
+export type UserTableType = Readonly<ShallowRef<ShallowUnwrapRef<{
+  tableRef: Ref<HTMLTableElement | null, HTMLTableElement | null>;
+  tableApi: Table<UserType>;
 }> | null>>;
 
 export interface FilterOption {

@@ -11,11 +11,13 @@ const UButton = resolveComponent("UButton");
 const UBadge = resolveComponent("UBadge");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UCheckbox = resolveComponent("UCheckbox");
-const UTooltip = resolveComponent("UTooltip");
 const UAvatar = resolveComponent("UAvatar");
 const UIcon = resolveComponent("UIcon");
 
 const title = ref("Users Dashboard");
+
+const globalFilter = ref("");
+const userTable = useTemplateRef("userTable");
 
 const { data, status, users } = useFetchUserData();
 
@@ -26,7 +28,6 @@ const { columns, getRowItems } = useUserRowColumn(
   UDropdownMenu,
   UCheckbox,
   UIcon,
-  UTooltip,
 );
 
 const cards = computed<StatsCard[]>(() => [
@@ -67,6 +68,13 @@ const cards = computed<StatsCard[]>(() => [
     period: "daily",
   },
 ]);
+
+const {
+  statusFilter,
+  roleFilter,
+  statusFilterOptions,
+  roleFilterOptions,
+} = useUserFilters(userTable, data);
 </script>
 
 <template>
@@ -78,15 +86,35 @@ const cards = computed<StatsCard[]>(() => [
 
       <template #body>
         <div class="p-2 md:p-4">
-          <RoomCardSkeleton v-if="status === 'pending'" />
+          <DashboardCardSkeleton v-if="status === 'pending'" />
 
           <DashboardStatsCard
             v-else
             :cards
           />
+
+          <UserSearchFilter
+            v-model="globalFilter"
+            v-model:role-filter="roleFilter"
+            v-model:status-filter="statusFilter"
+            :role-filter-options
+            :status-filter-options="statusFilterOptions"
+          >
+            <template #actions>
+              <UButton
+                label="Delete Selected Users"
+                icon="i-lucide-trash-2"
+                color="error"
+                variant="subtle"
+                size="lg"
+                class="cursor-pointer"
+              />
+            </template>
+          </UserSearchFilter>
         </div>
 
         <UTable
+          ref="userTable"
           class="mt-6 max-w-[95dvw] md:max-w-full shrink-0"
           :columns
           :get-row-items
@@ -97,6 +125,4 @@ const cards = computed<StatsCard[]>(() => [
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

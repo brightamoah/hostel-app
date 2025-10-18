@@ -145,7 +145,7 @@ const pagination = ref({
 
       <template #body>
         <div class="p-2 md:p-4">
-          <RoomCardSkeleton v-if="status === 'pending'" />
+          <DashboardCardSkeleton v-if="status === 'pending'" />
 
           <DashboardStatsCard
             v-else

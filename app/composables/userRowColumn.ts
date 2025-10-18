@@ -10,7 +10,7 @@ export function useUserRowColumn(
   UDropdownMenu: Component,
   UCheckbox: Component,
   UIcon: Component,
-  UTooltip: Component,
+  // UTooltip: Component,
 ) {
   const getRowItems = (row: Row<UserType>) => {
     const roleChangeLabels = computed<string>(() => row.original.role === "admin" ? "Demote to Student" : "Promote to Admin");
@@ -23,18 +23,18 @@ export function useUserRowColumn(
       {
         label: "View user details",
         icon: "i-lucide-eye",
-        onSelect: () => {},
+        onSelect: () => { },
       },
       {
         label: roleChangeLabels.value,
         icon: "i-lucide-refresh-cw",
-        onSelect: () => {},
+        onSelect: () => { },
       },
       {
         label: "Delete user",
-        icon: "i-lucide-trash",
+        icon: "i-lucide-trash-2",
         color: "error",
-        onSelect: () => {},
+        onSelect: () => { },
       },
     ];
   };
@@ -76,6 +76,24 @@ export function useUserRowColumn(
 
   const columns = ref<TableColumn<UserType>[]>([
     {
+      id: "select",
+      header: ({ table }) =>
+        h(UCheckbox, {
+          "modelValue": table.getIsSomePageRowsSelected()
+            ? "indeterminate"
+            : table.getIsAllPageRowsSelected(),
+          "onUpdate:modelValue": (value: boolean | "indeterminate") =>
+            table.toggleAllPageRowsSelected(!!value),
+          "ariaLabel": "Select all",
+        }),
+      cell: ({ row }) =>
+        h(UCheckbox, {
+          "modelValue": row.getIsSelected(),
+          "onUpdate:modelValue": (value: boolean | "indeterminate") => row.toggleSelected(!!value),
+          "ariaLabel": "Select row",
+        }),
+    },
+    {
       accessorKey: "name",
       header: createSortableHeader("User"),
       cell: ({ row }) => {
@@ -110,10 +128,16 @@ export function useUserRowColumn(
       },
     },
     {
-      accessorKey: "residencyStatus",
+      id: "residencyStatus",
+      accessorFn: row => row.student?.residencyStatus ?? "N/A",
       header: createSortableHeader("Residency Status"),
+      filterFn: (row, columnId, filterValue) => {
+        if (!filterValue || filterValue === "all")
+          return true;
+        return row.getValue(columnId) === filterValue;
+      },
       cell: ({ row }) => {
-        const residencyStatus = row.original.role === "admin" ? "N/A" : row.original.student?.residencyStatus ?? "active";
+        const residencyStatus = row.original.role === "admin" ? "N/A" : row.original.student?.residencyStatus ?? "N/A";
         return h(UBadge, {
           label: residencyStatus,
           color: statusColorMap[residencyStatus],
@@ -124,16 +148,17 @@ export function useUserRowColumn(
       },
     },
     {
-      accessorKey: "email",
-      header: createSortableHeader("Email"),
+      id: "phoneNumber",
+      accessorFn: row => row.student?.phoneNumber ?? row.admin?.phoneNumber ?? "",
+      header: createSortableHeader("Phone Number"),
       cell: ({ row }) => {
-        return h("p", { class: "font-medium" }, row.original.email)
-        ;
+        const phoneNumber = row.original.role === "admin" ? row.original.admin?.phoneNumber : row.original.student?.phoneNumber;
+        return phoneNumber || "N/A";
       },
     },
     {
       accessorKey: "emailVerified",
-      header: createSortableHeader("Email verification Status"),
+      header: createSortableHeader("Email Status"),
       cell: ({ row }) => {
         return row.original.isEmailVerified
           ? h(UBadge, {
@@ -149,6 +174,33 @@ export function useUserRowColumn(
               size: "lg",
             });
       },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) =>
+        h(
+          "div",
+          { class: "text-center" },
+          [
+            h(UDropdownMenu, {
+              arrow: true,
+              content: {
+                align: "center",
+              },
+              items: getRowItems(row),
+              ui: {
+                item: "cursor-pointer rounded",
+              },
+            }, () =>
+              h(UButton, {
+                icon: "i-lucide-ellipsis-vertical",
+                color: "neutral",
+                variant: "ghost",
+                class: "ml-auto cursor-pointer",
+              })),
+          ],
+        ),
     },
   ]);
 

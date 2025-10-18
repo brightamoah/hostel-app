@@ -30,10 +30,7 @@
   "indentRainbow.indentSetter": {},
   "indentRainbow.updateDelay": 10,
   "indentRainbow.colorOnWhiteSpaceOnly": false,
-  "indentRainbow.ignoreErrorLanguages": [
-    "*",
-    "markdown"
-  ],
+  "indentRainbow.ignoreErrorLanguages": ["*", "markdown"],
   // Disable the default formatter, use eslint instead
   "prettier.enable": false,
   "editor.formatOnSave": false,
@@ -139,5 +136,10 @@
   "vue.inlayHints.inlineHandlerLeading": true,
   "typescript.inlayHints.variableTypes.enabled": true,
   "workbench.sideBar.location": "right",
-  "oxc.enable": true
+  "oxc.enable": true,
+  "indent_guides": {
+    "enabled": true,
+    "coloring": "indent_aware",
+    "background_coloring": "indent_aware"
+  }
 }

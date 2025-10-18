@@ -1,8 +1,8 @@
-import type { RoomDataResponse, TableType } from "~/types";
+import type { RoomDataResponse, RoomTableType } from "~/types";
 
 type DataType = globalThis.Ref<RoomDataResponse, RoomDataResponse>;
 
-export function useRoomFilters(table: TableType, data: DataType) {
+export function useRoomFilters(table: RoomTableType, data: DataType) {
   const statusFilter = ref("");
 
   const statusFilterOptions = ref([
