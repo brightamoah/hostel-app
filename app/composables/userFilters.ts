@@ -169,5 +169,6 @@ export function useUserFilters(table: UserTableType, data: DataType) {
     updatePage,
     selectedUserIds,
     selectedUsersLength,
+    totalUsers,
   };
 }

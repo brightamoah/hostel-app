@@ -1,12 +1,16 @@
 <script setup lang="ts">
+import { getPaginationRowModel } from "@tanstack/table-core";
+
 import type { StatsCard } from "~/types";
+
+import { useUserStore } from "~/stores/userStore";
 
 definePageMeta({
   middleware: ["requires-auth", "admin"],
   layout: "admin-dashboard",
 });
 
-const toast = useToast();
+// const toast = useToast();
 const UButton = resolveComponent("UButton");
 const UBadge = resolveComponent("UBadge");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
@@ -14,10 +18,15 @@ const UCheckbox = resolveComponent("UCheckbox");
 const UAvatar = resolveComponent("UAvatar");
 const UIcon = resolveComponent("UIcon");
 
+const userStore = useUserStore();
+const { deleteModalOpen, isLoading } = storeToRefs(userStore);
+
 const title = ref("Users Dashboard");
 
 const globalFilter = ref("");
 const userTable = useTemplateRef("userTable");
+const columnVisibility = ref<{ [key: string | number]: boolean }>({ id: false });
+const rowSelection = ref({});
 
 const { data, status, users } = useFetchUserData();
 
@@ -74,7 +83,20 @@ const {
   roleFilter,
   statusFilterOptions,
   roleFilterOptions,
+  currentUserShowing,
+  defaultPage,
+  itemsPerPage,
+  updatePage,
+  lastUserShowing,
+  // selectedUserIds,
+  selectedUsersLength,
+  totalUsers,
 } = useUserFilters(userTable, data);
+
+const pagination = ref({
+  pageIndex: 0,
+  pageSize: 10,
+});
 </script>
 
 <template>
@@ -101,25 +123,98 @@ const {
             :status-filter-options="statusFilterOptions"
           >
             <template #actions>
-              <UButton
-                label="Delete Selected Users"
-                icon="i-lucide-trash-2"
-                color="error"
-                variant="subtle"
-                size="lg"
-                class="cursor-pointer"
-              />
+              <DashboardConfirmationModal
+                v-if="selectedUsersLength"
+                v-model:open="deleteModalOpen"
+                confirm-label="Delete Room"
+                render-trigger
+                :title="`Delete ${selectedUsersLength} Rooms`"
+                :is-loading
+
+              >
+                <template #trigger="{ show }">
+                  <UButton
+                    label="Delete Selected Rooms"
+                    icon="i-lucide-trash-2"
+                    variant="subtle"
+                    color="error"
+                    size="lg"
+                    class="justify-center items-center w-full sm:w-auto cursor-pointer"
+                    @click="show()"
+                  >
+                    <template #trailing>
+                      <UKbd>
+                        {{ selectedUsersLength }}
+                      </UKbd>
+                    </template>
+                  </UButton>
+                </template>
+
+                <template #default>
+                  <p class="">
+                    Are you sure you want to delete the selected user(s)? This action cannot be
+                    undone.
+                  </p>
+                </template>
+              </DashboardConfirmationModal>
             </template>
           </UserSearchFilter>
         </div>
 
         <UTable
           ref="userTable"
+          v-model:global-filter="globalFilter"
+          v-model:pagination="pagination"
+          v-model:column-visibility="columnVisibility"
+          v-model:row-selection="rowSelection"
           class="mt-6 max-w-[95dvw] md:max-w-full shrink-0"
+          row-key="id"
           :columns
           :get-row-items
           :data="users"
+          :loading="status === 'pending'"
+          :pagination-options="{
+            getPaginationRowModel: getPaginationRowModel(),
+          }"
+          :ui="{
+            base: 'table-fixed border-separate border-spacing-0',
+            thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+            tbody: '[&>tr]:last:[&>td]:border-b-0',
+            th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+            td: 'border-b border-default',
+          }"
         />
+
+        <div class="flex justify-between items-center gap-3 mt-auto pt-4 border-default border-t">
+          <div class="text-muted text-sm">
+            <template v-if="selectedUsersLength">
+              {{ selectedUsersLength }} of
+              {{ users.length }} row(s) selected.
+            </template>
+
+            <template v-else-if="users.length > 0 && userTable?.tableApi">
+              Showing
+              {{ currentUserShowing }}
+              -
+              {{ lastUserShowing }}
+              of
+              {{ users.length }} rows.
+            </template>
+
+            <template v-else>
+              No data available.
+            </template>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <UPagination
+              :default-page
+              :items-per-page
+              :total="totalUsers"
+              @update:page="updatePage"
+            />
+          </div>
+        </div>
       </template>
     </UDashboardPanel>
   </div>
