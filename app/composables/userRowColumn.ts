@@ -12,6 +12,16 @@ export function useUserRowColumn(
   UIcon: Component,
   // UTooltip: Component,
 ) {
+  const overlay = useOverlay();
+
+  const UserDetailsModal = defineAsyncComponent(() => import("~/components/user/detailsModal.vue"));
+
+  const openDetailsModal = (user: UserType) => {
+    overlay.create(UserDetailsModal).open({
+      user,
+    });
+  };
+
   const getRowItems = (row: Row<UserType>) => {
     const roleChangeLabels = computed<string>(() => row.original.role === "admin" ? "Demote to Student" : "Promote to Admin");
 
@@ -23,7 +33,7 @@ export function useUserRowColumn(
       {
         label: "View user details",
         icon: "i-lucide-eye",
-        onSelect: () => { },
+        onSelect: () => openDetailsModal(row.original),
       },
       {
         label: roleChangeLabels.value,
