@@ -39,6 +39,25 @@ const userDetails = ref(flattenUserDetails(user));
           </div>
         </div>
       </div>
+
+      <div
+        v-if="user.role === 'admin'"
+        class="flex items-center gap-4 mt-5 w-full"
+      >
+        <USelectMenu
+          :items="['awe', 'pos', 'big']"
+          class="w-2/3 cursor-pointer"
+          size="lg"
+          placeholder="Select Hostel To Assign"
+        />
+
+        <UButton
+          color="primary"
+          variant="solid"
+          class="cursor-pointer"
+          label="Assign Hostel"
+        />
+      </div>
     </template>
 
     <template #footer>

@@ -99,6 +99,7 @@ const {
   // selectedUserIds,
   selectedUsersLength,
   totalUsers,
+  itemsToDisplay,
 } = useUserFilters(userTable, data);
 
 const pagination = ref({
@@ -128,7 +129,7 @@ const pagination = ref({
             v-model:role-filter="roleFilter"
             v-model:status-filter="statusFilter"
             :role-filter-options
-            :status-filter-options="statusFilterOptions"
+            :status-filter-options
           >
             <template #actions>
               <DashboardRefreshButton
@@ -137,6 +138,8 @@ const pagination = ref({
                 :refresh-is-loading
                 :handle-refresh
               />
+
+              <UserAddAdminModal />
 
               <DashboardConfirmationModal
                 v-if="selectedUsersLength"
@@ -171,6 +174,8 @@ const pagination = ref({
                   </p>
                 </template>
               </DashboardConfirmationModal>
+
+              <DashboardItemsToDisplay :items-to-display />
             </template>
           </UserSearchFilter>
         </div>

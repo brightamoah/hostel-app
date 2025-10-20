@@ -1,3 +1,5 @@
+import { upperFirst } from "scule";
+
 import type { FilterOption, UserDataResponse, UserTableType } from "~/types";
 
 type DataType = globalThis.Ref<UserDataResponse, UserDataResponse>;
@@ -126,6 +128,23 @@ export function useUserFilters(table: UserTableType, data: DataType) {
     return { ids: tableApi?.getFilteredSelectedRowModel().rows.map(r => r.original.id) ?? [] };
   });
 
+  const itemsToDisplay = computed(() => {
+    const tableApi = safeTableApi();
+    const items = tableApi?.getAllColumns().filter((column: any) => column.getCanHide()).map((column: any) => ({
+      label: upperFirst(column.id),
+      type: "checkbox" as const,
+      checked: column.getIsVisible(),
+      onUpdateChecked(checked: boolean) {
+        tableApi?.getColumn(column.id)?.toggleVisibility(!!checked);
+      },
+      onSelect(e?: Event) {
+        e?.preventDefault();
+      },
+    }));
+
+    return items;
+  });
+
   watch(() => [statusFilter.value, roleFilter.value], async ([newStatus, newRole]) => {
     await nextTick();
     const tableApi = safeTableApi();
@@ -166,9 +185,10 @@ export function useUserFilters(table: UserTableType, data: DataType) {
     itemsPerPage,
     lastUserShowing,
     currentUserShowing,
-    updatePage,
     selectedUserIds,
     selectedUsersLength,
     totalUsers,
+    itemsToDisplay,
+    updatePage,
   };
 }

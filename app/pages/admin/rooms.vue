@@ -206,19 +206,7 @@ const pagination = ref({
                 </template>
               </DashboardConfirmationModal>
 
-              <UDropdownMenu
-                :items="itemsToDisplay"
-                :content="{ align: 'end' }"
-              >
-                <UButton
-                  label="Display"
-                  color="neutral"
-                  variant="outline"
-                  trailing-icon="i-lucide-settings-2"
-                  size="lg"
-                  class="justify-center items-center w-full sm:w-auto cursor-pointer"
-                />
-              </UDropdownMenu>
+              <DashboardItemsToDisplay :items-to-display />
             </template>
           </RoomSearchFilter>
         </div>

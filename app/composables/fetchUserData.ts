@@ -97,11 +97,11 @@ export function useFetchUserData() {
   return {
     data,
     status,
-    refresh,
     users,
     canResend,
     isLoading,
-    handleRefresh,
     coolDownTime,
+    handleRefresh,
+    refresh,
   };
 }
