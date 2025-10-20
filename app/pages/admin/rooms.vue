@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { getPaginationRowModel } from "@tanstack/table-core";
-import { upperFirst } from "scule";
 
 import type { StatsCard } from "~/types";
 
@@ -101,6 +100,7 @@ const {
   lastRoomShowing,
   selectedRoomIds,
   updatePage,
+  itemsToDisplay,
 } = useRoomFilters(table, data);
 
 const roomStore = useRoomStore();
@@ -162,16 +162,11 @@ const pagination = ref({
             :floor-filter-options
           >
             <template #actions>
-              <UButton
-                :label="refreshIsLoading ? 'Refreshing...' : canResend ? 'Refresh' : `Wait ${coolDownTime}s`"
-                icon="i-lucide-refresh-cw"
-                :loading="refreshIsLoading"
-                :disabled="!canResend || refreshIsLoading"
-                size="lg"
-                variant="outline"
-                color="primary"
-                class="justify-center items-center w-full md:max-w-sm cursor-pointer"
-                @click="handleRefresh()"
+              <DashboardRefreshButton
+                :can-resend
+                :cool-down-time
+                :refresh-is-loading
+                :handle-refresh
               />
 
               <RoomAddModal />
@@ -205,27 +200,14 @@ const pagination = ref({
 
                 <template #default>
                   <p class="">
-                    Are you sure you want to delete the selected room(s)? This action cannot be undone.
+                    Are you sure you want to delete the selected room(s)? This action cannot be
+                    undone.
                   </p>
                 </template>
               </DashboardConfirmationModal>
 
               <UDropdownMenu
-                :items="table?.tableApi
-                  ?.getAllColumns()
-                  .filter((column: any) => column.getCanHide())
-                  .map((column: any) => ({
-                    label: upperFirst(column.id),
-                    type: 'checkbox' as const,
-                    checked: column.getIsVisible(),
-                    onUpdateChecked(checked: boolean) {
-                      table?.tableApi?.getColumn(column.id)?.toggleVisibility(!!checked)
-                    },
-                    onSelect(e?: Event) {
-                      e?.preventDefault()
-                    },
-                  }))
-                "
+                :items="itemsToDisplay"
                 :content="{ align: 'end' }"
               >
                 <UButton

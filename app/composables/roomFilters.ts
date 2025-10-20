@@ -1,3 +1,5 @@
+import { upperFirst } from "scule";
+
 import type { RoomDataResponse, RoomTableType } from "~/types";
 
 type DataType = globalThis.Ref<RoomDataResponse, RoomDataResponse>;
@@ -134,6 +136,23 @@ export function useRoomFilters(table: RoomTableType, data: DataType) {
     return { ids: tableApi?.getFilteredSelectedRowModel().rows.map(r => r.original.id) ?? [] };
   });
 
+  const itemsToDisplay = computed(() => {
+    const tableApi = safeTableApi();
+    const items = tableApi?.getAllColumns().filter((column: any) => column.getCanHide()).map((column: any) => ({
+      label: upperFirst(column.id),
+      type: "checkbox" as const,
+      checked: column.getIsVisible(),
+      onUpdateChecked(checked: boolean) {
+        tableApi?.getColumn(column.id)?.toggleVisibility(!!checked);
+      },
+      onSelect(e?: Event) {
+        e?.preventDefault();
+      },
+    }));
+
+    return items;
+  });
+
   watch(() => [statusFilter.value, buildingFilter.value, floorFilter.value], async ([newStatus, newBuilding, newFloor]) => {
     await nextTick();
     const tableApi = safeTableApi();
@@ -189,5 +208,6 @@ export function useRoomFilters(table: RoomTableType, data: DataType) {
     lastRoomShowing,
     selectedRoomIds,
     updatePage,
+    itemsToDisplay,
   };
 }

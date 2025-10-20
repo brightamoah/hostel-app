@@ -28,7 +28,15 @@ const userTable = useTemplateRef("userTable");
 const columnVisibility = ref<{ [key: string | number]: boolean }>({ id: false });
 const rowSelection = ref({});
 
-const { data, status, users } = useFetchUserData();
+const {
+  data,
+  status,
+  users,
+  isLoading: refreshIsLoading,
+  canResend,
+  coolDownTime,
+  handleRefresh,
+} = useFetchUserData();
 
 const { columns, getRowItems } = useUserRowColumn(
   UAvatar,
@@ -123,18 +131,24 @@ const pagination = ref({
             :status-filter-options="statusFilterOptions"
           >
             <template #actions>
+              <DashboardRefreshButton
+                :can-resend
+                :cool-down-time
+                :refresh-is-loading
+                :handle-refresh
+              />
+
               <DashboardConfirmationModal
                 v-if="selectedUsersLength"
                 v-model:open="deleteModalOpen"
-                confirm-label="Delete Room"
+                confirm-label="Delete Users"
                 render-trigger
-                :title="`Delete ${selectedUsersLength} Rooms`"
+                :title="`Delete ${selectedUsersLength} Users`"
                 :is-loading
-
               >
                 <template #trigger="{ show }">
                   <UButton
-                    label="Delete Selected Rooms"
+                    label="Delete Selected User(s)"
                     icon="i-lucide-trash-2"
                     variant="subtle"
                     color="error"
