@@ -175,3 +175,12 @@ export interface UserType extends Omit<User, "emailVerified"> {
   admin?: Admin | null;
   isEmailVerified: boolean;
 }
+
+export interface AdminUser {
+  name: string;
+  email: string;
+  role: "admin";
+  phoneNumber: string;
+  accessLevel: "regular" | "super" | "support" | "";
+  department: string;
+}

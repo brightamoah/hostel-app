@@ -188,7 +188,28 @@ const deleteRoomSchema = z.object({
 
 export type DeleteRoomSchema = z.output<typeof deleteRoomSchema>;
 
+const accessLevelSchema = z.union([
+  z.enum(["regular", "super", "support"], {
+    error: "Access Level must be either 'regular', 'super', or 'support'",
+  }),
+  z.literal(""),
+]).refine(val => val !== "", "Access Level is required");
+
+const addAdminSchema = z.object({
+  name: nameSchema,
+  email: emailSchema,
+  phoneNumber: phoneNumberSchema,
+  role: roleSchema,
+  department: z.string({ error: "Department is required" })
+    .min(2, "Department must be at least 2 characters long")
+    .max(100, "Department must be at most 100 characters long"),
+  accessLevel: accessLevelSchema,
+});
+
+export type AddAdminSchema = z.output<typeof addAdminSchema>;
+
 export {
+  addAdminSchema,
   baseSignupSchema,
   confirmPasswordSchema,
   deleteRoomSchema,

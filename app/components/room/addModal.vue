@@ -4,7 +4,12 @@ import { useMediaQuery } from "@vueuse/core";
 const isMobile = useMediaQuery("(max-width: 640px)");
 
 const roomStore = useRoomStore();
-const { addRoomState, isFormValid, isLoading, isModalOpen } = storeToRefs(roomStore);
+const {
+  addRoomState,
+  isFormValid,
+  isLoading,
+  isModalOpen,
+} = storeToRefs(roomStore);
 
 const addRoomFormRef = useTemplateRef("addRoomFormRef");
 
