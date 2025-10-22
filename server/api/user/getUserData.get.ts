@@ -11,7 +11,12 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const { getAllUsers, getTotalAdmins, getTotalStudents, getActiveStudentsCount } = await userQueries(event);
+    const {
+      getAllUsers,
+      getTotalAdmins,
+      getTotalStudents,
+      getActiveStudentsCount,
+    } = await userQueries(event);
 
     const allUsers = await getAllUsers();
 

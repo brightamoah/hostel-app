@@ -45,8 +45,7 @@ export const room = pgTable("room", t => ({
 
 export const hostel = pgTable("hostel", t => ({
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: t.text().notNull(),
-  code: t.varchar({ length: 50 }).notNull().unique(),
+  name: t.text().notNull().unique(),
   address: t.text().notNull(),
   contactNumber: t.varchar({ length: 20 }).notNull(),
   email: t.varchar({ length: 255 }).notNull().unique(),

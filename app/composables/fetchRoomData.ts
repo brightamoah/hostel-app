@@ -15,6 +15,7 @@ export function useFetchRoomData() {
       totalAvailableRooms: 0,
       totalUnderMaintenance: 0,
       buildings: [],
+      hostels: [],
     }),
   });
 
@@ -27,6 +28,8 @@ export function useFetchRoomData() {
   const canResend = computed(() => coolDownTime.value === 0 && !isLoading.value);
 
   const rooms = computed<Room[]>(() => data.value?.rooms ?? []);
+
+  const hostels = computed(() => data.value?.hostels ?? []);
 
   let timer: ReturnType<typeof setInterval> | null = null;
 
@@ -102,6 +105,7 @@ export function useFetchRoomData() {
     coolDownTime,
     isLoading,
     canResend,
+    hostels,
     refresh,
     handleRefresh,
   };

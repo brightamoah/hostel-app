@@ -1,7 +1,11 @@
+import { sql } from "drizzle-orm";
 import {
+  check,
   pgEnum,
   pgTable,
 } from "drizzle-orm/pg-core";
+
+import { hostel } from "./room";
 
 export const rolesEnum = pgEnum("roles", [
   "student",
@@ -67,7 +71,13 @@ export const admin = pgTable("admin", t => ({
   phoneNumber: t.varchar({ length: 20 }).notNull(),
   department: t.text().notNull(),
   accessLevel: accessLevelEnum().default("regular").notNull(),
-}));
+  hostelId: t.integer().references(() => hostel.id, { onDelete: "set null" }),
+}), () => [
+  check("chk_hostel_for_regular_support", sql`
+    (access_level IN ('regular', 'support') AND hostel_id IS NOT NULL)
+    OR (access_level = 'super' AND hostel_id IS NULL)
+  `),
+]);
 
 // to be run manually in the database to set the starting value of the sequences
 // ALTER SEQUENCE user_id_seq INCREMENT BY 1 MINVALUE 10000000 MAXVALUE 99999999 START WITH 10000000 CYCLE RESTART WITH 10000000

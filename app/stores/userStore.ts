@@ -14,8 +14,9 @@ export const useUserStore = defineStore("userStore", () => {
     email: "",
     role: "admin",
     phoneNumber: "",
-    accessLevel: "",
+    accessLevel: "regular",
     department: "",
+    hostelId: null,
   });
 
   const isFormValid = computed(() => {
@@ -26,6 +27,7 @@ export const useUserStore = defineStore("userStore", () => {
       && adminState.value.role.trim() !== ""
       && adminState.value.accessLevel.trim() !== ""
       && adminState.value.department.trim() !== ""
+      && adminState.value.hostelId && adminState.value.hostelId > 0
     );
   });
 
@@ -56,8 +58,9 @@ export const useUserStore = defineStore("userStore", () => {
       email: "",
       role: "admin",
       phoneNumber: "",
-      accessLevel: "",
+      accessLevel: "regular",
       department: "",
+      hostelId: null,
     };
   }
 

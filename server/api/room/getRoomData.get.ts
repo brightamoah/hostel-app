@@ -19,6 +19,7 @@ export default defineEventHandler(async (event) => {
       getOccupiedRooms,
       getAvailableRooms,
       getUniqueBuildings,
+      getAllHostels,
     } = await roomQueries(event);
 
     const allRooms = await getAllRooms();
@@ -40,6 +41,7 @@ export default defineEventHandler(async (event) => {
     const totalAvailableRooms: number = availableRooms.length;
 
     const buildings = await getUniqueBuildings();
+    const hostels = await getAllHostels();
 
     return {
       rooms: allRooms,
@@ -51,6 +53,7 @@ export default defineEventHandler(async (event) => {
       totalOccupiedRooms,
       totalAvailableRooms,
       buildings,
+      hostels,
     };
   }
   catch (error) {

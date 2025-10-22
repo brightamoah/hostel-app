@@ -92,6 +92,17 @@ export type Room = {
   status: "vacant" | "fully occupied" | "partially occupied" | "under maintenance" | "reserved";
 };
 
+export type Hostel = {
+  id: number;
+  name: string;
+  address: string;
+  contactNumber: string;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+  status: "active" | "inactive" | "under renovation";
+};
+
 export type RoomDataResponse = {
   rooms: Room[];
   totalRooms: number;
@@ -101,6 +112,7 @@ export type RoomDataResponse = {
   buildings: {
     building: string;
   }[];
+  hostels: Hostel[];
 };
 
 export interface UserDataResponse {

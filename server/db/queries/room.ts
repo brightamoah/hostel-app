@@ -1,6 +1,6 @@
 import { and, asc, eq, gt, inArray, or } from "drizzle-orm";
 
-import { room } from "../schema";
+import { hostel, room } from "../schema";
 
 export const roomQueries = defineEventHandler(async () => {
   const { db } = useDB();
@@ -115,6 +115,14 @@ export const roomQueries = defineEventHandler(async () => {
     });
   };
 
+  const getAllHostels = async () => {
+    const hostels = await db
+      .query
+      .hostel
+      .findMany({ where: eq(hostel.status, "active") });
+    return hostels;
+  };
+
   return {
     getAllRooms,
     getRoomById,
@@ -128,5 +136,6 @@ export const roomQueries = defineEventHandler(async () => {
     editRoomById,
     getRoomByNumberAndBuilding,
     getRoomsByIds,
+    getAllHostels,
   };
 });

@@ -114,6 +114,20 @@ export const userQueries = defineEventHandler(async () => {
     return count.length;
   };
 
+  const getAdminByUserId = async (userId: number) => {
+    const existingAdmin = await db.query.admin.findFirst({
+      where: eq(admin.userId, userId),
+    });
+    return existingAdmin;
+  };
+
+  const checkIfUserExists = async (email: string): Promise<boolean> => {
+    const existingUser = await db.query.user.findFirst({
+      where: eq(user.email, email),
+    });
+    return !!existingUser;
+  };
+
   return {
     updateUserLastLogin,
     cleanupExpiredVerificationTokens,
@@ -124,5 +138,7 @@ export const userQueries = defineEventHandler(async () => {
     getTotalStudents,
     getTotalAdmins,
     getActiveStudentsCount,
+    getAdminByUserId,
+    checkIfUserExists,
   };
 });

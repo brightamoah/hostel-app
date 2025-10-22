@@ -75,3 +75,44 @@ export function getResetPasswordTemplate(resetUrl: string, userName: string) {
   const text = `Hi ${userName},\n\nYou requested a password reset. Click here to reset: ${resetUrl}\n\nThis link expires in 10 minutes.\n\nBest,\nKings Hostel Management Team`;
   return { html, text };
 }
+
+// create a welcome email for a newly created admin user showing the name email and temporary password
+export function getWelcomeAdminTemplate(adminName: string, adminEmail: string, tempPassword: string) {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Welcome, Admin! - Kings Hostel Management</title>
+      </head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f4f4f4;">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+          <h1 style="color: white; margin: 0; font-size: 28px;">Welcome, Admin!</h1>
+        </div>
+        
+        <div style="background: #ffffff; padding: 30px; border-radius: 0 0 10px 10px;">
+          <h2 style="color: #333; margin-top: 0;">Hello ${adminName},</h2>
+          
+          <p>Your administrator account for Kings Hostel Management has been successfully created. Here are your login credentials:</p>
+          
+          <div style="background: #f9f9f9; border-left: 4px solid #667eea; margin: 20px 0; padding: 15px;">
+            <p style="margin: 0;"><strong>Email:</strong> ${adminEmail}</p>
+            <p style="margin: 10px 0 0;"><strong>Temporary Password:</strong> <strong style="font-family: monospace; font-size: 16px;">${tempPassword}</strong></p>
+          </div>
+          
+          <p>For security reasons, please log in as soon as possible and change your password.</p>
+          
+          <hr style="border: none; height: 1px; background: #ddd; margin: 30px 0;">
+          
+          <p style="font-size: 14px; color: #666;">
+            Best regards,<br>
+            The Kings Hostel Management Team
+          </p>
+        </div>
+      </body>
+    </html>
+  `;
+  const text = `Hi ${adminName},\n\nYour admin account has been created.\n\nEmail: ${adminEmail}\nTemporary Password: ${tempPassword}\n\nPlease log in and change your password immediately.\n\nBest regards,\nKings Hostel Management Team`;
+  return { html, text };
+}

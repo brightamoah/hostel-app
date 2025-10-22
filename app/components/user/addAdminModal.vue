@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { SelectMenuItem } from "@nuxt/ui";
+
 import { useMediaQuery } from "@vueuse/core";
 
 import type { AdminUser } from "~/types";
@@ -21,18 +23,33 @@ const accessLevel = ref<AdminUser["accessLevel"][]>([
   "support",
 ]);
 
+const { hostels, isLoading: isHostelsLoading, handleRefresh } = useFetchRoomData();
+const hostelItem = computed<SelectMenuItem[]>(() =>
+  hostels.value.map(h => ({ label: h.name, value: h.id })));
+
 watch(
   () => addModalOpen.value,
-  (open) => {
+  async (open) => {
     if (!open) {
       userStore.resetAddAdminState();
     }
+
+    if (open && hostels.value.length === 0) {
+      try {
+        await handleRefresh();
+      }
+      catch (error) {
+        console.error("Failed to fetch hostels:", error);
+      }
+    }
   },
+  { immediate: true },
 );
 </script>
 
 <template>
   <UModal
+    v-model:open="addModalOpen"
     title="Add New Admin"
     description="Fill in the details below to add a new admin to the system."
     class="w-[70%]"
@@ -149,6 +166,23 @@ watch(
             />
           </UFormField>
         </div>
+
+        <UFormField
+          required
+          label="Hostels"
+          name="hostelId"
+          class="w-full"
+        >
+          <USelectMenu
+            v-model="adminState.hostelId"
+            placeholder="Select Hostel"
+            class="w-[100%] cursor-pointer"
+            :items="hostelItem"
+            :loading="isHostelsLoading"
+            :size="isMobile ? 'lg' : 'xl'"
+            value-key="value"
+          />
+        </UFormField>
       </UForm>
     </template>
 
