@@ -78,6 +78,7 @@ export const userQueries = defineEventHandler(async () => {
           phoneNumber: admin.phoneNumber,
           department: admin.department,
           accessLevel: admin.accessLevel,
+          hostelId: admin.hostelId,
         },
       })
       .from(user)
@@ -117,6 +118,13 @@ export const userQueries = defineEventHandler(async () => {
   const getAdminByUserId = async (userId: number) => {
     const existingAdmin = await db.query.admin.findFirst({
       where: eq(admin.userId, userId),
+      columns: {
+        id: true,
+        phoneNumber: true,
+        department: true,
+        accessLevel: true,
+        hostelId: true,
+      },
     });
     return existingAdmin;
   };

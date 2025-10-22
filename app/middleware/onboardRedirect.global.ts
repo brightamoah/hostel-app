@@ -11,6 +11,7 @@ export default defineNuxtRouteMiddleware((to) => {
     "auth-signup",
     "auth-forgotPassword",
     "auth-resetPassword",
+    "auth-resendVerification",
     "index",
     "about",
     "contact",

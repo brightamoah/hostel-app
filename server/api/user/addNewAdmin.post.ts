@@ -1,18 +1,10 @@
 import { userQueries } from "~~/server/db/queries/user";
 import { admin, user } from "~~/server/db/schema";
+import { generateTempPassword } from "~~/server/utils/generateTemporaryPassword";
 import { randomUUID } from "uncrypto";
 
 import { getEmailTemplate, getWelcomeAdminTemplate } from "~/utils/emailTemplate";
 import { addAdminSchema } from "~/utils/schema";
-
-function generateTempPassword(): string {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  for (let i = 0; i < 11; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-}
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event);
@@ -149,7 +141,7 @@ export default defineEventHandler(async (event) => {
       text,
     });
 
-    const verificationUrl = `${event.headers.get("origin")}/auth/verifyEmail?token=${verificationToken}&id=${newAdminUser.id}`;
+    const verificationUrl = `${event.headers.get("origin")}/auth/verifyEmail?token=${verificationToken}&id=${newAdminUser.userId}`;
 
     const {
       htmlTemplate,

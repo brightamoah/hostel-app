@@ -180,6 +180,7 @@ export type Admin = {
   phoneNumber: string;
   department: string;
   accessLevel: "regular" | "super" | "support";
+  hostelId: number | null;
 };
 
 export interface UserType extends Omit<User, "emailVerified"> {

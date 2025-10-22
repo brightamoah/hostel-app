@@ -1,3 +1,5 @@
+import type { Admin } from "~/types";
+
 declare module "#auth-utils" {
   interface User {
     id: number;
@@ -9,6 +11,7 @@ declare module "#auth-utils" {
     image: string | null;
     role: "student" | "admin";
     lastLogin?: Date;
+    adminData?: Admin;
   };
 
   /**

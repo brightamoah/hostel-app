@@ -5,6 +5,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import type { AddAdminSchema } from "~/utils/schema";
 
 export const useUserStore = defineStore("userStore", () => {
+  const toast = useToast();
   const addModalOpen = ref<boolean>(false);
   const deleteModalOpen = ref<boolean>(false);
   const isLoading = ref<boolean>(false);
@@ -37,15 +38,33 @@ export const useUserStore = defineStore("userStore", () => {
 
     isLoading.value = true;
     try {
-      // simulate 3 second delay
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      // Call your API to add a new admin here
-      console.log("New admin added:", payload.data);
+      const response = await $fetch("/api/user/addNewAdmin", {
+        method: "POST",
+        body: payload.data,
+      });
+
+      await refreshNuxtData("userData");
+
+      toast.add({
+        title: "Admin Added Successfully",
+        description: response.message,
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+
       addModalOpen.value = false;
       resetAddAdminState();
     }
     catch (error) {
       console.error("Error adding new admin:", error);
+      const message = (error as any)?.data?.message;
+      toast.add({
+        title: "Failed to Add Admin",
+        description: message,
+        color: "error",
+        icon: "i-lucide-alert-circle",
+        duration: 8000,
+      });
     }
     finally {
       isLoading.value = false;

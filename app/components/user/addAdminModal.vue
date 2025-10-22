@@ -5,6 +5,9 @@ import { useMediaQuery } from "@vueuse/core";
 
 import type { AdminUser } from "~/types";
 
+const { user } = useUserSession();
+const admin = user.value?.adminData;
+
 const isMobile = useMediaQuery("(max-width: 640px)");
 
 const addAdminFormRef = useTemplateRef("addAdminFormRef");
@@ -168,10 +171,11 @@ watch(
         </div>
 
         <UFormField
+          v-if="admin && admin.accessLevel === 'super'"
           required
           label="Hostels"
           name="hostelId"
-          class="w-full"
+          class="px-4 w-full"
         >
           <USelectMenu
             v-model="adminState.hostelId"

@@ -9,7 +9,12 @@ export default defineEventHandler(async (event) => {
   try {
     const { session, nodeEnv } = useRuntimeConfig();
 
-    const { updateUserLastLogin, getOnboardedStudent, getUserByEmail } = await userQueries(event);
+    const {
+      updateUserLastLogin,
+      getOnboardedStudent,
+      getUserByEmail,
+      getAdminByUserId,
+    } = await userQueries(event);
 
     const body = await readValidatedBody(event, body => loginSchema.safeParse(body));
 
@@ -37,6 +42,19 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 403, message: "Email not verified" });
     }
 
+    let adminData: User["adminData"] | null = null;
+
+    adminData = currentUser.role === "admin"
+      ? await getAdminByUserId(currentUser.id)
+      : null;
+
+    if (currentUser.role === "admin" && !adminData) {
+      throw createError({
+        statusCode: 403,
+        message: "Admin details not found. Please contact support.",
+      });
+    }
+
     await setUserSession(event, {
       user: {
         id: currentUser!.id,
@@ -47,6 +65,7 @@ export default defineEventHandler(async (event) => {
         emailVerified: currentUser!.emailVerified,
         updatedAt: currentUser!.updatedAt,
         lastLogin: currentUser!.lastLogin,
+        adminData,
       } as User,
       loggedInAt: Date.now(),
     });
