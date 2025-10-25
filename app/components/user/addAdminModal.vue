@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { SelectMenuItem } from "@nuxt/ui";
 
 import { useMediaQuery } from "@vueuse/core";
 
@@ -26,9 +25,12 @@ const accessLevel = ref<AdminUser["accessLevel"][]>([
   "support",
 ]);
 
-const { hostels, isLoading: isHostelsLoading, handleRefresh } = useFetchRoomData();
-const hostelItem = computed<SelectMenuItem[]>(() =>
-  hostels.value.map(h => ({ label: h.name, value: h.id })));
+const {
+  hostels,
+  hostelItem,
+  isLoading: isHostelsLoading,
+  handleRefresh,
+} = useFetchRoomData();
 
 watch(
   () => addModalOpen.value,

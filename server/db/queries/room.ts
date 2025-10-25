@@ -134,6 +134,20 @@ export const roomQueries = defineEventHandler(async (event) => {
     return buildings;
   };
 
+  const getScopedHostels = (hostelId?: number) => {
+    let query = db
+      .select()
+      .from(hostel)
+      .where(eq(hostel.status, "active"))
+      .$dynamic();
+
+    if (hostelId) {
+      query = query.where(eq(hostel.id, hostelId));
+    }
+
+    return query;
+  };
+
   const getRoomsScoped = async (adminId: number) => {
     const adminRecord = await getAdminByUserId(adminId);
     if (!adminRecord) {
@@ -193,5 +207,6 @@ export const roomQueries = defineEventHandler(async (event) => {
     getAllHostels,
     getRoomsScoped,
     getBuildingsByHostelId,
+    getScopedHostels,
   };
 });

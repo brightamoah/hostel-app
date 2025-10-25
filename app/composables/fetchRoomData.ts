@@ -1,3 +1,5 @@
+import type { SelectMenuItem } from "@nuxt/ui";
+
 import type { Room, RoomDataResponse } from "~/types";
 
 const REFRESH_COOL_DOWN_SECONDS = 120;
@@ -30,6 +32,9 @@ export function useFetchRoomData() {
   const rooms = computed<Room[]>(() => data.value?.rooms ?? []);
 
   const hostels = computed(() => data.value?.hostels ?? []);
+
+  const hostelItem = computed<SelectMenuItem[]>(() =>
+    hostels.value.map(h => ({ label: h.name, value: h.id })));
 
   let timer: ReturnType<typeof setInterval> | null = null;
 
@@ -106,6 +111,7 @@ export function useFetchRoomData() {
     isLoading,
     canResend,
     hostels,
+    hostelItem,
     refresh,
     handleRefresh,
   };

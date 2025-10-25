@@ -17,6 +17,7 @@ export default defineEventHandler(async (event) => {
       getAllHostels,
       getRoomsScoped,
       getBuildingsByHostelId,
+      getScopedHostels,
     } = await roomQueries(event);
 
     const {
@@ -33,9 +34,11 @@ export default defineEventHandler(async (event) => {
     if (adminRecord && adminRecord.accessLevel === "super") {
       buildings = await getUniqueBuildings();
       hostels = await getAllHostels();
+      // hostels = await getScopedHostels();
     }
     else {
       buildings = await getBuildingsByHostelId(adminRecord.hostelId!);
+      hostels = await getScopedHostels(adminRecord.hostelId!);
     }
 
     return {

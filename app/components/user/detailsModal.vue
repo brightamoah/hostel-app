@@ -8,6 +8,9 @@ const { user } = defineProps<{
 const emit = defineEmits<{ close: [boolean] }>();
 
 const userDetails = ref(flattenUserDetails(user));
+
+const { hostelItem } = useFetchRoomData();
+const assignedHostel = ref<string | null>(null);
 </script>
 
 <template>
@@ -41,11 +44,12 @@ const userDetails = ref(flattenUserDetails(user));
       </div>
 
       <div
-        v-if="user.role === 'admin'"
+        v-if="user.role === 'admin' && !user.hostelName"
         class="flex items-center gap-4 mt-5 w-full"
       >
         <USelectMenu
-          :items="['awe', 'pos', 'big']"
+          v-model="assignedHostel"
+          :items="hostelItem"
           class="w-2/3 cursor-pointer"
           size="lg"
           placeholder="Select Hostel To Assign"
@@ -56,6 +60,7 @@ const userDetails = ref(flattenUserDetails(user));
           variant="solid"
           class="cursor-pointer"
           label="Assign Hostel"
+          @click="console.log(assignedHostel)"
         />
       </div>
     </template>
