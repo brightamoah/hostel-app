@@ -11,32 +11,24 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
+    const { getUsersScoped } = await userQueries(event);
+    const data = await getUsersScoped(session.user.id);
+
     const {
-      getAllUsers,
-      getTotalAdmins,
-      getTotalStudents,
-      getActiveStudentsCount,
-    } = await userQueries(event);
-
-    const allUsers = await getAllUsers();
-
-    if (!allUsers)
-      throw createError({ statusCode: 404, message: "No users found" });
-
-    const totalUsers: number = allUsers.length;
-
-    const totalStudents: number = await getTotalStudents();
-
-    const totalAdmins: number = await getTotalAdmins();
-
-    const activeStudents: number = await getActiveStudentsCount();
-
-    return {
-      users: allUsers,
+      users,
       totalUsers,
       totalStudents,
       totalAdmins,
       activeStudents,
+    } = data;
+
+    return {
+      users,
+      totalUsers,
+      totalStudents,
+      totalAdmins,
+      activeStudents,
+      message: `Fetched user data for ${data.adminRecord.accessLevel} admin`,
     };
   }
   catch (error) {

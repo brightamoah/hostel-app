@@ -1,11 +1,16 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   check,
   pgEnum,
   pgTable,
 } from "drizzle-orm/pg-core";
 
-import { hostel } from "./room";
+import { announcement, announcementReads } from "./announcement";
+import { billing, payment } from "./billing";
+import { complaint, complaintResponse } from "./complaint";
+import { maintenanceRequest, maintenanceResponse } from "./maintenance";
+import { allocation, hostel } from "./room";
+import { visitor } from "./visitor";
 
 export const rolesEnum = pgEnum("roles", [
   "student",
@@ -78,6 +83,45 @@ export const admin = pgTable("admin", t => ({
     OR (access_level = 'super' AND hostel_id IS NULL)
   `),
 ]);
+
+export const userRelations = relations(user, ({ one, many }) => ({
+  student: one(student, {
+    fields: [user.id],
+    references: [student.userId],
+  }),
+  admin: one(admin, {
+    fields: [user.id],
+    references: [admin.userId],
+  }),
+  announcementReads: many(announcementReads),
+  complaintResponses: many(complaintResponse),
+  maintenanceResponses: many(maintenanceResponse),
+}));
+
+export const studentRelations = relations(student, ({ one, many }) => ({
+  user: one(user, {
+    fields: [student.userId],
+    references: [user.id],
+  }),
+  billings: many(billing),
+  payments: many(payment),
+  complaints: many(complaint),
+  maintenanceRequests: many(maintenanceRequest),
+  allocations: many(allocation),
+  visitors: many(visitor),
+}));
+
+export const adminRelations = relations(admin, ({ one, many }) => ({
+  user: one(user, {
+    fields: [admin.userId],
+    references: [user.id],
+  }),
+  hostel: one(hostel, {
+    fields: [admin.hostelId],
+    references: [hostel.id],
+  }),
+  announcementsPosted: many(announcement), // Admin as poster
+}));
 
 // to be run manually in the database to set the starting value of the sequences
 // ALTER SEQUENCE user_id_seq INCREMENT BY 1 MINVALUE 10000000 MAXVALUE 99999999 START WITH 10000000 CYCLE RESTART WITH 10000000

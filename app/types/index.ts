@@ -172,6 +172,7 @@ export type Student = {
   emergencyContactPhoneNumber: string;
   healthConditions: string;
   enrollmentDate: Date;
+  roomNumber: string;
   residencyStatus: "N/A" | "active" | "inactive" | "suspended" | "graduated" | "withdrawn";
 };
 
@@ -187,6 +188,7 @@ export interface UserType extends Omit<User, "emailVerified"> {
   student: Student | null;
   admin?: Admin | null;
   isEmailVerified: boolean;
+  hostelName?: string | null;
 }
 
 export interface AdminUser {

@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { pgEnum, pgTable } from "drizzle-orm/pg-core";
 
 import { student } from "./user";
@@ -40,4 +41,19 @@ export const visitorLogs = pgTable("visitor_logs", t => ({
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
+}));
+
+export const visitorRelations = relations(visitor, ({ one, many }) => ({
+  student: one(student, {
+    fields: [visitor.studentId],
+    references: [student.id],
+  }),
+  logs: many(visitorLogs),
+}));
+
+export const visitorLogsRelations = relations(visitorLogs, ({ one }) => ({
+  visitor: one(visitor, {
+    fields: [visitorLogs.visitorId],
+    references: [visitor.id],
+  }),
 }));

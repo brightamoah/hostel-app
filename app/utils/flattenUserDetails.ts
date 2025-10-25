@@ -44,13 +44,27 @@ export function flattenUserDetails(user: UserType): UserDetail[] {
 
   if (user.role === "student" && user.student) {
     const { emergencyContactName, emergencyContactPhoneNumber } = user.student;
-    if (emergencyContactName && emergencyContactPhoneNumber) {
-      details.push({
-        key: "Emergency Contact",
-        value: `${emergencyContactName} (${emergencyContactPhoneNumber})`,
-      });
-    }
+
+    details.push({
+      key: "Emergency Contact",
+      value: (emergencyContactName && emergencyContactPhoneNumber) ? `${emergencyContactName} (${emergencyContactPhoneNumber})` : "N/A",
+    });
+
+    details.push({
+      key: "Room",
+      value: (user.hostelName && user.student.roomNumber) ? `${user.hostelName} - ${user.student.roomNumber}` : "N/A",
+    });
   }
+
+  details.push({
+    key: "Email Verified",
+    value: user.isEmailVerified ? "Yes" : "No",
+  });
+
+  details.push({
+    key: "Hostel Name",
+    value: user.hostelName ?? "N/A",
+  });
 
   return details;
 }

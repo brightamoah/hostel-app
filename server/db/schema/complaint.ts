@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { pgEnum, pgTable } from "drizzle-orm/pg-core";
 
 import { hostel, room } from "./room";
@@ -49,4 +50,31 @@ export const complaintResponse = pgTable("complaint_response", t => ({
   response: t.text().notNull(),
   actionTaken: complaintActionTakenEnum().notNull(),
   responseDate: t.timestamp().defaultNow().notNull(),
+}));
+
+export const complaintRelations = relations(complaint, ({ one, many }) => ({
+  student: one(student, {
+    fields: [complaint.studentId],
+    references: [student.id],
+  }),
+  room: one(room, {
+    fields: [complaint.roomId],
+    references: [room.id],
+  }),
+  hostel: one(hostel, {
+    fields: [complaint.hostelId],
+    references: [hostel.id],
+  }),
+  responses: many(complaintResponse),
+}));
+
+export const complaintResponseRelations = relations(complaintResponse, ({ one }) => ({
+  complaint: one(complaint, {
+    fields: [complaintResponse.complaintId],
+    references: [complaint.id],
+  }),
+  responder: one(user, { // The user (admin/staff) who responded
+    fields: [complaintResponse.responderId],
+    references: [user.id],
+  }),
 }));

@@ -7,7 +7,7 @@ export function useFetchUserData() {
     method: "get",
     key: "userData",
     lazy: true,
-    cache: "force-cache",
+    cache: "default",
     default: () => ({
       users: [],
       totalUsers: 0,

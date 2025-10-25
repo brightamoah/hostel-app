@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, unique } from "drizzle-orm/pg-core";
 
 import { admin, user } from "./user";
@@ -25,3 +26,22 @@ export const announcementReads = pgTable("announcement_reads", t => ({
 }), table => [
   unique("unique_announcement_student").on(table.announcementId, table.userId),
 ]);
+
+export const announcementRelations = relations(announcement, ({ one, many }) => ({
+  postedByAdmin: one(admin, {
+    fields: [announcement.postedBy],
+    references: [admin.id],
+  }),
+  reads: many(announcementReads),
+}));
+
+export const announcementReadsRelations = relations(announcementReads, ({ one }) => ({
+  announcement: one(announcement, {
+    fields: [announcementReads.announcementId],
+    references: [announcement.id],
+  }),
+  user: one(user, {
+    fields: [announcementReads.userId],
+    references: [user.id],
+  }),
+}));

@@ -13,42 +13,34 @@ export default defineEventHandler(async (event) => {
 
   try {
     const {
-      getAllRooms,
-      getRoomsUnderMaintenance,
-      getOccupiedRoomsCount,
-      getOccupiedRooms,
-      getAvailableRooms,
       getUniqueBuildings,
       getAllHostels,
+      getRoomsScoped,
+      getBuildingsByHostelId,
     } = await roomQueries(event);
 
-    const allRooms = await getAllRooms();
-    if (!allRooms)
-      throw createError({ statusCode: 404, message: "No rooms found" });
+    const {
+      rooms,
+      totalAvailableRooms,
+      totalRooms,
+      totalOccupiedRooms,
+      totalUnderMaintenance,
+      adminRecord,
+    } = await getRoomsScoped(session.user.id);
 
-    const totalRooms: number = allRooms.length;
+    let buildings, hostels;
 
-    const occupiedRooms = await getOccupiedRooms();
-
-    const totalOccupiedRooms: number = await getOccupiedRoomsCount();
-
-    const underMaintenance = await getRoomsUnderMaintenance();
-
-    const totalUnderMaintenance: number = underMaintenance.length;
-
-    const availableRooms = await getAvailableRooms();
-
-    const totalAvailableRooms: number = availableRooms.length;
-
-    const buildings = await getUniqueBuildings();
-    const hostels = await getAllHostels();
+    if (adminRecord && adminRecord.accessLevel === "super") {
+      buildings = await getUniqueBuildings();
+      hostels = await getAllHostels();
+    }
+    else {
+      buildings = await getBuildingsByHostelId(adminRecord.hostelId!);
+    }
 
     return {
-      rooms: allRooms,
-      availableRooms,
+      rooms,
       totalRooms,
-      occupiedRooms,
-      underMaintenance,
       totalUnderMaintenance,
       totalOccupiedRooms,
       totalAvailableRooms,

@@ -7,7 +7,7 @@ export function useFetchRoomData() {
     method: "get",
     key: "roomData",
     lazy: true,
-    cache: "force-cache",
+    cache: "default",
     default: () => ({
       rooms: [],
       totalRooms: 0,

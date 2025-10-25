@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { check, pgEnum, pgTable } from "drizzle-orm/pg-core";
 
 import { allocation, hostel } from "./room";
@@ -56,4 +56,31 @@ export const payment = pgTable("payment", t => ({
   transactionReference: t.text().notNull().unique(),
   paymentMethod: paymentMethod().notNull(),
   status: paymentStatus().default("pending").notNull(),
+}));
+
+export const billingRelations = relations(billing, ({ one, many }) => ({
+  student: one(student, {
+    fields: [billing.studentId],
+    references: [student.id],
+  }),
+  allocation: one(allocation, {
+    fields: [billing.allocationId],
+    references: [allocation.id],
+  }),
+  hostel: one(hostel, {
+    fields: [billing.hostelId],
+    references: [hostel.id],
+  }),
+  payments: many(payment),
+}));
+
+export const paymentRelations = relations(payment, ({ one }) => ({
+  student: one(student, {
+    fields: [payment.studentId],
+    references: [student.id],
+  }),
+  billing: one(billing, {
+    fields: [payment.billingId],
+    references: [billing.id],
+  }),
 }));

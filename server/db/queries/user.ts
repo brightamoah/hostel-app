@@ -1,7 +1,39 @@
 import { useDB } from "~~/server/utils/db";
-import { and, eq, isNotNull, lt } from "drizzle-orm";
+import { and, eq, isNotNull, lt, or } from "drizzle-orm";
 
-import { admin, student, user } from "../schema";
+import { admin, allocation, hostel, room, student, user } from "../schema";
+
+const userDetails = {
+  id: user.id,
+  name: user.name,
+  email: user.email,
+  image: user.image,
+  role: user.role,
+  isEmailVerified: user.emailVerified,
+  createdAt: user.createdAt,
+  updatedAt: user.updatedAt,
+  hostelName: hostel.name,
+  student: {
+    id: student.id,
+    gender: student.gender,
+    dateOfBirth: student.dateOfBirth,
+    phoneNumber: student.phoneNumber,
+    address: student.address,
+    emergencyContactName: student.emergencyContactName,
+    emergencyContactPhoneNumber: student.emergencyContactPhoneNumber,
+    healthConditions: student.healthConditions,
+    enrollmentDate: student.enrollmentDate,
+    residencyStatus: student.residencyStatus,
+    roomNumber: room.roomNumber,
+  },
+  admin: {
+    id: admin.id,
+    phoneNumber: admin.phoneNumber,
+    department: admin.department,
+    accessLevel: admin.accessLevel,
+    hostelId: admin.hostelId,
+  },
+};
 
 export const userQueries = defineEventHandler(async () => {
   const { db } = useDB();
@@ -52,38 +84,13 @@ export const userQueries = defineEventHandler(async () => {
 
   const getAllUsers = async () => {
     const users = await db
-      .select({
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        isEmailVerified: user.emailVerified,
-        image: user.image,
-        name: user.name,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-        student: {
-          id: student.id,
-          gender: student.gender,
-          dateOfBirth: student.dateOfBirth,
-          phoneNumber: student.phoneNumber,
-          address: student.address,
-          emergencyContactName: student.emergencyContactName,
-          emergencyContactPhoneNumber: student.emergencyContactPhoneNumber,
-          healthConditions: student.healthConditions,
-          enrollmentDate: student.enrollmentDate,
-          residencyStatus: student.residencyStatus,
-        },
-        admin: {
-          id: admin.id,
-          phoneNumber: admin.phoneNumber,
-          department: admin.department,
-          accessLevel: admin.accessLevel,
-          hostelId: admin.hostelId,
-        },
-      })
+      .select(userDetails)
       .from(user)
-      .leftJoin(student, and(eq(student.userId, user.id), eq(user.role, "student")))
-      .leftJoin(admin, and(eq(admin.userId, user.id), eq(user.role, "admin")))
+      .leftJoin(student, eq(student.userId, user.id))
+      .leftJoin(admin, eq(admin.userId, user.id))
+      .leftJoin(allocation, eq(allocation.studentId, student.id))
+      .leftJoin(room, eq(room.id, allocation.roomId))
+      .leftJoin(hostel, or(eq(hostel.id, admin.hostelId), eq(hostel.id, room.hostelId)))
       .orderBy(user.id);
 
     return users;
@@ -136,6 +143,59 @@ export const userQueries = defineEventHandler(async () => {
     return !!existingUser;
   };
 
+  const getUsersScoped = async (adminId: number) => {
+    const adminRecord = await getAdminByUserId(adminId);
+    if (!adminRecord)
+      throw createError({ statusCode: 404, message: "Admin not found" });
+
+    let query = db
+      .select(userDetails)
+      .from(user)
+      .leftJoin(student, eq(student.userId, user.id))
+      .leftJoin(admin, eq(admin.userId, user.id))
+      .leftJoin(allocation, eq(allocation.studentId, student.id))
+      .leftJoin(room, eq(room.id, allocation.roomId))
+      .leftJoin(hostel, or(eq(hostel.id, admin.hostelId), eq(hostel.id, room.hostelId)))
+      .$dynamic();
+
+    // Filter for non-super admins
+    if (adminRecord.accessLevel !== "super") {
+      if (!adminRecord.hostelId) {
+        throw createError({
+          statusCode: 403,
+          message: "Access denied: Your admin account is not assigned to a hostel.",
+        });
+      }
+
+      query = query.where(eq(hostel.id, adminRecord.hostelId));
+    }
+
+    const users = await query.orderBy(user.id);
+
+    // If user has both admin & student roles, nullify student
+    const normalized = users.map((u) => {
+      if (u.admin?.id) {
+        return { ...u, student: null };
+      }
+      return u;
+    });
+
+    // Compute counts dynamically
+    const totalUsers = normalized.length;
+    const totalAdmins = normalized.filter(u => u.role === "admin").length;
+    const totalStudents = normalized.filter(u => u.role === "student").length;
+    const activeStudents = normalized.filter(u => u.student?.residencyStatus === "active").length;
+
+    return {
+      users: normalized,
+      totalUsers,
+      totalStudents,
+      totalAdmins,
+      activeStudents,
+      adminRecord,
+    };
+  };
+
   return {
     updateUserLastLogin,
     cleanupExpiredVerificationTokens,
@@ -148,5 +208,6 @@ export const userQueries = defineEventHandler(async () => {
     getActiveStudentsCount,
     getAdminByUserId,
     checkIfUserExists,
+    getUsersScoped,
   };
 });
