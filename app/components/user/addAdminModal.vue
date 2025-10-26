@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { useMediaQuery } from "@vueuse/core";
 
 import type { AdminUser } from "~/types";

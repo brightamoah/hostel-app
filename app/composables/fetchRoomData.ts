@@ -19,6 +19,11 @@ export function useFetchRoomData() {
       buildings: [],
       hostels: [],
     }),
+    getCachedData: (key, nuxtApp, ctx) => {
+      if (ctx.cause === "refresh:manual")
+        return undefined;
+      return nuxtApp.payload.data[key] ?? nuxtApp.static.data[key];
+    },
   });
 
   const coolDownTime = useCookie<number>("roomDataCoolDown", {

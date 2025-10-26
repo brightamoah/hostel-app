@@ -7,7 +7,6 @@ export function useFetchUserData() {
     method: "get",
     key: "userData",
     lazy: true,
-    cache: "default",
     default: () => ({
       users: [],
       totalUsers: 0,
@@ -15,6 +14,11 @@ export function useFetchUserData() {
       totalAdmins: 0,
       activeStudents: 0,
     }),
+    getCachedData: (key, nuxtApp, ctx) => {
+      if (ctx.cause === "refresh:manual")
+        return undefined;
+      return nuxtApp.payload.data[key] ?? nuxtApp.static.data[key];
+    },
   });
 
   const users = computed<UserType[]>(() => data.value?.users ?? []);
