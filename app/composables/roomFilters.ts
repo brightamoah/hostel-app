@@ -86,7 +86,7 @@ export function useRoomFilters(table: RoomTableType, data: DataType) {
 
   const totalRooms = computed<number>(() => {
     const tableApi = safeTableApi();
-    return tableApi?.getPreFilteredRowModel().rows.length ?? (data.value?.rooms?.length ?? 0);
+    return tableApi?.getFilteredRowModel().rows.length ?? (data.value?.rooms?.length ?? 0);
   });
 
   const updatePage = (p: number) => {
@@ -108,7 +108,8 @@ export function useRoomFilters(table: RoomTableType, data: DataType) {
       const pageIndex = typeof state?.pageIndex === "number" ? state.pageIndex : 0;
       const pageSize = typeof state?.pageSize === "number" ? state.pageSize : 10;
 
-      return pageIndex * pageSize + (totalRooms.value > 0 ? 1 : 0);
+      const filteredCount = tableApi.getFilteredRowModel().rows.length;
+      return pageIndex * pageSize + (filteredCount > 0 ? 1 : 0);
     }
     catch {
       return 0;
@@ -124,10 +125,11 @@ export function useRoomFilters(table: RoomTableType, data: DataType) {
       const pageIndex = typeof state?.pageIndex === "number" ? state.pageIndex : 0;
       const pageSize = typeof state?.pageSize === "number" ? state.pageSize : 10;
 
-      return Math.min((pageIndex + 1) * pageSize, totalRooms.value);
+      const filteredCount = tableApi.getFilteredRowModel().rows.length;
+      return Math.min((pageIndex + 1) * pageSize, filteredCount);
     }
     catch {
-      return totalRooms.value;
+      return tableApi.getFilteredRowModel().rows.length;
     }
   });
 

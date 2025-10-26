@@ -134,6 +134,10 @@ const pagination = ref({
   pageIndex: 0,
   pageSize: 10,
 });
+
+watch([globalFilter, statusFilter, buildingFilter, floorFilter], () => {
+  pagination.value.pageIndex = 0;
+});
 </script>
 
 <template>
@@ -236,36 +240,18 @@ const pagination = ref({
           }"
         />
 
-        <div class="flex justify-between items-center gap-3 mt-auto pt-4 border-default border-t">
-          <div class="text-muted text-sm">
-            <template v-if="selectedRoomsLength">
-              {{ selectedRoomsLength }} of
-              {{ rooms.length }} row(s) selected.
-            </template>
-
-            <template v-else-if="rooms.length > 0 && table?.tableApi">
-              Showing
-              {{ currentRoomsShowing }}
-              -
-              {{ lastRoomShowing }}
-              of
-              {{ rooms.length }} rows.
-            </template>
-
-            <template v-else>
-              No data available.
-            </template>
-          </div>
-
-          <div class="flex items-center gap-1.5">
-            <UPagination
-              :default-page
-              :items-per-page
-              :total="totalRooms"
-              @update:page="updatePage"
-            />
-          </div>
-        </div>
+        <DashboardPagination
+          v-if="table && table!.tableApi"
+          :current-rooms-showing
+          :last-room-showing
+          :rooms
+          :table="table?.tableApi"
+          :total-rooms
+          :selected-rooms-length
+          :default-page
+          :items-per-page
+          :update-page
+        />
       </template>
     </UDashboardPanel>
   </div>
