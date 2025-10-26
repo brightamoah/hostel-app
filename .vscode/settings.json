@@ -137,9 +137,5 @@
   "typescript.inlayHints.variableTypes.enabled": true,
   "workbench.sideBar.location": "right",
   "oxc.enable": true,
-  "indent_guides": {
-    "enabled": true,
-    "coloring": "indent_aware",
-    "background_coloring": "indent_aware"
-  }
+  "tailwindCSS.experimental.configFile": "app/assets/css/main.css"
 }

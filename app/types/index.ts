@@ -3,7 +3,7 @@ import type { Table } from "@tanstack/table-core";
 import type { User } from "#auth-utils";
 import type { useDB } from "~~/server/utils/db";
 import type { randomUUID } from "uncrypto";
-import type { ComputedOptions, ConcreteComponent, MethodOptions, ShallowRef, ShallowUnwrapRef } from "vue";
+import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 type FormFieldType = "select" | "checkbox" | "password" | "otp" | "email" | "text";

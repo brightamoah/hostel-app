@@ -7,7 +7,7 @@ import ConfirmationModal from "~/components/dashboard/confirmationModal.vue";
 
 type Toast = ReturnType<typeof useToast>;
 
-const DetailsModal = defineAsyncComponent(() => import("~/components/room/detailsModal.vue"));
+const RoomDetailsModal = defineAsyncComponent(() => import("~/components/room/detailsModal.vue"));
 const EditModal = defineAsyncComponent(() => import("~/components/room/editModal.vue"));
 
 export function useRoomRowColumn(
@@ -22,9 +22,9 @@ export function useRoomRowColumn(
   const roomStore = useRoomStore();
   const { isLoading } = storeToRefs(roomStore);
 
-  const openDetailsModal = (roomId: number) => {
-    overlay.create(DetailsModal).open({
-      roomId,
+  const openDetailsModal = (room: Room) => {
+    overlay.create(RoomDetailsModal).open({
+      room,
     });
   };
 
@@ -82,7 +82,7 @@ export function useRoomRowColumn(
         label: "View Details",
         icon: "i-lucide-eye",
         onSelect() {
-          openDetailsModal(row.original.id);
+          openDetailsModal(row.original);
         },
       },
       {

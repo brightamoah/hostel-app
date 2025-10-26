@@ -1,26 +1,20 @@
 <script setup lang="ts">
-import type { RoomDetailResponse } from "~/types";
+import type { Room } from "~/types";
 
-const { roomId } = defineProps<{ roomId: number }>();
+const { room } = defineProps<{
+  room: Room;
+}>();
+
 const emit = defineEmits<{ close: [boolean] }>();
 
-const { data, error, status } = useFetch<RoomDetailResponse>(`/api/room/${roomId}`, {
-  method: "GET",
-  key: computed(() => `room-details-${roomId}`),
-});
+const roomValue = computed(() => room);
 
-const room = computed(() => data.value?.room);
-
-const { featureIcons, statusColorMap } = useRoomColorIcon(room);
-
-const { getErrorMessage } = getSpecificRoomError();
-
-const errorInfo = computed(() => getErrorMessage(error.value));
+const { featureIcons, statusColorMap } = useRoomColorIcon(roomValue);
 </script>
 
 <template>
   <UModal
-    :title="room ? `Room ${room.roomNumber} Details` : 'Room Details'"
+    :title="roomValue ? `Room ${roomValue.roomNumber} Details` : 'Room Details'"
     description="Detailed information about the selected room."
     :dismissible="false"
     :ui="{
@@ -32,50 +26,22 @@ const errorInfo = computed(() => getErrorMessage(error.value));
     }"
   >
     <template #body>
-      <div
-        v-if="status === 'pending'"
-        class="flex flex-col justify-center items-center py-16"
-      >
-        <UIcon
-          name="i-lucide-loader"
-          class="w-10 h-10 text-primary animate-spin"
-        />
-
-        <p class="mt-4 text-muted">
-          Loading room details...
-        </p>
-      </div>
-
-      <div
-        v-else-if="status === 'error'"
-        class="flex flex-col justify-center items-center py-16"
-      >
-        <UIcon
-          :name="errorInfo.icon ?? 'i-lucide-alert-triangle'"
-          class="w-10 h-10 text-error"
-        />
-
-        <p class="mt-4 text-error">
-          Error loading data: {{ errorInfo.message }}
-        </p>
-      </div>
-
-      <div v-else-if="room">
+      <div>
         <UCard class="border-1 border-muted">
           <div class="flex justify-between items-center">
             <h3 class="font-semibold text-xl">
-              Room {{ room.roomNumber }}
+              Room {{ roomValue.roomNumber }}
               <span class="flex gap-1.5 mt-1 font-normal text-sm text-center">
                 <UIcon
                   name="i-lucide-map-pinned"
                   class="size-5"
                 />
-                {{ room.building }}, Floor {{ room.floor }}
+                {{ roomValue.building }}, Floor {{ roomValue.floor }}
               </span>
             </h3>
 
             <UBadge
-              :label="room.roomType"
+              :label="roomValue.roomType"
               color="primary"
               variant="subtle"
               size="lg"
@@ -103,28 +69,28 @@ const errorInfo = computed(() => getErrorMessage(error.value));
               <div class="gap-4 grid grid-cols-2">
                 <RoomDetailItem
                   label="Room Number"
-                  :value="room.roomNumber"
+                  :value="roomValue.roomNumber"
                 />
 
                 <RoomDetailItem
                   label="Building"
-                  :value="room.building"
+                  :value="roomValue.building"
                 />
 
                 <RoomDetailItem
                   label="Amount Per Year"
-                  :value="formatCurrency(Number(room.amountPerYear))"
+                  :value="formatCurrency(Number(roomValue.amountPerYear))"
                 />
 
                 <RoomDetailItem
                   label="Room Type"
-                  :value="room.roomType"
+                  :value="roomValue.roomType"
                   class="capitalize"
                 />
 
                 <RoomDetailItem
                   label="Floor"
-                  :value="room.floor"
+                  :value="roomValue.floor"
                 />
               </div>
             </template>
@@ -151,8 +117,8 @@ const errorInfo = computed(() => getErrorMessage(error.value));
                 </p>
 
                 <UBadge
-                  :label="room.status"
-                  :color="statusColorMap[room.status] || 'neutral'"
+                  :label="roomValue.status"
+                  :color="statusColorMap[roomValue.status] || 'neutral'"
                   variant="subtle"
                   size="lg"
                   class="capitalize"
@@ -162,28 +128,28 @@ const errorInfo = computed(() => getErrorMessage(error.value));
               <div class="gap-4 grid grid-cols-2 mt-3">
                 <RoomDetailItem
                   label="Total Capacity"
-                  :value="room.capacity"
+                  :value="roomValue.capacity"
                 />
 
                 <RoomDetailItem
                   label="Current Occupants"
-                  :value="room.currentOccupancy"
+                  :value="roomValue.currentOccupancy"
                 />
               </div>
 
               <UProgress
-                v-model="room.currentOccupancy"
+                v-model="roomValue.currentOccupancy"
                 size="lg"
-                class="relative mt-4 text-left"
-                :max="room.capacity"
-                :color="statusColorMap[room.status] || 'neutral'"
+                class="relative my-2 text-left"
+                :max="roomValue.capacity"
+                :color="statusColorMap[roomValue.status] || 'neutral'"
                 :ui="{
                   status: 'text-muted text-left',
                 }"
               >
                 <template #status>
-                  <p class="-bottom-6 left-0 absolute w-full">
-                    {{ room.capacity - room.currentOccupancy }} of {{ room.capacity }} spaces
+                  <p class="-bottom-5 md:-bottom-6 left-0 absolute w-full">
+                    {{ roomValue.capacity - roomValue.currentOccupancy }} of {{ roomValue.capacity }} spaces
                     available
                   </p>
                 </template>
