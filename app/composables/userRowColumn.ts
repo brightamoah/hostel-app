@@ -151,8 +151,7 @@ export function useUserRowColumn(
         return h(UBadge, {
           label: residencyStatus,
           color: statusColorMap[residencyStatus],
-          variant: "soft",
-          size: "lg",
+          variant: "subtle",
           class: "capitalize",
         });
       },
@@ -174,14 +173,12 @@ export function useUserRowColumn(
           ? h(UBadge, {
               label: "Verified",
               color: "success",
-              variant: "soft",
-              size: "lg",
+              variant: "subtle",
             })
           : h(UBadge, {
               label: "Unverified",
               color: "warning",
-              variant: "soft",
-              size: "lg",
+              variant: "subtle",
             });
       },
     },

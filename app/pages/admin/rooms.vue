@@ -241,13 +241,13 @@ watch([globalFilter, statusFilter, buildingFilter, floorFilter], () => {
         />
 
         <DashboardPagination
-          v-if="table && table!.tableApi"
-          :current-rooms-showing
-          :last-room-showing
-          :rooms
-          :table="table?.tableApi"
-          :total-rooms
-          :selected-rooms-length
+          v-if="table && table?.tableApi"
+          :items="rooms"
+          :total-items="totalRooms"
+          :selected-items-length="selectedRoomsLength"
+          :current-items-showing="currentRoomsShowing"
+          :last-item-showing="lastRoomShowing"
+          :table="table!.tableApi"
           :default-page
           :items-per-page
           :update-page

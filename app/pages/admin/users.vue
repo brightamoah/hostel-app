@@ -106,6 +106,10 @@ const pagination = ref({
   pageIndex: 0,
   pageSize: 10,
 });
+
+watch([globalFilter, statusFilter, roleFilter], () => {
+  pagination.value.pageIndex = 0;
+});
 </script>
 
 <template>
@@ -204,36 +208,18 @@ const pagination = ref({
           }"
         />
 
-        <div class="flex justify-between items-center gap-3 mt-auto pt-4 border-default border-t">
-          <div class="text-muted text-sm">
-            <template v-if="selectedUsersLength">
-              {{ selectedUsersLength }} of
-              {{ users.length }} row(s) selected.
-            </template>
-
-            <template v-else-if="users.length > 0 && userTable?.tableApi">
-              Showing
-              {{ currentUserShowing }}
-              -
-              {{ lastUserShowing }}
-              of
-              {{ users.length }} rows.
-            </template>
-
-            <template v-else>
-              No data available.
-            </template>
-          </div>
-
-          <div class="flex items-center gap-1.5">
-            <UPagination
-              :default-page
-              :items-per-page
-              :total="totalUsers"
-              @update:page="updatePage"
-            />
-          </div>
-        </div>
+        <DashboardPagination
+          v-if="userTable && userTable?.tableApi"
+          :items="users"
+          :total-items="totalUsers"
+          :selected-items-length="selectedUsersLength"
+          :current-items-showing="currentUserShowing"
+          :last-item-showing="lastUserShowing"
+          :table="userTable?.tableApi"
+          :default-page
+          :items-per-page
+          :update-page
+        />
       </template>
     </UDashboardPanel>
   </div>

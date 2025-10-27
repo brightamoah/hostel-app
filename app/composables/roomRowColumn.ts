@@ -257,7 +257,11 @@ export function useRoomRowColumn(
       },
       cell: ({ row }) => {
         const statusColor = statusColorMap[row.original.status] ?? "neutral";
-        return h(UBadge, { class: "capitalize", variant: "subtle", color: statusColor }, () => row.original.status);
+        return h(UBadge, {
+          class: "capitalize",
+          variant: "subtle",
+          color: statusColor,
+        }, () => row.original.status);
       },
     },
     {
@@ -293,7 +297,11 @@ export function useRoomRowColumn(
             () =>
               h(
                 UBadge,
-                { class: "font-medium capitalize", variant: "subtle", color: statusColor },
+                {
+                  class: "font-medium capitalize",
+                  variant: "subtle",
+                  color: statusColor,
+                },
                 () =>
                   "Maintenance",
               ),

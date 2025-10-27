@@ -1,38 +1,38 @@
 <script setup lang="ts" generic="T extends object">
 import type { Table } from "@tanstack/table-core";
 
-const { table, totalRooms } = defineProps<{
-  rooms: T[];
+const { table, totalItems, defaultPage = 1, itemsPerPage = 10 } = defineProps<{
+  items: T[];
   table?: Table<T>;
-  totalRooms: number;
-  selectedRoomsLength: number;
-  currentRoomsShowing: number;
-  lastRoomShowing: number;
-  defaultPage: number;
-  itemsPerPage: number;
+  totalItems: number;
+  selectedItemsLength: number;
+  currentItemsShowing: number;
+  lastItemShowing: number;
+  defaultPage?: number;
+  itemsPerPage?: number;
   updatePage: (page: number) => void;
 }>();
 
 const displayTotal = computed(() => {
   if (table)
     return table.getFilteredRowModel().rows.length;
-  return totalRooms;
+  return totalItems;
 });
 </script>
 
 <template>
   <div class="flex justify-between items-center gap-3 mt-auto pt-4 border-default border-t">
     <div class="text-muted text-sm">
-      <template v-if="selectedRoomsLength">
-        {{ selectedRoomsLength }} of
+      <template v-if="selectedItemsLength">
+        {{ selectedItemsLength }} of
         {{ displayTotal }} row(s) selected.
       </template>
 
-      <template v-else-if="rooms.length > 0 && table">
+      <template v-else-if="items.length > 0 && table">
         Showing
-        {{ currentRoomsShowing }}
+        {{ currentItemsShowing }}
         -
-        {{ lastRoomShowing }}
+        {{ lastItemShowing }}
         of
         {{ displayTotal }} rows.
       </template>
@@ -44,7 +44,7 @@ const displayTotal = computed(() => {
 
     <div class="flex items-center gap-1.5">
       <UPagination
-        :default-page
+        :page="defaultPage"
         :items-per-page
         :total="displayTotal"
         @update:page="updatePage"

@@ -99,7 +99,8 @@ export function useUserFilters(table: UserTableType, data: DataType) {
       const pageIndex = typeof state?.pageIndex === "number" ? state.pageIndex : 0;
       const pageSize = typeof state?.pageSize === "number" ? state.pageSize : 10;
 
-      return pageIndex * pageSize + (totalUsers.value > 0 ? 1 : 0);
+      const filteredCount = tableApi.getFilteredRowModel().rows.length;
+      return pageIndex * pageSize + (filteredCount > 0 ? 1 : 0); ;
     }
     catch {
       return 0;
@@ -116,10 +117,11 @@ export function useUserFilters(table: UserTableType, data: DataType) {
       const pageIndex = typeof state?.pageIndex === "number" ? state.pageIndex : 0;
       const pageSize = typeof state?.pageSize === "number" ? state.pageSize : 10;
 
-      return Math.min((pageIndex + 1) * pageSize, totalUsers.value);
+      const filteredCount = tableApi.getFilteredRowModel().rows.length;
+      return Math.min((pageIndex + 1) * pageSize, filteredCount);
     }
     catch {
-      return totalUsers.value;
+      return tableApi.getFilteredRowModel().rows.length;
     }
   });
 
