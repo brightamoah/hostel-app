@@ -1,5 +1,7 @@
 import { useDB } from "~~/server/utils/db";
-import { and, eq, isNotNull, lt, or } from "drizzle-orm";
+import { and, eq, inArray, isNotNull, lt, or, sql } from "drizzle-orm";
+
+import type { Allocation } from "~/types";
 
 import { admin, allocation, hostel, room, student, user } from "../schema";
 
@@ -25,6 +27,13 @@ const userDetails = {
     enrollmentDate: student.enrollmentDate,
     residencyStatus: student.residencyStatus,
     roomNumber: room.roomNumber,
+    allocation: sql<Allocation | null>`
+            json_build_object(
+              'id', ${allocation.id},
+              'status', ${allocation.status},
+              'roomId', ${allocation.roomId}
+            )
+          `.as("allocation"),
   },
   admin: {
     id: admin.id,
@@ -174,6 +183,10 @@ export const userQueries = defineEventHandler(async () => {
 
     // If user has both admin & student roles, nullify student
     const normalized = users.map((u) => {
+      if (u.student.allocation && u.student.allocation.id === null) {
+        u.student.allocation = null;
+      }
+
       if (u.admin?.id) {
         return { ...u, student: null };
       }
@@ -196,6 +209,48 @@ export const userQueries = defineEventHandler(async () => {
     };
   };
 
+  const deleteUsersByIds = async (ids: number[]) => {
+    if (ids.length === 0)
+      return [];
+
+    const deletedUsers = await db
+      .delete(user)
+      .where(inArray(user.id, ids))
+      .returning();
+
+    return deletedUsers;
+  };
+
+  const getUserByIds = async (ids: number[]) => {
+    const users = await db
+      .select({
+        id: user.id,
+        role: user.role,
+        admin: {
+          id: admin.id,
+          accessLevel: admin.accessLevel,
+        },
+        student: {
+          id: student.id,
+          residencyStatus: student.residencyStatus,
+          allocation: sql<Allocation>`
+            json_build_object(
+              'id', ${allocation.id},
+              'status', ${allocation.status},
+              'roomId', ${allocation.roomId}
+            )
+          `.as("allocation"),
+        },
+      })
+      .from(user)
+      .leftJoin(admin, eq(admin.userId, user.id))
+      .leftJoin(student, eq(student.userId, user.id))
+      .leftJoin(allocation, eq(allocation.studentId, student.id))
+      .where(inArray(user.id, ids));
+
+    return users;
+  };
+
   return {
     updateUserLastLogin,
     cleanupExpiredVerificationTokens,
@@ -209,5 +264,7 @@ export const userQueries = defineEventHandler(async () => {
     getAdminByUserId,
     checkIfUserExists,
     getUsersScoped,
+    deleteUsersByIds,
+    getUserByIds,
   };
 });

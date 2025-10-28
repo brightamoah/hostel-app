@@ -5,9 +5,11 @@ import type { Room, RoomDataResponse } from "~/types";
 const REFRESH_COOL_DOWN_SECONDS = 120;
 
 export function useFetchRoomData() {
+  const { user } = useUserSession();
+
   const { data, status, refresh } = useFetch<RoomDataResponse>("/api/room/getRoomData", {
     method: "get",
-    key: "roomData",
+    key: computed(() => `roomData:${user.value?.adminData?.accessLevel}`),
     lazy: true,
     cache: "default",
     default: () => ({
@@ -20,7 +22,7 @@ export function useFetchRoomData() {
       hostels: [],
     }),
     getCachedData: (key, nuxtApp, ctx) => {
-      if (ctx.cause === "refresh:manual")
+      if (ctx.cause === "refresh:manual" || ctx.cause === "refresh:hook")
         return undefined;
       return nuxtApp.payload.data[key] ?? nuxtApp.static.data[key];
     },

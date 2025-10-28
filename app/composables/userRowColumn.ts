@@ -3,6 +3,10 @@ import type { Column, Row } from "@tanstack/table-core";
 
 import type { Component, UserType } from "~/types";
 
+const UserDetailsModal = defineAsyncComponent(() => import("~/components/user/detailsModal.vue"));
+
+const ConfirmationModal = defineAsyncComponent(() => import("~/components/dashboard/confirmationModal.vue"));
+
 export function useUserRowColumn(
   UAvatar: Component,
   UButton: Component,
@@ -13,12 +17,35 @@ export function useUserRowColumn(
   // UTooltip: Component,
 ) {
   const overlay = useOverlay();
-
-  const UserDetailsModal = defineAsyncComponent(() => import("~/components/user/detailsModal.vue"));
+  const userStore = useUserStore();
+  const { isLoading } = storeToRefs(userStore);
 
   const openDetailsModal = (user: UserType) => {
     overlay.create(UserDetailsModal).open({
       user,
+    });
+  };
+
+  const openDeleteUserModal = (userId: number, userName: string) => {
+    const modal = overlay.create(ConfirmationModal);
+    const close = modal.close;
+    modal.open({
+      title: `Delete User With Name ${userName}`,
+      confirmLabel: "Delete User",
+      isLoading,
+      description: `This action will delete user with ID ${userId}.`,
+      renderTrigger: false,
+      body: `Are you sure you want to delete user with name ${userName}? This action cannot be undone.`,
+      onConfirm: async () => {
+        try {
+          await userStore.deleteUser({ ids: [userId] });
+          close();
+        }
+        catch (error) {
+          console.warn("Delete failed:", error);
+          close();
+        }
+      },
     });
   };
 
@@ -44,7 +71,9 @@ export function useUserRowColumn(
         label: "Delete user",
         icon: "i-lucide-trash-2",
         color: "error",
-        onSelect: () => { },
+        onSelect: () => {
+          openDeleteUserModal(row.original.id, row.original.name);
+        },
       },
     ];
   };

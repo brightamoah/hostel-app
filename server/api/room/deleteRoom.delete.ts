@@ -1,7 +1,7 @@
 import { roomQueries } from "~~/server/db/queries/room";
 
 import { getSpecificRoomError } from "~/utils/roomErrors";
-import { deleteRoomSchema } from "~/utils/schema";
+import { deleteItemSchema } from "~/utils/schema";
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event);
@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const body = await readValidatedBody(event, body => deleteRoomSchema.safeParse(body));
+    const body = await readValidatedBody(event, body => deleteItemSchema.safeParse(body));
 
     if (!body.success) {
       throw createError({

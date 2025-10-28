@@ -182,11 +182,11 @@ export type RoomFormState = Omit<AddRoomSchemaInput, "features"> & {
 export type EditRoomDataSchema = z.output<typeof editRoomData>;
 export type EditRoomSchema = z.output<typeof editRoomSchema>;
 
-const deleteRoomSchema = z.object({
+const deleteItemSchema = z.object({
   ids: z.array(z.number().min(1, "Invalid room ID")).min(1, "At least one room ID is required"),
 });
 
-export type DeleteRoomSchema = z.output<typeof deleteRoomSchema>;
+export type DeleteItemSchema = z.output<typeof deleteItemSchema>;
 
 const accessLevelSchema
   = z.enum(["regular", "super", "support"], "Access Level is required");
@@ -209,7 +209,7 @@ export {
   addAdminSchema,
   baseSignupSchema,
   confirmPasswordSchema,
-  deleteRoomSchema,
+  deleteItemSchema,
   editRoomSchema,
   emailSchema,
   emailVerificationSchema,

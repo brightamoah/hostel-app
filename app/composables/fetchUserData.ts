@@ -3,9 +3,11 @@ import type { UserDataResponse, UserType } from "~/types";
 const REFRESH_COOL_DOWN_SECONDS = 120;
 
 export function useFetchUserData() {
+  const { user } = useUserSession();
+
   const { data, status, refresh } = useFetch<UserDataResponse>("/api/user/getUserData", {
     method: "get",
-    key: "userData",
+    key: computed(() => `userData:${user.value?.adminData?.accessLevel}`),
     lazy: true,
     default: () => ({
       users: [],
@@ -15,7 +17,7 @@ export function useFetchUserData() {
       activeStudents: 0,
     }),
     getCachedData: (key, nuxtApp, ctx) => {
-      if (ctx.cause === "refresh:manual")
+      if (ctx.cause === "refresh:manual" || ctx.cause === "refresh:hook")
         return undefined;
       return nuxtApp.payload.data[key] ?? nuxtApp.static.data[key];
     },

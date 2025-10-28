@@ -137,5 +137,6 @@
   "typescript.inlayHints.variableTypes.enabled": true,
   "workbench.sideBar.location": "right",
   "oxc.enable": true,
-  "tailwindCSS.experimental.configFile": "app/assets/css/main.css"
+  "tailwindCSS.experimental.configFile": "app/assets/css/main.css",
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }

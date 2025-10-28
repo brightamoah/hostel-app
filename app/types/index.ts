@@ -1,6 +1,7 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Table } from "@tanstack/table-core";
 import type { User } from "#auth-utils";
+import type { allocation } from "~~/server/db/schema";
 import type { useDB } from "~~/server/utils/db";
 import type { randomUUID } from "uncrypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
@@ -199,3 +200,5 @@ export interface AdminUser {
   accessLevel: "regular" | "super" | "support" | "";
   department: string;
 }
+
+export type Allocation = typeof allocation.$inferSelect;

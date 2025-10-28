@@ -4,7 +4,8 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 
 export const useRoomStore = defineStore("roomStore", () => {
   const toast = useToast();
-
+  const { user } = useUserSession();
+  const roomDataKey = computed(() => `roomData:${user.value?.adminData?.accessLevel}`);
   const isModalOpen = ref<boolean>(false);
 
   const isLoading = ref<boolean>(false);
@@ -80,7 +81,7 @@ export const useRoomStore = defineStore("roomStore", () => {
         body: payload.data,
       });
 
-      await refreshNuxtData("roomData");
+      await refreshNuxtData(roomDataKey.value);
 
       toast.add({
         title: response.message,
@@ -123,7 +124,7 @@ export const useRoomStore = defineStore("roomStore", () => {
 
   const deleteModalOpen = ref<boolean>(false);
 
-  const deleteRoom = async (payload: DeleteRoomSchema) => {
+  const deleteRoom = async (payload: DeleteItemSchema) => {
     if (!payload.ids)
       return;
 
@@ -141,7 +142,7 @@ export const useRoomStore = defineStore("roomStore", () => {
         color: "success",
         icon: "i-lucide-check-circle",
       });
-      await refreshNuxtData("roomData");
+      await refreshNuxtData(roomDataKey.value);
     }
     catch (error) {
       const message = (error as any)?.data?.message;

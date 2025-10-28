@@ -29,6 +29,7 @@ export function flattenUserDetails(user: UserType): UserDetail[] {
     "createdAt",
     "updatedAt",
     "emergencyContactName",
+    "allocation",
     "emergencyContactPhoneNumber",
   ]);
 
