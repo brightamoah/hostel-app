@@ -96,7 +96,7 @@ const {
   itemsPerPage,
   updatePage,
   lastUserShowing,
-  // selectedUserIds,
+  selectedUserIds,
   selectedUsersLength,
   totalUsers,
   itemsToDisplay,
@@ -106,6 +106,30 @@ const pagination = ref({
   pageIndex: 0,
   pageSize: 10,
 });
+
+async function handleDeleteUsers() {
+  const payload = selectedUserIds.value;
+
+  if (!payload?.ids?.length)
+    return;
+
+  try {
+    await userStore.deleteUser(payload);
+    deleteModalOpen.value = false;
+        try {
+          rowSelection.value = {};
+          const api = userTable?.value?.tableApi;
+          api?.resetRowSelection?.();
+          api?.toggleAllPageRowsSelected?.(false);
+        }
+        catch (error) {
+          console.warn("Failed to clear selection after delete:", error);
+        }
+  }
+  catch (error) {
+    console.error("Error deleting selected users:", error);
+  }
+}
 
 watch([globalFilter, statusFilter, roleFilter], () => {
   pagination.value.pageIndex = 0;
@@ -152,6 +176,7 @@ watch([globalFilter, statusFilter, roleFilter], () => {
                 render-trigger
                 :title="`Delete ${selectedUsersLength} Users`"
                 :is-loading
+                @confirm="handleDeleteUsers"
               >
                 <template #trigger="{ show }">
                   <UButton
