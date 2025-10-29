@@ -30,7 +30,7 @@ export const useUserStore = defineStore("userStore", () => {
       && adminState.value.role.trim() !== ""
       && adminState.value.accessLevel.trim() !== ""
       && adminState.value.department.trim() !== ""
-      && adminState.value.hostelId && adminState.value.hostelId > 0
+      && (adminState.value.hostelId === null || (adminState.value.hostelId && adminState.value.hostelId > 0))
     );
   });
 

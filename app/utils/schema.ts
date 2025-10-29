@@ -200,7 +200,7 @@ const addAdminSchema = z.object({
     .min(2, "Department must be at least 2 characters long")
     .max(100, "Department must be at most 100 characters long"),
   accessLevel: accessLevelSchema,
-  hostelId: z.number("Hostel ID is required").min(1, "Hostel ID must be at least 1").nullable(),
+  hostelId: z.number("Hostel ID is required").min(1, "Hostel ID must be at least 1").nullable().optional(),
 });
 
 export type AddAdminSchema = z.output<typeof addAdminSchema>;
