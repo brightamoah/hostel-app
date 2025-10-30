@@ -89,7 +89,7 @@ watch(
             <UInput
               v-model="adminState.name"
               placeholder="Enter Full Name"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -103,7 +103,7 @@ watch(
             <UInput
               v-model="adminState.email"
               placeholder="Enter Email Address"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -120,7 +120,7 @@ watch(
               v-model="adminState.role"
               readonly
               placeholder="Enter Access Role"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -135,7 +135,7 @@ watch(
               v-model="adminState.accessLevel"
               :items="accessLevel"
               placeholder="Select Admin Access Level"
-              class="w-[100%] cursor-pointer"
+              class="w-full cursor-pointer"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -151,7 +151,7 @@ watch(
             <UInput
               v-model="adminState.phoneNumber"
               placeholder="Enter Phone Number"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -165,7 +165,7 @@ watch(
             <UInput
               v-model="adminState.department"
               placeholder="Enter Department"
-              class="w-[100%] cursor-pointer"
+              class="w-full cursor-pointer"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -181,7 +181,7 @@ watch(
           <USelectMenu
             v-model="adminState.hostelId"
             placeholder="Select Hostel"
-            class="w-[100%] cursor-pointer"
+            class="w-full cursor-pointer"
             :items="hostelItem"
             :loading="isHostelsLoading"
             :size="isMobile ? 'lg' : 'xl'"

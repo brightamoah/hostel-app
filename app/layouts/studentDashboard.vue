@@ -148,6 +148,7 @@ onMounted(async () => {
       id="student-sidebar"
       v-model:open="open"
       collapsible
+      collapsed
       resizable
       class="bg-elevated/25"
       :menu="{
@@ -155,7 +156,6 @@ onMounted(async () => {
       }"
       :ui="{
         footer: 'lg:border-t lg:border-default',
-
       }"
     >
       <template #header="{ collapsed }">

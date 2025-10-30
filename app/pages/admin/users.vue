@@ -116,15 +116,15 @@ async function handleDeleteUsers() {
   try {
     await userStore.deleteUser(payload);
     deleteModalOpen.value = false;
-        try {
-          rowSelection.value = {};
-          const api = userTable?.value?.tableApi;
-          api?.resetRowSelection?.();
-          api?.toggleAllPageRowsSelected?.(false);
-        }
-        catch (error) {
-          console.warn("Failed to clear selection after delete:", error);
-        }
+    try {
+      rowSelection.value = {};
+      const api = userTable?.value?.tableApi;
+      api?.resetRowSelection?.();
+      api?.toggleAllPageRowsSelected?.(false);
+    }
+    catch (error) {
+      console.warn("Failed to clear selection after delete:", error);
+    }
   }
   catch (error) {
     console.error("Error deleting selected users:", error);
