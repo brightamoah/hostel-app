@@ -92,7 +92,7 @@ defineExpose({
     <template #body>
       <slot>
         <!-- default message if no slot provided -->
-        <p class="text-muted text-sm">
+        <p class="text-base">
           {{ body ?? "Are you sure you want to proceed with this action?" }}
         </p>
       </slot>

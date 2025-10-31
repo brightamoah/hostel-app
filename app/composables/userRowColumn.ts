@@ -30,10 +30,10 @@ export function useUserRowColumn(
     const modal = overlay.create(ConfirmationModal);
     const close = modal.close;
     modal.open({
-      title: `Delete User With Name ${userName}`,
+      title: `Delete User`,
       confirmLabel: "Delete User",
       isLoading,
-      description: `This action will delete user with ID ${userId}.`,
+      description: `This action will delete user with Name ${userName} and ID ${userId}.`,
       renderTrigger: false,
       body: `Are you sure you want to delete user with name ${userName}? This action cannot be undone.`,
       onConfirm: async () => {
@@ -43,6 +43,38 @@ export function useUserRowColumn(
         }
         catch (error) {
           console.warn("Delete failed:", error);
+          close();
+        }
+      },
+    });
+  };
+
+  const openPromoteDemoteUserModal = (user: UserType) => {
+    const modal = overlay.create(ConfirmationModal);
+    const close = modal.close;
+
+    const assignRoleChangeLabel = computed<string>(() =>
+      user.role === "admin" ? "Demote User" : "Promote User",
+    );
+    const newRole = computed(() => user.role === "admin" ? "student" : "admin");
+
+    modal.open({
+      title: `${assignRoleChangeLabel.value}`,
+      description: `This action will ${assignRoleChangeLabel.value.toLocaleLowerCase()} with name ${user.name} and ID ${user.id}.`,
+      confirmLabel: `${assignRoleChangeLabel.value}`,
+      isLoading,
+      renderTrigger: false,
+      body: `Are you sure you want to ${assignRoleChangeLabel.value.toLocaleLowerCase()} with name ${user.name} from ${user.role} to ${newRole.value}? This action cannot be undone.`,
+      onConfirm: async () => {
+        try {
+          await userStore.promoteOrDemoteUser({
+            userId: user.id,
+            action: user.role === "admin" ? "demote" : "promote",
+          });
+          close();
+        }
+        catch (error) {
+          console.warn("Role change failed:", error);
           close();
         }
       },
@@ -65,7 +97,7 @@ export function useUserRowColumn(
       {
         label: roleChangeLabels.value,
         icon: "i-lucide-refresh-cw",
-        onSelect: () => { },
+        onSelect: () => openPromoteDemoteUserModal(row.original),
       },
       {
         label: "Delete user",

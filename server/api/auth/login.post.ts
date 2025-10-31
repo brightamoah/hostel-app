@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
     let adminData: User["adminData"] | null = null;
 
     adminData = currentUser.role === "admin"
-      ? await getAdminByUserId(currentUser.id)
+      ? await getAdminByUserId(currentUser.id, true)
       : null;
 
     if (currentUser.role === "admin" && !adminData) {

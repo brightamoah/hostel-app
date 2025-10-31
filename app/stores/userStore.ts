@@ -2,7 +2,7 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 
 import { acceptHMRUpdate, defineStore } from "pinia";
 
-import type { AddAdminSchema, DeleteItemSchema } from "~/utils/schema";
+import type { AddAdminSchema, DeleteItemSchema, PromoteDemoteSchema } from "~/utils/schema";
 
 export const useUserStore = defineStore("userStore", () => {
   const toast = useToast();
@@ -110,6 +110,42 @@ export const useUserStore = defineStore("userStore", () => {
     }
   };
 
+  const promoteOrDemoteUser = async (payload: PromoteDemoteSchema) => {
+    if (!payload.userId)
+      return;
+
+    isLoading.value = true;
+
+    try {
+      const response = await $fetch("/api/user/promoteDemote", {
+        method: "PATCH",
+        body: payload,
+      });
+
+      toast.add({
+        title: "User Role Updated Successfully",
+        description: response.message,
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+
+      await refreshNuxtData(userDataKey.value);
+    }
+    catch (error) {
+      const message = (error as any)?.data?.message;
+      toast.add({
+        title: "Failed to Update User Role",
+        description: message,
+        color: "error",
+        icon: "i-lucide-alert-circle",
+        duration: 8000,
+      });
+    }
+    finally {
+      isLoading.value = false;
+    }
+  };
+
   function resetAddAdminState() {
     adminState.value = {
       name: "",
@@ -131,6 +167,7 @@ export const useUserStore = defineStore("userStore", () => {
     addNewAdmin,
     resetAddAdminState,
     deleteUser,
+    promoteOrDemoteUser,
   };
 });
 

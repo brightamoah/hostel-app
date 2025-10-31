@@ -9,6 +9,7 @@ export default defineEventHandler(async (event) => {
     !session?.user
     || session.user.role !== "admin"
     || session.user.adminData?.accessLevel !== "super"
+    || session.user.adminData?.status !== "active"
   ) {
     throw createError({
       statusCode: 403,

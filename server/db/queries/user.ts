@@ -41,12 +41,19 @@ const userDetails = {
     department: admin.department,
     accessLevel: admin.accessLevel,
     hostelId: admin.hostelId,
+    status: admin.status,
   },
 };
 
 export const userQueries = defineEventHandler(async () => {
   const { db } = useDB();
 
+  /**
+   * Updates the `lastLogin` field for a user to the current date and time.
+   * @async
+   * @param userId The ID of the user to update.
+   * @returns A promise that resolves when the user's last login has been successfully updated.
+   */
   async function updateUserLastLogin(userId: number) {
     await db.update(user).set({
       lastLogin: new Date(),
@@ -131,18 +138,19 @@ export const userQueries = defineEventHandler(async () => {
     return count.length;
   };
 
-  const getAdminByUserId = async (userId: number) => {
-    const existingAdmin = await db.query.admin.findFirst({
-      where: eq(admin.userId, userId),
-      columns: {
-        id: true,
-        phoneNumber: true,
-        department: true,
-        accessLevel: true,
-        hostelId: true,
-      },
-    });
-    return existingAdmin;
+  const getAdminByUserId = async (userId: number, activeOnly = false) => {
+    const query = db
+      .select()
+      .from(admin)
+      .where(eq(admin.userId, userId))
+      .$dynamic();
+
+    if (activeOnly) {
+      query.where(eq(admin.status, "active"));
+    }
+
+    const [result] = await query;
+    return result;
   };
 
   const checkIfUserExists = async (email: string): Promise<boolean> => {
@@ -187,7 +195,7 @@ export const userQueries = defineEventHandler(async () => {
         u.student.allocation = null;
       }
 
-      if (u.admin?.id) {
+      if (u.role === "admin" && u.admin?.id) {
         return { ...u, student: null };
       }
       return u;
@@ -251,6 +259,64 @@ export const userQueries = defineEventHandler(async () => {
     return users;
   };
 
+  const createOrUpdateAdminForUser = async (userId: number, payload: {
+    phoneNumber: string;
+    department: string;
+    accessLevel: "regular" | "super" | "support";
+    hostelId: number | null;
+  }) => {
+    return await db.transaction(async (tx) => {
+      const existingAdmin = await tx.query.admin.findFirst({
+        where: eq(admin.userId, userId),
+        columns: { id: true },
+      });
+
+      if (existingAdmin) {
+        const [updatedUser] = await tx
+          .update(admin)
+          .set({
+            ...payload,
+            status: "active",
+          })
+          .where(eq(admin.userId, userId))
+          .returning();
+
+        await tx.update(user).set({ role: "admin" }).where(eq(user.id, userId));
+        return updatedUser;
+      }
+
+      const [insertedAdmin] = await tx
+        .insert(admin)
+        .values({
+          userId,
+          ...payload,
+          status: "active",
+        })
+        .returning();
+
+      await tx.update(user).set({ role: "admin" }).where(eq(user.id, userId));
+
+      return insertedAdmin;
+    });
+  };
+
+  const disableAdminByUserId = async (userId: number) => {
+    return await db.transaction(async (tx) => {
+      const [demotedAdmin] = await tx
+        .update(admin)
+        .set({ status: "inactive" })
+        .where(eq(admin.userId, userId))
+        .returning();
+
+      if (!demotedAdmin)
+        return null;
+
+      await tx.update(user).set({ role: "student" }).where(eq(user.id, userId));
+
+      return demotedAdmin;
+    });
+  };
+
   return {
     updateUserLastLogin,
     cleanupExpiredVerificationTokens,
@@ -266,5 +332,7 @@ export const userQueries = defineEventHandler(async () => {
     getUsersScoped,
     deleteUsersByIds,
     getUserByIds,
+    createOrUpdateAdminForUser,
+    disableAdminByUserId,
   };
 });

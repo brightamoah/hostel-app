@@ -10,7 +10,11 @@ export default defineEventHandler(async (event) => {
   const session = await getUserSession(event);
   const creator = session.user;
 
-  if (!creator || creator.role !== "admin") {
+  if (
+    !creator
+    || creator.role !== "admin"
+    || creator.adminData?.status !== "active"
+  ) {
     throw createError({
       statusCode: 403,
       message: "Access Denied: You must be an admin to perform this action.",

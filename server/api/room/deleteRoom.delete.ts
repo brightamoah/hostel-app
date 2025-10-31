@@ -7,7 +7,13 @@ export default defineEventHandler(async (event) => {
   const session = await getUserSession(event);
   const { getErrorMessage } = getSpecificRoomError();
 
-  if (!session || !session.user || session.user.role !== "admin") {
+  if (
+    !session
+    || !session.user
+    || session.user.role !== "admin"
+    || !session.user.adminData
+    || session.user.adminData.status !== "active"
+  ) {
     throw createError({
       statusCode: 403,
       message: "Access denied: Must be a logged in verified admin",

@@ -183,6 +183,7 @@ export type Admin = {
   department: string;
   accessLevel: "regular" | "super" | "support";
   hostelId: number | null;
+  status: "active" | "inactive";
 };
 
 export interface UserType extends Omit<User, "emailVerified"> {

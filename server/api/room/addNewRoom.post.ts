@@ -7,7 +7,12 @@ import { addRoomSchema } from "~/utils/schema";
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event);
 
-  if (!session || !session.user || session.user.role !== "admin") {
+  if (
+    !session || !session.user
+    || session.user.role !== "admin"
+    || !session.user.adminData
+    || session.user.adminData.status !== "active"
+  ) {
     throw createError({
       statusCode: 403,
       message: "Access denied: Must be a verified admin",

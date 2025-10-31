@@ -67,7 +67,7 @@ onMounted(() => {
         <div class="space-y-3">
           <UAlert
             v-if="route.query.error === 'token_expired' || route.query.error === 'invalid_token'"
-            color="info"
+            color="neutral"
             title="Having trouble with email verification?"
             class="mt-4"
             variant="subtle"

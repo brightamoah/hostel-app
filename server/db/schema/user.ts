@@ -36,6 +36,11 @@ export const accessLevelEnum = pgEnum("access_level", [
   "support",
 ]);
 
+export const adminStatusEnum = pgEnum("admin_status", [
+  "active",
+  "inactive",
+]);
+
 export const user = pgTable("user", t => ({
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
   name: t.varchar({ length: 255 }).notNull(),
@@ -77,6 +82,7 @@ export const admin = pgTable("admin", t => ({
   department: t.text().notNull(),
   accessLevel: accessLevelEnum().default("regular").notNull(),
   hostelId: t.integer().references(() => hostel.id, { onDelete: "set null" }),
+  status: adminStatusEnum().default("active").notNull(),
 }), () => [
   check("chk_hostel_for_regular_support", sql`
     (access_level IN ('regular', 'support') AND hostel_id IS NOT NULL)
@@ -122,6 +128,11 @@ export const adminRelations = relations(admin, ({ one, many }) => ({
   }),
   announcementsPosted: many(announcement), // Admin as poster
 }));
+
+export type UserWithRelations = typeof user & {
+  student?: typeof student;
+  admin?: typeof admin;
+};
 
 // to be run manually in the database to set the starting value of the sequences
 // ALTER SEQUENCE user_id_seq INCREMENT BY 1 MINVALUE 10000000 MAXVALUE 99999999 START WITH 10000000 CYCLE RESTART WITH 10000000

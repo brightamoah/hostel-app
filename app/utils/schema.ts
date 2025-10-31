@@ -191,19 +191,34 @@ export type DeleteItemSchema = z.output<typeof deleteItemSchema>;
 const accessLevelSchema
   = z.enum(["regular", "super", "support"], "Access Level is required");
 
+const hostelIdSchema = z.number("Hostel ID is required").min(1, "Hostel ID must be at least 1").positive().nullable().optional();
+
+const departmentSchema = z.string("Department is required")
+  .min(2, "Department must be at least 2 characters long")
+  .max(100, "Department must be at most 100 characters long");
+
 const addAdminSchema = z.object({
   name: nameSchema,
   email: emailSchema,
   phoneNumber: phoneNumberSchema,
   role: z.literal("admin", "Role must be 'admin'"),
-  department: z.string("Department is required")
-    .min(2, "Department must be at least 2 characters long")
-    .max(100, "Department must be at most 100 characters long"),
+  department: departmentSchema,
   accessLevel: accessLevelSchema,
-  hostelId: z.number("Hostel ID is required").min(1, "Hostel ID must be at least 1").nullable().optional(),
+  hostelId: hostelIdSchema,
 });
 
 export type AddAdminSchema = z.output<typeof addAdminSchema>;
+
+const promoteDemoteSchema = z.object({
+  userId: idSchema,
+  action: z.enum(["promote", "demote"], "Action must be either 'promote' or 'demote'"),
+  accessLevel: accessLevelSchema.optional(),
+  phoneNumber: phoneNumberSchema.optional(),
+  department: departmentSchema.optional(),
+  hostelId: hostelIdSchema,
+});
+
+export type PromoteDemoteSchema = z.output<typeof promoteDemoteSchema>;
 
 export {
   addAdminSchema,
@@ -218,6 +233,7 @@ export {
   passwordResetSchema,
   passwordSchema,
   personalDetailsSchema,
+  promoteDemoteSchema,
   rememberMeSchema,
   resetPasswordSchema,
   roleSchema,
