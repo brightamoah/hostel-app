@@ -156,8 +156,7 @@ export function useRoomRowColumn(
         });
       },
       cell: ({ row }) => {
-        return h("p", { class: "font-medium" }, row.original.roomNumber)
-        ;
+        return h("p", { class: "font-medium" }, row.original.roomNumber);
       },
     },
     {
@@ -181,8 +180,7 @@ export function useRoomRowColumn(
         });
       },
       cell: ({ row }) => {
-        return h("p", { class: "font-medium" }, row.original.building)
-        ;
+        return h("p", { class: "font-medium" }, row.original.building);
       },
     },
     {
@@ -231,8 +229,7 @@ export function useRoomRowColumn(
         });
       },
       cell: ({ row }) => {
-        return h("p", { class: "font-medium capitalize" }, row.original.roomType)
-        ;
+        return h("p", { class: "font-medium capitalize" }, row.original.roomType);
       },
     },
     {
@@ -372,8 +369,7 @@ export function useRoomRowColumn(
         });
       },
       cell: ({ row }) => {
-        return h("p", { class: "font-medium" }, `${formatCurrency(Number(row.original.amountPerYear))}`)
-        ;
+        return h("p", { class: "font-medium" }, `${formatCurrency(Number(row.original.amountPerYear))}`);
       },
     },
     {

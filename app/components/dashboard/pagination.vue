@@ -14,8 +14,10 @@ const { table, totalItems, defaultPage = 1, itemsPerPage = 10 } = defineProps<{
 }>();
 
 const displayTotal = computed(() => {
-  if (table)
-    return table.getFilteredRowModel().rows.length;
+  const tableRowCount = table?.getFilteredRowModel().rows.length;
+  if (typeof tableRowCount === "number") {
+    return tableRowCount;
+  }
   return totalItems;
 });
 </script>

@@ -2,8 +2,6 @@
 import { env } from "./app/lib/env";
 
 export default defineNuxtConfig({
-  compatibilityDate: "2025-07-15",
-  devtools: { enabled: true },
   modules: [
     "@nuxt/eslint",
     "@nuxt/image",
@@ -12,24 +10,13 @@ export default defineNuxtConfig({
     "nuxt-auth-utils",
     "nuxt-nodemailer",
   ],
-
-  css: ["~/assets/css/main.css"],
-
-  experimental: {
-    typedPages: true,
-    // viteEnvironmentApi: true,
-    // typescriptPlugin: true,
-  },
-
-  eslint: {
-    config: {
-      standalone: false,
-    },
-  },
+  devtools: { enabled: true },
 
   app: {
     pageTransition: { name: "page", mode: "out-in" },
   },
+
+  css: ["~/assets/css/main.css"],
 
   runtimeConfig: {
     session: {
@@ -46,6 +33,19 @@ export default defineNuxtConfig({
     nodemailerAuthUser: env.NUXT_NODEMAILER_AUTH_USER,
     nodemailerAuthPass: env.NUXT_NODEMAILER_AUTH_PASS,
     nodeEnv: env.NODE_ENV,
+  },
+
+  experimental: {
+    typedPages: true,
+    // viteEnvironmentApi: true,
+    // typescriptPlugin: true,
+  },
+  compatibilityDate: "2025-07-15",
+
+  eslint: {
+    config: {
+      standalone: false,
+    },
   },
 
   nodemailer: {

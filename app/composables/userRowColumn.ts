@@ -7,6 +7,8 @@ const UserDetailsModal = defineAsyncComponent(() => import("~/components/user/de
 
 const ConfirmationModal = defineAsyncComponent(() => import("~/components/dashboard/confirmationModal.vue"));
 
+const PromoteUserModal = defineAsyncComponent(() => import("~/components/user/promoteUserModal.vue"));
+
 export function useUserRowColumn(
   UAvatar: Component,
   UButton: Component,
@@ -14,7 +16,6 @@ export function useUserRowColumn(
   UDropdownMenu: Component,
   UCheckbox: Component,
   UIcon: Component,
-  // UTooltip: Component,
 ) {
   const overlay = useOverlay();
   const userStore = useUserStore();
@@ -50,39 +51,82 @@ export function useUserRowColumn(
   };
 
   const openPromoteDemoteUserModal = (user: UserType) => {
-    const modal = overlay.create(ConfirmationModal);
-    const close = modal.close;
+    if (user.role === "admin" && user.admin?.status === "active") {
+      const modal = overlay.create(ConfirmationModal);
+      const close = modal.close;
 
-    const assignRoleChangeLabel = computed<string>(() =>
-      user.role === "admin" ? "Demote User" : "Promote User",
-    );
-    const newRole = computed(() => user.role === "admin" ? "student" : "admin");
+      modal.open({
+        title: "Demote User",
+        description: `This action will demote ${user.name} from admin to student.`,
+        confirmLabel: "Demote User",
+        confirmColor: "warning",
+        isLoading,
+        renderTrigger: false,
+        body: `Are you sure you want to demote ${user.name} from admin to student? Their admin privileges will be revoked. This action cannot be undone.`,
+        onConfirm: async () => {
+          try {
+            await userStore.promoteOrDemoteUser({
+              userId: user.id,
+              action: "demote",
+            });
+            close();
+          }
+          catch (error) {
+            console.warn("Role change failed:", error);
+          }
+        },
+      });
+    }
+    else if (user.role === "student" && user.admin && user.admin.id) {
+      const modal = overlay.create(ConfirmationModal);
+      const close = modal.close;
 
-    modal.open({
-      title: `${assignRoleChangeLabel.value}`,
-      description: `This action will ${assignRoleChangeLabel.value.toLocaleLowerCase()} with name ${user.name} and ID ${user.id}.`,
-      confirmLabel: `${assignRoleChangeLabel.value}`,
-      isLoading,
-      renderTrigger: false,
-      body: `Are you sure you want to ${assignRoleChangeLabel.value.toLocaleLowerCase()} with name ${user.name} from ${user.role} to ${newRole.value}? This action cannot be undone.`,
-      onConfirm: async () => {
-        try {
+      modal.open({
+        title: "Re-activate Admin Role",
+        description: `Do you want to re-activate ${user.name}'s previous admin role? `,
+        confirmLabel: "Re-activate",
+        confirmColor: "primary",
+        isLoading,
+        renderTrigger: false,
+        body: `Are you sure you want to re-activate ${user.name}'s admin role? Their saved settings and privileges will be restored. `,
+        onConfirm: async () => {
           await userStore.promoteOrDemoteUser({
             userId: user.id,
-            action: user.role === "admin" ? "demote" : "promote",
+            action: "promote",
           });
           close();
-        }
-        catch (error) {
-          console.warn("Role change failed:", error);
-          close();
-        }
-      },
-    });
+        },
+      });
+    }
+    else {
+      const modal = overlay.create(PromoteUserModal);
+      const close = modal.close;
+
+      modal.open({
+        user,
+        isLoading,
+        onConfirm: async (payload: PromoteDemoteSchema) => {
+          try {
+            await userStore.promoteOrDemoteUser(payload);
+            close();
+          }
+          catch (error) {
+            console.warn("Promote failed:", error);
+          }
+        },
+      });
+    }
   };
 
   const getRowItems = (row: Row<UserType>) => {
-    const roleChangeLabels = computed<string>(() => row.original.role === "admin" ? "Demote to Student" : "Promote to Admin");
+    const user = row.original;
+    const roleChangeLabel = computed(() => {
+      if (user.role === "admin")
+        return "Demote to Student";
+      if (user.admin?.id)
+        return "Re-activate Admin Role";
+      return "Promote to Admin";
+    });
 
     return [
       {
@@ -92,19 +136,19 @@ export function useUserRowColumn(
       {
         label: "View user details",
         icon: "i-lucide-eye",
-        onSelect: () => openDetailsModal(row.original),
+        onSelect: () => openDetailsModal(user),
       },
       {
-        label: roleChangeLabels.value,
+        label: roleChangeLabel.value,
         icon: "i-lucide-refresh-cw",
-        onSelect: () => openPromoteDemoteUserModal(row.original),
+        onSelect: () => openPromoteDemoteUserModal(user),
       },
       {
         label: "Delete user",
         icon: "i-lucide-trash-2",
         color: "error",
         onSelect: () => {
-          openDeleteUserModal(row.original.id, row.original.name);
+          openDeleteUserModal(user.id, user.name);
         },
       },
     ];

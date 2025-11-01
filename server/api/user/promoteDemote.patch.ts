@@ -101,14 +101,19 @@ export default defineEventHandler(async (event) => {
         };
       }
 
-      case "promote":{
+      case "promote": {
+        const promotionPayload: Parameters<typeof createOrUpdateAdminForUser>[1] = {
+          phoneNumber,
+          department,
+          accessLevel,
+        };
+
+        if (hostelId !== undefined) {
+          promotionPayload.hostelId = hostelId;
+        }
+
         if (adminMakingRequest.accessLevel === "super") {
-          const promotedAdmin = await createOrUpdateAdminForUser(userId, {
-            phoneNumber: phoneNumber ?? "",
-            department: department ?? "",
-            accessLevel: accessLevel ?? "regular",
-            hostelId: typeof hostelId === "number" ? hostelId : null,
-          });
+          const promotedAdmin = await createOrUpdateAdminForUser(userId, promotionPayload);
           return {
             message: "User successfully promoted.",
             data: promotedAdmin,
@@ -136,12 +141,9 @@ export default defineEventHandler(async (event) => {
           });
         }
 
-        const promotedAdmin = await createOrUpdateAdminForUser(userId, {
-          phoneNumber: phoneNumber ?? "",
-          department: department ?? "",
-          accessLevel: (accessLevel as "regular" | "support") ?? "regular",
-          hostelId: adminMakingRequest.hostelId,
-        });
+        promotionPayload.hostelId = adminMakingRequest.hostelId;
+
+        const promotedAdmin = await createOrUpdateAdminForUser(userId, promotionPayload);
 
         return {
           message: `User promoted to admin for hostel ID ${adminMakingRequest.hostelId}.`,

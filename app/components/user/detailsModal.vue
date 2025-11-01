@@ -33,11 +33,11 @@ const assignedHostel = ref<string | null>(null);
           :key="item.key"
           class="flex items-center pb-2 border-muted border-b last:border-b-0"
         >
-          <div class="w-1/3 font-medium text-white text-base">
+          <div class="w-1/3 font-medium text-base">
             {{ item.key }}
           </div>
 
-          <div class="w-2/5 text-white text-base">
+          <div class="w-2/5 text-base">
             {{ item.value }}
           </div>
         </div>

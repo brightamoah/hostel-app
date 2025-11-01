@@ -58,26 +58,30 @@ export function useUserFilters(table: UserTableType, data: DataType) {
     }
   };
 
+  const tableState = computed(() => safeTableApi()?.getState());
+
   const selectedUsersLength = computed(() => {
+    if (!tableState.value)
+      return 0;
     const tableApi = safeTableApi();
     return tableApi?.getFilteredSelectedRowModel?.().rows.length ?? 0;
   });
 
   const defaultPage = computed<number>(() => {
-    const tableApi = safeTableApi();
-    const pageIndex = tableApi?.getState?.().pagination?.pageIndex;
+    const pageIndex = tableState.value?.pagination?.pageIndex;
     return (typeof pageIndex === "number" ? pageIndex : 0) + 1;
   });
 
   const itemsPerPage = computed<number>(() => {
-    const tableApi = safeTableApi();
-    const pageSize = tableApi?.getState?.().pagination?.pageSize;
+    const pageSize = tableState.value?.pagination?.pageSize;
     return typeof pageSize === "number" ? pageSize : 10;
   });
 
   const totalUsers = computed<number>(() => {
+    if (!tableState.value)
+      return data.value?.users?.length ?? 0;
     const tableApi = safeTableApi();
-    return tableApi?.getPreFilteredRowModel().rows.length ?? (data.value?.users?.length ?? 0);
+    return tableApi?.getPreFilteredRowModel().rows.length ?? 0;
   });
 
   const updatePage = (p: number) => {
@@ -90,39 +94,27 @@ export function useUserFilters(table: UserTableType, data: DataType) {
   };
 
   const currentUserShowing = computed(() => {
-    const tableApi = safeTableApi();
-    if (!tableApi)
+    const state = tableState.value?.pagination;
+    if (!state)
       return 0;
 
-    try {
-      const state = tableApi.getState?.().pagination ?? tableApi.getState().pagination;
-      const pageIndex = typeof state?.pageIndex === "number" ? state.pageIndex : 0;
-      const pageSize = typeof state?.pageSize === "number" ? state.pageSize : 10;
+    const pageIndex = typeof state.pageIndex === "number" ? state.pageIndex : 0;
+    const pageSize = typeof state.pageSize === "number" ? state.pageSize : 10;
+    const filteredCount = safeTableApi()?.getFilteredRowModel().rows.length ?? 0;
 
-      const filteredCount = tableApi.getFilteredRowModel().rows.length;
-      return pageIndex * pageSize + (filteredCount > 0 ? 1 : 0); ;
-    }
-    catch {
-      return 0;
-    }
+    return pageIndex * pageSize + (filteredCount > 0 ? 1 : 0);
   });
 
   const lastUserShowing = computed(() => {
-    const tableApi = safeTableApi();
-    if (!tableApi)
+    const state = tableState.value?.pagination;
+    if (!state)
       return 0;
 
-    try {
-      const state = tableApi.getState?.().pagination ?? tableApi.getState().pagination;
-      const pageIndex = typeof state?.pageIndex === "number" ? state.pageIndex : 0;
-      const pageSize = typeof state?.pageSize === "number" ? state.pageSize : 10;
+    const pageIndex = typeof state.pageIndex === "number" ? state.pageIndex : 0;
+    const pageSize = typeof state.pageSize === "number" ? state.pageSize : 10;
+    const filteredCount = safeTableApi()?.getFilteredRowModel().rows.length ?? 0;
 
-      const filteredCount = tableApi.getFilteredRowModel().rows.length;
-      return Math.min((pageIndex + 1) * pageSize, filteredCount);
-    }
-    catch {
-      return tableApi.getFilteredRowModel().rows.length;
-    }
+    return Math.min((pageIndex + 1) * pageSize, filteredCount);
   });
 
   const selectedUserIds = computed(() => {

@@ -215,7 +215,7 @@ const promoteDemoteSchema = z.object({
   accessLevel: accessLevelSchema.optional(),
   phoneNumber: phoneNumberSchema.optional(),
   department: departmentSchema.optional(),
-  hostelId: hostelIdSchema,
+  hostelId: hostelIdSchema.nullable(),
 });
 
 export type PromoteDemoteSchema = z.output<typeof promoteDemoteSchema>;

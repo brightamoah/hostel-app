@@ -260,22 +260,24 @@ export const userQueries = defineEventHandler(async () => {
   };
 
   const createOrUpdateAdminForUser = async (userId: number, payload: {
-    phoneNumber: string;
-    department: string;
-    accessLevel: "regular" | "super" | "support";
-    hostelId: number | null;
+    phoneNumber?: string;
+    department?: string;
+    accessLevel?: "regular" | "super" | "support";
+    hostelId?: number | null;
   }) => {
     return await db.transaction(async (tx) => {
       const existingAdmin = await tx.query.admin.findFirst({
         where: eq(admin.userId, userId),
-        columns: { id: true },
       });
 
       if (existingAdmin) {
         const [updatedUser] = await tx
           .update(admin)
           .set({
-            ...payload,
+            phoneNumber: payload.phoneNumber ?? existingAdmin.phoneNumber,
+            department: payload.department ?? existingAdmin.department,
+            accessLevel: payload.accessLevel ?? existingAdmin.accessLevel,
+            hostelId: payload.hostelId === undefined ? existingAdmin.hostelId : payload.hostelId,
             status: "active",
           })
           .where(eq(admin.userId, userId))
@@ -289,7 +291,10 @@ export const userQueries = defineEventHandler(async () => {
         .insert(admin)
         .values({
           userId,
-          ...payload,
+          phoneNumber: payload.phoneNumber!,
+          department: payload.department!,
+          accessLevel: payload.accessLevel!,
+          hostelId: payload.hostelId,
           status: "active",
         })
         .returning();
