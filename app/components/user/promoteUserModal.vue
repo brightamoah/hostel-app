@@ -20,12 +20,14 @@ const isMobile = useMediaQuery("(max-width: 640px)");
 const promoteFormRef = useTemplateRef("promoteFormRef");
 
 const accessLevels = computed(() => {
-  const levels: Exclude<PromoteDemoteSchema["accessLevel"], undefined>[] = ["regular", "support"];
+  const levels: { label: string; value: PromoteDemoteSchema["accessLevel"] }[] = [{ label: "Regular", value: "regular" }, { label: "Support", value: "support" }];
   if (currentUser.value?.adminData?.accessLevel === "super") {
-    levels.push("super");
+    levels.push({ label: "Super Admin", value: "super" });
   }
   return levels;
 });
+
+const { hostelItem } = useFetchRoomData();
 
 const isLoadingValue = computed(() => unref(isLoading));
 
@@ -54,10 +56,6 @@ function onPromoteSubmit(event: FormSubmitEvent<Omit<PromoteDemoteSchema, "userI
     userId: user.id,
     action: "promote",
   });
-
-  if (!isLoading) {
-    open.value = false;
-  }
 }
 </script>
 
@@ -78,7 +76,7 @@ function onPromoteSubmit(event: FormSubmitEvent<Omit<PromoteDemoteSchema, "userI
       <UForm
         ref="promoteFormRef"
         :state="promoteUserState"
-        :schema="promoteDemoteSchema.pick({ accessLevel: true, phoneNumber: true, department: true })"
+        :schema="promoteDemoteSchema.pick({ accessLevel: true, phoneNumber: true, department: true, hostelId: true })"
         @submit="onPromoteSubmit"
       >
         <div class="flex md:flex-row flex-col justify-between gap-5 mb-4 px-4">
@@ -121,8 +119,28 @@ function onPromoteSubmit(event: FormSubmitEvent<Omit<PromoteDemoteSchema, "userI
             <USelectMenu
               v-model="promoteUserState.accessLevel"
               :items="accessLevels"
+              :size="isMobile ? 'lg' : 'xl'"
+              value-key="value"
               placeholder="Select Admin Access Level"
               class="w-full cursor-pointer"
+            />
+          </UFormField>
+
+          <UFormField
+            v-if="currentUser
+              && currentUser.adminData
+              && currentUser.adminData.accessLevel === 'super'"
+            required
+            label="Hostels"
+            name="hostelId"
+            class="w-full"
+          >
+            <USelectMenu
+              v-model="promoteUserState.hostelId"
+              placeholder="Select Hostel To Assign"
+              class="w-full cursor-pointer"
+              value-key="value"
+              :items="hostelItem"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -135,7 +153,7 @@ function onPromoteSubmit(event: FormSubmitEvent<Omit<PromoteDemoteSchema, "userI
         <UButton
           label="Cancel"
           color="error"
-          variant="outline"
+          variant="subtle"
           class="cursor-pointer"
           :disabled="isLoadingValue"
           @click="close"

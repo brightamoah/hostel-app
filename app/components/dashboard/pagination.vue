@@ -1,25 +1,22 @@
 <script setup lang="ts" generic="T extends object">
 import type { Table } from "@tanstack/table-core";
 
-const { table, totalItems, defaultPage = 1, itemsPerPage = 10 } = defineProps<{
+const { totalItems, page, itemsPerPage, items } = defineProps<{
   items: T[];
   table?: Table<T>;
   totalItems: number;
   selectedItemsLength: number;
   currentItemsShowing: number;
   lastItemShowing: number;
-  defaultPage?: number;
+  page?: number;
   itemsPerPage?: number;
-  updatePage: (page: number) => void;
 }>();
 
-const displayTotal = computed(() => {
-  const tableRowCount = table?.getFilteredRowModel().rows.length;
-  if (typeof tableRowCount === "number") {
-    return tableRowCount;
-  }
-  return totalItems;
-});
+const emit = defineEmits<{
+  "update:page": [ page: number];
+}>();
+
+const displayTotal = computed(() => totalItems ?? items.length);
 </script>
 
 <template>
@@ -30,7 +27,7 @@ const displayTotal = computed(() => {
         {{ displayTotal }} row(s) selected.
       </template>
 
-      <template v-else-if="items.length > 0 && table">
+      <template v-else-if="items.length > 0">
         Showing
         {{ currentItemsShowing }}
         -
@@ -46,10 +43,10 @@ const displayTotal = computed(() => {
 
     <div class="flex items-center gap-1.5">
       <UPagination
-        :page="defaultPage"
+        :model-value="page"
         :items-per-page
         :total="displayTotal"
-        @update:page="updatePage"
+        @update:page="emit('update:page', $event)"
       />
     </div>
   </div>

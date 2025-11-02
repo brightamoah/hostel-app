@@ -58,6 +58,8 @@ export function useUserFilters(table: UserTableType, data: DataType) {
     }
   };
 
+  const currentPage = ref(0);
+
   const tableState = computed(() => safeTableApi()?.getState());
 
   const selectedUsersLength = computed(() => {
@@ -65,11 +67,6 @@ export function useUserFilters(table: UserTableType, data: DataType) {
       return 0;
     const tableApi = safeTableApi();
     return tableApi?.getFilteredSelectedRowModel?.().rows.length ?? 0;
-  });
-
-  const defaultPage = computed<number>(() => {
-    const pageIndex = tableState.value?.pagination?.pageIndex;
-    return (typeof pageIndex === "number" ? pageIndex : 0) + 1;
   });
 
   const itemsPerPage = computed<number>(() => {
@@ -81,11 +78,12 @@ export function useUserFilters(table: UserTableType, data: DataType) {
     if (!tableState.value)
       return data.value?.users?.length ?? 0;
     const tableApi = safeTableApi();
-    return tableApi?.getPreFilteredRowModel().rows.length ?? 0;
+    return tableApi?.getFilteredRowModel().rows.length ?? 0;
   });
 
   const updatePage = (p: number) => {
     try {
+      currentPage.value = p;
       safeTableApi()?.setPageIndex?.(p - 1);
     }
     catch (e) {
@@ -139,6 +137,23 @@ export function useUserFilters(table: UserTableType, data: DataType) {
     return items;
   });
 
+  watch(() => tableState.value?.pagination?.pageIndex, (newIndex) => {
+    if (typeof newIndex === "number") {
+      currentPage.value = newIndex + 1;
+    }
+  });
+
+  watch(
+    () => data.value?.users?.length,
+    () => {
+      nextTick(() => {
+        const tableApi = safeTableApi();
+        if (tableApi)
+          tableApi.setPageIndex(0);
+      });
+    },
+  );
+
   watch(() => [statusFilter.value, roleFilter.value], async ([newStatus, newRole]) => {
     await nextTick();
     const tableApi = safeTableApi();
@@ -175,7 +190,7 @@ export function useUserFilters(table: UserTableType, data: DataType) {
     roleFilter,
     roleFilterOptions,
     statusFilterOptions,
-    defaultPage,
+    currentPage,
     itemsPerPage,
     lastUserShowing,
     currentUserShowing,

@@ -117,7 +117,7 @@ useSeoMeta({
       <UForm
         :state
         :schema
-        class="flex flex-col gap-3 w-full max-w-[40rem]"
+        class="flex flex-col gap-3 w-full max-w-160"
         @submit="onSubmit"
       >
         <UFormField
