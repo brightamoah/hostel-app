@@ -92,8 +92,9 @@ const {
   statusFilterOptions,
   roleFilterOptions,
   currentUserShowing,
- currentPage,
+  defaultPage,
   itemsPerPage,
+  updatePage,
   lastUserShowing,
   selectedUserIds,
   selectedUsersLength,
@@ -132,37 +133,6 @@ async function handleDeleteUsers() {
 
 watch([globalFilter, statusFilter, roleFilter], () => {
   pagination.value.pageIndex = 0;
-});
-
-const description = "Admin Users Dashboard Page";
-const image = "/images/hostel.jpg";
-const url = "https://bkamoah.vercel.app/contact";
-
-useHead({
-  titleTemplate: `Kings Hostel Management | ${title.value}`,
-  meta: [
-    { name: "viewport", content: "width=device-width, initial-scale=1.0" },
-    { name: "charset", content: "utf-8" },
-    { name: "color-scheme", content: "light dark" },
-  ],
-  link: [
-    { rel: "icon", type: "image/x-icon", href: "/fav.svg" },
-    { rel: "canonical", href: url },
-  ],
-});
-
-useSeoMeta({
-  title,
-  description,
-  ogTitle: title,
-  ogDescription: description,
-  ogImage: image,
-  ogUrl: url,
-  ogType: "website",
-  twitterCard: "summary_large_image",
-  twitterTitle: title,
-  twitterDescription: description,
-  twitterImage: image,
 });
 </script>
 
@@ -265,13 +235,15 @@ useSeoMeta({
 
         <DashboardPagination
           v-if="userTable && userTable?.tableApi"
-          v-model:page="currentPage"
           :items="users"
-          :total-items="totalUsers ?? users.length"
+          :total-items="totalUsers"
           :selected-items-length="selectedUsersLength"
           :current-items-showing="currentUserShowing"
           :last-item-showing="lastUserShowing"
+          :table="userTable?.tableApi"
+          :default-page
           :items-per-page
+          :update-page
         />
       </template>
     </UDashboardPanel>

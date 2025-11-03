@@ -58,8 +58,6 @@ export function useUserFilters(table: UserTableType, data: DataType) {
     }
   };
 
-  const currentPage = ref(0);
-
   const tableState = computed(() => safeTableApi()?.getState());
 
   const selectedUsersLength = computed(() => {
@@ -69,21 +67,26 @@ export function useUserFilters(table: UserTableType, data: DataType) {
     return tableApi?.getFilteredSelectedRowModel?.().rows.length ?? 0;
   });
 
+  const defaultPage = computed<number>(() => {
+    const pageIndex = tableState.value?.pagination?.pageIndex;
+    return (typeof pageIndex === "number" ? pageIndex : 0) + 1;
+  });
+
   const itemsPerPage = computed<number>(() => {
     const pageSize = tableState.value?.pagination?.pageSize;
     return typeof pageSize === "number" ? pageSize : 10;
   });
 
   const totalUsers = computed<number>(() => {
-    if (!tableState.value)
-      return data.value?.users?.length ?? 0;
     const tableApi = safeTableApi();
-    return tableApi?.getFilteredRowModel().rows.length ?? 0;
+    const tableCount = tableApi?.getFilteredRowModel?.().rows.length ?? 0;
+    const dataCount = data.value?.users?.length ?? 0;
+
+    return tableCount > 0 ? tableCount : dataCount;
   });
 
   const updatePage = (p: number) => {
     try {
-      currentPage.value = p;
       safeTableApi()?.setPageIndex?.(p - 1);
     }
     catch (e) {
@@ -137,19 +140,15 @@ export function useUserFilters(table: UserTableType, data: DataType) {
     return items;
   });
 
-  watch(() => tableState.value?.pagination?.pageIndex, (newIndex) => {
-    if (typeof newIndex === "number") {
-      currentPage.value = newIndex + 1;
-    }
-  });
-
   watch(
-    () => data.value?.users?.length,
+    () => [data.value?.users?.length, totalUsers.value],
     () => {
       nextTick(() => {
         const tableApi = safeTableApi();
+        const pageSize = tableState.value?.pagination.pageSize || 10;
         if (tableApi)
           tableApi.setPageIndex(0);
+        tableApi?.setPageSize(pageSize);
       });
     },
   );
@@ -190,7 +189,7 @@ export function useUserFilters(table: UserTableType, data: DataType) {
     roleFilter,
     roleFilterOptions,
     statusFilterOptions,
-    currentPage,
+    defaultPage,
     itemsPerPage,
     lastUserShowing,
     currentUserShowing,
