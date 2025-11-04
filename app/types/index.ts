@@ -1,7 +1,7 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Table } from "@tanstack/table-core";
 import type { User } from "#auth-utils";
-import type { allocation } from "~~/server/db/schema";
+import type { allocation, visitor, visitorLogs } from "~~/server/db/schema";
 import type { useDB } from "~~/server/utils/db";
 import type { randomUUID } from "uncrypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
@@ -104,6 +104,8 @@ export type Hostel = {
   status: "active" | "inactive" | "under renovation";
 };
 
+export type Visitor = typeof visitor.$inferSelect;
+
 export type RoomDataResponse = {
   rooms: Room[];
   totalRooms: number;
@@ -123,6 +125,10 @@ export interface UserDataResponse {
   totalAdmins: number;
   activeStudents: number;
 };
+
+export interface VisitorDataResponse {
+  visitors: Visitor[];
+}
 
 export interface RoomDetailResponse {
   room: Room;
@@ -203,3 +209,4 @@ export interface AdminUser {
 }
 
 export type Allocation = typeof allocation.$inferSelect;
+export type VisitorLog = typeof visitorLogs.$inferSelect;
