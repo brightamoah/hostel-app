@@ -92,7 +92,7 @@ export function useFetchUserData() {
     }
     catch (err) {
       // Log and rethrow so callers can handle errors
-      console.error("[useFetchRoomData] refresh failed", err);
+      console.error("[useFetchUserData] refresh failed", err);
       throw err;
     }
     finally {

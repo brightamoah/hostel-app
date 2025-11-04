@@ -83,7 +83,7 @@ const { data: stats } = await useAsyncData<Stat[]>("stats", async () => {
         leading: 'p-2.5 rounded-full bg-primary/10 ring ring-inset ring-primary/25 flex-col',
         title: 'font-normal text-muted text-xs uppercase',
       }"
-      class="hover:z-1 border-b-1 hover:border-b-3 first:border-b-error rounded-lg transition-all duration-300 ease-in-out"
+      class="hover:z-1 border-b hover:border-b-3 first:border-b-error rounded-lg transition-all duration-300 ease-in-out"
       :class="{
         'border-b-primary': stat.color === 'primary',
         'border-b-error': stat.color === 'error',

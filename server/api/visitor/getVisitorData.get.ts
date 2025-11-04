@@ -34,13 +34,14 @@ export default defineEventHandler(async (event) => {
 
     const visitors = await getScopedVisitors(adminMakingRequest);
 
-    const { approved, checkedIn, pending } = await getVisitorStatusCount(adminMakingRequest);
+    const { approved, checkedIn, pending, totalVisitors } = await getVisitorStatusCount(adminMakingRequest);
 
     return {
       visitors,
       approved,
       checkedIn,
       pending,
+      totalVisitors,
       message: `Fetched visitor data for ${adminMakingRequest.accessLevel} admin`,
     };
   }

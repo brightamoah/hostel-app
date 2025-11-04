@@ -176,6 +176,7 @@ export const visitorQueries = defineEventHandler(async () => {
 
     const [result] = await db
       .select({
+        totalVisitors: count(visitor.id),
         approved: count(sql`CASE WHEN ${visitor.status} = 'approved' THEN 1 END`),
         checkedIn: count(sql`CASE WHEN ${visitor.status} = 'checked-in' THEN 1 END`),
         pending: count(sql`CASE WHEN ${visitor.status} = 'pending' THEN 1 END`),
@@ -184,6 +185,7 @@ export const visitorQueries = defineEventHandler(async () => {
       .where(whereConditions.length > 0 ? and(...whereConditions) : undefined);
 
     return {
+      totalVisitors: result?.totalVisitors,
       approved: result?.approved,
       checkedIn: result?.checkedIn,
       pending: result?.pending,
@@ -198,3 +200,5 @@ export const visitorQueries = defineEventHandler(async () => {
     getVisitorStatusCount,
   };
 });
+
+export type Visitor = NonNullable<Awaited<ReturnType<Awaited<ReturnType<typeof visitorQueries>>["getVisitorById"]>>>;

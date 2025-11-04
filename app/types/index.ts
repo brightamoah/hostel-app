@@ -1,11 +1,15 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Table } from "@tanstack/table-core";
 import type { User } from "#auth-utils";
-import type { allocation, visitor, visitorLogs } from "~~/server/db/schema";
+import type { Visitor } from "~~/server/db/queries/visitor";
+import type { allocation, visitorLogs } from "~~/server/db/schema";
 import type { useDB } from "~~/server/utils/db";
 import type { randomUUID } from "uncrypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
+
+export type Allocation = typeof allocation.$inferSelect;
+export type VisitorLog = typeof visitorLogs.$inferSelect;
 
 type FormFieldType = "select" | "checkbox" | "password" | "otp" | "email" | "text";
 
@@ -104,8 +108,6 @@ export type Hostel = {
   status: "active" | "inactive" | "under renovation";
 };
 
-export type Visitor = typeof visitor.$inferSelect;
-
 export type RoomDataResponse = {
   rooms: Room[];
   totalRooms: number;
@@ -128,6 +130,10 @@ export interface UserDataResponse {
 
 export interface VisitorDataResponse {
   visitors: Visitor[];
+  approved: number;
+  checkedIn: number;
+  pending: number;
+  totalVisitors: number;
 }
 
 export interface RoomDetailResponse {
@@ -162,6 +168,11 @@ export type RoomTableType = Readonly<ShallowRef<ShallowUnwrapRef<{
 export type UserTableType = Readonly<ShallowRef<ShallowUnwrapRef<{
   tableRef: Ref<HTMLTableElement | null, HTMLTableElement | null>;
   tableApi: Table<UserType>;
+}> | null>>;
+
+export type VisitorTableType = Readonly<ShallowRef<ShallowUnwrapRef<{
+  tableRef: Ref<HTMLTableElement | null, HTMLTableElement | null>;
+  tableApi: Table<Visitor>;
 }> | null>>;
 
 export interface FilterOption {
@@ -207,6 +218,3 @@ export interface AdminUser {
   accessLevel: "regular" | "super" | "support" | "";
   department: string;
 }
-
-export type Allocation = typeof allocation.$inferSelect;
-export type VisitorLog = typeof visitorLogs.$inferSelect;

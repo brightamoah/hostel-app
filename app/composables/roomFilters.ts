@@ -1,6 +1,4 @@
-import { upperFirst } from "scule";
-
-import type { RoomDataResponse, RoomTableType } from "~/types";
+import type { Room, RoomDataResponse, RoomTableType } from "~/types";
 
 type DataType = globalThis.Ref<RoomDataResponse, RoomDataResponse>;
 
@@ -58,102 +56,18 @@ export function useRoomFilters(table: RoomTableType, data: DataType) {
     })),
   ]);
 
-  const safeTableApi = () => {
-    try {
-      return table?.value?.tableApi ?? null;
-    }
-    catch {
-      return null;
-    }
-  };
-
-  const selectedRoomsLength = computed<number>(() => {
-    const tableApi = safeTableApi();
-    return tableApi?.getFilteredSelectedRowModel?.().rows.length ?? 0;
-  });
-
-  const defaultPage = computed<number>(() => {
-    const tableApi = safeTableApi();
-    const pageIndex = tableApi?.getState?.().pagination?.pageIndex;
-    return (typeof pageIndex === "number" ? pageIndex : 0) + 1;
-  });
-
-  const itemsPerPage = computed<number>(() => {
-    const tableApi = safeTableApi();
-    const pageSize = tableApi?.getState?.().pagination?.pageSize;
-    return typeof pageSize === "number" ? pageSize : 10;
-  });
-
-  const totalRooms = computed<number>(() => {
-    const tableApi = safeTableApi();
-    return tableApi?.getFilteredRowModel().rows.length ?? (data.value?.rooms?.length ?? 0);
-  });
-
-  const updatePage = (p: number) => {
-    try {
-      safeTableApi()?.setPageIndex?.(p - 1);
-    }
-    catch (e) {
-      console.warn("updatePage skipped:", e);
-    }
-  };
-
-  const currentRoomsShowing = computed(() => {
-    const tableApi = safeTableApi();
-    if (!tableApi)
-      return 0;
-
-    try {
-      const state = tableApi.getState?.().pagination ?? tableApi.getState().pagination;
-      const pageIndex = typeof state?.pageIndex === "number" ? state.pageIndex : 0;
-      const pageSize = typeof state?.pageSize === "number" ? state.pageSize : 10;
-
-      const filteredCount = tableApi.getFilteredRowModel().rows.length;
-      return pageIndex * pageSize + (filteredCount > 0 ? 1 : 0);
-    }
-    catch {
-      return 0;
-    }
-  });
-
-  const lastRoomShowing = computed(() => {
-    const tableApi = safeTableApi();
-    if (!tableApi)
-      return 0;
-    try {
-      const state = tableApi.getState?.().pagination ?? tableApi.getState().pagination;
-      const pageIndex = typeof state?.pageIndex === "number" ? state.pageIndex : 0;
-      const pageSize = typeof state?.pageSize === "number" ? state.pageSize : 10;
-
-      const filteredCount = tableApi.getFilteredRowModel().rows.length;
-      return Math.min((pageIndex + 1) * pageSize, filteredCount);
-    }
-    catch {
-      return tableApi.getFilteredRowModel().rows.length;
-    }
-  });
-
-  const selectedRoomIds = computed(() => {
-    const tableApi = safeTableApi();
-    return { ids: tableApi?.getFilteredSelectedRowModel().rows.map(r => r.original.id) ?? [] };
-  });
-
-  const itemsToDisplay = computed(() => {
-    const tableApi = safeTableApi();
-    const items = tableApi?.getAllColumns().filter((column: any) => column.getCanHide()).map((column: any) => ({
-      label: upperFirst(column.id),
-      type: "checkbox" as const,
-      checked: column.getIsVisible(),
-      onUpdateChecked(checked: boolean) {
-        tableApi?.getColumn(column.id)?.toggleVisibility(!!checked);
-      },
-      onSelect(e?: Event) {
-        e?.preventDefault();
-      },
-    }));
-
-    return items;
-  });
+  const {
+    safeTableApi,
+    updatePage,
+    selectedItemsLength: selectedRoomsLength,
+    totalItems: totalRooms,
+    currentItemShowing: currentRoomsShowing,
+    lastItemShowing: lastRoomShowing,
+    selectedIds: selectedRoomIds,
+    defaultPage,
+    itemsToDisplay,
+    itemsPerPage,
+  } = useTableFilters<Room>(table, data, "rooms");
 
   watch(() => [statusFilter.value, buildingFilter.value, floorFilter.value], async ([newStatus, newBuilding, newFloor]) => {
     await nextTick();
@@ -209,7 +123,7 @@ export function useRoomFilters(table: RoomTableType, data: DataType) {
     currentRoomsShowing,
     lastRoomShowing,
     selectedRoomIds,
-    updatePage,
     itemsToDisplay,
+    updatePage,
   };
 }

@@ -1,8 +1,10 @@
+// oxlint-disable no-unused-vars
 import { relations, sql } from "drizzle-orm";
 import { check, pgEnum, pgTable } from "drizzle-orm/pg-core";
 
 import { hostel } from "./room";
-import { admin, student } from "./user";
+// eslint-disable-next-line unused-imports/no-unused-imports
+import { admin, student, user } from "./user";
 
 export const visitorStatusEnum = pgEnum("visitor_status", [
   "checked-in",
