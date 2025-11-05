@@ -47,8 +47,7 @@ export function useTableFilters<T extends { id: number }>(
     const dataItems = data.value?.[dataKey] as T[] | undefined;
     const dataCount = dataItems?.length ?? 0;
 
-    // Prefer table count once it's ready, otherwise fallback to raw data count
-    return tableApi ? tableCount : dataCount;
+    return tableCount > 0 ? tableCount : dataCount;
   });
 
   const updatePage = (p: number) => {
@@ -107,6 +106,16 @@ export function useTableFilters<T extends { id: number }>(
         e?.preventDefault();
       },
     }));
+  });
+
+  watch(() => [data.value?.[dataKey]?.length, totalItems.value], () => {
+    nextTick(() => {
+      const tableApi = safeTableApi();
+      const pageSize = tableState.value?.pagination.pageSize || 10;
+      if (tableApi)
+        tableApi.setPageIndex(0);
+      tableApi?.setPageSize(pageSize);
+    });
   });
 
   return {

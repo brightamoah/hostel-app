@@ -2,16 +2,19 @@ import type { TableColumn } from "@nuxt/ui";
 import type { Column, Row } from "@tanstack/table-core";
 import type { Visitor } from "~~/server/db/queries/visitor";
 
+import type { ColorType, Component } from "~/types";
+
 export function useVisitorRowColumn(
   UAvatar: Component,
   UButton: Component,
   UBadge: Component,
   UDropdownMenu: Component,
   UCheckbox: Component,
-  UIcon: Component,
+  // UIcon: Component,
 ) {
   const getRowItems = (row: Row<Visitor>) => {
-    return [
+    const visitor = row.original;
+    const actions = [
       {
         type: "label",
         label: "Actions",
@@ -19,28 +22,49 @@ export function useVisitorRowColumn(
       {
         label: "View Visitor Details",
         icon: "i-lucide-eye",
-        onselect: () => {},
+        onSelect: () => {
+          console.table(visitor);
+        },
       },
       {
         label: "Check In Visitor",
         icon: "i-lucide-log-in",
-        onselect: () => {},
+        onSelect: () => { },
       },
       {
         label: "Check Out Visitor",
         icon: "i-lucide-log-out",
-        onselect: () => {},
+        onSelect: () => { },
       },
       {
         label: "Delete Visitor",
         icon: "i-lucide-trash-2",
-        variant: "error",
-        onselect: () => {},
+        color: "error",
+        onSelect: () => { },
       },
     ];
+
+    if (visitor.status === "pending") {
+      actions.push(
+        {
+          label: "Approve Visitor",
+          icon: "i-lucide-check-circle",
+          color: "success",
+          onSelect: () => { },
+        },
+        {
+          label: "Deny Visitor",
+          icon: "i-lucide-x-circle",
+          color: "error",
+          onSelect: () => { },
+        },
+      );
+    }
+
+    return actions;
   };
 
-  const statusColorMap: Record<Visitor["status"], string> = {
+  const statusColorMap: Record<Visitor["status"], ColorType> = {
     "pending": "warning",
     "approved": "info",
     "checked-in": "success",
@@ -110,19 +134,100 @@ export function useVisitorRowColumn(
       },
     },
     {
-     id: "student",
+      id: "student",
       header: createSortableHeader("Student"),
       cell: ({ row }) => {
         const studentUser = row.original.student?.user;
+        const studentAllocation = row.original.student?.allocations[0];
+
         if (!studentUser) {
-          return h("span", "N/A"); 
+          return h("span", "N/A");
         }
 
-        return h("div", { class: "flex items-center gap-3" }, [
-          h("p", {class: "font-medium text-highlighted"}, studentUser.name),
-        ])
-      }
-    }
+        return h("div", { class: "flex flex-col" }, [
+          h("p", { class: "font-medium text-highlighted" }, studentUser.name),
+          h("p", { class: "text-sm" }, `${studentUser.email}`),
+          studentAllocation && h("p", { class: "text-sm text-muted" }, `Room: ${studentAllocation.room.roomNumber} (${studentAllocation.room?.hostel?.name})`,
+          ),
+        ]);
+      },
+    },
+    {
+      accessorKey: "relationship",
+      header: createSortableHeader("Relationship"),
+      cell: ({ row }) => {
+        return h("span", { class: "capitalize font-medium text-default" }, row.original.relationship);
+      },
+    },
+    {
+      accessorKey: "visitDate",
+      header: createSortableHeader("Visit Date"),
+      cell: ({ row }) => {
+        return h("span", { class: "font-medium text-default" }, new Date(row.original.visitDate).toLocaleDateString());
+      },
+    },
+    {
+      id: "checkIn",
+      header: createSortableHeader("Last Check-In"),
+      cell: ({ row }) => {
+        const lastLog = row.original.visitorLogs.find(log => log.action === "check_in");
+        if (!lastLog) {
+          return h("span", "N/A");
+        }
+        return h("span", { class: "font-medium text-default" }, new Date(lastLog.timestamp).toLocaleString());
+      },
+    },
+    {
+      id: "checkOut",
+      header: createSortableHeader("Last Check-Out"),
+      cell: ({ row }) => {
+        const lastLog = row.original.visitorLogs.find(log => log.action === "check_out");
+        if (!lastLog) {
+          return h("span", "N/A");
+        }
+        return h("span", { class: "font-medium text-default" }, new Date(lastLog.timestamp).toLocaleString());
+      },
+    },
+    {
+      accessorKey: "status",
+      header: createSortableHeader("Status"),
+      cell: ({ row }) => {
+        return h(UBadge, {
+          label: row.original.status.replace("-", " "),
+          color: statusColorMap[row.original.status],
+          variant: "subtle",
+          class: "capitalize",
+        });
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) =>
+        h(
+          "div",
+          { class: "text-center" },
+          [
+            h(UDropdownMenu, {
+              arrow: true,
+              content: {
+                align: "center",
+              },
+              items: getRowItems(row),
+              ui: {
+                item: "cursor-pointer rounded",
+              },
+            }, () =>
+              h(UButton, {
+                icon: "i-lucide-ellipsis-vertical",
+                color: "neutral",
+                variant: "ghost",
+                class: "ml-auto cursor-pointer",
+              })),
+          ],
+        ),
+    },
+
   ]);
 
   return {

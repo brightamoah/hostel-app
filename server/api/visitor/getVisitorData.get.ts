@@ -32,6 +32,13 @@ export default defineEventHandler(async (event) => {
       });
     }
 
+    console.log("Admin making request:", {
+      id: adminMakingRequest.id,
+      user: session.user,
+      accessLevel: adminMakingRequest.accessLevel,
+      hostelId: adminMakingRequest.hostelId,
+    });
+
     const visitors = await getScopedVisitors(adminMakingRequest);
 
     const { approved, checkedIn, pending, totalVisitors } = await getVisitorStatusCount(adminMakingRequest);

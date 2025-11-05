@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getPaginationRowModel } from "@tanstack/table-core";
+
 import type { StatsCard } from "~/types";
 
 definePageMeta({
@@ -6,9 +8,18 @@ definePageMeta({
   layout: "admin-dashboard",
 });
 
+const UButton = resolveComponent("UButton");
+const UBadge = resolveComponent("UBadge");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
+const UCheckbox = resolveComponent("UCheckbox");
+const UAvatar = resolveComponent("UAvatar");
+// const UIcon = resolveComponent("UIcon");
+
 const title = ref("Visitors Dashboard");
-const globalFilter = ref("");
 const tableRef = useTemplateRef("tableRef");
+const globalFilter = ref("");
+const columnVisibility = ref<{ [key: string | number]: boolean }>({ id: false });
+const rowSelection = ref({});
 
 const {
   data,
@@ -64,7 +75,27 @@ const {
   statusFilter,
   statusFilterOptions,
   dateFilterOptions,
+  currentVisitorShowing,
+  lastVisitorShowing,
+  totalVisitors,
+  selectedVisitorsLength,
+  itemsPerPage,
+  defaultPage,
+  updatePage,
 } = useVisitorFilters(tableRef, data);
+
+const { columns, getRowItems } = useVisitorRowColumn(
+  UAvatar,
+  UButton,
+  UBadge,
+  UDropdownMenu,
+  UCheckbox,
+);
+
+const pagination = ref({
+  pageIndex: 0,
+  pageSize: 10,
+});
 </script>
 
 <template>
@@ -103,9 +134,39 @@ const {
 
         <UTable
           ref="tableRef"
+          v-model:global-filter="globalFilter"
+          v-model:pagination="pagination"
+          v-model:column-visibility="columnVisibility"
+          v-model:row-selection="rowSelection"
           class="mt-6 max-w-[95dvw] md:max-w-full shrink-0"
           row-key="id"
+          :columns
+          :get-row-items
           :data="visitors"
+          :loading="status === 'pending'"
+          :pagination-options="{
+            getPaginationRowModel: getPaginationRowModel(),
+          }"
+          :ui="{
+            base: 'table-fixed border-separate border-spacing-0',
+            thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+            tbody: '[&>tr]:last:[&>td]:border-b-0',
+            th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+            td: 'border-b border-default',
+          }"
+        />
+
+        <DashboardPagination
+          v-if="tableRef && tableRef?.tableApi"
+          :items="visitors"
+          :total-items="totalVisitors"
+          :selected-items-length="selectedVisitorsLength"
+          :current-items-showing="currentVisitorShowing"
+          :last-item-showing="lastVisitorShowing"
+          :table="tableRef?.tableApi"
+          :default-page
+          :items-per-page
+          :update-page
         />
       </template>
     </UDashboardPanel>

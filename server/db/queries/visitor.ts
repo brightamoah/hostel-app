@@ -2,17 +2,36 @@ import { and, count, desc, eq, sql } from "drizzle-orm";
 
 import type { Admin, VisitorLog } from "~/types";
 
-import { visitor, visitorLogs } from "../schema";
+import { allocation, visitor, visitorLogs } from "../schema";
 
 const visitorWithRelations = {
   with: {
     student: {
+      columns: {},
       with: {
         user: {
           columns: {
             name: true,
             email: true,
             image: true,
+          },
+        },
+        allocations: {
+          where: eq(allocation.status, "active"),
+          with: {
+            room: {
+              columns: {
+                roomNumber: true,
+                building: true,
+              },
+              with: {
+                hostel: {
+                  columns: {
+                    name: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -26,6 +45,7 @@ const visitorWithRelations = {
       orderBy: desc(visitorLogs.timestamp),
       with: {
         admin: {
+          columns: {},
           with: {
             user: {
               columns: {
@@ -39,6 +59,7 @@ const visitorWithRelations = {
       },
     },
     admin: {
+      columns: {},
       with: {
         user: {
           columns: {
@@ -50,7 +71,7 @@ const visitorWithRelations = {
       },
     },
   },
-};
+} as const;
 
 export const visitorQueries = defineEventHandler(async () => {
   const { db } = useDB();
@@ -58,7 +79,15 @@ export const visitorQueries = defineEventHandler(async () => {
   // type Visitor = NonNullable<Awaited<ReturnType<typeof db.query.visitor.findFirst<typeof visitorWithRelations>>>>;
 
   const getScopedVisitors = async (admin: Admin) => {
+    console.log("getScopedVisitors called with admin:", {
+      id: admin.id,
+      // userId: admin.userId,
+      accessLevel: admin.accessLevel,
+      hostelId: admin.hostelId,
+    });
+
     if (admin.accessLevel === "super") {
+      console.log("Fetching all visitors for super admin");
       return await db.query.visitor.findMany({
         ...visitorWithRelations,
         orderBy: desc(visitor.visitDate),
@@ -68,6 +97,7 @@ export const visitorQueries = defineEventHandler(async () => {
     if (!admin.hostelId)
       return [];
 
+    console.log("Fetching visitors for hostel:", admin.hostelId);
     return await db.query.visitor.findMany({
       ...visitorWithRelations,
       where: eq(visitor.hostelId, admin.hostelId),
@@ -201,4 +231,7 @@ export const visitorQueries = defineEventHandler(async () => {
   };
 });
 
-export type Visitor = NonNullable<Awaited<ReturnType<Awaited<ReturnType<typeof visitorQueries>>["getVisitorById"]>>>;
+// export type Visitor = NonNullable<Awaited<ReturnType<Awaited<ReturnType<typeof visitorQueries>>["getVisitorById"]>>>;
+
+type VisitorWithRelations = Awaited<ReturnType<Awaited<ReturnType<typeof visitorQueries>>["getVisitorById"]>>;
+export type Visitor = NonNullable<VisitorWithRelations>;

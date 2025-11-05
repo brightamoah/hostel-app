@@ -139,17 +139,17 @@ export const userQueries = defineEventHandler(async () => {
   };
 
   const getAdminByUserId = async (userId: number, activeOnly = false) => {
-    const query = db
-      .select()
-      .from(admin)
-      .where(eq(admin.userId, userId))
-      .$dynamic();
+    const whereConditions = [eq(admin.userId, userId)];
 
     if (activeOnly) {
-      query.where(eq(admin.status, "active"));
+      whereConditions.push(eq(admin.status, "active"));
     }
 
-    const [result] = await query;
+    const [result] = await db
+      .select()
+      .from(admin)
+      .where(and(...whereConditions));
+
     return result;
   };
 

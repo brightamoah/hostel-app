@@ -128,6 +128,22 @@ export interface UserDataResponse {
   activeStudents: number;
 };
 
+// export interface Visitor{
+//   id: number;
+//   name: string;
+//   email: string;
+//   createdAt: Date;
+//   updatedAt: Date;
+//   phoneNumber: string;
+//   status: "cancelled" | "pending" | "checked-in" | "checked-out" | "denied" | "approved";
+//   hostelId: number;
+//   studentId: number;
+//   adminId: number | null;
+//   visitDate: string;
+//   relationship: string;
+//   purpose: string;
+// }
+
 export interface VisitorDataResponse {
   visitors: Visitor[];
   approved: number;

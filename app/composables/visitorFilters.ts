@@ -110,7 +110,7 @@ export function useVisitorFilters(table: VisitorTableType, data: DataType) {
       statusColumn.setFilterValue(newStatus);
     }
 
-    const dateColumn = tableApi.getColumn("date");
+    const dateColumn = tableApi.getColumn("visitDate");
     if (!dateColumn)
       return;
 
