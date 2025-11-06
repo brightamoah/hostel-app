@@ -1,4 +1,4 @@
-import type { DropdownMenuItem } from "@nuxt/ui";
+import type { AvatarProps, DropdownMenuItem, KbdProps } from "@nuxt/ui";
 import type { Table } from "@tanstack/table-core";
 import type { User } from "#auth-utils";
 import type { Visitor } from "~~/server/db/queries/visitor";
@@ -72,6 +72,7 @@ export interface Stat {
 }
 
 export type ColorType = "primary" | "error" | "warning" | "info" | "success" | "neutral";
+export type VariantType = "outline" | "soft" | "subtle" | "ghost" | "none";
 
 export interface StatsCard {
   id: number | string;
@@ -233,4 +234,77 @@ export interface AdminUser {
   phoneNumber: string;
   accessLevel: "regular" | "super" | "support" | "";
   department: string;
+}
+
+export interface RowActionsItem {
+  /**
+   * The text label for the menu item
+   */
+  label?: string;
+
+  /**
+   * The icon to display (e.g., 'i-lucide-user')
+   */
+  icon?: string;
+
+  /**
+   * An avatar object instead of an icon
+   */
+  avatar?: AvatarProps;
+
+  /**
+   * Highlight color for the item
+   */
+  color?: ColorType;
+
+  variant?: string;
+
+  /**
+   * Whether the item is disabled
+   */
+  disabled?: boolean;
+
+  /**
+   * Custom slot name for the item
+   */
+  slot?: string;
+
+  /**
+   * Custom CSS classes
+   */
+  class?: string;
+
+  /**
+   * Callback function when item is selected
+   */
+  onSelect?: (e: Event) => void;
+
+  /**
+   * Nested menu items (can be a flat array or grouped arrays)
+   */
+  children?: DropdownMenuItem[] | DropdownMenuItem[][];
+  type?: "link" | "label" | "separator" | "checkbox";
+
+  /**
+   * Custom UI configuration for styling specific parts
+   */
+  ui?: {
+    item?: string;
+    label?: string;
+    separator?: string;
+    itemLeadingIcon?: string;
+    itemLeadingAvatarSize?: string;
+    itemLeadingAvatar?: string;
+    itemLabel?: string;
+    itemLabelExternalIcon?: string;
+    itemTrailing?: string;
+    itemTrailingIcon?: string;
+    itemTrailingKbds?: string;
+    itemTrailingKbdsSize?: string;
+  };
+
+  /**
+   * Keyboard shortcuts to display (e.g., ['meta', 'n'])
+   */
+  kbds?: string[] | KbdProps[];
 }

@@ -76,18 +76,8 @@ const visitorWithRelations = {
 export const visitorQueries = defineEventHandler(async () => {
   const { db } = useDB();
 
-  // type Visitor = NonNullable<Awaited<ReturnType<typeof db.query.visitor.findFirst<typeof visitorWithRelations>>>>;
-
   const getScopedVisitors = async (admin: Admin) => {
-    console.log("getScopedVisitors called with admin:", {
-      id: admin.id,
-      // userId: admin.userId,
-      accessLevel: admin.accessLevel,
-      hostelId: admin.hostelId,
-    });
-
     if (admin.accessLevel === "super") {
-      console.log("Fetching all visitors for super admin");
       return await db.query.visitor.findMany({
         ...visitorWithRelations,
         orderBy: desc(visitor.visitDate),
@@ -97,7 +87,6 @@ export const visitorQueries = defineEventHandler(async () => {
     if (!admin.hostelId)
       return [];
 
-    console.log("Fetching visitors for hostel:", admin.hostelId);
     return await db.query.visitor.findMany({
       ...visitorWithRelations,
       where: eq(visitor.hostelId, admin.hostelId),

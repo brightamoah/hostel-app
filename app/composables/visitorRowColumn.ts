@@ -3,6 +3,7 @@ import type { Column, Row } from "@tanstack/table-core";
 import type { Visitor } from "~~/server/db/queries/visitor";
 
 import type { ColorType, Component } from "~/types";
+import type { RowActionItem } from "~/types/rowAction";
 
 export function useVisitorRowColumn(
   UAvatar: Component,
@@ -14,11 +15,35 @@ export function useVisitorRowColumn(
 ) {
   const getRowItems = (row: Row<Visitor>) => {
     const visitor = row.original;
-    const actions = [
+
+    const actions: RowActionItem[] = [
       {
         type: "label",
         label: "Actions",
       },
+    ];
+
+    if (visitor.status === "pending") {
+      actions.push(
+        {
+          label: "Approve Visitor",
+          icon: "i-lucide-check-circle",
+          color: "success",
+          onSelect: () => { },
+        },
+        {
+          label: "Deny Visitor",
+          icon: "i-lucide-x-circle",
+          color: "error",
+          onSelect: () => { },
+        },
+        {
+          type: "separator",
+        },
+      );
+    }
+
+    actions.push(
       {
         label: "View Visitor Details",
         icon: "i-lucide-eye",
@@ -42,24 +67,7 @@ export function useVisitorRowColumn(
         color: "error",
         onSelect: () => { },
       },
-    ];
-
-    if (visitor.status === "pending") {
-      actions.push(
-        {
-          label: "Approve Visitor",
-          icon: "i-lucide-check-circle",
-          color: "success",
-          onSelect: () => { },
-        },
-        {
-          label: "Deny Visitor",
-          icon: "i-lucide-x-circle",
-          color: "error",
-          onSelect: () => { },
-        },
-      );
-    }
+    );
 
     return actions;
   };
