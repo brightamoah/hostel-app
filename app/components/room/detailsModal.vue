@@ -27,7 +27,7 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(roomValue);
   >
     <template #body>
       <div>
-        <UCard class="border-1 border-muted">
+        <UCard class="border border-muted">
           <div class="flex justify-between items-center">
             <h3 class="font-semibold text-xl">
               Room {{ roomValue.roomNumber }}
@@ -51,7 +51,7 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(roomValue);
         </UCard>
 
         <div class="gap-4 grid grid-cols-1 md:grid-cols-2 mt-4">
-          <UCard class="border-1 border-muted">
+          <UCard class="border border-muted">
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon
@@ -67,28 +67,28 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(roomValue);
 
             <template #default>
               <div class="gap-4 grid grid-cols-2">
-                <RoomDetailItem
+                <DashboardDetailItem
                   label="Room Number"
                   :value="roomValue.roomNumber"
                 />
 
-                <RoomDetailItem
+                <DashboardDetailItem
                   label="Building"
                   :value="roomValue.building"
                 />
 
-                <RoomDetailItem
+                <DashboardDetailItem
                   label="Amount Per Year"
                   :value="formatCurrency(Number(roomValue.amountPerYear))"
                 />
 
-                <RoomDetailItem
+                <DashboardDetailItem
                   label="Room Type"
                   :value="roomValue.roomType"
                   class="capitalize"
                 />
 
-                <RoomDetailItem
+                <DashboardDetailItem
                   label="Floor"
                   :value="roomValue.floor"
                 />
@@ -96,7 +96,7 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(roomValue);
             </template>
           </UCard>
 
-          <UCard class="border-1 border-muted">
+          <UCard class="border border-muted">
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon
@@ -126,12 +126,12 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(roomValue);
               </div>
 
               <div class="gap-4 grid grid-cols-2 mt-3">
-                <RoomDetailItem
+                <DashboardDetailItem
                   label="Total Capacity"
                   :value="roomValue.capacity"
                 />
 
-                <RoomDetailItem
+                <DashboardDetailItem
                   label="Current Occupants"
                   :value="roomValue.currentOccupancy"
                 />
@@ -158,7 +158,7 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(roomValue);
           </UCard>
         </div>
 
-        <UCard class="mt-4 border-1 border-muted">
+        <UCard class="mt-4 border border-muted">
           <template #header>
             <div class="flex items-center gap-2">
               <UIcon

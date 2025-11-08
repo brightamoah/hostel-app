@@ -48,7 +48,7 @@ export function useVisitorRowColumn(
         label: "View Visitor Details",
         icon: "i-lucide-eye",
         onSelect: () => {
-          console.table(visitor);
+          console.table({ ...visitor });
         },
       },
       {

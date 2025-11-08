@@ -5,7 +5,9 @@ const { user } = defineProps<{
   user: UserType;
 }>();
 
-const emit = defineEmits<{ close: [boolean] }>();
+const emit = defineEmits<{
+  close: [boolean];
+}>();
 
 const userDetails = ref(flattenUserDetails(user));
 
