@@ -7,7 +7,9 @@ import { allocation, visitor, visitorLogs } from "../schema";
 const visitorWithRelations = {
   with: {
     student: {
-      columns: {},
+      columns: {
+        phoneNumber: true,
+      },
       with: {
         user: {
           columns: {
@@ -23,6 +25,7 @@ const visitorWithRelations = {
               columns: {
                 roomNumber: true,
                 building: true,
+                roomType: true,
               },
               with: {
                 hostel: {

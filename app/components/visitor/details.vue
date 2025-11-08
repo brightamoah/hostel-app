@@ -2,16 +2,21 @@
 import type { TabsItem } from "@nuxt/ui";
 import type { Visitor } from "~~/server/db/queries/visitor";
 
-import { useDateFormat } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints, useDateFormat } from "@vueuse/core";
 
 import type { ColorType } from "~/types";
 
-import { sampleVisitor } from "~/lib/dummy";
+const { visitor } = defineProps<{
+  visitor: Visitor;
+}>();
 
-const visitor = ref(sampleVisitor);
+const emit = defineEmits<{ close: [boolean] }>();
 
-const visitorInitials = generateInitials(visitor.value.name);
-const avatarBgColor = generateUserColor(visitor.value.name);
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("md");
+
+const visitorInitials = generateInitials(visitor.name);
+const avatarBgColor = generateUserColor(visitor.name);
 
 const statusColorMap: Record<Visitor["status"], ColorType> = {
   "pending": "warning",
@@ -22,49 +27,134 @@ const statusColorMap: Record<Visitor["status"], ColorType> = {
   "denied": "error",
 };
 const visitorBadgeColor = computed<ColorType>(() => {
-  return statusColorMap[visitor.value.status];
+  return statusColorMap[visitor.status];
 });
 
-const items = ref<TabsItem[]>([
+const items = computed<TabsItem[]>(() => [
   {
-    label: "Visitor Info",
+    label: isMobile.value ? "Visitor" : "Visitor Info",
     icon: "i-lucide-user",
     slot: "visitor" as const,
   },
   {
-    label: "Student Info",
+    label: isMobile.value ? "Student" : "Student Info",
     icon: "i-lucide-graduation-cap",
     slot: "student" as const,
   },
   {
-    label: "Visit History",
+    label: isMobile.value ? "History" : "Visit History",
     icon: "i-lucide-history",
     slot: "history" as const,
   },
 ]);
 
-const visitorItems = ref([
+const visitorItems = computed(() => [
   {
     label: "Phone Number",
-    value: visitor.value.phoneNumber,
+    value: visitor.phoneNumber,
     icon: "i-lucide-phone-call",
   },
   {
     label: "Email Address",
-    value: visitor.value.email,
+    value: visitor.email,
     icon: "i-lucide-mail",
   },
   {
     label: "Purpose of Visit",
-    value: visitor.value.purpose,
+    value: visitor.purpose,
     icon: "i-lucide-clipboard-list",
   },
   {
     label: "Visit Date",
-    value: useDateFormat(visitor.value.visitDate, "Do MMMM, YYYY").value,
+    value: useDateFormat(visitor.visitDate, "dddd Do MMMM, YYYY").value,
     icon: "i-lucide-calendar-days",
   },
+  {
+    label: "Date Registered",
+    value: useDateFormat(visitor.createdAt, "dddd Do MMMM, YYYY").value,
+    icon: "i-lucide-calendar-plus",
+  },
 ]);
+
+const studentItems = computed(() => [
+  {
+    label: "Student Name",
+    value: visitor.student.user.name,
+    icon: "i-lucide-user",
+  },
+  {
+    label: "Student ID",
+    value: visitor.student.allocations[0]?.studentId || "N/A",
+    icon: "i-lucide-id-card",
+  },
+  {
+    label: "Room Number",
+    value: `${visitor.student.allocations[0]?.room.roomNumber} (${visitor.student.allocations[0]?.room.roomType})` || "N/A",
+    icon: "i-lucide-door-open",
+  },
+  {
+    label: "Building",
+    value: visitor.student.allocations[0]?.room.building || "N/A",
+    icon: "i-lucide-building",
+  },
+  {
+    label: "Email Address",
+    value: visitor.student.user.email,
+    icon: "i-lucide-mail",
+  },
+  {
+    label: "Phone Number",
+    value: visitor.student.phoneNumber,
+    icon: "i-lucide-phone-call",
+  },
+]);
+
+const visitHistory = computed(() => {
+  const vLogs = visitor.visitorLogs ?? [];
+  if (!vLogs.length)
+    return [];
+
+  const formatDate = (ts: string | Date) => useDateFormat(ts, "ddd Do MMM, YYYY HH:mm").value;
+  const duration = (a: string | Date, b: string | Date) => {
+    const diff = +new Date(b) - +new Date(a);
+    if (diff <= 0)
+      return "-";
+    const m = Math.round(diff / 60000);
+    return m < 60 ? `${m}m` : `${Math.floor(m / 60)}h${m % 60 ? ` ${m % 60}m` : ""}`;
+  };
+
+  const rows: { checkIn: string; checkOut: string; performedBy: string; duration: string }[] = [];
+  const stack: typeof vLogs = [];
+
+  for (const log of [...vLogs].sort((a, b) => +new Date(a.timestamp) - +new Date(b.timestamp))) {
+    const adminName = log.admin?.user?.name ?? "-";
+
+    if (log.action === "check_in") {
+      stack.push(log);
+    }
+    else if (log.action === "check_out") {
+      const ci = stack.pop();
+      const performer = adminName !== "-" ? adminName : ci?.admin?.user?.name ?? "-";
+      rows.push({
+        checkIn: ci ? formatDate(ci.timestamp) : "-",
+        checkOut: formatDate(log.timestamp),
+        performedBy: performer,
+        duration: ci ? duration(ci.timestamp, log.timestamp) : "-",
+      });
+    }
+  }
+
+  for (const ci of stack) {
+    rows.push({
+      checkIn: formatDate(ci.timestamp),
+      checkOut: "-",
+      performedBy: ci.admin?.user?.name ?? "-",
+      duration: "-",
+    });
+  }
+
+  return rows;
+});
 </script>
 
 <template>
@@ -74,7 +164,7 @@ const visitorItems = ref([
     :dismissible="false"
     :ui="{
       footer: 'justify-end',
-      content: 'w-[90%] max-w-3xl h-auto rounded-lg shadow-lg ring ring-default overflow-hidden',
+      content: 'w-[90%] max-w-4xl h-auto rounded-lg shadow-lg ring ring-default overflow-hidden',
       title: 'font-newsreader text-xl font-semibold',
       description: 'text-base text-muted',
       close: 'cursor-pointer',
@@ -118,7 +208,6 @@ const visitorItems = ref([
                 :label="visitor?.status"
                 :color="visitorBadgeColor"
                 variant="subtle"
-                size="sm"
                 class="justify-center mt-1 text-center"
               />
             </div>
@@ -133,13 +222,16 @@ const visitorItems = ref([
           </template>
         </UUser>
 
-        <div class="flex items-center gap-3">
+        <div
+          v-if="visitor.status === 'pending'"
+          class="flex md:flex-row flex-col items-center gap-3"
+        >
           <UButton
             label="Approve"
             icon="i-lucide-check-circle"
             variant="subtle"
             color="success"
-            size="lg"
+            :size="isMobile ? 'md' : 'lg'"
             class="justify-center w-full sm:w-auto cursor-pointer"
           />
 
@@ -148,9 +240,23 @@ const visitorItems = ref([
             icon="i-lucide-x-circle"
             variant="subtle"
             color="error"
-            size="lg"
+            :size="isMobile ? 'md' : 'lg'"
             class="justify-center cursor-pointer"
           />
+        </div>
+
+        <div
+          v-else-if="visitor.status === 'denied' || visitor.status === 'cancelled'"
+          class="flex items-center text-sm text-end"
+        >
+          No actions available
+        </div>
+
+        <div
+          v-else
+          class="flex items-center text-sm text-end"
+        >
+          Check-in available on {{ useDateFormat(visitor.visitDate, "dddd Do MMMM, YYYY").value }}
         </div>
       </div>
 
@@ -160,59 +266,65 @@ const visitorItems = ref([
         class="w-full"
       >
         <template #visitor>
-          <div class="flex justify-between">
-            <div class="flex flex-col gap-4">
-              <DashboardDetailItem
-                v-for="item in visitorItems"
-                :key="item.label"
-                :label="item.label"
-              >
-                <template #default>
-                  <div class="flex items-center gap-2">
-                    <UIcon
-                      :name="item.icon"
-                      class="size-5 text-primary"
-                    />
+          <div class="gap-4 grid grid-cols-1 md:grid-cols-2 w-full">
+            <DashboardDetailItem
+              v-for="item in visitorItems"
+              :key="item.label"
+              :label="item.label"
+            >
+              <template #default>
+                <div class="flex items-center gap-2">
+                  <UIcon
+                    :name="item.icon"
+                    class="size-5 text-primary"
+                  />
 
-                    <p>{{ item.value }}</p>
-                  </div>
-                </template>
-              </DashboardDetailItem>
-            </div>
-
-            <div class="flex flex-col gap-4">
-              <DashboardDetailItem
-                v-for="item in visitorItems"
-                :key="item.label"
-                :label="item.label"
-              >
-                <template #default>
-                  <div class="flex items-center gap-2">
-                    <UIcon
-                      :name="item.icon"
-                      class="size-5 text-primary"
-                    />
-
-                    <p>{{ item.value }}</p>
-                  </div>
-                </template>
-              </DashboardDetailItem>
-            </div>
+                  <p>{{ item.value }}</p>
+                </div>
+              </template>
+            </DashboardDetailItem>
           </div>
         </template>
 
-        <template #student="{ item }">
-          <div class="p-4">
-            <pre>{{ item }}</pre>
+        <template #student>
+          <div class="gap-4 grid grid-cols-1 md:grid-cols-2 w-full">
+            <DashboardDetailItem
+              v-for="item in studentItems"
+              :key="item.label"
+              :label="item.label"
+            >
+              <template #default>
+                <div class="flex items-center gap-2">
+                  <UIcon
+                    :name="item.icon"
+                    class="size-5 text-primary"
+                  />
+
+                  <p>{{ item.value }}</p>
+                </div>
+              </template>
+            </DashboardDetailItem>
           </div>
         </template>
 
-        <template #history="{ item }">
-          <div class="p-4">
-            <pre>{{ item }}</pre>
-          </div>
+        <template #history>
+          <UTable
+            :data="visitHistory"
+            class="flex-1"
+          />
         </template>
       </UTabs>
+    </template>
+
+    <template #footer>
+      <UButton
+        color="primary"
+        variant="solid"
+        class="cursor-pointer"
+        @click="emit('close', false)"
+      >
+        Close
+      </UButton>
     </template>
   </UModal>
 </template>

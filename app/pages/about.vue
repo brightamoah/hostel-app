@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useRoleBasedRoute } from "~/composables/useRoleBasedRoutes";
+// import { sampleVisitor } from "~/lib/dummy";
 
 const roleRoutes = useRoleBasedRoute();
 </script>
 
 <template>
   <div>
-    <VisitorDetails />
+    <!-- <VisitorDetails :visitor="sampleVisitor" /> -->
 
     <ULink
       :to="roleRoutes?.profile"

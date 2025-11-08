@@ -5,6 +5,8 @@ import type { Visitor } from "~~/server/db/queries/visitor";
 import type { ColorType, Component } from "~/types";
 import type { RowActionItem } from "~/types/rowAction";
 
+const VisitorDetailsModal = defineAsyncComponent(() => import("~/components/visitor/details.vue"));
+
 export function useVisitorRowColumn(
   UAvatar: Component,
   UButton: Component,
@@ -13,6 +15,14 @@ export function useVisitorRowColumn(
   UCheckbox: Component,
   // UIcon: Component,
 ) {
+  const overlay = useOverlay();
+
+  const openVisitorDetailsModal = (visitor: Visitor) => {
+    overlay.create(VisitorDetailsModal).open({
+      visitor,
+    });
+  };
+
   const getRowItems = (row: Row<Visitor>) => {
     const visitor = row.original;
 
@@ -48,7 +58,7 @@ export function useVisitorRowColumn(
         label: "View Visitor Details",
         icon: "i-lucide-eye",
         onSelect: () => {
-          console.table({ ...visitor });
+          openVisitorDetailsModal(visitor);
         },
       },
       {

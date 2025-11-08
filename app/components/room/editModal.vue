@@ -165,7 +165,7 @@ async function submitUpdate() {
             <UInput
               v-model="editRoomState.roomNumber"
               placeholder="Enter room number"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -179,7 +179,7 @@ async function submitUpdate() {
             <UInput
               v-model="editRoomState.building"
               placeholder="Enter building name"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -195,7 +195,7 @@ async function submitUpdate() {
             <UInputNumber
               v-model="editRoomState.floor"
               placeholder="Enter floor number"
-              class="w-[100%]"
+              class="w-full"
               :min="1"
               :max="10"
               :size="isMobile ? 'lg' : 'xl'"
@@ -212,7 +212,7 @@ async function submitUpdate() {
               v-model="editRoomState.roomType"
               :items="roomTypeItems"
               placeholder="Select room type"
-              class="w-[100%] cursor-pointer"
+              class="w-full cursor-pointer"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -228,7 +228,7 @@ async function submitUpdate() {
             <UInputNumber
               v-model="editRoomState.capacity"
               placeholder="Enter room capacity"
-              class="w-[100%]"
+              class="w-full"
               readonly
               :min="1"
               :max="4"
@@ -245,7 +245,7 @@ async function submitUpdate() {
             <UInputNumber
               v-model="editRoomState.amountPerYear"
               placeholder="Enter amount per year"
-              class="w-[100%]"
+              class="w-full"
               :min="1"
               :size="isMobile ? 'lg' : 'xl'"
               :format-options="{
@@ -270,7 +270,7 @@ async function submitUpdate() {
             <UInputNumber
               v-model="editRoomState.currentOccupancy"
               placeholder="Enter current occupancy"
-              class="w-[100%]"
+              class="w-full"
               :min="0"
               :max="4"
               :size="isMobile ? 'lg' : 'xl'"
@@ -287,7 +287,7 @@ async function submitUpdate() {
               v-model="editRoomState.status"
               :items="roomStatusItems"
               placeholder="Select room status"
-              class="w-[100%] cursor-pointer"
+              class="w-full cursor-pointer"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -302,7 +302,7 @@ async function submitUpdate() {
           <UTextarea
             v-model.trim="editRoomState.features"
             placeholder="Enter room features (comma separated)"
-            class="w-[100%]"
+            class="w-full"
             :size="isMobile ? 'lg' : 'xl'"
           />
         </UFormField>

@@ -15,6 +15,7 @@ export const sampleVisitor: Visitor = {
   createdAt: new Date(),
   updatedAt: new Date(),
   student: {
+    phoneNumber: "0549583838",
     user: {
       name: "Samuel King",
       email: "samuel.student@example.com",
@@ -31,6 +32,7 @@ export const sampleVisitor: Visitor = {
         room: {
           roomNumber: "Q103",
           building: "Queens",
+          roomType: "double",
           hostel: {
             name: "Queens",
           },
