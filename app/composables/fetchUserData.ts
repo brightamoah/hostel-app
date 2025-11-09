@@ -1,5 +1,3 @@
-import type { UserDataResponse, UserType } from "~/types";
-
 const REFRESH_COOL_DOWN_SECONDS = 120;
 
 export function useFetchUserData() {

@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import type { StatsCard } from "~/types";
-
 definePageMeta({
   middleware: ["requires-auth"],
   layout: "student-dashboard",

@@ -4,7 +4,6 @@ import { generateTempPassword } from "~~/server/utils/generateTemporaryPassword"
 import { randomUUID } from "uncrypto";
 
 import { getEmailTemplate, getWelcomeAdminTemplate } from "~/utils/emailTemplate";
-import { addAdminSchema } from "~/utils/schema";
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event);

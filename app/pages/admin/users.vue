@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { getPaginationRowModel } from "@tanstack/table-core";
 
-import type { StatsCard } from "~/types";
-
 import { useUserStore } from "~/stores/userStore";
 
 definePageMeta({

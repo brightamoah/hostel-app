@@ -4,8 +4,6 @@ import type { Visitor } from "~~/server/db/queries/visitor";
 
 import { breakpointsTailwind, useBreakpoints, useDateFormat } from "@vueuse/core";
 
-import type { ColorType } from "~/types";
-
 const { visitor } = defineProps<{
   visitor: Visitor;
 }>();

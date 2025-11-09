@@ -2,8 +2,6 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 
 import { acceptHMRUpdate, defineStore } from "pinia";
 
-import type { AddAdminSchema, DeleteItemSchema, PromoteDemoteSchema } from "~/utils/schema";
-
 export const useUserStore = defineStore("userStore", () => {
   const toast = useToast();
   const addModalOpen = ref<boolean>(false);

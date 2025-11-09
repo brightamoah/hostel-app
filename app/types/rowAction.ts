@@ -1,11 +1,11 @@
 import type { AvatarProps, DropdownMenuItem, KbdProps } from "@nuxt/ui";
 
-import type { ColorType, VariantType } from ".";
+// import type { ColorType, VariantType } from ".";
 
 /**
  * Base properties shared by all row action menu items
  */
-interface ActionItemBase {
+type ActionItemBase = {
   /**
    * The text label for the menu item
    */
@@ -76,12 +76,12 @@ interface ActionItemBase {
    * Keyboard shortcuts to display (e.g., ['meta', 'n'])
    */
   kbds?: string[] | KbdProps[];
-}
+};
 
 /**
  * Link-specific properties (any property from the Link component)
  */
-interface ActionItemLink extends ActionItemBase {
+type ActionItemLink = {
   /**
    * The type of item - link (default)
    */
@@ -106,12 +106,12 @@ interface ActionItemLink extends ActionItemBase {
    * Any other Link component properties
    */
   [key: string]: any;
-}
+} & ActionItemBase;
 
 /**
  * Label item - non-interactive header/label
  */
-interface ActionItemLabel extends ActionItemBase {
+type ActionItemLabel = {
   /**
    * The type of item - label (non-interactive header)
    */
@@ -121,22 +121,22 @@ interface ActionItemLabel extends ActionItemBase {
    * Label must be defined for label type
    */
   label: string;
-}
+} & ActionItemBase;
 
 /**
  * Separator item - visual divider
  */
-interface ActionItemSeparator extends Omit<ActionItemBase, "label" | "icon" | "avatar" | "onSelect" | "kbds"> {
+type ActionItemSeparator = {
   /**
    * The type of item - separator (visual divider)
    */
   type: "separator";
-}
+} & Omit<ActionItemBase, "label" | "icon" | "avatar" | "onSelect" | "kbds">;
 
 /**
  * Checkbox item - checkable/toggleable item
  */
-interface ActionItemCheckbox extends ActionItemBase {
+type ActionItemCheckbox = {
   /**
    * The type of item - checkbox (checkable item)
    */
@@ -156,7 +156,7 @@ interface ActionItemCheckbox extends ActionItemBase {
    * Highlight color for the item
    */
   color?: ColorType;
-}
+} & ActionItemBase;
 
 /**
  * Union type for all action item types

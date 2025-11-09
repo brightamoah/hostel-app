@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { sub } from "date-fns";
 
-import type { Period, Range } from "~/types";
-
 definePageMeta({
   middleware: ["requires-auth", "admin"],
   layout: "admin-dashboard",
@@ -10,7 +8,7 @@ definePageMeta({
 
 const title = ref("Admin Dashboard");
 
-const range = shallowRef<Range>({
+const range = shallowRef<RangeType>({
   start: sub(new Date(), { days: 14 }),
   end: new Date(),
 });

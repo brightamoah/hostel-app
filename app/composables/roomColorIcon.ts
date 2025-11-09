@@ -1,5 +1,3 @@
-import type { ColorType, Room } from "~/types";
-
 type RoomRef = Ref<Room | undefined> | ComputedRef<Room | undefined>;
 
 export function useRoomColorIcon(roomRef: RoomRef) {

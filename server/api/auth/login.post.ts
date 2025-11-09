@@ -3,8 +3,6 @@ import type { User } from "#auth-utils";
 import { userQueries } from "~~/server/db/queries/user";
 import { handleError } from "~~/server/utils/errorHandler";
 
-import { loginSchema } from "~/utils/schema";
-
 export default defineEventHandler(async (event) => {
   try {
     const { session, nodeEnv } = useRuntimeConfig();

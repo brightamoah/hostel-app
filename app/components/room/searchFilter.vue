@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { FilterOption } from "~/types";
-
 const props = defineProps<{
   modelValue: string;
   statusFilter: string;

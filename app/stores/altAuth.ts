@@ -2,8 +2,6 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 
 import { acceptHMRUpdate, defineStore } from "pinia";
 
-import type { AuthFormField } from "~/types";
-
 export const useAltAuth = defineStore("altAuth", () => {
   const isLoading = ref<boolean>(false);
   const toast = useToast();

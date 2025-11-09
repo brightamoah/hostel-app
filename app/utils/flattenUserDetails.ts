@@ -1,13 +1,11 @@
 import { useDateFormat } from "@vueuse/core";
 
-import type { UserType } from "~/types";
-
 type UserDetailValue = string | number | boolean | Date | null | undefined;
 
-interface UserDetail {
+type UserDetail = {
   key: string;
   value: UserDetailValue;
-}
+};
 
 /**
  * Formats a camelCase string into a human-readable, title-cased string.

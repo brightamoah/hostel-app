@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { FilterOption } from "~/types";
-
 const {
   modelValue,
   statusFilter,

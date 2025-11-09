@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { StatsCard } from "~/types";
-
 definePageMeta({
   middleware: ["requires-auth", "admin"],
   layout: "admin-dashboard",

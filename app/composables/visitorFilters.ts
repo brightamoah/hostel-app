@@ -1,7 +1,5 @@
 import type { Visitor } from "~~/server/db/queries/visitor";
 
-import type { FilterOption, VisitorDataResponse, VisitorTableType } from "~/types";
-
 type DataType = globalThis.Ref<VisitorDataResponse, VisitorDataResponse>;
 
 export function useVisitorFilters(table: VisitorTableType, data: DataType) {

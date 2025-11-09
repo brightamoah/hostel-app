@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { UserType } from "~/types";
-
 const { user } = defineProps<{
   user: UserType;
 }>();

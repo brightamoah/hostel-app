@@ -1,8 +1,6 @@
 import { useDB } from "~~/server/utils/db";
 import { and, eq, inArray, isNotNull, lt, or, sql } from "drizzle-orm";
 
-import type { Allocation } from "~/types";
-
 import { admin, allocation, hostel, room, student, user } from "../schema";
 
 const userDetails = {

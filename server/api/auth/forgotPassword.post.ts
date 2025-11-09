@@ -6,7 +6,6 @@ import { eq } from "drizzle-orm";
 import { randomUUID } from "uncrypto";
 
 import { getResetPasswordTemplate } from "~/utils/emailTemplate";
-import { verifyEmailSchema } from "~/utils/schema";
 
 export default defineEventHandler(async (event) => {
   try {

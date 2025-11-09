@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import type { Notification } from "#imports";
+
 import { formatTimeAgo } from "@vueuse/core";
 import { randomUUID } from "uncrypto";
-
-import type { Notification } from "~/types";
 
 const { isNotificationsSlideoverOpen } = useDashboard();
 const { userInitials } = useUseUserItems();

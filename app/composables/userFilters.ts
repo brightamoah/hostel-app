@@ -1,5 +1,3 @@
-import type { FilterOption, UserDataResponse, UserTableType, UserType } from "~/types";
-
 type DataType = globalThis.Ref<UserDataResponse, UserDataResponse>;
 
 export function useUserFilters(table: UserTableType, data: DataType) {

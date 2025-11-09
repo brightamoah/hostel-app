@@ -3,9 +3,6 @@ import type { RouteLocationRaw } from "vue-router";
 
 import { acceptHMRUpdate, defineStore } from "pinia";
 
-import type { AuthFormField } from "~/types";
-import type { LoginSchema, SignupSchema } from "~/utils/schema";
-
 export const useAuthStore = defineStore("authStore", () => {
   const toast = useToast();
   const route = useRoute();

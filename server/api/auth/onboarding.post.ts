@@ -3,8 +3,6 @@ import { handleError } from "~~/server/utils/errorHandler";
 import { eq } from "drizzle-orm";
 import { ref } from "vue";
 
-import { personalDetailsSchema } from "~/utils/schema";
-
 export default defineEventHandler(async (event) => {
   try {
     const session = await getUserSession(event);

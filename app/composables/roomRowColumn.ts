@@ -1,8 +1,6 @@
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/table-core";
 
-import type { Component, Room } from "~/types";
-
 import ConfirmationModal from "~/components/dashboard/confirmationModal.vue";
 
 type Toast = ReturnType<typeof useToast>;
@@ -12,11 +10,11 @@ const EditModal = defineAsyncComponent(() => import("~/components/room/editModal
 
 export function useRoomRowColumn(
   toast: Toast,
-  UButton: Component,
-  UBadge: Component,
-  UDropdownMenu: Component,
-  UCheckbox: Component,
-  UTooltip: Component,
+  UButton: ComponentType,
+  UBadge: ComponentType,
+  UDropdownMenu: ComponentType,
+  UCheckbox: ComponentType,
+  UTooltip: ComponentType,
 ) {
   const overlay = useOverlay();
   const roomStore = useRoomStore();

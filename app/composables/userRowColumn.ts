@@ -1,8 +1,6 @@
 import type { TableColumn } from "@nuxt/ui";
 import type { Column, Row } from "@tanstack/table-core";
 
-import type { Component, UserType } from "~/types";
-
 const UserDetailsModal = defineAsyncComponent(() => import("~/components/user/detailsModal.vue"));
 
 const ConfirmationModal = defineAsyncComponent(() => import("~/components/dashboard/confirmationModal.vue"));
@@ -10,12 +8,12 @@ const ConfirmationModal = defineAsyncComponent(() => import("~/components/dashbo
 const PromoteUserModal = defineAsyncComponent(() => import("~/components/user/promoteUserModal.vue"));
 
 export function useUserRowColumn(
-  UAvatar: Component,
-  UButton: Component,
-  UBadge: Component,
-  UDropdownMenu: Component,
-  UCheckbox: Component,
-  UIcon: Component,
+  UAvatar: ComponentType,
+  UButton: ComponentType,
+  UBadge: ComponentType,
+  UDropdownMenu: ComponentType,
+  UCheckbox: ComponentType,
+  UIcon: ComponentType,
 ) {
   const overlay = useOverlay();
   const userStore = useUserStore();

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Room } from "~/types";
-
 const { room } = defineProps<{
   room: Room;
 }>();

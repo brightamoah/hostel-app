@@ -1,7 +1,5 @@
 import type { SelectMenuItem } from "@nuxt/ui";
 
-import type { Room, RoomDataResponse } from "~/types";
-
 const REFRESH_COOL_DOWN_SECONDS = 120;
 
 export function useFetchRoomData() {

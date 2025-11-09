@@ -1,7 +1,5 @@
 import { userQueries } from "~~/server/db/queries/user";
 
-import { deleteItemSchema } from "~/utils/schema";
-
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event);
 

@@ -2,8 +2,6 @@ import { room } from "~~/server/db/schema";
 import { handleError } from "~~/server/utils/errorHandler";
 import { eq } from "drizzle-orm";
 
-import { addRoomSchema } from "~/utils/schema";
-
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event);
 

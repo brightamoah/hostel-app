@@ -1,10 +1,10 @@
 import type { H3Event } from "h3";
 
-interface StructuredError extends Error {
+type StructuredError = {
   statusCode?: number;
   statusMessage?: string;
   data?: any;
-}
+} & Error;
 
 export function handleError(
   error: unknown,

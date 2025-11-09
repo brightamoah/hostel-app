@@ -3,8 +3,6 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 
 import { useMediaQuery } from "@vueuse/core";
 
-import type { UserType } from "~/types";
-
 const { user, isLoading } = defineProps<{
   user: UserType;
   isLoading: boolean | Ref<boolean>;

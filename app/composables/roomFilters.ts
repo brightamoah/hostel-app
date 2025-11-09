@@ -1,5 +1,3 @@
-import type { Room, RoomDataResponse, RoomTableType } from "~/types";
-
 type DataType = globalThis.Ref<RoomDataResponse, RoomDataResponse>;
 
 export function useRoomFilters(table: RoomTableType, data: DataType) {

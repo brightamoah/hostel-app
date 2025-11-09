@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { useAuthStore } from "~/stores/authStore";
-import { loginSchema } from "~/utils/schema";
-
 definePageMeta({
   layout: "auth",
   middleware: ["auth-redirect"],

@@ -1,5 +1,3 @@
-import type { Admin } from "~/types";
-
 declare module "#auth-utils" {
   interface User {
     id: number;

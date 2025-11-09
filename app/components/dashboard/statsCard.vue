@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { StatsCard } from "~/types";
-
-defineProps<{
+const { cards } = defineProps<{
   cards: StatsCard[];
 }>();
 </script>

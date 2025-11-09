@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import type { Period, Range, Stat } from "~/types";
-
-const props = defineProps<{
+const { period, range } = defineProps<{
   period: Period;
-  range: Range;
+  range: RangeType;
 }>();
 
 function formatCurrency(value: number): string {
@@ -63,7 +61,7 @@ const { data: stats } = await useAsyncData<Stat[]>("stats", async () => {
     };
   });
 }, {
-  watch: [() => props.period, () => props.range],
+  watch: [() => period, () => range],
   default: () => [],
 });
 </script>

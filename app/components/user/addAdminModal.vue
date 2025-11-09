@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useMediaQuery } from "@vueuse/core";
 
-import type { AdminUser } from "~/types";
-
 const { user } = useUserSession();
 const admin = user.value?.adminData;
 

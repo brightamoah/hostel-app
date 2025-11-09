@@ -1,7 +1,6 @@
 import { roomQueries } from "~~/server/db/queries/room";
 
 import { getSpecificRoomError } from "~/utils/roomErrors";
-import { deleteItemSchema } from "~/utils/schema";
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event);

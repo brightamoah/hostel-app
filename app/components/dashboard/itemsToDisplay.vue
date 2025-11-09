@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-interface ItemsToDisplay {
+type ItemsToDisplay = {
   itemsToDisplay: {
     label: Capitalize<any>;
     type: "checkbox";
@@ -7,7 +7,7 @@ interface ItemsToDisplay {
     onUpdateChecked: (checked: boolean) => void;
     onSelect: (e?: Event | undefined) => void;
   }[] | undefined;
-}
+};
 
 const { itemsToDisplay } = defineProps<ItemsToDisplay>();
 </script>

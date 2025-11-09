@@ -2,17 +2,16 @@ import type { TableColumn } from "@nuxt/ui";
 import type { Column, Row } from "@tanstack/table-core";
 import type { Visitor } from "~~/server/db/queries/visitor";
 
-import type { ColorType, Component } from "~/types";
 import type { RowActionItem } from "~/types/rowAction";
 
 const VisitorDetailsModal = defineAsyncComponent(() => import("~/components/visitor/details.vue"));
 
 export function useVisitorRowColumn(
-  UAvatar: Component,
-  UButton: Component,
-  UBadge: Component,
-  UDropdownMenu: Component,
-  UCheckbox: Component,
+  UAvatar: ComponentType,
+  UButton: ComponentType,
+  UBadge: ComponentType,
+  UDropdownMenu: ComponentType,
+  UCheckbox: ComponentType,
   // UIcon: Component,
 ) {
   const overlay = useOverlay();

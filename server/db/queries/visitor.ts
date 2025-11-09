@@ -1,7 +1,5 @@
 import { and, count, desc, eq, sql } from "drizzle-orm";
 
-import type { Admin, VisitorLog } from "~/types";
-
 import { allocation, visitor, visitorLogs } from "../schema";
 
 const visitorWithRelations = {

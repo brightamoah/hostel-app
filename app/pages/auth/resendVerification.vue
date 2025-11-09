@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { verifyEmailSchema } from "~/utils/schema";
-
 definePageMeta({
   layout: "auth",
   middleware: ["auth-redirect"],

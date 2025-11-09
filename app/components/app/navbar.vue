@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useWindowScroll } from "@vueuse/core";
 
-import type { NavItem } from "~/types";
-
 import { useAuthStore } from "~/stores/authStore";
 import { generateUserColor } from "~/utils/generateUserColor";
 

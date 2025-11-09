@@ -7,7 +7,7 @@
   "editor.fontLigatures": true,
   "editor.fontWeight": "normal",
   "editor.fontSize": 13,
-  "editor.lineHeight": 1.5,
+  "editor.lineHeight": 0,
   "editor.letterSpacing": 0,
   "debug.console.fontSize": 13,
   "window.commandCenter": false,

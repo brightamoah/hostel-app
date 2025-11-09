@@ -4,8 +4,6 @@ import { useDB } from "~~/server/utils/db";
 import { handleError } from "~~/server/utils/errorHandler";
 import { eq } from "drizzle-orm";
 
-import { emailVerificationSchema } from "~/utils/schema";
-
 export default defineEventHandler(async (event) => {
   try {
     const { db } = useDB();

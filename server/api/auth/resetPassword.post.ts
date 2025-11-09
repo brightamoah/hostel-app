@@ -3,8 +3,6 @@ import { user } from "~~/server/db/schema";
 import { handleError } from "~~/server/utils/errorHandler";
 import { eq } from "drizzle-orm";
 
-import { passwordResetSchema } from "~/utils/schema";
-
 export default defineEventHandler(async (event) => {
   try {
     const { db } = useDB();

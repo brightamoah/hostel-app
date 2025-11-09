@@ -1,7 +1,3 @@
-import type { Visitor } from "~~/server/db/queries/visitor";
-
-import type { VisitorDataResponse } from "~/types";
-
 const REFRESH_COOL_DOWN_SECONDS = 120;
 
 export function useFetchVisitorData() {
@@ -25,7 +21,7 @@ export function useFetchVisitorData() {
     },
   });
 
-  const visitors = computed<Visitor[]>(() => data.value?.visitors ?? []);
+  const visitors = computed<VisitorDataResponse["visitors"]>(() => data.value?.visitors ?? []);
 
   const coolDownTime = useCookie<number>("visitorDataCoolDown", {
     default: () => 0,

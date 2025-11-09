@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { CalendarDate, DateFormatter, getLocalTimeZone, today } from "@internationalized/date";
 
-import type { Range } from "~/types";
-
 const df = new DateFormatter("en-US", {
   dateStyle: "medium",
 });
 
-const selected = defineModel<Range>({ required: true });
+const selected = defineModel<RangeType>({ required: true });
 
 const ranges = [
   { label: "Last 7 days", days: 7 },

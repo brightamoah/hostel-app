@@ -5,7 +5,6 @@ import { eq } from "drizzle-orm";
 import { randomUUID } from "uncrypto";
 
 import { getEmailTemplate } from "~/utils/emailTemplate";
-import { baseSignupSchema } from "~/utils/schema";
 
 export default defineEventHandler(async (event) => {
   try {
