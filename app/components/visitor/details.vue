@@ -89,7 +89,7 @@ const studentItems = computed(() => [
   },
   {
     label: "Room Number",
-    value: `${visitor.student.allocations[0]?.room.roomNumber} (${visitor.student.allocations[0]?.room.roomType})` || "N/A",
+    value: visitor.student.allocations[0] ? `${visitor.student.allocations[0].room.roomNumber} (${visitor.student.allocations[0].room.roomType})` : "N/A",
     icon: "i-lucide-door-open",
   },
   {
@@ -110,45 +110,53 @@ const studentItems = computed(() => [
 ]);
 
 const visitHistory = computed(() => {
-  const vLogs = visitor.visitorLogs ?? [];
-  if (!vLogs.length)
+  const visitLogs = visitor.visitorLogs ?? [];
+  if (!visitLogs.length)
     return [];
 
-  const formatDate = (ts: string | Date) => useDateFormat(ts, "ddd Do MMM, YYYY HH:mm").value;
-  const duration = (a: string | Date, b: string | Date) => {
-    const diff = +new Date(b) - +new Date(a);
+  const formatTimestamp = (timestamp: string | Date) => useDateFormat(timestamp, "ddd Do MMM, YYYY HH:mm").value;
+
+  const duration = (checkinTime: string | Date, checkoutTime: string | Date) => {
+    const diff = +new Date(checkoutTime) - +new Date(checkinTime);
     if (diff <= 0)
       return "-";
-    const m = Math.round(diff / 60000);
-    return m < 60 ? `${m}m` : `${Math.floor(m / 60)}h${m % 60 ? ` ${m % 60}m` : ""}`;
+
+    const minutes = Math.round(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return minutes < 60
+      ? `${minutes}m`
+      : remainingMinutes
+        ? `${hours}h ${remainingMinutes}m`
+        : `${hours}h`;
   };
 
   const rows: { checkIn: string; checkOut: string; performedBy: string; duration: string }[] = [];
-  const stack: typeof vLogs = [];
+  const stack: typeof visitLogs = [];
 
-  for (const log of [...vLogs].sort((a, b) => +new Date(a.timestamp) - +new Date(b.timestamp))) {
+  for (const log of [...visitLogs].sort((a, b) => +new Date(a.timestamp) - +new Date(b.timestamp))) {
     const adminName = log.admin?.user?.name ?? "-";
 
     if (log.action === "check_in") {
       stack.push(log);
     }
     else if (log.action === "check_out") {
-      const ci = stack.pop();
-      const performer = adminName !== "-" ? adminName : ci?.admin?.user?.name ?? "-";
+      const checkinLog = stack.pop();
+      const performer = adminName !== "-" ? adminName : checkinLog?.admin?.user?.name ?? "-";
       rows.push({
-        checkIn: ci ? formatDate(ci.timestamp) : "-",
-        checkOut: formatDate(log.timestamp),
+        checkIn: checkinLog ? formatTimestamp(checkinLog.timestamp) : "-",
+        checkOut: formatTimestamp(log.timestamp),
         performedBy: performer,
-        duration: ci ? duration(ci.timestamp, log.timestamp) : "-",
+        duration: checkinLog ? duration(checkinLog.timestamp, log.timestamp) : "-",
       });
     }
   }
 
-  for (const ci of stack) {
+  for (const checkinLog of stack) {
     rows.push({
-      checkIn: formatDate(ci.timestamp),
+      checkIn: formatTimestamp(checkinLog.timestamp),
       checkOut: "-",
-      performedBy: ci.admin?.user?.name ?? "-",
+      performedBy: checkinLog.admin?.user?.name ?? "-",
       duration: "-",
     });
   }

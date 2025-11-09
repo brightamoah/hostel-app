@@ -21,6 +21,9 @@ const globalFilter = ref("");
 const columnVisibility = ref<{ [key: string | number]: boolean }>({ id: false });
 const rowSelection = ref({});
 
+const visitorStore = useVisitorStore();
+const { deleteModalOpen, isLoading } = storeToRefs(visitorStore);
+
 const {
   data,
   status,
@@ -81,6 +84,8 @@ const {
   selectedVisitorsLength,
   itemsPerPage,
   defaultPage,
+  itemsToDisplay,
+  selectedVisitorIds,
   updatePage,
 } = useVisitorFilters(tableRef, data);
 
@@ -96,6 +101,18 @@ const pagination = ref({
   pageIndex: 0,
   pageSize: 10,
 });
+
+async function handleDeleteVisitors() {
+  const payload = selectedVisitorIds.value;
+
+  if (!payload?.ids?.length)
+    return;
+
+  await visitorStore.deleteVisitors(payload);
+  if (tableRef.value?.tableApi) {
+    tableRef.value.tableApi.resetRowSelection();
+  }
+}
 </script>
 
 <template>
@@ -128,6 +145,43 @@ const pagination = ref({
                 :refresh-is-loading
                 :handle-refresh
               />
+
+              <DashboardConfirmationModal
+                v-if="selectedVisitorsLength"
+                v-model:open="deleteModalOpen"
+                confirm-label="Delete Users"
+                render-trigger
+                :title="`Delete ${selectedVisitorsLength} Users`"
+                :is-loading
+                @confirm="handleDeleteVisitors"
+              >
+                <template #trigger="{ show }">
+                  <UButton
+                    label="Delete Selected Visitor(s)"
+                    icon="i-lucide-trash-2"
+                    variant="subtle"
+                    color="error"
+                    size="lg"
+                    class="justify-center items-center w-full sm:w-auto cursor-pointer"
+                    @click="show()"
+                  >
+                    <template #trailing>
+                      <UKbd>
+                        {{ selectedVisitorsLength }}
+                      </UKbd>
+                    </template>
+                  </UButton>
+                </template>
+
+                <template #default>
+                  <p class="">
+                    Are you sure you want to delete the selected visitor(s)? This action cannot be
+                    undone.
+                  </p>
+                </template>
+              </DashboardConfirmationModal>
+
+              <DashboardItemsToDisplay :items-to-display />
             </template>
           </VisitorSearchFilter>
         </div>

@@ -4,6 +4,7 @@
   "terminal.integrated.fontSize": 13,
   "workbench.startupEditor": "none",
   "editor.fontFamily": "JetBrains Mono",
+  "editor.fontLigatures": true,
   "editor.fontWeight": "normal",
   "editor.fontSize": 13,
   "editor.lineHeight": 1.5,
