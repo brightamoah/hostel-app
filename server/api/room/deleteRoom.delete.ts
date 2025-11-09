@@ -33,7 +33,7 @@ export default defineEventHandler(async (event) => {
 
     const { ids } = body.data;
 
-    const { deleteRoomsByIds, getRoomsByIds } = await roomQueries(event);
+    const { deleteRoomsByIds, getRoomsByIds } = await roomQueries();
 
     const roomsToDelete = await getRoomsByIds(ids);
 

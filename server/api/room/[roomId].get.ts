@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const { getRoomById } = await roomQueries(event);
+    const { getRoomById } = await roomQueries();
 
     const id = getRouterParam(event, "roomId");
 

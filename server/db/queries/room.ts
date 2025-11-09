@@ -3,9 +3,9 @@ import { and, asc, eq, gt, inArray, or } from "drizzle-orm";
 import { hostel, room } from "../schema";
 import { userQueries } from "./user";
 
-export const roomQueries = defineEventHandler(async (event) => {
+export async function roomQueries() {
   const { db } = useDB();
-  const { getAdminByUserId } = await userQueries(event);
+  const { getAdminByUserId } = await userQueries();
 
   const getAllRooms = async () => {
     const rooms = await db
@@ -209,4 +209,4 @@ export const roomQueries = defineEventHandler(async (event) => {
     getBuildingsByHostelId,
     getScopedHostels,
   };
-});
+}

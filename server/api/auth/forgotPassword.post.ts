@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const { email } = body.data;
-    const { getUserByEmail } = await userQueries(event);
+    const { getUserByEmail } = await userQueries();
 
     const existingUser = await getUserByEmail(email);
 

@@ -50,6 +50,20 @@
       "when": 1762241586923,
       "tag": "0006_long_bill_hollister",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1762686820385,
+      "tag": "0007_adorable_supernaut",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1762691096949,
+      "tag": "0008_brave_blacklash",
+      "breakpoints": true
     }
   ]
 }

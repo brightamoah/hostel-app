@@ -6,13 +6,16 @@ import { handleError } from "~~/server/utils/errorHandler";
 export default defineEventHandler(async (event) => {
   try {
     const { session, nodeEnv } = useRuntimeConfig();
+    const rawIp = getRequestIP(event, { xForwardedFor: true }) || event.node?.req?.socket?.remoteAddress;
+    const ip = normalizeIp(rawIp);
 
     const {
       updateUserLastLogin,
       getOnboardedStudent,
       getUserByEmail,
       getAdminByUserId,
-    } = await userQueries(event);
+      recordLoginAttempt,
+    } = await userQueries();
 
     const body = await readValidatedBody(event, body => loginSchema.safeParse(body));
 
@@ -22,22 +25,40 @@ export default defineEventHandler(async (event) => {
     const { email, password, rememberMe } = body.data;
 
     if (!email || !password) {
-      throw createError({ statusCode: 400, message: "Email and password required" });
+      throw createError({
+        statusCode: 400,
+        message: "Email and password required",
+      });
     }
+
+    await checkUserLockedOutByIp(ip);
 
     const currentUser = await getUserByEmail(email);
 
     if (!currentUser) {
-      throw createError({ statusCode: 401, message: "Invalid email or password" });
+      await recordLoginAttempt(null, ip);
+      throw createError({
+        statusCode: 401,
+        message: "Invalid email or password",
+      });
     }
+
+    await checkUserLockOutByUserId(currentUser.id, ip);
 
     const isValid = await verifyPassword(currentUser!.password, password);
     if (!isValid) {
-      throw createError({ statusCode: 401, message: "Invalid email or password" });
+      await recordLoginAttempt(currentUser.id, ip);
+      throw createError({
+        statusCode: 401,
+        message: "Invalid email or password",
+      });
     }
 
     if (!currentUser.emailVerified) {
-      throw createError({ statusCode: 403, message: "Email not verified" });
+      throw createError({
+        statusCode: 403,
+        message: "Email not verified",
+      });
     }
 
     let adminData: User["adminData"] | null = null;
@@ -52,6 +73,12 @@ export default defineEventHandler(async (event) => {
         message: "Admin details not found. Please contact support.",
       });
     }
+
+    await recordLoginAttempt(
+      currentUser.id,
+      ip,
+      true,
+    );
 
     await setUserSession(event, {
       user: {

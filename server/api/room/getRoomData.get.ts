@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
       getRoomsScoped,
       getBuildingsByHostelId,
       getScopedHostels,
-    } = await roomQueries(event);
+    } = await roomQueries();
 
     const {
       rooms,

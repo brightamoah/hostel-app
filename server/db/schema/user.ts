@@ -90,6 +90,14 @@ export const admin = pgTable("admin", t => ({
   `),
 ]);
 
+export const loginAttempts = pgTable("login_attempts", t => ({
+  id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
+  userId: t.integer().references(() => user.id, { onDelete: "cascade" }),
+  ip: t.text().notNull(),
+  timestamp: t.timestamp().notNull(),
+  success: t.boolean().notNull(),
+}));
+
 export const userRelations = relations(user, ({ one, many }) => ({
   student: one(student, {
     fields: [user.id],

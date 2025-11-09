@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 export default defineEventHandler(async (event) => {
   try {
     const { db } = useDB();
-    const { getUserById } = await userQueries(event);
+    const { getUserById } = await userQueries();
 
     const body = await readValidatedBody(event, body =>
       emailVerificationSchema.safeParse(body));

@@ -1,7 +1,7 @@
+import { userQueries } from "~~/server/db/queries/user";
 import { user } from "~~/server/db/schema/index";
 import { useDB } from "~~/server/utils/db";
 import { handleError } from "~~/server/utils/errorHandler";
-import { eq } from "drizzle-orm";
 import { randomUUID } from "uncrypto";
 
 import { getEmailTemplate } from "~/utils/emailTemplate";
@@ -11,6 +11,7 @@ export default defineEventHandler(async (event) => {
     await clearUserSession(event);
 
     const { db } = useDB();
+    const { getUserByEmail } = await userQueries();
 
     const body = await readValidatedBody(event, body => baseSignupSchema.safeParse(body));
 
@@ -20,12 +21,18 @@ export default defineEventHandler(async (event) => {
     const { email, name, password } = body.data;
 
     if (!email || !password || !name) {
-      throw createError({ statusCode: 400, message: "Name, email, and password are required" });
+      throw createError({
+        statusCode: 400,
+        message: "Name, email, and password are required",
+      });
     }
 
-    const existingUser = await db.query.user.findFirst({ where: eq(user.email, email) });
+    const existingUser = await getUserByEmail(email);
     if (existingUser) {
-      throw createError({ statusCode: 409, message: "An account with this email already exists" });
+      throw createError({
+        statusCode: 409,
+        message: "An account with this email already exists",
+      });
     }
 
     const passwordHash = await hashPassword(password);

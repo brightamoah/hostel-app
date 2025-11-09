@@ -41,9 +41,12 @@ export default defineEventHandler(async (event) => {
       status,
     } = body.data;
 
-    const existingRoom = await db.query.room.findFirst({
-      where: eq(room.roomNumber, roomNumber),
-    });
+    const existingRoom = await db
+      .query
+      .room
+      .findFirst({
+        where: eq(room.roomNumber, roomNumber),
+      });
 
     if (existingRoom) {
       throw createError({

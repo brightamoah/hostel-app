@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const { editRoomById, getRoomById, getRoomByNumberAndBuilding } = await roomQueries(event);
+    const { editRoomById, getRoomById, getRoomByNumberAndBuilding } = await roomQueries();
 
     const body = await readValidatedBody(event, body => editRoomSchema.safeParse(body));
 

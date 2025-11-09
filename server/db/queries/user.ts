@@ -1,7 +1,9 @@
 import { useDB } from "~~/server/utils/db";
-import { and, eq, inArray, isNotNull, lt, or, sql } from "drizzle-orm";
+import { and, count, eq, gt, inArray, isNotNull, lt, or, sql } from "drizzle-orm";
 
-import { admin, allocation, hostel, room, student, user } from "../schema";
+import { admin, allocation, hostel, loginAttempts, room, student, user } from "../schema";
+
+const ATTEMPT_WINDOW_MINUTES = 15;
 
 const userDetails = {
   id: user.id,
@@ -43,7 +45,7 @@ const userDetails = {
   },
 };
 
-export const userQueries = defineEventHandler(async () => {
+export async function userQueries() {
   const { db } = useDB();
 
   /**
@@ -74,6 +76,37 @@ export const userQueries = defineEventHandler(async () => {
       );
     return result;
   }
+
+  const getFailedAttemptsCount = async (
+    filteredField: FailedAttempts,
+    filteredValue: string | number,
+  ): Promise<number> => {
+    const windowStartTimestamp = Date.now() - ATTEMPT_WINDOW_MINUTES * 60 * 1000;
+
+    const [result] = await db
+      .select({ value: count() })
+      .from(loginAttempts)
+      .where(
+        and(
+          eq(filteredField, filteredValue),
+          eq(loginAttempts.success, false),
+          gt(loginAttempts.timestamp, new Date(windowStartTimestamp)),
+        ),
+      );
+
+    return result.value ?? 0;
+  };
+
+  const recordLoginAttempt = async (userId: number | null, ip: string, success = false): Promise<void> => {
+    await db
+      .insert(loginAttempts)
+      .values({
+        userId,
+        ip,
+        timestamp: new Date(),
+        success,
+      });
+  };
 
   const getUserByEmail = async (email: string) => {
     const existingUser = await db.query.user.findFirst({
@@ -337,5 +370,7 @@ export const userQueries = defineEventHandler(async () => {
     getUserByIds,
     createOrUpdateAdminForUser,
     disableAdminByUserId,
+    getFailedAttemptsCount,
+    recordLoginAttempt,
   };
-});
+}

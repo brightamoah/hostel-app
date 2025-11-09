@@ -2,7 +2,7 @@ import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Table } from "@tanstack/vue-table";
 import type { User } from "#auth-utils";
 import type { Visitor } from "~~/server/db/queries/visitor";
-import type { allocation, visitorLogs } from "~~/server/db/schema";
+import type { allocation, loginAttempts, visitorLogs } from "~~/server/db/schema";
 import type { randomUUID } from "node:crypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
@@ -218,3 +218,5 @@ export type AdminUser = {
   accessLevel: "regular" | "super" | "support" | "";
   department: string;
 };
+
+export type FailedAttempts = (typeof loginAttempts)["_"]["columns"][keyof (typeof loginAttempts)["_"]["columns"]];

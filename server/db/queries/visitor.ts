@@ -74,7 +74,7 @@ const visitorWithRelations = {
   },
 } as const;
 
-export const visitorQueries = defineEventHandler(async () => {
+export async function visitorQueries() {
   const { db } = useDB();
 
   const getScopedVisitors = async (admin: Admin) => {
@@ -219,7 +219,7 @@ export const visitorQueries = defineEventHandler(async () => {
     createVisitorLog,
     getVisitorStatusCount,
   };
-});
+}
 
 // export type Visitor = NonNullable<Awaited<ReturnType<Awaited<ReturnType<typeof visitorQueries>>["getVisitorById"]>>>;
 
