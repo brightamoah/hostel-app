@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
   const {
     getAdminByUserId,
     checkIfUserExists,
-  } = await userQueries(event);
+  } = await userQueries();
 
   const creatorAdminDetails = await getAdminByUserId(creator.id);
 

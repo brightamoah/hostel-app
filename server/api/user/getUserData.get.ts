@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const { getUsersScoped } = await userQueries(event);
+    const { getUsersScoped } = await userQueries();
     const data = await getUsersScoped(session.user.id);
 
     const {

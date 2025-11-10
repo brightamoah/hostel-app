@@ -6,6 +6,8 @@ import { breakpointsTailwind, useBreakpoints, useDateFormat } from "@vueuse/core
 
 const { visitor } = defineProps<{
   visitor: Visitor;
+  approve?: () => void;
+  deny?: () => void;
 }>();
 
 const emit = defineEmits<{ close: [boolean] }>();
@@ -239,6 +241,7 @@ const visitHistory = computed(() => {
             color="success"
             :size="isMobile ? 'md' : 'lg'"
             class="justify-center w-full sm:w-auto cursor-pointer"
+            @click="approve?.()"
           />
 
           <UButton
@@ -248,6 +251,7 @@ const visitHistory = computed(() => {
             color="error"
             :size="isMobile ? 'md' : 'lg'"
             class="justify-center cursor-pointer"
+            @click="deny?.()"
           />
         </div>
 

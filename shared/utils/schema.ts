@@ -220,8 +220,16 @@ const promoteDemoteSchema = z.object({
 
 export type PromoteDemoteSchema = z.output<typeof promoteDemoteSchema>;
 
+const approveDenySchema = z.object({
+  visitorId: z.number().int().positive().min(1, "Invalid Visitor ID"),
+  status: z.enum(["approved", "denied"], "Status must be either 'approved' or 'denied'"),
+});
+
+export type ApproveDenySchema = z.output<typeof approveDenySchema>;
+
 export {
   addAdminSchema,
+  approveDenySchema,
   baseSignupSchema,
   confirmPasswordSchema,
   deleteItemSchema,

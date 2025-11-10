@@ -55,6 +55,7 @@ export default defineEventHandler(async (event) => {
     }
 
     if (!currentUser.emailVerified) {
+      await recordLoginAttempt(currentUser.id, ip);
       throw createError({
         statusCode: 403,
         message: "Email not verified",

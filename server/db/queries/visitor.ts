@@ -113,10 +113,17 @@ export async function visitorQueries() {
   const updateVisitorStatus = async (visitorId: number, status: "approved" | "denied", admin: Admin) => {
     const visitorToUpdate = await getVisitorById(visitorId, admin);
 
-    if (visitorToUpdate && visitorToUpdate.status !== "pending") {
+    if (!visitorToUpdate) {
+      throw createError({
+        statusCode: 404,
+        message: "Visitor not found or you do not have permission to access it.",
+      });
+    }
+
+    if (visitorToUpdate.status !== "pending") {
       throw createError({
         statusCode: 400,
-        message: `This visit has already been ${visitorToUpdate.status}.`,
+        message: `This visit cannot be modified as it is already '${visitorToUpdate.status}'`,
       });
     }
 
@@ -125,6 +132,14 @@ export async function visitorQueries() {
       .set({ status, adminId: admin.id })
       .where(eq(visitor.id, visitorId))
       .returning();
+
+    if (!updatedVisitor) {
+      throw createError({
+        statusCode: 500,
+        message: "Failed to update visitor status.",
+      });
+    }
+
     return updatedVisitor;
   };
 

@@ -94,7 +94,7 @@ export async function userQueries() {
         ),
       );
 
-    return result.value ?? 0;
+    return result?.value ?? 0;
   };
 
   const recordLoginAttempt = async (userId: number | null, ip: string, success = false): Promise<void> => {

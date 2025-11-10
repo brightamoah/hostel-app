@@ -2,9 +2,13 @@ import type { TableColumn } from "@nuxt/ui";
 import type { Column, Row } from "@tanstack/table-core";
 import type { Visitor } from "~~/server/db/queries/visitor";
 
+import { useDateFormat } from "@vueuse/core";
+
 import type { RowActionItem } from "~/types/rowAction";
 
 const VisitorDetailsModal = defineAsyncComponent(() => import("~/components/visitor/details.vue"));
+
+const ConfirmationModal = defineAsyncComponent(() => import("~/components/dashboard/confirmationModal.vue"));
 
 export function useVisitorRowColumn(
   UAvatar: ComponentType,
@@ -15,10 +19,51 @@ export function useVisitorRowColumn(
   // UIcon: Component,
 ) {
   const overlay = useOverlay();
+  const visitorStore = useVisitorStore();
+  const { isLoading } = storeToRefs(visitorStore);
+
+  const openApproveDemoteModal = (visitor: Visitor, status: "approved" | "denied") => {
+    const modal = overlay.create(ConfirmationModal);
+    const close = modal.close;
+
+    modal.open({
+      title: status === "approved" ? "Approve Visitor" : "Deny Visitor",
+      description: `This action will change the status of the visitor to "${status}"`,
+      confirmLabel: status === "approved" ? "Approve Visitor" : "Deny Visitor",
+      renderTrigger: false,
+      confirmColor: status === "approved" ? "success" : "error",
+      isLoading,
+      body: `Are you sure you want to ${status === "approved" ? "approve" : "deny"} visitor with name ${visitor.name}? This action cannot be undone.`,
+      onConfirm: async () => {
+        try {
+          await visitorStore.approveDenyVisitor({
+            visitorId: visitor.id,
+            status,
+          });
+          close();
+        }
+        catch (error) {
+          console.warn(`Failed to change status to ${status}`, error);
+        }
+      },
+    });
+  };
 
   const openVisitorDetailsModal = (visitor: Visitor) => {
-    overlay.create(VisitorDetailsModal).open({
+    const modal = overlay.create(VisitorDetailsModal);
+    const close = modal.close;
+
+    modal.open({
       visitor,
+      approve: () => {
+        openApproveDemoteModal(visitor, "approved");
+        close();
+      },
+      deny: () => {
+        openApproveDemoteModal(visitor, "denied");
+        close();
+      },
+
     });
   };
 
@@ -38,13 +83,15 @@ export function useVisitorRowColumn(
           label: "Approve Visitor",
           icon: "i-lucide-check-circle",
           color: "success",
-          onSelect: () => { },
+          disabled: isLoading.value,
+          onSelect: () => openApproveDemoteModal(visitor, "approved"),
         },
         {
           label: "Deny Visitor",
           icon: "i-lucide-x-circle",
           color: "error",
-          onSelect: () => { },
+          disabled: isLoading.value,
+          onSelect: () => openApproveDemoteModal(visitor, "denied"),
         },
         {
           type: "separator",
@@ -179,8 +226,11 @@ export function useVisitorRowColumn(
     {
       accessorKey: "visitDate",
       header: createSortableHeader("Visit Date"),
+      filterFn: (row, columnId: string, filterValue: string) => {
+        return dateFilter<Visitor>(row, columnId, filterValue);
+      },
       cell: ({ row }) => {
-        return h("span", { class: "font-medium text-default" }, new Date(row.original.visitDate).toLocaleDateString());
+        return h("span", { class: "font-medium text-default" }, useDateFormat(row.original.visitDate, "ddd DD-MM-YYYY").value);
       },
     },
     {
