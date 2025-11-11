@@ -52,11 +52,49 @@ export const useVisitorStore = defineStore("visitorStore", () => {
     }
   };
 
+  const checkInCheckOutVisitor = async (payload: LogActionSchema) => {
+    if (!payload.visitorId && !payload.action)
+      return;
+
+    isLoading.value = true;
+
+    try {
+      const response = await $fetch("/api/visitor/checkInCheckout", {
+        method: "POST",
+        body: payload,
+      });
+
+      const action = payload.action === "check_in" ? "Checked In" : "Checked Out";
+      toast.add({
+        title: `Visitor ${action} Successfully`,
+        description: response.message,
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+      await refreshNuxtData(visitorDataKey.value);
+    }
+    catch (error) {
+      const message = (error as any)?.data?.message;
+      const action = payload.action === "check_in" ? "Check In" : "Check Out";
+      toast.add({
+        title: `Failed to ${action} Visitor`,
+        description: message,
+        color: "error",
+        icon: "i-lucide-alert-circle",
+        duration: 8000,
+      });
+    }
+    finally {
+      isLoading.value = false;
+    }
+  };
+
   return {
     isLoading,
     deleteModalOpen,
     deleteVisitors,
     approveDenyVisitor,
+    checkInCheckOutVisitor,
   };
 });
 

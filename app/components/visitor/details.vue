@@ -114,7 +114,7 @@ const visitHistory = computed(() => {
   if (!visitLogs.length)
     return [];
 
-  const formatTimestamp = (timestamp: string | Date) => useDateFormat(timestamp, "ddd Do MMM, YYYY HH:mm").value;
+  const formatTimestamp = (timestamp: string | Date) => useDateFormat(timestamp, "ddd Do MMM, YYYY HH:mm:ss").value;
 
   const duration = (checkinTime: string | Date, checkoutTime: string | Date) => {
     const diff = +new Date(checkoutTime) - +new Date(checkinTime);

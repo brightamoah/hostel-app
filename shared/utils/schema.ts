@@ -227,6 +227,13 @@ const approveDenySchema = z.object({
 
 export type ApproveDenySchema = z.output<typeof approveDenySchema>;
 
+const logActionSchema = z.object({
+  visitorId: z.number().int().positive().min(1, "Invalid Visitor ID"),
+  action: z.enum(["check_in", "check_out"], "Action must be either 'check_in' or 'check_out'"),
+});
+
+export type LogActionSchema = z.output<typeof logActionSchema>;
+
 export {
   addAdminSchema,
   approveDenySchema,
@@ -236,6 +243,7 @@ export {
   editRoomSchema,
   emailSchema,
   emailVerificationSchema,
+  logActionSchema,
   loginSchema,
   nameSchema,
   passwordResetSchema,

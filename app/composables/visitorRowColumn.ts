@@ -67,6 +67,33 @@ export function useVisitorRowColumn(
     });
   };
 
+  const openCheckInCheckOutModal = (visitor: Visitor, action: LogActionSchema["action"]) => {
+    const modal = overlay.create(ConfirmationModal);
+    const close = modal.close;
+
+    modal.open({
+      title: action === "check_in" ? "Check In Visitor" : "Check Out Visitor",
+      description: `This action will ${action === "check_in" ? "check in" : "check out"} the visitor.`,
+      confirmLabel: action === "check_in" ? "Check In Visitor" : "Check Out Visitor",
+      renderTrigger: false,
+      confirmColor: "primary",
+      isLoading,
+      body: `Are you sure you want to ${action === "check_in" ? "check in" : "check out"} visitor with name ${visitor.name}?`,
+      onConfirm: async () => {
+        try {
+          await visitorStore.checkInCheckOutVisitor({
+            visitorId: visitor.id,
+            action,
+          });
+          close();
+        }
+        catch (error) {
+          console.warn(`Failed to ${action === "check_in" ? "check in" : "check out"} visitor`, error);
+        }
+      },
+    });
+  };
+
   const getRowItems = (row: Row<Visitor>) => {
     const visitor = row.original;
 
@@ -103,25 +130,28 @@ export function useVisitorRowColumn(
       {
         label: "View Visitor Details",
         icon: "i-lucide-eye",
-        onSelect: () => {
-          openVisitorDetailsModal(visitor);
-        },
+        onSelect: () => openVisitorDetailsModal(visitor),
       },
       {
         label: "Check In Visitor",
         icon: "i-lucide-log-in",
-        onSelect: () => { },
+        disabled: isLoading.value || (visitor.status !== "approved" && visitor.status !== "checked-out"),
+        onSelect: () => openCheckInCheckOutModal(visitor, "check_in"),
       },
       {
         label: "Check Out Visitor",
         icon: "i-lucide-log-out",
-        onSelect: () => { },
+        disabled: isLoading.value || visitor.status !== "checked-in",
+        onSelect: () => openCheckInCheckOutModal(visitor, "check_out"),
+      },
+      {
+        type: "separator",
       },
       {
         label: "Delete Visitor",
         icon: "i-lucide-trash-2",
         color: "error",
-        onSelect: () => { },
+        onSelect: () => { /* TODO: Implement delete confirmation */ },
       },
     );
 
@@ -241,18 +271,20 @@ export function useVisitorRowColumn(
         if (!lastLog) {
           return h("span", "N/A");
         }
-        return h("span", { class: "font-medium text-default" }, new Date(lastLog.timestamp).toLocaleString());
+        return h("span", { class: "font-medium text-default" }, useDateFormat(lastLog.timestamp, "HH:mm:ss").value);
       },
     },
     {
       id: "checkOut",
       header: createSortableHeader("Last Check-Out"),
       cell: ({ row }) => {
-        const lastLog = row.original.visitorLogs.find(log => log.action === "check_out");
-        if (!lastLog) {
-          return h("span", "N/A");
+        const lastLog = row.original.visitorLogs[0];
+
+        if (lastLog && lastLog.action === "check_out") {
+          return h("span", { class: "font-medium text-default" }, useDateFormat(lastLog.timestamp, "HH:mm:ss").value);
         }
-        return h("span", { class: "font-medium text-default" }, new Date(lastLog.timestamp).toLocaleString());
+
+        return h("span", "N/A");
       },
     },
     {

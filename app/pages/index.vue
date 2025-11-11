@@ -109,7 +109,7 @@ const features = ref([
     <UPageSection
       title="Everything you need for efficient hostel administration"
       description="Our comprehensive hostel management system streamlines operations for both administrators and residents."
-      class="-mt-5 md:-mt-[10rem]"
+      class="-mt-5 md:-mt-40"
       :ui="{
         title: 'font-newsreader animate-fade-in-up capitalize text-2xl md:text-3xl lg:text-4xl',
         description: 'animate-fade-in-up animation-delay-600 md:-mt-0.5',
