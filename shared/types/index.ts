@@ -220,3 +220,7 @@ export type AdminUser = {
 };
 
 export type FailedAttempts = (typeof loginAttempts)["_"]["columns"][keyof (typeof loginAttempts)["_"]["columns"]];
+
+export type VisitorType = Visitor;
+export type VisitorStatus = Visitor["status"];
+export type AllowedStatusesForCheckIn = Extract<VisitorStatus, "approved" | "checked-out">;

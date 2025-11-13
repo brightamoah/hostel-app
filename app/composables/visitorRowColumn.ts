@@ -1,6 +1,5 @@
 import type { TableColumn } from "@nuxt/ui";
 import type { Column, Row } from "@tanstack/table-core";
-import type { Visitor } from "~~/server/db/queries/visitor";
 
 import { useDateFormat } from "@vueuse/core";
 
@@ -22,7 +21,7 @@ export function useVisitorRowColumn(
   const visitorStore = useVisitorStore();
   const { isLoading } = storeToRefs(visitorStore);
 
-  const openApproveDemoteModal = (visitor: Visitor, status: "approved" | "denied") => {
+  const openApproveDemoteModal = (visitor: VisitorType, status: "approved" | "denied") => {
     const modal = overlay.create(ConfirmationModal);
     const close = modal.close;
 
@@ -49,7 +48,7 @@ export function useVisitorRowColumn(
     });
   };
 
-  const openVisitorDetailsModal = (visitor: Visitor) => {
+  const openVisitorDetailsModal = (visitor: VisitorType) => {
     const modal = overlay.create(VisitorDetailsModal);
     const close = modal.close;
 
@@ -67,18 +66,35 @@ export function useVisitorRowColumn(
     });
   };
 
-  const openCheckInCheckOutModal = (visitor: Visitor, action: LogActionSchema["action"]) => {
+  const openCheckInCheckOutModal = (visitor: VisitorType, action: LogActionSchema["action"]) => {
+    const checksPassed = checkInCheckOutChecks(visitor, action);
+    if (!checksPassed) {
+      return;
+    }
+
     const modal = overlay.create(ConfirmationModal);
     const close = modal.close;
 
     modal.open({
-      title: action === "check_in" ? "Check In Visitor" : "Check Out Visitor",
-      description: `This action will ${action === "check_in" ? "check in" : "check out"} the visitor.`,
-      confirmLabel: action === "check_in" ? "Check In Visitor" : "Check Out Visitor",
+      title: action === "check_in"
+        ? "Check In Visitor"
+        : "Check Out Visitor",
+
+      description: `This action will ${action === "check_in"
+        ? "check in"
+        : "check out"} the visitor.`,
+
+      confirmLabel: action === "check_in"
+        ? "Check In Visitor"
+        : "Check Out Visitor",
+
       renderTrigger: false,
       confirmColor: "primary",
       isLoading,
-      body: `Are you sure you want to ${action === "check_in" ? "check in" : "check out"} visitor with name ${visitor.name}?`,
+      body: `Are you sure you want to ${action === "check_in"
+        ? "check in"
+        : "check out"} visitor with name ${visitor.name}?`,
+
       onConfirm: async () => {
         try {
           await visitorStore.checkInCheckOutVisitor({
@@ -88,24 +104,35 @@ export function useVisitorRowColumn(
           close();
         }
         catch (error) {
-          console.warn(`Failed to ${action === "check_in" ? "check in" : "check out"} visitor`, error);
+          console.warn(`Failed to ${action === "check_in"
+            ? "check in"
+            : "check out"} visitor`, error);
         }
       },
     });
   };
 
-  const getRowItems = (row: Row<Visitor>) => {
+  const getRowItems = (row: Row<VisitorType>) => {
     const visitor = row.original;
+    const today = new Date().toISOString().split("T")[0];
 
     const actions: RowActionItem[] = [
       {
         type: "label",
         label: "Actions",
       },
+      {
+        label: "View Visitor Details",
+        icon: "i-lucide-eye",
+        onSelect: () => openVisitorDetailsModal(visitor),
+      },
     ];
 
     if (visitor.status === "pending") {
       actions.push(
+        {
+          type: "separator",
+        },
         {
           label: "Approve Visitor",
           icon: "i-lucide-check-circle",
@@ -120,30 +147,32 @@ export function useVisitorRowColumn(
           disabled: isLoading.value,
           onSelect: () => openApproveDemoteModal(visitor, "denied"),
         },
+      );
+    }
+
+    if ((visitor.status === "approved" || visitor.status === "checked-out") && visitor.visitDate === today) {
+      actions.push(
         {
-          type: "separator",
+          label: "Check In Visitor",
+          icon: "i-lucide-log-in",
+          disabled: isLoading.value || (visitor.status !== "approved" && visitor.status !== "checked-out"),
+          onSelect: () => openCheckInCheckOutModal(visitor, "check_in"),
+        },
+      );
+    }
+
+    if (visitor.status === "checked-in") {
+      actions.push(
+        {
+          label: "Check Out Visitor",
+          icon: "i-lucide-log-out",
+          disabled: isLoading.value || visitor.status !== "checked-in",
+          onSelect: () => openCheckInCheckOutModal(visitor, "check_out"),
         },
       );
     }
 
     actions.push(
-      {
-        label: "View Visitor Details",
-        icon: "i-lucide-eye",
-        onSelect: () => openVisitorDetailsModal(visitor),
-      },
-      {
-        label: "Check In Visitor",
-        icon: "i-lucide-log-in",
-        disabled: isLoading.value || (visitor.status !== "approved" && visitor.status !== "checked-out"),
-        onSelect: () => openCheckInCheckOutModal(visitor, "check_in"),
-      },
-      {
-        label: "Check Out Visitor",
-        icon: "i-lucide-log-out",
-        disabled: isLoading.value || visitor.status !== "checked-in",
-        onSelect: () => openCheckInCheckOutModal(visitor, "check_out"),
-      },
       {
         type: "separator",
       },
@@ -158,7 +187,7 @@ export function useVisitorRowColumn(
     return actions;
   };
 
-  const statusColorMap: Record<Visitor["status"], ColorType> = {
+  const statusColorMap: Record<VisitorType["status"], ColorType> = {
     "pending": "warning",
     "approved": "info",
     "checked-in": "success",
@@ -168,7 +197,7 @@ export function useVisitorRowColumn(
   };
 
   const createSortableHeader = (label: string) => {
-    return ({ column }: { column: Column<Visitor, unknown> }) => {
+    return ({ column }: { column: Column<VisitorType, unknown> }) => {
       const isSorted = column.getIsSorted();
       return h(UButton, {
         color: "neutral",
@@ -188,7 +217,7 @@ export function useVisitorRowColumn(
     };
   };
 
-  const columns = ref<TableColumn<Visitor>[]>([
+  const columns = ref<TableColumn<VisitorType>[]>([
     {
       id: "select",
       header: ({ table }) =>
@@ -257,7 +286,7 @@ export function useVisitorRowColumn(
       accessorKey: "visitDate",
       header: createSortableHeader("Visit Date"),
       filterFn: (row, columnId: string, filterValue: string) => {
-        return dateFilter<Visitor>(row, columnId, filterValue);
+        return dateFilter<VisitorType>(row, columnId, filterValue);
       },
       cell: ({ row }) => {
         return h("span", { class: "font-medium text-default" }, useDateFormat(row.original.visitDate, "ddd DD-MM-YYYY").value);
