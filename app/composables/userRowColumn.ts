@@ -1,5 +1,5 @@
 import type { TableColumn } from "@nuxt/ui";
-import type { Column, Row } from "@tanstack/table-core";
+import type { Row } from "@tanstack/table-core";
 
 const UserDetailsModal = defineAsyncComponent(() => import("~/components/user/detailsModal.vue"));
 
@@ -166,27 +166,6 @@ export function useUserRowColumn(
   const userIcon = (userRole?: UserType["role"]) =>
     userRole === "admin" ? "i-lucide-monitor" : "i-lucide-graduation-cap";
 
-  const createSortableHeader = (label: string) => {
-    return ({ column }: { column: Column<UserType, unknown> }) => {
-      const isSorted = column.getIsSorted();
-      return h(UButton, {
-        color: "neutral",
-        variant: "ghost",
-        label,
-        icon: isSorted
-          ? isSorted === "asc"
-            ? "i-lucide-arrow-up-narrow-wide"
-            : "i-lucide-arrow-down-wide-narrow"
-          : "i-lucide-arrow-up-down",
-        class: "-mx-2.5 cursor-pointer",
-        ui: {
-          leadingIcon: "size-4 opacity-25",
-        },
-        onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-      });
-    };
-  };
-
   const columns = ref<TableColumn<UserType>[]>([
     {
       id: "select",
@@ -208,7 +187,7 @@ export function useUserRowColumn(
     },
     {
       accessorKey: "name",
-      header: createSortableHeader("User"),
+      header: createSortableHeader("User", UButton),
       cell: ({ row }) => {
         return h("div", { class: "flex items-center gap-3" }, [
           h(UAvatar, {
@@ -229,7 +208,7 @@ export function useUserRowColumn(
     },
     {
       accessorKey: "role",
-      header: createSortableHeader("Role"),
+      header: createSortableHeader("Role", UButton),
       cell: ({ row }) => {
         return h("div", { class: "flex items-center gap-3" }, [
           h(UIcon, {
@@ -243,7 +222,7 @@ export function useUserRowColumn(
     {
       id: "residencyStatus",
       accessorFn: row => row.student?.residencyStatus ?? "N/A",
-      header: createSortableHeader("Residency Status"),
+      header: createSortableHeader("Residency Status", UButton),
       filterFn: (row, columnId, filterValue) => {
         if (!filterValue || filterValue === "all")
           return true;
@@ -262,7 +241,7 @@ export function useUserRowColumn(
     {
       id: "phoneNumber",
       accessorFn: row => row.student?.phoneNumber ?? row.admin?.phoneNumber ?? "",
-      header: createSortableHeader("Phone Number"),
+      header: createSortableHeader("Phone Number", UButton),
       cell: ({ row }) => {
         const phoneNumber = row.original.role === "admin" ? row.original.admin?.phoneNumber : row.original.student?.phoneNumber;
         return phoneNumber || "N/A";
@@ -270,7 +249,7 @@ export function useUserRowColumn(
     },
     {
       accessorKey: "emailVerified",
-      header: createSortableHeader("Email Status"),
+      header: createSortableHeader("Email Status", UButton),
       cell: ({ row }) => {
         return row.original.isEmailVerified
           ? h(UBadge, {

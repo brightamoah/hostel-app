@@ -14,7 +14,7 @@ pnpm install
 
 Create a `.env` file in the root of the project.
 
-Get your database connection string from **Neon** (make sure to get the “Pooled” string).  
+Get your database connection string from **Neon** (make sure to get the “Pooled” string).
 Add it to your `.env` file:
 
 ```bash
@@ -29,9 +29,8 @@ NUXT_NODEMAILER_FROM='<your app name> <'senders email address'>'
 NUXT_NODEMAILER_HOST=smtp.gmail.com
 NUXT_NODEMAILER_PORT=465
 NUXT_NODEMAILER_AUTH_USER=<'senders email address'>
-NUXT_NODEMAILER_AUTH_PASS=your-email-app-password 
+NUXT_NODEMAILER_AUTH_PASS=your-email-app-password
 ```
-
 
 ## Development
 
@@ -77,6 +76,7 @@ Preview locally:
 ```bash
 pnpm preview
 ```
+
 ---
 
 ## Scripts
@@ -92,14 +92,14 @@ pnpm preview
 
 This project uses a modern, type-safe, full-stack architecture:
 
-| Category | Technology | Purpose |
-|-----------|-------------|----------|
-| Framework | **Nuxt 4** | Full-stack framework (Vue 3, Nitro server, file-based routing) |
-| Database | **Neon** | Serverless Postgres database |
-| ORM | **Drizzle ORM** | Type-safe SQL query builder and schema management |
-| UI Library | **Nuxt UI** | Pre-built Vue components (tables, modals, forms) |
-| State Mgt | **Pinia** | Centralized state management for the frontend |
-| Validation | **Zod** | Schema validation for both frontend forms and backend API routes |
+| Category   | Technology      | Purpose                                                          |
+| ---------- | --------------- | ---------------------------------------------------------------- |
+| Framework  | **Nuxt 4**      | Full-stack framework (Vue 3, Nitro server, file-based routing)   |
+| Database   | **Neon**        | Serverless Postgres database                                     |
+| ORM        | **Drizzle ORM** | Type-safe SQL query builder and schema management                |
+| UI Library | **Nuxt UI**     | Pre-built Vue components (tables, modals, forms)                 |
+| State Mgt  | **Pinia**       | Centralized state management for the frontend                    |
+| Validation | **Zod**         | Schema validation for both frontend forms and backend API routes |
 
 ---
 
@@ -129,7 +129,8 @@ This project uses a modern, type-safe, full-stack architecture:
 ```
 
 ## 💡 Developed By
-**Bright Amoah**  
+
+**Bright Amoah**
 [GitHub](https://github.com/brightamoah)
 
 ---

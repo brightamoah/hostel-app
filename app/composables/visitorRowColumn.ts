@@ -1,5 +1,5 @@
 import type { TableColumn } from "@nuxt/ui";
-import type { Column, Row } from "@tanstack/table-core";
+import type { Row } from "@tanstack/table-core";
 
 import { useDateFormat } from "@vueuse/core";
 
@@ -21,7 +21,7 @@ export function useVisitorRowColumn(
   const visitorStore = useVisitorStore();
   const { isLoading } = storeToRefs(visitorStore);
 
-  const openApproveDemoteModal = (visitor: VisitorType, status: "approved" | "denied") => {
+  const openApproveDenyModal = (visitor: VisitorType, status: "approved" | "denied") => {
     const modal = overlay.create(ConfirmationModal);
     const close = modal.close;
 
@@ -55,11 +55,11 @@ export function useVisitorRowColumn(
     modal.open({
       visitor,
       approve: () => {
-        openApproveDemoteModal(visitor, "approved");
+        openApproveDenyModal(visitor, "approved");
         close();
       },
       deny: () => {
-        openApproveDemoteModal(visitor, "denied");
+        openApproveDenyModal(visitor, "denied");
         close();
       },
 
@@ -138,14 +138,14 @@ export function useVisitorRowColumn(
           icon: "i-lucide-check-circle",
           color: "success",
           disabled: isLoading.value,
-          onSelect: () => openApproveDemoteModal(visitor, "approved"),
+          onSelect: () => openApproveDenyModal(visitor, "approved"),
         },
         {
           label: "Deny Visitor",
           icon: "i-lucide-x-circle",
           color: "error",
           disabled: isLoading.value,
-          onSelect: () => openApproveDemoteModal(visitor, "denied"),
+          onSelect: () => openApproveDenyModal(visitor, "denied"),
         },
       );
     }
@@ -196,27 +196,6 @@ export function useVisitorRowColumn(
     "denied": "error",
   };
 
-  const createSortableHeader = (label: string) => {
-    return ({ column }: { column: Column<VisitorType, unknown> }) => {
-      const isSorted = column.getIsSorted();
-      return h(UButton, {
-        color: "neutral",
-        variant: "ghost",
-        label,
-        icon: isSorted
-          ? isSorted === "asc"
-            ? "i-lucide-arrow-up-narrow-wide"
-            : "i-lucide-arrow-down-wide-narrow"
-          : "i-lucide-arrow-up-down",
-        class: "-mx-2.5 cursor-pointer",
-        ui: {
-          leadingIcon: "size-4 opacity-25",
-        },
-        onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-      });
-    };
-  };
-
   const columns = ref<TableColumn<VisitorType>[]>([
     {
       id: "select",
@@ -238,7 +217,7 @@ export function useVisitorRowColumn(
     },
     {
       accessorKey: "name",
-      header: createSortableHeader("Visitor"),
+      header: createSortableHeader("Visitor", UButton),
       cell: ({ row }) => {
         return h("div", { class: "flex items-center gap-3" }, [
           h(UAvatar, {
@@ -258,7 +237,7 @@ export function useVisitorRowColumn(
     },
     {
       id: "student",
-      header: createSortableHeader("Student"),
+      header: createSortableHeader("Student", UButton),
       cell: ({ row }) => {
         const studentUser = row.original.student?.user;
         const studentAllocation = row.original.student?.allocations[0];
@@ -277,14 +256,14 @@ export function useVisitorRowColumn(
     },
     {
       accessorKey: "relationship",
-      header: createSortableHeader("Relationship"),
+      header: createSortableHeader("Relationship", UButton),
       cell: ({ row }) => {
         return h("span", { class: "capitalize font-medium text-default" }, row.original.relationship);
       },
     },
     {
       accessorKey: "visitDate",
-      header: createSortableHeader("Visit Date"),
+      header: createSortableHeader("Visit Date", UButton),
       filterFn: (row, columnId: string, filterValue: string) => {
         return dateFilter<VisitorType>(row, columnId, filterValue);
       },
@@ -294,7 +273,7 @@ export function useVisitorRowColumn(
     },
     {
       id: "checkIn",
-      header: createSortableHeader("Last Check-In"),
+      header: createSortableHeader("Last Check-In", UButton),
       cell: ({ row }) => {
         const lastLog = row.original.visitorLogs.find(log => log.action === "check_in");
         if (!lastLog) {
@@ -305,7 +284,7 @@ export function useVisitorRowColumn(
     },
     {
       id: "checkOut",
-      header: createSortableHeader("Last Check-Out"),
+      header: createSortableHeader("Last Check-Out", UButton),
       cell: ({ row }) => {
         const lastLog = row.original.visitorLogs[0];
 
@@ -318,7 +297,7 @@ export function useVisitorRowColumn(
     },
     {
       accessorKey: "status",
-      header: createSortableHeader("Status"),
+      header: createSortableHeader("Status", UButton),
       cell: ({ row }) => {
         return h(UBadge, {
           label: row.original.status.replace("-", " "),

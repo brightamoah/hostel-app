@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TabsItem } from "@nuxt/ui";
+import type { TableColumn, TabsItem } from "@nuxt/ui";
 import type { Visitor } from "~~/server/db/queries/visitor";
 
 import { breakpointsTailwind, useBreakpoints, useDateFormat } from "@vueuse/core";
@@ -12,6 +12,7 @@ const { visitor } = defineProps<{
 
 const emit = defineEmits<{ close: [boolean] }>();
 
+const UButton = resolveComponent("UButton");
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
@@ -109,6 +110,37 @@ const studentItems = computed(() => [
   },
 ]);
 
+type HistoryItem = {
+  checkIn: string;
+  checkOut: string;
+  performedBy: string;
+  duration: string;
+};
+
+const historyColumns = ref<TableColumn<HistoryItem>[]>([
+  {
+    id: "checkIn",
+    header: createSortableHeader("Check-In Time", UButton),
+    accessorKey: "checkIn",
+  },
+  {
+    id: "checkOut",
+    header: createSortableHeader("Check-Out Time", UButton),
+    accessorKey: "checkOut",
+  },
+  {
+    id: "performedBy",
+    header: "Performed By",
+    accessorKey: "performedBy",
+  },
+  {
+    id: "duration",
+    header: createSortableHeader("Duration", UButton),
+    accessorKey: "duration",
+  },
+
+]);
+
 const visitHistory = computed(() => {
   const visitLogs = visitor.visitorLogs ?? [];
   if (!visitLogs.length)
@@ -161,7 +193,7 @@ const visitHistory = computed(() => {
     });
   }
 
-  return rows;
+  return rows.reverse();
 });
 </script>
 
@@ -319,6 +351,7 @@ const visitHistory = computed(() => {
 
         <template #history>
           <UTable
+            :columns="historyColumns"
             :data="visitHistory"
             class="flex-1"
           />
@@ -339,6 +372,4 @@ const visitHistory = computed(() => {
   </UModal>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

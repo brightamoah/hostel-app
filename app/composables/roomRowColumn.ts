@@ -135,48 +135,14 @@ export function useRoomRowColumn(
     },
     {
       accessorKey: "roomNumber",
-      header: ({ column }) => {
-        const isSorted = column.getIsSorted();
-        return h(UButton, {
-          color: "neutral",
-          variant: "ghost",
-          label: "Room #",
-          icon: isSorted
-            ? isSorted === "asc"
-              ? "i-lucide-arrow-up-narrow-wide"
-              : "i-lucide-arrow-down-wide-narrow"
-            : "i-lucide-arrow-up-down",
-          class: "-mx-2.5 cursor-pointer",
-          ui: {
-            leadingIcon: "size-4 opacity-25",
-          },
-          onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-        });
-      },
+      header: createSortableHeader("Room #", UButton),
       cell: ({ row }) => {
         return h("p", { class: "font-medium" }, row.original.roomNumber);
       },
     },
     {
       accessorKey: "building",
-      header: ({ column }) => {
-        const isSorted = column.getIsSorted();
-        return h(UButton, {
-          color: "neutral",
-          variant: "ghost",
-          label: "Building",
-          icon: isSorted
-            ? isSorted === "asc"
-              ? "i-lucide-arrow-up-narrow-wide"
-              : "i-lucide-arrow-down-wide-narrow"
-            : "i-lucide-arrow-up-down",
-          class: "-mx-2.5 cursor-pointer",
-          ui: {
-            leadingIcon: "size-4 opacity-25",
-          },
-          onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-        });
-      },
+      header: createSortableHeader("Building", UButton),
       cell: ({ row }) => {
         return h("p", { class: "font-medium" }, row.original.building);
       },
@@ -184,72 +150,21 @@ export function useRoomRowColumn(
     {
       accessorKey: "floor",
       filterFn: "equals",
-      header: ({ column }) => {
-        const isSorted = column.getIsSorted();
-        return h(UButton, {
-          color: "neutral",
-          variant: "ghost",
-          label: "Floor",
-          icon: isSorted
-            ? isSorted === "asc"
-              ? "i-lucide-arrow-up-narrow-wide"
-              : "i-lucide-arrow-down-wide-narrow"
-            : "i-lucide-arrow-up-down",
-          class: "-mx-2.5 cursor-pointer",
-          ui: {
-            leadingIcon: "size-4 opacity-25",
-          },
-          onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-        });
-      },
+      header: createSortableHeader("Floor", UButton),
       cell: ({ row }) => {
         return h("p", { class: "font-medium" }, row.original.floor);
       },
     },
     {
       accessorKey: "roomType",
-      header: ({ column }) => {
-        const isSorted = column.getIsSorted();
-        return h(UButton, {
-          color: "neutral",
-          variant: "ghost",
-          label: "Room Type",
-          icon: isSorted
-            ? isSorted === "asc"
-              ? "i-lucide-arrow-up-narrow-wide"
-              : "i-lucide-arrow-down-wide-narrow"
-            : "i-lucide-arrow-up-down",
-          class: "-mx-2.5 cursor-pointer",
-          ui: {
-            leadingIcon: "size-4 opacity-25",
-          },
-          onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-        });
-      },
+      header: createSortableHeader("Room Type", UButton),
       cell: ({ row }) => {
         return h("p", { class: "font-medium capitalize" }, row.original.roomType);
       },
     },
     {
       accessorKey: "status",
-      header: ({ column }) => {
-        const isSorted = column.getIsSorted();
-        return h(UButton, {
-          color: "neutral",
-          variant: "ghost",
-          label: "Status",
-          icon: isSorted
-            ? isSorted === "asc"
-              ? "i-lucide-arrow-up-narrow-wide"
-              : "i-lucide-arrow-down-wide-narrow"
-            : "i-lucide-arrow-up-down",
-          class: "-mx-2.5 cursor-pointer",
-          ui: {
-            leadingIcon: "size-4 opacity-25",
-          },
-          onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-        });
-      },
+      header: createSortableHeader("Status", UButton),
       cell: ({ row }) => {
         const statusColor = statusColorMap[row.original.status] ?? "neutral";
         return h(UBadge, {
@@ -261,24 +176,7 @@ export function useRoomRowColumn(
     },
     {
       accessorKey: "capacity",
-      header: ({ column }) => {
-        const isSorted = column.getIsSorted();
-        return h(UButton, {
-          color: "neutral",
-          variant: "ghost",
-          label: "Availability",
-          icon: isSorted
-            ? isSorted === "asc"
-              ? "i-lucide-arrow-up-narrow-wide"
-              : "i-lucide-arrow-down-wide-narrow"
-            : "i-lucide-arrow-up-down",
-          class: "-mx-2.5 cursor-pointer",
-          ui: {
-            leadingIcon: "size-4 opacity-25",
-          },
-          onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-        });
-      },
+      header: createSortableHeader("Capacity", UButton),
       cell: ({ row }) => {
         const statusColor = statusColorMap[row.original.status] ?? "neutral";
 
@@ -348,24 +246,7 @@ export function useRoomRowColumn(
     },
     {
       accessorKey: "amountPerYear",
-      header: ({ column }) => {
-        const isSorted = column.getIsSorted();
-        return h(UButton, {
-          color: "neutral",
-          variant: "ghost",
-          label: "Amount",
-          icon: isSorted
-            ? isSorted === "asc"
-              ? "i-lucide-arrow-up-narrow-wide"
-              : "i-lucide-arrow-down-wide-narrow"
-            : "i-lucide-arrow-up-down",
-          class: "-mx-2.5 cursor-pointer",
-          ui: {
-            leadingIcon: "size-4 opacity-25",
-          },
-          onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-        });
-      },
+      header: createSortableHeader("Amount", UButton),
       cell: ({ row }) => {
         return h("p", { class: "font-medium" }, `${formatCurrency(Number(row.original.amountPerYear))}`);
       },
