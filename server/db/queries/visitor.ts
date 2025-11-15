@@ -1,4 +1,7 @@
-import { and, count, desc, eq, sql } from "drizzle-orm";
+import type { Admin } from "~~/shared/types";
+
+import { useDB } from "~~/server/utils/db";
+import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
 
 import { allocation, visitor, visitorLogs } from "../schema";
 
@@ -77,6 +80,24 @@ const visitorWithRelations = {
 export async function visitorQueries() {
   const { db } = useDB();
 
+  const getVisitorsForSuperAdmin = async () => {
+    return await db.query.visitor.findMany({
+      ...visitorWithRelations,
+      orderBy: desc(visitor.visitDate),
+    });
+  };
+
+  const getVisitorsForRegularAdmin = async (admin: Admin) => {
+    if (!admin.hostelId)
+      return [];
+
+    return await db.query.visitor.findMany({
+      ...visitorWithRelations,
+      where: eq(visitor.hostelId, admin.hostelId),
+      orderBy: desc(visitor.visitDate),
+    });
+  };
+
   const getScopedVisitors = async (admin: Admin) => {
     if (admin.accessLevel === "super") {
       return await db.query.visitor.findMany({
@@ -110,121 +131,6 @@ export async function visitorQueries() {
     return visitorRecord;
   };
 
-  const updateVisitorStatus = async (visitorId: number, status: "approved" | "denied", admin: Admin) => {
-    const visitorToUpdate = await getVisitorById(visitorId, admin);
-
-    if (!visitorToUpdate) {
-      throw createError({
-        statusCode: 404,
-        message: "Visitor not found or you do not have permission to access it.",
-      });
-    }
-
-    if (visitorToUpdate.status !== "pending") {
-      throw createError({
-        statusCode: 400,
-        message: `This visit cannot be modified as it is already '${visitorToUpdate.status}'`,
-      });
-    }
-
-    const [updatedVisitor] = await db
-      .update(visitor)
-      .set({ status, adminId: admin.id })
-      .where(eq(visitor.id, visitorId))
-      .returning();
-
-    if (!updatedVisitor) {
-      throw createError({
-        statusCode: 500,
-        message: "Failed to update visitor status.",
-      });
-    }
-
-    return updatedVisitor;
-  };
-
-  const createVisitorLog = async (visitorId: number, action: VisitorLog["action"], admin: Admin) => {
-    return await db.transaction(async (tx) => {
-      const visitorRecord = await getVisitorById(visitorId, admin);
-
-      if (!visitorRecord) {
-        throw createError({
-          statusCode: 404,
-          message: "Visitor not found.",
-        });
-      }
-
-      if (admin.accessLevel !== "super" && visitorRecord.hostelId !== admin.hostelId) {
-        throw createError({
-          statusCode: 403,
-          message: "You do not have permission to modify visitors for this hostel.",
-        });
-      }
-
-      const lastLog = visitorRecord.visitorLogs[0];
-
-      if (action === "check_in") {
-        if (!["approved", "checked-out"].includes(visitorRecord.status)) {
-          throw createError({
-            statusCode: 400,
-            message: `Cannot check in. Visitor status is currently '${visitorRecord.status}'.`,
-          });
-        }
-
-        const today = new Date().toISOString().split("T")[0];
-        if (visitorRecord.visitDate !== today) {
-          throw createError({
-            statusCode: 400,
-            message: `This visitor is only scheduled for ${visitorRecord.visitDate}, not today.`,
-          });
-        }
-
-        if (lastLog && lastLog.action === "check_in") {
-          throw createError({
-            statusCode: 409,
-            message: "This visitor is already checked in.",
-          });
-        }
-
-        await tx
-          .update(visitor)
-          .set({ status: "checked-in" })
-          .where(eq(visitor.id, visitorId));
-      }
-      else {
-        if (visitorRecord.status !== "checked-in") {
-          throw createError({
-            statusCode: 400,
-            message: "This visitor is not currently checked in.",
-          });
-        }
-
-        if (!lastLog || lastLog.action === "check_out") {
-          throw createError({
-            statusCode: 409,
-            message: "Cannot check out a visitor who is not checked in.",
-          });
-        }
-
-        await tx
-          .update(visitor)
-          .set({ status: "checked-out" })
-          .where(eq(visitor.id, visitorId));
-      };
-
-      const [newLog] = await tx
-        .insert(visitorLogs)
-        .values({
-          visitorId,
-          adminId: admin.id,
-          action,
-        })
-        .returning();
-
-      return newLog;
-    });
-  };
-
   const getVisitorStatusCount = async (admin: Admin) => {
     const whereConditions = [];
 
@@ -253,12 +159,24 @@ export async function visitorQueries() {
     };
   };
 
+  const getVisitorByIds = async (visitorIds: number[]) => {
+    const visitors = await db
+      .query
+      .visitor
+      .findMany({
+        where: inArray(visitor.id, visitorIds),
+        ...visitorWithRelations,
+      });
+    return visitors;
+  };
+
   return {
     getScopedVisitors,
     getVisitorById,
-    updateVisitorStatus,
-    createVisitorLog,
+    getVisitorByIds,
     getVisitorStatusCount,
+    getVisitorsForSuperAdmin,
+    getVisitorsForRegularAdmin,
   };
 }
 

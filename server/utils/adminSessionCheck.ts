@@ -1,0 +1,18 @@
+import type { H3Event } from "h3";
+
+export async function checkAdminSession(event: H3Event): Promise<boolean> {
+  const session = await getUserSession(event);
+
+  if (
+    !session
+    || !session.user
+    || session.user.role !== "admin"
+    || !session.user.adminData
+    || session.user.adminData.status !== "active") {
+    throw createError({
+      statusCode: 403,
+      message: "Access denied: Must be a verified active admin",
+    });
+  }
+  return true;
+}

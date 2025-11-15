@@ -1,4 +1,4 @@
-import { userQueries, visitorQueries } from "~~/server/db/queries";
+import { userQueries } from "~~/server/db/queries";
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event);
@@ -32,7 +32,6 @@ export default defineEventHandler(async (event) => {
     const { action, visitorId } = body.data;
 
     const { getAdminByUserId } = await userQueries();
-    const { createVisitorLog } = await visitorQueries();
 
     const adminMakingRequest = await getAdminByUserId(
       userId,

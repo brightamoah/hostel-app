@@ -9,12 +9,17 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "nuxt-auth-utils",
     "nuxt-nodemailer",
+    "@formkit/auto-animate",
   ],
   devtools: { enabled: true },
 
   app: {
     pageTransition: { name: "page", mode: "out-in" },
   },
+
+  // imports: {
+  //   dirs: ["./server/db/queries/index.ts"],
+  // },
 
   css: ["~/assets/css/main.css"],
 

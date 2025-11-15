@@ -9,12 +9,6 @@ export const useVisitorStore = defineStore("visitorStore", () => {
 
   const visitorDataKey = computed(() => `visitorData:${user.value?.adminData?.accessLevel}`);
 
-  const deleteVisitors = async (payload: DeleteItemSchema) => {
-    if (!payload.ids)
-      // eslint-disable-next-line no-useless-return
-      return;
-  };
-
   const approveDenyVisitor = async (payload: ApproveDenySchema) => {
     if (!payload.visitorId && !payload.status)
       return;
@@ -78,6 +72,41 @@ export const useVisitorStore = defineStore("visitorStore", () => {
       const action = payload.action === "check_in" ? "Check In" : "Check Out";
       toast.add({
         title: `Failed to ${action} Visitor`,
+        description: message,
+        color: "error",
+        icon: "i-lucide-alert-circle",
+        duration: 8000,
+      });
+    }
+    finally {
+      isLoading.value = false;
+    }
+  };
+
+  const deleteVisitors = async (payload: DeleteItemSchema) => {
+    if (!payload.ids)
+      return;
+
+    isLoading.value = true;
+
+    try {
+      const response = await $fetch("/api/visitor/deleteVisitorAdmin", {
+        method: "DELETE",
+        body: payload,
+      });
+
+      toast.add({
+        title: response.message,
+        description: "The visitor(s) has been deleted successfully.",
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+      await refreshNuxtData(visitorDataKey.value);
+    }
+    catch (error) {
+      const message = (error as any)?.data?.message;
+      toast.add({
+        title: "Failed to Delete Visitor(s)",
         description: message,
         color: "error",
         icon: "i-lucide-alert-circle",

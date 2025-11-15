@@ -6,7 +6,7 @@
  * - converts IPv4-mapped IPv6 (::ffff:127.0.0.1) and ::1 to 127.0.0.1
  * - returns "unknown" for empty/invalid inputs
  */
-export function normalizeIp(rawIp?: string | null) {
+export function normalizeIp(rawIp?: string) {
   if (!rawIp)
     return "unknown";
   // IPv4-mapped IPv6 (node sometimes gives ::ffff:127.0.0.1)

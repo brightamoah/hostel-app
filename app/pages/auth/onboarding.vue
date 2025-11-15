@@ -105,14 +105,6 @@ async function submitForm(payload: FormSubmitEvent<typeof state.value>) {
       body: payload.data,
     });
 
-    if (!response.success) {
-      errorMessage.value = response.errorMessage.value;
-      throw createError({
-        statusCode: 500,
-        statusMessage: response.errorMessage.value || "Onboarding failed to complete",
-      });
-    }
-
     await refreshSession();
 
     toast.add({
@@ -182,7 +174,7 @@ onMounted(() => {
             <USelectMenu
               v-model="state.gender"
               :items="genderItems"
-              class="w-[100%] cursor-pointer"
+              class="w-full cursor-pointer"
               placeholder="Select your gender"
               :size="isMobile ? 'lg' : 'xl'"
             />
@@ -200,7 +192,7 @@ onMounted(() => {
                 variant="subtle"
                 icon="i-lucide-calendar-days"
                 :size="isMobile ? 'lg' : 'xl'"
-                class="bg-transparent w-[100%] text-muted cursor-pointer"
+                class="bg-transparent w-full text-muted cursor-pointer"
               >
                 {{ dateVal ? formattedDate : 'Select your date of birth' }}
               </UButton>
@@ -226,7 +218,7 @@ onMounted(() => {
               v-model="state.phoneNumber"
               placeholder="Enter your phone number"
               icon="i-lucide-phone"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
               type="tel"
             />
@@ -242,7 +234,7 @@ onMounted(() => {
               v-model="state.emergencyContactName"
               placeholder="Enter your emergency contact name"
               icon="i-lucide-users"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -259,7 +251,7 @@ onMounted(() => {
               v-model="state.emergencyContactPhoneNumber"
               placeholder="Enter your emergency contact's phone number"
               icon="i-lucide-phone"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
               type="tel"
             />
@@ -275,7 +267,7 @@ onMounted(() => {
               v-model="state.emergencyContactEmail"
               placeholder="Enter your emergency contact's email"
               icon="i-lucide-mail"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -292,7 +284,7 @@ onMounted(() => {
               v-model="state.address"
               placeholder="Enter your house address"
               icon="i-lucide-home"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -306,7 +298,7 @@ onMounted(() => {
               v-model="state.healthConditions"
               placeholder="Enter any health conditions you have (separated by commas)"
               icon="i-lucide-heart-pulse"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>

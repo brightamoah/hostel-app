@@ -73,7 +73,10 @@ const dateFilterModel = computed({
       />
     </div>
 
-    <div class="flex sm:flex-row flex-col gap-3 md:gap-4">
+    <div
+      v-auto-animate
+      class="flex sm:flex-row flex-col gap-3 md:gap-4"
+    >
       <slot name="actions" />
     </div>
   </div>

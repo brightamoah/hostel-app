@@ -161,7 +161,7 @@ export function useVisitorRowColumn(
       );
     }
 
-    if (visitor.status === "checked-in") {
+    if (visitor.status === "checked-in" && visitor.visitDate === today) {
       actions.push(
         {
           label: "Check Out Visitor",
