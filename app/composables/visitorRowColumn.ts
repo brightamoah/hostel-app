@@ -17,9 +17,11 @@ export function useVisitorRowColumn(
   UCheckbox: ComponentType,
   // UIcon: Component,
 ) {
+  const toast = useToast();
   const overlay = useOverlay();
   const visitorStore = useVisitorStore();
   const { isLoading } = storeToRefs(visitorStore);
+  const { approveDenyVisitor, checkInCheckOutVisitor, deleteVisitors } = visitorStore;
 
   const openApproveDenyModal = (visitor: VisitorType, status: "approved" | "denied") => {
     const modal = overlay.create(ConfirmationModal);
@@ -35,7 +37,7 @@ export function useVisitorRowColumn(
       body: `Are you sure you want to ${status === "approved" ? "approve" : "deny"} visitor with name ${visitor.name}? This action cannot be undone.`,
       onConfirm: async () => {
         try {
-          await visitorStore.approveDenyVisitor({
+          await approveDenyVisitor({
             visitorId: visitor.id,
             status,
           });
@@ -97,7 +99,7 @@ export function useVisitorRowColumn(
 
       onConfirm: async () => {
         try {
-          await visitorStore.checkInCheckOutVisitor({
+          await checkInCheckOutVisitor({
             visitorId: visitor.id,
             action,
           });
@@ -107,6 +109,41 @@ export function useVisitorRowColumn(
           console.warn(`Failed to ${action === "check_in"
             ? "check in"
             : "check out"} visitor`, error);
+        }
+      },
+    });
+  };
+
+  const openDeleteVisitorModal = (visitor: VisitorType) => {
+    const modal = overlay.create(ConfirmationModal);
+    const close = modal.close;
+    modal.open({
+      title: `Delete Visitor`,
+      confirmLabel: "Delete Visitor",
+      isLoading,
+      description: `This action will delete visitor with Name ${visitor.name} and ID ${visitor.id}.`,
+      renderTrigger: false,
+      body: `Are you sure you want to delete visitor with name ${visitor.name}? This action cannot be undone.`,
+      onConfirm: async () => {
+        try {
+          const notDeletable = visitor.status !== "pending" && visitor.status !== "cancelled";
+          if (notDeletable) {
+            toast.add({
+              title: `Failed to Delete Visitor`,
+              description: `Action denied: Visitor "${visitor.name}" cannot be deleted due to its status: ${visitor.status}`,
+              color: "error",
+              icon: "i-lucide-alert-circle",
+              duration: 8000,
+            });
+            close();
+            return;
+          }
+          await deleteVisitors({ ids: [visitor.id] });
+          close();
+        }
+        catch (error) {
+          console.warn("Delete failed:", error);
+          close();
         }
       },
     });
@@ -180,7 +217,7 @@ export function useVisitorRowColumn(
         label: "Delete Visitor",
         icon: "i-lucide-trash-2",
         color: "error",
-        onSelect: () => { /* TODO: Implement delete confirmation */ },
+        onSelect: () => openDeleteVisitorModal(visitor),
       },
     );
 

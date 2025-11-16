@@ -58,6 +58,7 @@ const userMenuItems = computed<UserMenuItem[][]>(() => {
       {
         label: "Log Out",
         icon: "i-lucide-log-out",
+        color: "error",
         onSelect: () => handleSignOut(),
       },
     ],

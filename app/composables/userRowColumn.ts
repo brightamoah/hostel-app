@@ -145,9 +145,8 @@ export function useUserRowColumn(
         label: "Delete user",
         icon: "i-lucide-trash-2",
         color: "error",
-        onSelect: () => {
-          openDeleteUserModal(user.id, user.name);
-        },
+        onSelect: () => openDeleteUserModal(user.id, user.name),
+
       },
     ];
   };

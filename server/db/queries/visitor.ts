@@ -170,6 +170,17 @@ export async function visitorQueries() {
     return visitors;
   };
 
+  const deleteVisitorsByIds = async (visitorIds: number[]) => {
+    if (visitorIds.length === 0)
+      return [];
+
+    const deleteResult = await db
+      .delete(visitor)
+      .where(inArray(visitor.id, visitorIds))
+      .returning();
+    return deleteResult;
+  };
+
   return {
     getScopedVisitors,
     getVisitorById,
@@ -177,6 +188,7 @@ export async function visitorQueries() {
     getVisitorStatusCount,
     getVisitorsForSuperAdmin,
     getVisitorsForRegularAdmin,
+    deleteVisitorsByIds,
   };
 }
 

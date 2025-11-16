@@ -1,6 +1,9 @@
 import type { H3Event } from "h3";
 
-export async function checkAdminSession(event: H3Event): Promise<boolean> {
+export async function checkAdminSession(event: H3Event): Promise<{
+  isActiveAdmin: true;
+  adminData: Admin;
+}> {
   const session = await getUserSession(event);
 
   if (
@@ -14,5 +17,8 @@ export async function checkAdminSession(event: H3Event): Promise<boolean> {
       message: "Access denied: Must be a verified active admin",
     });
   }
-  return true;
+  return {
+    isActiveAdmin: true,
+    adminData: session.user.adminData,
+  };
 }

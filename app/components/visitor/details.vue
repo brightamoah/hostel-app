@@ -210,14 +210,7 @@ const visitHistory = computed(() => {
       close: 'cursor-pointer',
     }"
   >
-    <UButton
-      label="Open Visitor Modal"
-      icon="i-lucide-user-check"
-      variant="subtle"
-      color="primary"
-      size="lg"
-      class="justify-center w-full sm:w-auto cursor-pointer"
-    />
+
 
     <template #body>
       <div class="flex justify-between mb-8 w-full">
