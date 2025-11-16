@@ -11,7 +11,7 @@ const { handleSignOut, isLoggedIn, user } = defineProps<{
 const { userInitials, userBadgeColor, avatarBgColor } = useUseUserItems();
 
 const dashboardIcon = computed(() =>
-  user?.role === "admin" ? "i-lucide-shield" : "i-lucide-graduation-cap",
+  user?.role === "admin" ? "i-lucide-monitor" : "i-lucide-graduation-cap",
 );
 
 const userMenuItems = computed<UserMenuItem[][]>(() => {
@@ -73,7 +73,7 @@ const userMenuItems = computed<UserMenuItem[][]>(() => {
 
       <UIcon name="i-lucide-settings" />
 
-      <UIcon name="i-lucide-shield" />
+      <UIcon name="i-lucide-monitor" />
 
       <UIcon name="i-lucide-graduation-cap" />
 

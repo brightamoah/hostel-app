@@ -1,4 +1,4 @@
-import z from "zod";
+import * as z from "zod";
 
 const passwordSchema = z
   .string({ error: "Password is required" })

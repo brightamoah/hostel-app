@@ -17,10 +17,6 @@ export default defineNuxtConfig({
     pageTransition: { name: "page", mode: "out-in" },
   },
 
-  // imports: {
-  //   dirs: ["./server/db/queries/index.ts"],
-  // },
-
   css: ["~/assets/css/main.css"],
 
   runtimeConfig: {
