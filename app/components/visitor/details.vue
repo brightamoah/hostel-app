@@ -210,8 +210,6 @@ const visitHistory = computed(() => {
       close: 'cursor-pointer',
     }"
   >
-
-
     <template #body>
       <div class="flex justify-between mb-8 w-full">
         <UUser
