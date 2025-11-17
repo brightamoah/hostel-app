@@ -3,19 +3,9 @@ import { userQueries } from "~~/server/db/queries";
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event);
 
-  if (
-    !session
-    || !session.user
-    || session.user.role !== "admin"
-    || !session.user.adminData
-    || session.user.adminData.status !== "active") {
-    throw createError({
-      statusCode: 403,
-      message: "Access denied: Must be a verified active admin",
-    });
-  }
+  await checkAdminSession(event);
 
-  const userId = session.user.id;
+  const userId = session.user!.id;
 
   try {
     const body = await readValidatedBody(event, body => logActionSchema.safeParse(body));

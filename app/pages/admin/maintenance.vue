@@ -5,40 +5,42 @@ definePageMeta({
 });
 const title = ref("Maintenance Dashboard");
 
+const { data, status } = useFetchMaintenanceData();
+
 const cards = computed<StatsCard[]>(() => [
   {
     id: 1,
-    title: "Total Rooms",
-    icon: "i-lucide-building-2",
+    title: "Total Requests",
+    icon: "i-heroicons-wrench-screwdriver",
     color: "primary",
-    value: 0,
+    value: data.totalMaintenanceRequests,
     percentage: 5.2,
     period: "monthly",
   },
   {
     id: 2,
-    title: "Occupied Rooms",
-    icon: "i-lucide-users",
-    color: "info",
-    value: 0,
+    title: "Pending Requests",
+    icon: "i-lucide-clock",
+    color: "warning",
+    value: data.totalPending,
     percentage: 8.1,
     period: "monthly",
   },
   {
     id: 3,
-    title: "Available Rooms",
-    icon: "i-lucide-check-circle",
+    title: "Completed Requests",
+    icon: "i-lucide-circle-check-big",
     color: "success",
-    value: 0,
+    value: data.totalCompleted,
     percentage: -3.4,
     period: "weekly",
   },
   {
     id: 4,
-    title: "Under Maintenance",
-    icon: "i-heroicons-wrench-screwdriver",
-    color: "warning",
-    value: 0,
+    title: "In-progress",
+    icon: "i-lucide-loader",
+    color: "info",
+    value: data.totalInProgress,
     percentage: 10.0,
     period: "daily",
   },
@@ -53,12 +55,8 @@ const cards = computed<StatsCard[]>(() => [
       </template>
 
       <template #body>
-        <div class="p-4">
-          <h1 class="mb-4 font-bold text-2xl">
-            Maintenance Dashboard
-          </h1>
-          <!-- Analytics content goes here -->
-          <p>This is where you can display various maintenance requests.</p>
+        <div class="p-2 md:p-4">
+          <DashboardCardSkeleton v-if="status === 'pending'" />
 
           <DashboardStatsCard :cards />
         </div>

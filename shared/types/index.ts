@@ -1,6 +1,7 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Table } from "@tanstack/vue-table";
 import type { User } from "#auth-utils";
+import type { Maintenance } from "~~/server/db/queries/maintenance";
 import type { Visitor } from "~~/server/db/queries/visitor";
 import type { allocation, loginAttempts, visitorLogs } from "~~/server/db/schema";
 import type { randomUUID } from "node:crypto";
@@ -224,3 +225,14 @@ export type FailedAttempts = (typeof loginAttempts)["_"]["columns"][keyof (typeo
 export type VisitorType = Visitor;
 export type VisitorStatus = Visitor["status"];
 export type AllowedStatusesForCheckIn = Extract<VisitorStatus, "approved" | "checked-out">;
+
+export type MaintenanceType = Maintenance;
+export type MaintenanceDataResponse = {
+  maintenanceRequests: Maintenance[];
+  totalMaintenanceRequests: number;
+  totalAssigned: number;
+  totalInProgress: number;
+  totalPending: number;
+  totalCompleted: number;
+  totalRejected: number;
+};

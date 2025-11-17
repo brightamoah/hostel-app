@@ -3,6 +3,7 @@ import type { H3Event } from "h3";
 export async function checkAdminSession(event: H3Event): Promise<{
   isActiveAdmin: true;
   adminData: Admin;
+  userId: number;
 }> {
   const session = await getUserSession(event);
 
@@ -20,5 +21,6 @@ export async function checkAdminSession(event: H3Event): Promise<{
   return {
     isActiveAdmin: true,
     adminData: session.user.adminData,
+    userId: session.user.id,
   };
 }
