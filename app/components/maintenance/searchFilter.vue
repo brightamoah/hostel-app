@@ -51,7 +51,7 @@ const typeFilterModel = computed({
       v-model="globalFilterModel"
       class="w-full md:max-w-sm"
       icon="i-lucide-search"
-      placeholder="Search visitors..."
+      placeholder="Search Maintenance..."
       size="xl"
     />
 

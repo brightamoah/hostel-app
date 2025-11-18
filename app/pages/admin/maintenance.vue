@@ -11,6 +11,7 @@ const UBadge = resolveComponent("UBadge");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UCheckbox = resolveComponent("UCheckbox");
 const UAvatar = resolveComponent("UAvatar");
+const UIcon = resolveComponent("UIcon");
 
 const title = ref("Maintenance Dashboard");
 const tableRef = useTemplateRef("tableRef");
@@ -18,7 +19,15 @@ const globalFilter = ref("");
 const columnVisibility = ref<{ [key: string | number]: boolean }>({ id: false });
 const rowSelection = ref({});
 
-const { data, status, maintenanceRequests } = useFetchMaintenanceData();
+const {
+  data,
+  status,
+  maintenanceRequests,
+  canResend,
+  coolDownTime,
+  isLoading: refreshIsLoading,
+  handleRefresh,
+} = useFetchMaintenanceData();
 
 const cards = computed<StatsCard[]>(() => [
   {
@@ -83,6 +92,7 @@ const { columns, getRowItems } = useMaintenanceRowColumn(
   UBadge,
   UDropdownMenu,
   UCheckbox,
+  UIcon,
 );
 
 const pagination = ref({
@@ -117,6 +127,13 @@ const pagination = ref({
             :priority-filter-options
           >
             <template #actions>
+              <DashboardRefreshButton
+                :can-resend
+                :cool-down-time
+                :refresh-is-loading
+                :handle-refresh
+              />
+
               <DashboardItemsToDisplay :items-to-display />
             </template>
           </MaintenanceSearchFilter>

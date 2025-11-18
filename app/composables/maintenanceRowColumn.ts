@@ -11,6 +11,7 @@ export function useMaintenanceRowColumn(
   UBadge: ComponentType,
   UDropdownMenu: ComponentType,
   UCheckbox: ComponentType,
+  UIcon: ComponentType,
 ) {
   const getRowItems = (row: Row<MaintenanceType>) => {
     const maintenance = row.original;
@@ -54,6 +55,18 @@ export function useMaintenanceRowColumn(
     "rejected": "error",
   };
 
+  const typeIconMap: Record<MaintenanceType["issueType"], string> = {
+    "plumbing": "i-lucide-shower-head",
+    "electrical": "i-lucide-plug-zap",
+    "furniture": "i-lucide-sofa",
+    "cleaning": "i-lucide-brush-cleaning",
+    "appliance": "i-lucide-air-vent",
+    "structural": "i-lucide-house",
+    "pest control": "i-lucide-bug",
+    "internet/Wi-Fi": "i-lucide-wifi",
+    "other": "i-lucide-wrench",
+  };
+
   const columns = ref<TableColumn<MaintenanceType>[]>([
     {
       id: "select",
@@ -79,7 +92,6 @@ export function useMaintenanceRowColumn(
       cell: ({ row },
       ) => {
         const student = row.original.student;
-        const studentHostel = { ...row.original.room, ...row.original.hostel };
 
         if (!student) {
           return h("span", "N/A");
@@ -87,9 +99,26 @@ export function useMaintenanceRowColumn(
 
         return h("div", { class: "flex flex-col" }, [
           h("p", { class: "font-medium text-highlighted" }, student.user.name),
-          h("p", { class: "text-sm" }, `${student.user.email}`),
-          studentHostel && h("p", { class: "text-sm text-muted" }, `Room: ${studentHostel.roomNumber} (${studentHostel.name})`,
-          ),
+          h("p", { class: "text-xs" }, `${student.user.email}`),
+        ]);
+      },
+    },
+    {
+      accessorKey: "room",
+      header: createSortableHeader("Room", UButton),
+      filterFn: (row, columnId, filterValue) => {
+        const room = row.original.room;
+        const hostel = row.original.hostel;
+        const searchText = `${room.roomNumber} ${hostel.name}`.toLowerCase();
+        return searchText.includes(filterValue.toLowerCase());
+      },
+      cell: ({ row }) => {
+        const room = row.original.room;
+        const hostel = row.original.hostel;
+
+        return h("div", { class: "flex flex-col" }, [
+          h("p", { class: "font-medium text-highlighted" }, room.roomNumber),
+          h("p", { class: "text-sm" }, `${hostel.name}`),
         ]);
       },
     },
@@ -97,7 +126,13 @@ export function useMaintenanceRowColumn(
       accessorKey: "issueType",
       header: createSortableHeader("Type", UButton),
       cell: ({ row }) => {
-        return h("span", { class: "capitalize font-medium text-default" }, row.original.issueType);
+        return h("div", { class: "flex items-center gap-3" }, [
+          h(UIcon, {
+            name: typeIconMap[row.original.issueType],
+            class: "text-primary size-6",
+          }),
+          h("span", { class: "capitalize font-medium text-highlighted" }, row.original.issueType),
+        ]);
       },
     },
     {
