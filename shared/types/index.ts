@@ -1,5 +1,6 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Table } from "@tanstack/vue-table";
+import type { useFetch } from "#app";
 import type { User } from "#auth-utils";
 import type { Maintenance } from "~~/server/db/queries/maintenance";
 import type { Visitor } from "~~/server/db/queries/visitor";
@@ -7,6 +8,8 @@ import type { allocation, loginAttempts, visitorLogs } from "~~/server/db/schema
 import type { randomUUID } from "node:crypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
+
+export type Refresh = ReturnType<typeof useFetch>["refresh"];
 
 export type FormFieldType = "select" | "checkbox" | "password" | "otp" | "email" | "text";
 
@@ -71,7 +74,7 @@ export type Stat = {
   color?: string;
 };
 
-export type ColorType = "primary" | "error" | "warning" | "info" | "success" | "neutral";
+export type ColorType = "primary" | "error" | "warning" | "info" | "success" | "neutral" | "secondary";
 export type VariantType = "outline" | "soft" | "subtle" | "ghost" | "none";
 
 export type StatsCard = {
@@ -161,19 +164,19 @@ export type FloorFilterOptions = ({
   value: number;
 } | { label: string; value: string })[];
 
-export type RoomTableType = Readonly<ShallowRef<ShallowUnwrapRef<{
-  tableRef: Ref<HTMLTableElement | null, HTMLTableElement | null>;
-  tableApi: Table<Room>;
-}> | null>>;
+// export type UserTableType = Readonly<ShallowRef<ShallowUnwrapRef<{
+//   tableRef: Ref<HTMLTableElement | null, HTMLTableElement | null>;
+//   tableApi: Table<UserType>;
+// }> | null>>;
 
-export type UserTableType = Readonly<ShallowRef<ShallowUnwrapRef<{
-  tableRef: Ref<HTMLTableElement | null, HTMLTableElement | null>;
-  tableApi: Table<UserType>;
-}> | null>>;
+// export type VisitorTableType = Readonly<ShallowRef<ShallowUnwrapRef<{
+//   tableRef: Ref<HTMLTableElement | null, HTMLTableElement | null>;
+//   tableApi: Table<Visitor>;
+// }> | null>>;
 
-export type VisitorTableType = Readonly<ShallowRef<ShallowUnwrapRef<{
+export type TableType<T> = Readonly<ShallowRef<ShallowUnwrapRef<{
   tableRef: Ref<HTMLTableElement | null, HTMLTableElement | null>;
-  tableApi: Table<Visitor>;
+  tableApi: Table<T>;
 }> | null>>;
 
 export type FilterOption = {
@@ -228,11 +231,13 @@ export type AllowedStatusesForCheckIn = Extract<VisitorStatus, "approved" | "che
 
 export type MaintenanceType = Maintenance;
 export type MaintenanceDataResponse = {
-  maintenanceRequests: Maintenance[];
-  totalMaintenanceRequests: number;
-  totalAssigned: number;
-  totalInProgress: number;
-  totalPending: number;
-  totalCompleted: number;
-  totalRejected: number;
+  maintenanceRequests: MaintenanceType[];
+  totalMaintenance: number;
+  assigned: number;
+  inProgress: number;
+  pending: number;
+  completed: number;
+  rejected: number;
 };
+
+export type DataType<T> = Ref<T, T>;

@@ -1,6 +1,4 @@
-type DataType = globalThis.Ref<UserDataResponse, UserDataResponse>;
-
-export function useUserFilters(table: UserTableType, data: DataType) {
+export function useUserFilters(table: TableType<UserType>, data: DataType<UserDataResponse>) {
   const statusFilter = ref("");
 
   const statusFilterOptions = ref<FilterOption[]>([
@@ -58,19 +56,6 @@ export function useUserFilters(table: UserTableType, data: DataType) {
     itemsPerPage,
     defaultPage,
   } = useTableFilters<UserType>(table, data, "users");
-
-  // watch(
-  //   () => [data.value?.users?.length, totalUsers.value],
-  //   () => {
-  //     nextTick(() => {
-  //       const tableApi = safeTableApi();
-  //       const pageSize = tableState.value?.pagination.pageSize || 10;
-  //       if (tableApi)
-  //         tableApi.setPageIndex(0);
-  //       tableApi?.setPageSize(pageSize);
-  //     });
-  //   },
-  // );
 
   watch(() => [statusFilter.value, roleFilter.value], async ([newStatus, newRole]) => {
     await nextTick();

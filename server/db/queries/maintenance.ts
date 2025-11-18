@@ -1,10 +1,16 @@
+import type { Admin } from "~~/shared/types";
+
 import { and, count, countDistinct, desc, eq, sql } from "drizzle-orm";
 
 import { maintenanceRequest, maintenanceResponse } from "../schema";
 
 const maintenanceWithRelations = {
   with: {
-    student: true,
+    student: {
+      with: {
+        user: true,
+      },
+    },
     room: true,
     hostel: true,
     responses: {

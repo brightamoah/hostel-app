@@ -153,7 +153,7 @@ export function useUserRowColumn(
 
   type Student = NonNullable<UserType["student"]>;
 
-  const statusColorMap: Record<Student["residencyStatus"], string> = {
+  const statusColorMap: Record<Student["residencyStatus"], ColorType> = {
     "active": "success",
     "graduated": "info",
     "inactive": "error",

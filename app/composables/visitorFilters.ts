@@ -1,8 +1,4 @@
-import type { Visitor } from "~~/server/db/queries/visitor";
-
-type DataType = globalThis.Ref<VisitorDataResponse, VisitorDataResponse>;
-
-export function useVisitorFilters(table: VisitorTableType, data: DataType) {
+export function useVisitorFilters(table: TableType<VisitorType>, data: DataType<VisitorDataResponse>) {
   const statusFilter = ref("");
 
   const statusFilterOptions = ref<FilterOption[]>([
@@ -89,7 +85,7 @@ export function useVisitorFilters(table: VisitorTableType, data: DataType) {
     itemsToDisplay,
     tableState,
     itemsPerPage,
-  } = useTableFilters<Visitor>(table, data, "visitors");
+  } = useTableFilters<VisitorType>(table, data, "visitors");
 
   watch(() => [statusFilter.value, dateFilter.value], async ([newStatus, newDate]) => {
     await nextTick();

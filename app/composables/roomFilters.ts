@@ -1,6 +1,4 @@
-type DataType = globalThis.Ref<RoomDataResponse, RoomDataResponse>;
-
-export function useRoomFilters(table: RoomTableType, data: DataType) {
+export function useRoomFilters(table: TableType<Room>, data: DataType<RoomDataResponse>) {
   const statusFilter = ref("");
 
   const statusFilterOptions = ref([
