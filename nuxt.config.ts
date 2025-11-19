@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     "nuxt-auth-utils",
     "nuxt-nodemailer",
     "@formkit/auto-animate",
+    "@nuxthub/core",
   ],
   devtools: { enabled: true },
 
@@ -18,6 +19,12 @@ export default defineNuxtConfig({
   },
 
   css: ["~/assets/css/main.css"],
+
+  nitro: {
+    experimental: {
+      openAPI: true,
+    },
+  },
 
   runtimeConfig: {
     session: {

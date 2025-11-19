@@ -12,6 +12,8 @@ const EnvSchema = z.object({
   NUXT_NODEMAILER_PORT: z.coerce.number(),
   NUXT_NODEMAILER_AUTH_USER: z.string(),
   NUXT_NODEMAILER_AUTH_PASS: z.string(),
+  NUXT_HUB_PROJECT_KEY: z.string(),
+  NUXT_HUB_USER_TOKEN: z.string(),
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;
