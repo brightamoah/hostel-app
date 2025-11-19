@@ -19,7 +19,6 @@ const isMobile = breakpoints.smaller("md");
 const visitorInitials = generateInitials(visitor.name);
 const avatarBgColor = generateUserColor(visitor.name);
 
-
 const visitorBadgeColor = computed<ColorType>(() => {
   return visitorStatusColorMap[visitor.status];
 });
