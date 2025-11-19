@@ -82,7 +82,7 @@ const {
   selectedMaintenanceLength,
   lastMaintenanceShowing,
   itemsToDisplay,
-  // selectedMaintenanceIds,
+  selectedMaintenanceIds,
   updatePage,
 } = useMaintenanceFilter(tableRef, data);
 
@@ -99,6 +99,16 @@ const pagination = ref({
   pageIndex: 0,
   pageSize: 10,
 });
+
+const deleteModalOpen = ref(false);
+const isLoading = ref(false);
+
+async function handleDeleteUsers() {
+  if (selectedMaintenanceIds.value.ids.length === 0)
+    return;
+
+  console.log(selectedMaintenanceIds.value);
+}
 </script>
 
 <template>
@@ -133,6 +143,41 @@ const pagination = ref({
                 :refresh-is-loading
                 :handle-refresh
               />
+
+              <DashboardConfirmationModal
+                v-if="selectedMaintenanceLength"
+                v-model:open="deleteModalOpen"
+                confirm-label="Delete Users"
+                render-trigger
+                :title="`Delete ${selectedMaintenanceLength} Users`"
+                :is-loading
+                @confirm="handleDeleteUsers"
+              >
+                <template #trigger="{ show }">
+                  <UButton
+                    label="Delete Selected User(s)"
+                    icon="i-lucide-trash-2"
+                    variant="subtle"
+                    color="error"
+                    size="lg"
+                    class="justify-center items-center w-full sm:w-auto cursor-pointer"
+                    @click="show()"
+                  >
+                    <template #trailing>
+                      <UKbd>
+                        {{ selectedMaintenanceLength }}
+                      </UKbd>
+                    </template>
+                  </UButton>
+                </template>
+
+                <template #default>
+                  <p class="">
+                    Are you sure you want to delete the selected user(s)? This action cannot be
+                    undone.
+                  </p>
+                </template>
+              </DashboardConfirmationModal>
 
               <DashboardItemsToDisplay :items-to-display />
             </template>

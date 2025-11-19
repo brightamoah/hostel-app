@@ -5,6 +5,8 @@ import { useDateFormat } from "@vueuse/core";
 
 import type { RowActionItem } from "~/types/rowAction";
 
+const MaintenanceDetailModal = defineAsyncComponent(() => import("~/components/maintenance/details.vue"));
+
 export function useMaintenanceRowColumn(
   UAvatar: ComponentType,
   UButton: ComponentType,
@@ -13,6 +15,17 @@ export function useMaintenanceRowColumn(
   UCheckbox: ComponentType,
   UIcon: ComponentType,
 ) {
+  const overlay = useOverlay();
+
+  const openMaintenanceDetailModal = (maintenance: MaintenanceType) => {
+    const modal = overlay.create(MaintenanceDetailModal);
+    // const close = modal.close;
+
+    modal.open({
+      maintenance,
+    });
+  };
+
   const getRowItems = (row: Row<MaintenanceType>) => {
     const maintenance = row.original;
     const actions: RowActionItem[] = [
@@ -23,7 +36,7 @@ export function useMaintenanceRowColumn(
       {
         label: "View Details",
         icon: "i-lucide-eye",
-        onSelect: () => console.log(maintenance),
+        onSelect: () => openMaintenanceDetailModal(maintenance),
       },
       {
         label: "Change Status",
@@ -38,33 +51,6 @@ export function useMaintenanceRowColumn(
     ];
 
     return actions;
-  };
-
-  const priorityColorMap: Record<MaintenanceType["priority"], ColorType> = {
-    low: "success",
-    medium: "info",
-    high: "warning",
-    emergency: "error",
-  };
-
-  const statusColorMap: Record<MaintenanceType["status"], ColorType> = {
-    "in-progress": "secondary",
-    "assigned": "info",
-    "completed": "success",
-    "pending": "warning",
-    "rejected": "error",
-  };
-
-  const typeIconMap: Record<MaintenanceType["issueType"], string> = {
-    "plumbing": "i-lucide-shower-head",
-    "electrical": "i-lucide-plug-zap",
-    "furniture": "i-lucide-sofa",
-    "cleaning": "i-lucide-brush-cleaning",
-    "appliance": "i-lucide-air-vent",
-    "structural": "i-lucide-house",
-    "pest control": "i-lucide-bug",
-    "internet/Wi-Fi": "i-lucide-wifi",
-    "other": "i-lucide-wrench",
   };
 
   const columns = ref<TableColumn<MaintenanceType>[]>([
@@ -128,8 +114,8 @@ export function useMaintenanceRowColumn(
       cell: ({ row }) => {
         return h("div", { class: "flex items-center gap-3" }, [
           h(UIcon, {
-            name: typeIconMap[row.original.issueType],
-            class: "text-primary size-6",
+            name: maintenanceTypeIconMap[row.original.issueType],
+            class: "text-primary size-7",
           }),
           h("span", { class: "capitalize font-medium text-highlighted" }, row.original.issueType),
         ]);
@@ -141,7 +127,7 @@ export function useMaintenanceRowColumn(
       cell: ({ row }) => {
         return h(UBadge, {
           label: row.original.priority.replace("-", " "),
-          color: priorityColorMap[row.original.priority],
+          color: maintenancePriorityColorMap[row.original.priority],
           variant: "subtle",
           class: "capitalize",
         });
@@ -153,7 +139,7 @@ export function useMaintenanceRowColumn(
       cell: ({ row }) => {
         return h(UBadge, {
           label: row.original.status.replace("-", " "),
-          color: statusColorMap[row.original.status],
+          color: maintenanceStatusColorMap[row.original.status],
           variant: "subtle",
           class: "capitalize",
         });

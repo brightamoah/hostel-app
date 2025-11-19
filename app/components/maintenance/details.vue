@@ -1,0 +1,169 @@
+<script setup lang="ts">
+import type { TabsItem } from "@nuxt/ui";
+
+import { useDateFormat, useTimeAgo } from "@vueuse/core";
+import { capitalize } from "vue";
+
+const { maintenance } = defineProps<{
+  maintenance: MaintenanceType;
+}>();
+
+const emit = defineEmits<{ close: [boolean] }>();
+
+// const breakpoints = useBreakpoints(breakpointsTailwind);
+// const isMobile = breakpoints.smaller("md");
+
+const timeAgo = useTimeAgo(maintenance.requestDate).value;
+
+const items = computed<TabsItem[]>(() => [
+  {
+    label: "Details",
+    icon: "i-lucide-badge-info",
+    slot: "details" as const,
+  },
+  {
+    label: "Responses",
+    icon: "i-lucide-message-square-text",
+    slot: "responses" as const,
+  },
+]);
+
+const detailItems = computed(() => [
+  {
+    label: "Student Name",
+    value: maintenance.student.user.name,
+    icon: "i-lucide-user",
+  },
+  {
+    label: "Student Email",
+    value: maintenance.student.user.email,
+    icon: "i-lucide-mail",
+  },
+  {
+    label: "Building/Hostel",
+    value: maintenance.room.building,
+    icon: "i-lucide-map-pinned",
+  },
+  {
+    label: "Room Number",
+    value: maintenance.room.roomNumber,
+    icon: "i-lucide-door-open",
+  },
+  {
+    label: "Maintenance Type",
+    value: maintenance.issueType,
+    icon: maintenanceTypeIconMap[maintenance.issueType],
+  },
+  {
+    label: "Priority",
+    value: maintenance.priority,
+    badge: maintenancePriorityColorMap[maintenance.priority],
+  },
+  {
+    label: "Status",
+    value: maintenance.status,
+    badge: maintenanceStatusColorMap[maintenance.status],
+  },
+  {
+    label: "Date Submitted",
+    value: useDateFormat(maintenance.requestDate, "dddd Do MMMM, YYYY").value,
+    icon: "i-lucide-calendar-days",
+  },
+]);
+</script>
+
+<template>
+  <UModal
+    title="Maintenance Request Details"
+    description="Detailed information about the selected maintenance request."
+    :dismissible="false"
+    :ui="{
+      footer: 'justify-end',
+      content: 'w-[90%] max-w-4xl h-auto rounded-lg shadow-lg ring ring-default overflow-hidden',
+      title: 'font-newsreader text-xl font-semibold',
+      description: 'text-base text-muted',
+      close: 'cursor-pointer',
+    }"
+  >
+    <template #body>
+      <p>
+        Request ID: {{ maintenance.id }}
+      </p>
+
+      <p class="mb-2">
+        Submitted {{ capitalize(timeAgo) }}
+      </p>
+
+      <UTabs
+        :items
+        color="primary"
+        class="w-full"
+      >
+        <template #details>
+          <div class="gap-4 grid grid-cols-1 md:grid-cols-2 w-full">
+            <DashboardDetailItem
+              v-for="item in detailItems"
+              :key="item.label"
+              :label="item.label"
+            >
+              <template #default>
+                <div class="flex items-center gap-2">
+                  <UIcon
+                    v-if="item.icon"
+                    :name="item.icon"
+                    class="size-5 text-primary"
+                  />
+
+                  <p v-if="!item.badge">
+                    {{ capitalize(item.value) }}
+                  </p>
+
+                  <UBadge
+                    v-if="item.badge"
+                    :label="capitalize(item.value)"
+                    :color="item.badge"
+                    variant="subtle"
+                    class="justify-center mt-1 text-center"
+                  />
+                </div>
+              </template>
+            </DashboardDetailItem>
+          </div>
+
+          <div class="mt-6">
+            <p class="flex items-center pb-2 font-medium text-muted text-base">
+              <UIcon
+                name="i-lucide-file-text"
+                class="mr-1 size-6 text-primary"
+              />
+              Description
+            </p>
+
+            <UCard class="w-full">
+              {{ maintenance.description }}
+            </UCard>
+          </div>
+        </template>
+
+        <template #responses>
+          <pre>Responses</pre>
+        </template>
+      </UTabs>
+    </template>
+
+    <template #footer>
+      <UButton
+        color="primary"
+        variant="solid"
+        class="cursor-pointer"
+        @click="emit('close', false)"
+      >
+        Close
+      </UButton>
+    </template>
+  </UModal>
+</template>
+
+<style scoped>
+
+</style>

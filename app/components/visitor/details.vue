@@ -19,16 +19,9 @@ const isMobile = breakpoints.smaller("md");
 const visitorInitials = generateInitials(visitor.name);
 const avatarBgColor = generateUserColor(visitor.name);
 
-const statusColorMap: Record<Visitor["status"], ColorType> = {
-  "pending": "warning",
-  "approved": "info",
-  "checked-in": "success",
-  "checked-out": "neutral",
-  "cancelled": "error",
-  "denied": "error",
-};
+
 const visitorBadgeColor = computed<ColorType>(() => {
-  return statusColorMap[visitor.status];
+  return visitorStatusColorMap[visitor.status];
 });
 
 const items = computed<TabsItem[]>(() => [

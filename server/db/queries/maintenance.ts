@@ -8,7 +8,12 @@ const maintenanceWithRelations = {
   with: {
     student: {
       with: {
-        user: true,
+        user: {
+          columns:{
+            name: true,
+            email: true
+          }
+        },
       },
     },
     room: true,
