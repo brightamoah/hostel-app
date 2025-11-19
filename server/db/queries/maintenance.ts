@@ -9,10 +9,10 @@ const maintenanceWithRelations = {
     student: {
       with: {
         user: {
-          columns:{
+          columns: {
             name: true,
-            email: true
-          }
+            email: true,
+          },
         },
       },
     },
@@ -20,6 +20,15 @@ const maintenanceWithRelations = {
     hostel: true,
     responses: {
       orderBy: desc(maintenanceResponse.responseDate),
+      with: {
+        responder: {
+          columns: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     },
   },
 } as const;

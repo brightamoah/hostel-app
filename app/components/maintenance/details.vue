@@ -70,6 +70,8 @@ const detailItems = computed(() => [
     icon: "i-lucide-calendar-days",
   },
 ]);
+
+const responseItems = computed(() => maintenance.responses ?? []);
 </script>
 
 <template>
@@ -146,7 +148,29 @@ const detailItems = computed(() => [
         </template>
 
         <template #responses>
-          <pre>Responses</pre>
+          <UEmpty
+            v-if="!responseItems.length"
+            icon="i-lucide-folder-open"
+            title="No Responses Yet"
+            description="There are currently no responses for this maintenance request."
+          />
+
+          <div
+            v-else
+            class="flex flex-col gap-4"
+          >
+            <DashboardDetailItem
+              v-for="response in responseItems"
+              :key="response.id"
+              :label="`Response by ${response.responder.name} on ${useDateFormat(response.responseDate, 'dddd Do MMMM, YYYY').value}`"
+            >
+              <template #default>
+                <div class="w-full">
+                  {{ response.responseText }}
+                </div>
+              </template>
+            </DashboardDetailItem>
+          </div>
         </template>
       </UTabs>
     </template>
