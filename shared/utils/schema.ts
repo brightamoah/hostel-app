@@ -231,8 +231,35 @@ const logActionSchema = z.object({
   visitorId: z.number().int().positive().min(1, "Invalid Visitor ID"),
   action: z.enum(["check_in", "check_out"], "Action must be either 'check_in' or 'check_out'"),
 });
-
 export type LogActionSchema = z.output<typeof logActionSchema>;
+
+const maintenanceStatusSchema = z.union([
+  z.enum([
+    "pending",
+    "assigned",
+    "in-progress",
+    "completed",
+    "rejected",
+  ], {
+    error: "Status must be one of 'pending', 'assigned', 'in-progress', 'completed', 'rejected'",
+  }),
+  z.literal(""),
+]).refine(val => val !== "", "Status is required");
+
+const maintenanceResponseText = z
+  .string()
+  .trim()
+  .nonempty("Response Text is required")
+  .min(10, "Response is too short")
+  .max(1000, "Response Text cannot exceed 1000 characters");
+
+const maintenanceStatusResponseSchema = z.object({
+  maintenanceId: z.number().int().positive().min(1, "Invalid Maintenance ID"),
+  status: maintenanceStatusSchema,
+  responseText: maintenanceResponseText,
+});
+
+export type MaintenanceStatusResponseSchema = z.output<typeof maintenanceStatusResponseSchema>;
 
 export {
   addAdminSchema,
@@ -245,6 +272,7 @@ export {
   emailVerificationSchema,
   logActionSchema,
   loginSchema,
+  maintenanceStatusResponseSchema,
   nameSchema,
   passwordResetSchema,
   passwordSchema,

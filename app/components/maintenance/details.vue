@@ -153,6 +153,7 @@ const responseItems = computed(() => maintenance.responses ?? []);
             icon="i-lucide-folder-open"
             title="No Responses Yet"
             description="There are currently no responses for this maintenance request."
+            class="mt-2"
           />
 
           <div

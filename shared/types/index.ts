@@ -9,6 +9,8 @@ import type { randomUUID } from "node:crypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
+import type { MaintenanceStatusResponseSchema } from "../utils/schema";
+
 export type Refresh = ReturnType<typeof useFetch>["refresh"];
 
 export type FormFieldType = "select" | "checkbox" | "password" | "otp" | "email" | "text";
@@ -239,5 +241,9 @@ export type MaintenanceDataResponse = {
   completed: number;
   rejected: number;
 };
+
+export type MaintenanceAction = "change-status" | "add-response";
+
+export type StatusResponseForm = Omit<MaintenanceStatusResponseSchema, "maintenanceId">;
 
 export type DataType<T> = Ref<T, T>;

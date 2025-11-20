@@ -7,6 +7,8 @@ import type { RowActionItem } from "~/types/rowAction";
 
 const MaintenanceDetailModal = defineAsyncComponent(() => import("~/components/maintenance/details.vue"));
 
+const MaintenanceStatusResponseModal = defineAsyncComponent(() => import("~/components/maintenance/statusChange.vue"));
+
 export function useMaintenanceRowColumn(
   UAvatar: ComponentType,
   UButton: ComponentType,
@@ -26,6 +28,16 @@ export function useMaintenanceRowColumn(
     });
   };
 
+  const openStatusResponseModal = (maintenance: MaintenanceType, action: MaintenanceAction) => {
+    const modal = overlay.create(MaintenanceStatusResponseModal);
+    // const close = modal.close;
+
+    modal.open({
+      maintenance,
+      action,
+    });
+  };
+
   const getRowItems = (row: Row<MaintenanceType>) => {
     const maintenance = row.original;
     const actions: RowActionItem[] = [
@@ -41,12 +53,12 @@ export function useMaintenanceRowColumn(
       {
         label: "Change Status",
         icon: "i-lucide-refresh-cw",
-        onSelect: () => {},
+        onSelect: () => openStatusResponseModal(maintenance, "change-status"),
       },
       {
         label: "Add Response",
         icon: "i-lucide-message-circle-plus",
-        onSelect: () => {},
+        onSelect: () => openStatusResponseModal(maintenance, "add-response"),
       },
     ];
 
