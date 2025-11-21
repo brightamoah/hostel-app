@@ -1,7 +1,7 @@
 import { visitorQueries } from "~~/server/db/queries";
 
 export default defineEventHandler(async (event) => {
-  const { adminData } = await checkAdminSession(event);
+  const { adminData } = await adminSessionCheck(event);
 
   try {
     const body = await readValidatedBody(event, body => deleteItemSchema.safeParse(body));

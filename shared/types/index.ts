@@ -4,7 +4,7 @@ import type { useFetch } from "#app";
 import type { User } from "#auth-utils";
 import type { Maintenance } from "~~/server/db/queries/maintenance";
 import type { Visitor } from "~~/server/db/queries/visitor";
-import type { allocation, loginAttempts, visitorLogs } from "~~/server/db/schema";
+import type { allocation, loginAttempts, maintenanceStatusEnum, visitorLogs } from "~~/server/db/schema";
 import type { randomUUID } from "node:crypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
@@ -241,6 +241,8 @@ export type MaintenanceDataResponse = {
   completed: number;
   rejected: number;
 };
+
+export type MaintenanceStatus = typeof maintenanceStatusEnum["enumValues"][number];
 
 export type MaintenanceAction = "change-status" | "add-response";
 

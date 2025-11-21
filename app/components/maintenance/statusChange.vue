@@ -1,10 +1,13 @@
 <script setup lang="ts">
-const { maintenance, action } = defineProps<{
+const { maintenance, action, isLoading, update, addResponse } = defineProps<{
   maintenance: MaintenanceType;
   action: MaintenanceAction;
+  isLoading: boolean | Ref<boolean>;
+  update?: () => Promise<void>;
+  addResponse?: () => Promise<void>;
 }>();
 
-const emit = defineEmits<{ close: [boolean] }>();
+const isLoadingValue = computed(() => unref(isLoading));
 
 const statusResponseRef = useTemplateRef("statusResponseRef");
 
@@ -26,7 +29,14 @@ const statusOptions = ref<StatusResponseForm["status"][]>([
 
 const maintenanceStore = useMaintenanceStore();
 
-const { maintenanceStatusResponseState } = storeToRefs(maintenanceStore);
+const {
+  maintenanceStatusResponseState,
+  isAddResponseFormValid,
+  isUpdateFormValid,
+} = storeToRefs(maintenanceStore);
+const { clearState } = maintenanceStore;
+
+onMounted(() => clearState());
 </script>
 
 <template>
@@ -48,7 +58,7 @@ const { maintenanceStatusResponseState } = storeToRefs(maintenanceStore);
         ref="statusResponseRef"
         :state="maintenanceStatusResponseState"
         :schema="maintenanceStatusResponseSchema.omit({ maintenanceId: true })"
-        @submit.prevent="console.log($event)"
+        @submit.prevent="update"
       >
         <div class="flex flex-col gap-4">
           <UFormField
@@ -74,7 +84,7 @@ const { maintenanceStatusResponseState } = storeToRefs(maintenanceStore);
             required
           >
             <UTextarea
-              v-model.trim="maintenanceStatusResponseState.responseText"
+              v-model="maintenanceStatusResponseState.responseText"
               label="Response Message"
               placeholder="Type your response here..."
               class="w-full"
@@ -91,7 +101,7 @@ const { maintenanceStatusResponseState } = storeToRefs(maintenanceStore);
         ref="responseRef"
         :state="maintenanceStatusResponseState"
         :schema="maintenanceStatusResponseSchema.omit({ status: true, maintenanceId: true })"
-        @submit.prevent="console.log($event)"
+        @submit.prevent="addResponse"
       >
         <UFormField
           required
@@ -112,14 +122,14 @@ const { maintenanceStatusResponseState } = storeToRefs(maintenanceStore);
       </UForm>
     </template>
 
-    <template #footer>
+    <template #footer="{ close }">
       <div class="flex gap-4">
         <UButton
           color="error"
           variant="outline"
           class="cursor-pointer"
           label="Cancel"
-          @click="emit('close', false)"
+          @click="close"
         />
 
         <UButton
@@ -127,7 +137,11 @@ const { maintenanceStatusResponseState } = storeToRefs(maintenanceStore);
           variant="solid"
           class="cursor-pointer"
           icon="i-lucide-send"
-          label="Submit Changes"
+          :label="isLoading ? 'Submitting' : 'Submit Changes'"
+          :loading="isLoadingValue"
+          :disabled="action === 'change-status'
+            ? !isUpdateFormValid
+            : !isAddResponseFormValid"
           @click="action === 'change-status'
             ? statusResponseRef?.submit()
             : responseRef?.submit()"

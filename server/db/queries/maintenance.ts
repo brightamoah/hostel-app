@@ -1,4 +1,4 @@
-import type { Admin } from "~~/shared/types";
+import type { Admin, MaintenanceStatus } from "~~/shared/types";
 
 import { and, count, countDistinct, desc, eq, sql } from "drizzle-orm";
 
@@ -26,6 +26,7 @@ const maintenanceWithRelations = {
             id: true,
             name: true,
             email: true,
+            role: true,
           },
         },
       },
@@ -69,6 +70,12 @@ export async function maintenanceQueries() {
     return maintenanceRecord;
   };
 
+  const findMaintenanceRequestById = async (id: number) => {
+    return db.query.maintenanceRequest.findFirst({
+      where: eq(maintenanceRequest.id, id),
+    });
+  };
+
   const getMaintenanceStatusCount = async (admin: Admin) => {
     const whereConditions = [];
 
@@ -107,10 +114,65 @@ export async function maintenanceQueries() {
     };
   };
 
+  const updateStatusAndAddResponse = async (
+    maintenanceId: number,
+    adminId: number,
+    status: MaintenanceStatus,
+    responseText: string,
+    hostelId?: number,
+  ) => {
+    return db
+      .transaction(async (tx) => {
+        const whereClause = hostelId
+          ? and(eq(maintenanceRequest.id, maintenanceId), eq(maintenanceRequest.hostelId, hostelId))
+          : eq(maintenanceRequest.id, maintenanceId);
+
+        const [updatedRequest] = await tx
+          .update(maintenanceRequest)
+          .set({
+            status,
+            resolutionDate: status === "completed" ? new Date() : null,
+          })
+          .where(whereClause)
+          .returning();
+
+        const [newResponse] = await tx
+          .insert(maintenanceResponse)
+          .values({
+            maintenanceRequestId: maintenanceId,
+            responderId: adminId,
+            responseText,
+          })
+          .returning();
+
+        return { updatedRequest, newResponse };
+      });
+  };
+
+  const addMaintenanceResponse = async (
+    maintenanceId: number,
+    responderId: number,
+    responseText: string,
+  ) => {
+    const [newResponse] = await db
+      .insert(maintenanceResponse)
+      .values({
+        maintenanceRequestId: maintenanceId,
+        responderId,
+        responseText,
+      })
+      .returning();
+
+    return newResponse;
+  };
+
   return {
     getAllMaintenanceRequests,
     getMaintenanceById,
     getMaintenanceStatusCount,
+    updateStatusAndAddResponse,
+    addMaintenanceResponse,
+    findMaintenanceRequestById,
   };
 }
 

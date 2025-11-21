@@ -76,7 +76,7 @@ watch(
             <UInput
               v-model.trim="addRoomState.roomNumber"
               placeholder="Enter room number"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -90,7 +90,7 @@ watch(
             <UInput
               v-model.trim="addRoomState.building"
               placeholder="Enter building name"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -106,7 +106,7 @@ watch(
             <UInputNumber
               v-model="addRoomState.floor"
               placeholder="Enter floor number"
-              class="w-[100%]"
+              class="w-full"
               :min="1"
               :max="10"
               :size="isMobile ? 'lg' : 'xl'"
@@ -123,7 +123,7 @@ watch(
               v-model="addRoomState.roomType"
               :items="roomType"
               placeholder="Select room type"
-              class="w-[100%] cursor-pointer"
+              class="w-full cursor-pointer"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -139,7 +139,7 @@ watch(
             <UInputNumber
               v-model="addRoomState.capacity"
               placeholder="Enter room capacity"
-              class="w-[100%]"
+              class="w-full"
               readonly
               :min="1"
               :max="4"
@@ -156,7 +156,7 @@ watch(
             <UInputNumber
               v-model="addRoomState.amountPerYear"
               placeholder="Enter amount per year"
-              class="w-[100%]"
+              class="w-full"
               :min="1"
               :size="isMobile ? 'lg' : 'xl'"
               :format-options="{
@@ -181,7 +181,7 @@ watch(
             <UInputNumber
               v-model="addRoomState.currentOccupancy"
               placeholder="Enter current occupancy"
-              class="w-[100%]"
+              class="w-full"
               :min="0"
               :max="4"
               :size="isMobile ? 'lg' : 'xl'"
@@ -198,7 +198,7 @@ watch(
               v-model="addRoomState.status"
               :items="roomStatus"
               placeholder="Select room status"
-              class="w-[100%] cursor-pointer"
+              class="w-full cursor-pointer"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -213,7 +213,7 @@ watch(
           <UTextarea
             v-model="addRoomState.features"
             placeholder="Enter room features (comma separated)"
-            class="w-[100%]"
+            class="w-full"
             :size="isMobile ? 'lg' : 'xl'"
           />
         </UFormField>

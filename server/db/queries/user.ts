@@ -122,6 +122,13 @@ export async function userQueries() {
     return existingUser;
   };
 
+  const getStudentByUserId = async (id: number) => {
+    const existingStudent = await db.query.student.findFirst({
+      where: eq(student.userId, id),
+    });
+    return existingStudent;
+  };
+
   const getOnboardedStudent = async (id: number) => {
     const existingStudent = await db.query.student.findFirst({
       where: eq(student.userId, id),
@@ -372,5 +379,6 @@ export async function userQueries() {
     disableAdminByUserId,
     getFailedAttemptsCount,
     recordLoginAttempt,
+    getStudentByUserId,
   };
 }

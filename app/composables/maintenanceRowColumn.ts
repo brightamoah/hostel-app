@@ -18,6 +18,9 @@ export function useMaintenanceRowColumn(
   UIcon: ComponentType,
 ) {
   const overlay = useOverlay();
+  const maintenanceStore = useMaintenanceStore();
+  const { isLoading, maintenanceStatusResponseState } = storeToRefs(maintenanceStore);
+  const { updateStatusAndAddResponse, addMaintenanceResponse } = maintenanceStore;
 
   const openMaintenanceDetailModal = (maintenance: MaintenanceType) => {
     const modal = overlay.create(MaintenanceDetailModal);
@@ -30,11 +33,27 @@ export function useMaintenanceRowColumn(
 
   const openStatusResponseModal = (maintenance: MaintenanceType, action: MaintenanceAction) => {
     const modal = overlay.create(MaintenanceStatusResponseModal);
-    // const close = modal.close;
+    const close = modal.close;
 
     modal.open({
       maintenance,
       action,
+      isLoading,
+      update: async () => {
+        await updateStatusAndAddResponse({
+          maintenanceId: maintenance.id,
+          status: maintenanceStatusResponseState.value.status,
+          responseText: maintenanceStatusResponseState.value.responseText,
+        });
+        close();
+      },
+      addResponse: async () => {
+        await addMaintenanceResponse({
+          maintenanceId: maintenance.id,
+          responseText: maintenanceStatusResponseState.value.responseText,
+        });
+        close();
+      },
     });
   };
 

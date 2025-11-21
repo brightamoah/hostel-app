@@ -1,8 +1,7 @@
-import { userQueries } from "~~/server/db/queries";
-import { maintenanceQueries } from "~~/server/db/queries/maintenance";
+import { maintenanceQueries, userQueries } from "~~/server/db/queries";
 
 export default defineEventHandler(async (event) => {
-  const { userId } = await checkAdminSession(event);
+  const { userId } = await adminSessionCheck(event);
 
   try {
     const { getAdminByUserId } = await userQueries();
@@ -46,6 +45,6 @@ export default defineEventHandler(async (event) => {
       throw error;
     }
 
-    handleError(error, "Get Visitor Data", event);
+    handleError(error, "Get Maintenance Data", event);
   }
 });

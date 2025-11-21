@@ -10,9 +10,6 @@ const { maintenance } = defineProps<{
 
 const emit = defineEmits<{ close: [boolean] }>();
 
-// const breakpoints = useBreakpoints(breakpointsTailwind);
-// const isMobile = breakpoints.smaller("md");
-
 const timeAgo = useTimeAgo(maintenance.requestDate).value;
 
 const items = computed<TabsItem[]>(() => [
@@ -72,6 +69,69 @@ const detailItems = computed(() => [
 ]);
 
 const responseItems = computed(() => maintenance.responses ?? []);
+
+interface MessageMetadata {
+  id: number;
+  senderName: string;
+  senderRole: string;
+  email: string;
+  date: string;
+  timeAgo: string;
+}
+
+const messages = computed(() => {
+  const allMessages = [
+    {
+      id: maintenance.id.toString(),
+      role: "system",
+      parts: [
+        {
+          type: "text",
+          text: "Request Submitted",
+        },
+      ],
+      metadata: {
+        id: maintenance.id,
+        senderName: "System",
+        senderRole: "System",
+        email: "",
+        date: maintenance.requestDate,
+        timeAgo: useTimeAgo(new Date(maintenance.requestDate)).value,
+      },
+    },
+    ...responseItems.value.map((response) => {
+      const responderInfo = response.responder;
+      const isStudent = responderInfo.role === "student";
+
+      return {
+        id: response.id.toString(),
+        role: isStudent ? "user" : "assistant",
+        parts: [
+          {
+            type: "text",
+            text: response.responseText,
+            id: response.id.toString(),
+          },
+        ],
+        metadata: {
+          id: response.responder.id,
+          senderName: responderInfo.name,
+          senderRole: isStudent ? "Student" : "Admin",
+          email: responderInfo.email,
+          date: response.responseDate,
+          timeAgo: useTimeAgo(new Date(response.responseDate)).value,
+        },
+
+      };
+    }),
+  ];
+
+  return allMessages.sort((a, b) => {
+    const dateA = new Date(a.metadata.date).getTime();
+    const dateB = new Date(b.metadata.date).getTime();
+    return dateA - dateB;
+  });
+});
 </script>
 
 <template>
@@ -158,19 +218,57 @@ const responseItems = computed(() => maintenance.responses ?? []);
 
           <div
             v-else
-            class="flex flex-col gap-4"
+            class="flex flex-col h-full"
           >
-            <DashboardDetailItem
-              v-for="response in responseItems"
-              :key="response.id"
-              :label="`Response by ${response.responder.name} on ${useDateFormat(response.responseDate, 'dddd Do MMMM, YYYY').value}`"
+            <UChatMessages
+              :messages="messages"
+              :user="{
+                side: 'right',
+                variant: 'subtle',
+              }"
+              :assistant="{
+                side: 'left',
+                variant: 'outline',
+              }"
             >
-              <template #default>
-                <div class="w-full">
-                  {{ response.responseText }}
+              <template #leading="{ message, avatar }">
+                <UAvatar
+                  v-bind="avatar"
+                  :text="generateInitials((message.metadata as MessageMetadata).senderName)"
+                  size="sm"
+                  :style="{ backgroundColor: generateUserColor((message.metadata as MessageMetadata).id) }"
+                  :ui="{ fallback: 'text-white' }"
+                />
+              </template>
+
+              <template #content="{ message }">
+                <div class="space-y-2">
+                  <div class="flex items-center gap-2 text-xs">
+                    <span class="font-semibold">{{ (message.metadata as MessageMetadata).senderName }}</span>
+
+                    <UBadge
+                      :label="(message.metadata as MessageMetadata).senderRole"
+                      size="xs"
+                      :color="message.role === 'user' ? 'primary' : message.role === 'system' ? 'info' : 'neutral'"
+                    />
+
+                    <span>•</span>
+
+                    <span>{{ (message.metadata as MessageMetadata).timeAgo }}</span>
+                  </div>
+
+                  <!-- Message text -->
+                  <div
+                    class="text-sm"
+                    :class="[
+                      message.role === 'system' ? 'text-center italic text-muted' : '',
+                    ]"
+                  >
+                    {{ message.parts[0].text }}
+                  </div>
                 </div>
               </template>
-            </DashboardDetailItem>
+            </UChatMessages>
           </div>
         </template>
       </UTabs>

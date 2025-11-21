@@ -19,7 +19,7 @@ export const maintenancePriorityColorMap: Record<MaintenanceType["priority"], Co
 
 export const maintenanceStatusColorMap: Record<MaintenanceType["status"], ColorType> = {
   "in-progress": "secondary",
-  "assigned": "info",
+  "assigned": "neutral",
   "completed": "success",
   "pending": "warning",
   "rejected": "error",

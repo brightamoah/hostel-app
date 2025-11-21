@@ -3,7 +3,7 @@ import { userQueries } from "~~/server/db/queries";
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event);
 
-  await checkAdminSession(event);
+  await adminSessionCheck(event);
 
   const userId = session.user!.id;
 

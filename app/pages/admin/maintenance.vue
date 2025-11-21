@@ -107,7 +107,7 @@ async function handleDeleteUsers() {
   if (selectedMaintenanceIds.value.ids.length === 0)
     return;
 
-  console.log(selectedMaintenanceIds.value);
+  console.warn(selectedMaintenanceIds.value);
 }
 </script>
 
