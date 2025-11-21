@@ -104,10 +104,9 @@ const { maintenanceStatusResponseState } = storeToRefs(maintenanceStore);
             label="Response Message"
             placeholder="Type your response here..."
             class="w-full"
-            :rows="4"
             autoresize
+            :rows="4"
             :maxrows="10"
-            \
           />
         </UFormField>
       </UForm>
