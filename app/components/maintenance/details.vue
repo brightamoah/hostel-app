@@ -10,6 +10,7 @@ const { maintenance } = defineProps<{
 
 const emit = defineEmits<{ close: [boolean] }>();
 
+const { user } = useUserSession();
 const timeAgo = useTimeAgo(maintenance.requestDate).value;
 
 const items = computed<TabsItem[]>(() => [
@@ -80,13 +81,15 @@ interface MessageMetadata {
 }
 
 const messages = computed(() => {
+  const isAdmin = user.value?.role === "admin";
+
   const allMessages = [
     {
       id: maintenance.id.toString(),
-      role: "system",
+      role: "system" as const,
       parts: [
         {
-          type: "text",
+          type: "text" as const,
           text: "Request Submitted",
         },
       ],
@@ -103,9 +106,17 @@ const messages = computed(() => {
       const responderInfo = response.responder;
       const isStudent = responderInfo.role === "student";
 
+      let messageRole: "user" | "assistant";
+      if (isAdmin) {
+        messageRole = isStudent ? "assistant" : "user";
+      }
+      else {
+        messageRole = isStudent ? "user" : "assistant";
+      }
+
       return {
         id: response.id.toString(),
-        role: isStudent ? "user" : "assistant",
+        role: messageRole,
         parts: [
           {
             type: "text",
