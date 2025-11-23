@@ -31,7 +31,7 @@ export default defineNuxtConfig({
       password: env.NUXT_SESSION_PASSWORD,
       name: env.NUXT_SESSION_NAME,
       cookie: {
-        maxAge: 60 * 24 * 7, // 7 days
+        maxAge: 60 * 60 * 24 * 7, // 7 days
       },
     },
     databaseUrl: env.NUXT_DATABASE_URL,

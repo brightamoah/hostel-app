@@ -46,7 +46,7 @@ export const hostel = pgTable("hostel", t => ({
 export const room = pgTable("room", t => ({
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
   roomNumber: t.varchar({ length: 10 }).notNull().unique(),
-  building: t.varchar({ length: 100 }).notNull(),
+  // building: t.varchar({ length: 100 }).notNull(),
   hostelId: t.integer().notNull().references(() => hostel.id, { onDelete: "cascade" }),
   floor: t.integer().notNull(),
   capacity: t.integer().notNull(),
@@ -56,7 +56,8 @@ export const room = pgTable("room", t => ({
   amountPerYear: t.numeric({ precision: 10, scale: 2, mode: "number" }).notNull(),
   status: roomStatusEnum().default("vacant").notNull(),
 }), table => [
-  unique("unique_room").on(table.roomNumber, table.building, table.hostelId),
+  // unique("unique_room").on(table.roomNumber, table.building, table.hostelId),
+  unique("unique_room_number").on(table.roomNumber, table.hostelId),
   check("chk_capacity", sql`capacity > 0`),
   check("chk_occupancy", sql`current_occupancy >= 0 AND current_occupancy <= capacity`),
 ]);

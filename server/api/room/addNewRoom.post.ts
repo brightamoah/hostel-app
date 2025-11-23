@@ -1,24 +1,11 @@
-import { room } from "~~/server/db/schema";
+import { roomQueries } from "~~/server/db/queries";
 import { handleError } from "~~/server/utils/errorHandler";
-import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
-  const session = await getUserSession(event);
-
-  if (
-    !session || !session.user
-    || session.user.role !== "admin"
-    || !session.user.adminData
-    || session.user.adminData.status !== "active"
-  ) {
-    throw createError({
-      statusCode: 403,
-      message: "Access denied: Must be a verified admin",
-    });
-  }
+  await adminSessionCheck(event);
 
   try {
-    const { db } = useDB();
+    const { getExistingRoomByRoomNumberAndHostel, addNewRoom } = await roomQueries();
 
     const body = await readValidatedBody(event, body => addRoomSchema.safeParse(body));
 
@@ -31,7 +18,7 @@ export default defineEventHandler(async (event) => {
 
     const {
       amountPerYear,
-      building,
+      hostelId,
       capacity,
       currentOccupancy,
       features,
@@ -41,12 +28,14 @@ export default defineEventHandler(async (event) => {
       status,
     } = body.data;
 
-    const existingRoom = await db
-      .query
-      .room
-      .findFirst({
-        where: eq(room.roomNumber, roomNumber),
+    if (roomType === "" || status === "") {
+      throw createError({
+        statusCode: 400,
+        message: "Room type and status must be provided",
       });
+    }
+
+    const existingRoom = await getExistingRoomByRoomNumberAndHostel(roomNumber, hostelId);
 
     if (existingRoom) {
       throw createError({
@@ -55,17 +44,17 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const [newRoom] = await db.insert(room).values({
-      roomNumber,
-      building,
-      floor,
+    const newRoom = await addNewRoom({
+      amountPerYear,
+      hostelId,
       capacity,
-      roomType,
       currentOccupancy,
       features,
-      amountPerYear,
+      floor,
+      roomNumber,
+      roomType,
       status,
-    } as any).returning();
+    });
 
     if (!newRoom) {
       throw createError({

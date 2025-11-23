@@ -34,7 +34,7 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(roomValue);
                   name="i-lucide-map-pinned"
                   class="size-5"
                 />
-                {{ roomValue.building }}, Floor {{ roomValue.floor }}
+                {{ roomValue.hostel.name }}, Floor {{ roomValue.floor }}
               </span>
             </h3>
 
@@ -71,8 +71,8 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(roomValue);
                 />
 
                 <DashboardDetailItem
-                  label="Building"
-                  :value="roomValue.building"
+                  label="Hostel"
+                  :value="roomValue.hostel.name"
                 />
 
                 <DashboardDetailItem

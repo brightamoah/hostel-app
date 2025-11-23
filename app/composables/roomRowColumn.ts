@@ -72,6 +72,8 @@ export function useRoomRowColumn(
           navigator.clipboard.writeText(row.original.id.toString());
           toast.add({
             title: "Copied to clipboard",
+            color: "success",
+            icon: "i-lucide-check-circle",
             description: "Customer ID copied to clipboard",
           });
         },
@@ -85,7 +87,7 @@ export function useRoomRowColumn(
       },
       {
         label: "Edit Room",
-        icon: "i-heroicons-pencil-square",
+        icon: "i-lucide-notebook-pen",
         onSelect() {
           const roomForEditForm: RoomFormState = {
             ...row.original,
@@ -141,10 +143,11 @@ export function useRoomRowColumn(
       },
     },
     {
-      accessorKey: "building",
+      id: "hostel.name",
+      accessorFn: row => row.hostel.name,
       header: createSortableHeader("Building", UButton),
       cell: ({ row }) => {
-        return h("p", { class: "font-medium" }, row.original.building);
+        return h("p", { class: "font-medium" }, row.original.hostel.name);
       },
     },
     {

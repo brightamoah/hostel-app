@@ -2,23 +2,10 @@ import { roomQueries } from "~~/server/db/queries/room";
 import { handleError } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async (event) => {
-  const session = await getUserSession(event);
-
-  if (
-    !session
-    || !session.user
-    || session.user.role !== "admin"
-    || !session.user.adminData
-    || session.user.adminData.status !== "active"
-  ) {
-    throw createError({
-      statusCode: 403,
-      message: "Access denied: Must be a logged in verified admin",
-    });
-  }
+  await adminSessionCheck(event);
 
   try {
-    const { editRoomById, getRoomById, getRoomByNumberAndBuilding } = await roomQueries();
+    const { editRoomById, getRoomById, getExistingRoomByRoomNumberAndHostel } = await roomQueries();
 
     const body = await readValidatedBody(event, body => editRoomSchema.safeParse(body));
 
@@ -31,33 +18,22 @@ export default defineEventHandler(async (event) => {
 
     const { roomId, data } = body.data;
 
-    const existingRoom = await getRoomById(roomId);
+    if (data.roomNumber) {
+      const originalRoom = await getRoomById(roomId);
 
-    if (!existingRoom) {
-      throw createError({
-        statusCode: 404,
-        message: "Room not found",
-      });
-    }
+      if (!originalRoom) {
+        throw createError({
+          statusCode: 404,
+          message: "Room not found",
+        });
+      }
 
-    // If room number is being updated, check for uniqueness
-    const newRoomNumber = data.roomNumber;
-    const newBuilding = data.building;
+      const existingRoom = await getExistingRoomByRoomNumberAndHostel(data.roomNumber, originalRoom.hostelId);
 
-    const isUniqueKeyChanged = (newRoomNumber
-      && newRoomNumber !== existingRoom.roomNumber) || (newBuilding && newBuilding !== existingRoom.building);
-
-    if (isUniqueKeyChanged) {
-      // Use the new values if provided, otherwise fallback to the existing ones.
-      const checkNumber = newRoomNumber ?? existingRoom.roomNumber;
-      const checkBuilding = newBuilding ?? existingRoom.building;
-
-      const conflictingRoom = await getRoomByNumberAndBuilding(checkNumber, checkBuilding);
-
-      if (conflictingRoom && conflictingRoom.id !== roomId) {
+      if (existingRoom && existingRoom.id !== roomId) {
         throw createError({
           statusCode: 409,
-          message: `A room with number ${checkNumber} in ${checkBuilding} already exists.`,
+          message: `A room with number "${data.roomNumber}" already exists in this hostel.`,
         });
       }
     }

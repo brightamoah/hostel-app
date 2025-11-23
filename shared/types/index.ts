@@ -3,8 +3,9 @@ import type { Table } from "@tanstack/vue-table";
 import type { useFetch } from "#app";
 import type { User } from "#auth-utils";
 import type { Maintenance } from "~~/server/db/queries/maintenance";
+import type { Room as RoomType } from "~~/server/db/queries/room";
 import type { Visitor } from "~~/server/db/queries/visitor";
-import type { allocation, loginAttempts, maintenanceStatusEnum, visitorLogs } from "~~/server/db/schema";
+import type { allocation, loginAttempts, maintenanceStatusEnum, room, visitorLogs } from "~~/server/db/schema";
 import type { randomUUID } from "node:crypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
@@ -90,18 +91,9 @@ export type StatsCard = {
   to?: RouteLocationRaw;
 };
 
-export type Room = {
-  id: number;
-  roomNumber: string;
-  building: string;
-  floor: number;
-  roomType: "single" | "double" | "triple" | "quad";
-  capacity: number;
-  currentOccupancy: number;
-  features: string[];
-  amountPerYear: number;
-  status: "vacant" | "fully occupied" | "partially occupied" | "under maintenance" | "reserved";
-};
+export type Room = RoomType;
+
+export type RoomInsert = typeof room.$inferInsert;
 
 export type Hostel = {
   id: number;
@@ -120,9 +112,10 @@ export type RoomDataResponse = {
   totalOccupiedRooms: number;
   totalAvailableRooms: number;
   totalUnderMaintenance: number;
-  buildings: {
-    building: string;
-  }[];
+  totalFullyOccupiedRooms: number;
+  totalVacantRooms: number;
+  totalPartiallyOccupiedRooms: number;
+  totalReservedRooms: number;
   hostels: Hostel[];
 };
 

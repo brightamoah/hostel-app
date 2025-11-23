@@ -38,8 +38,8 @@ const detailItems = computed(() => [
     icon: "i-lucide-mail",
   },
   {
-    label: "Building/Hostel",
-    value: maintenance.room.building,
+    label: "Hostel",
+    value: maintenance.hostel.name,
     icon: "i-lucide-map-pinned",
   },
   {

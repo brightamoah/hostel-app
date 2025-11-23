@@ -16,7 +16,10 @@ export function useFetchRoomData() {
       totalOccupiedRooms: 0,
       totalAvailableRooms: 0,
       totalUnderMaintenance: 0,
-      buildings: [],
+      totalFullyOccupiedRooms: 0,
+      totalVacantRooms: 0,
+      totalPartiallyOccupiedRooms: 0,
+      totalReservedRooms: 0,
       hostels: [],
     }),
     getCachedData: (key, nuxtApp, ctx) => {

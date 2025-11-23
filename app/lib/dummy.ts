@@ -31,7 +31,6 @@ export const sampleVisitor: Visitor = {
         status: "active",
         room: {
           roomNumber: "Q103",
-          building: "Queens",
           roomType: "double",
           hostel: {
             name: "Queens",

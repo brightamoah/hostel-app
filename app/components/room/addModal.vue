@@ -28,11 +28,27 @@ const roomStatus = ref<AddRoomSchema["status"][]>([
   "reserved",
 ]);
 
+const {
+  hostels,
+  hostelItem,
+  isLoading: isHostelsLoading,
+  handleRefresh,
+} = useFetchRoomData();
+
 watch(
   () => isModalOpen.value,
-  (open) => {
+  async (open) => {
     if (!open) {
       roomStore.resetAddRoomState();
+    }
+
+    if (open && hostels.value.length === 0) {
+      try {
+        await handleRefresh();
+      }
+      catch (error) {
+        console.error("Failed to fetch hostels:", error);
+      }
     }
   },
 );
@@ -83,14 +99,17 @@ watch(
 
           <UFormField
             required
-            label="Building"
-            name="building"
+            label="Hostel"
+            name="hostelId"
             class="w-full"
           >
-            <UInput
-              v-model.trim="addRoomState.building"
-              placeholder="Enter building name"
-              class="w-full"
+            <USelectMenu
+              v-model="addRoomState.hostelId"
+              placeholder="Select Hostel"
+              class="w-full cursor-pointer"
+              value-key="value"
+              :items="hostelItem"
+              :loading="isHostelsLoading"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>

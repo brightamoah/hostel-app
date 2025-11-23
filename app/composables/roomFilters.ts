@@ -28,18 +28,18 @@ export function useRoomFilters(table: TableType<Room>, data: DataType<RoomDataRe
     },
   ]);
 
-  const buildingFilter = ref("");
+  const hostelFilter = ref("");
 
-  const buildingFilterOptions = computed(() => {
-    const raw = (data.value?.buildings.map(
-      b => b.building,
+  const hostelFilterOptions = computed(() => {
+    const raw = (data.value?.hostels.map(
+      hostel => hostel.name,
     ) ?? []) as string[];
 
     const options = raw.map(name => ({
       label: name,
       value: name,
     }));
-    return [{ label: "All Buildings", value: "all" }, ...options];
+    return [{ label: "All Hostels", value: "all" }, ...options];
   });
 
   const floorFilter = ref<string | number>("");
@@ -65,7 +65,7 @@ export function useRoomFilters(table: TableType<Room>, data: DataType<RoomDataRe
     itemsPerPage,
   } = useTableFilters<Room>(table, data, "rooms");
 
-  watch(() => [statusFilter.value, buildingFilter.value, floorFilter.value], async ([newStatus, newBuilding, newFloor]) => {
+  watch(() => [statusFilter.value, hostelFilter.value, floorFilter.value], async ([newStatus, newHostel, newFloor]) => {
     await nextTick();
     const tableApi = safeTableApi();
     if (!tableApi)
@@ -83,13 +83,13 @@ export function useRoomFilters(table: TableType<Room>, data: DataType<RoomDataRe
       statusColumn.setFilterValue(newStatus);
     }
 
-    const buildingColumn = tableApi.getColumn?.("building");
-    if (buildingColumn) {
-      if (!newBuilding || newBuilding === "all") {
-        buildingColumn.setFilterValue(undefined);
+    const hostelColumn = tableApi.getColumn?.("hostel.name");
+    if (hostelColumn) {
+      if (!newHostel || newHostel === "all") {
+        hostelColumn.setFilterValue(undefined);
       }
       else {
-        buildingColumn.setFilterValue(newBuilding);
+        hostelColumn.setFilterValue(newHostel);
       }
     }
 
@@ -108,8 +108,8 @@ export function useRoomFilters(table: TableType<Room>, data: DataType<RoomDataRe
   return {
     statusFilter,
     statusFilterOptions,
-    buildingFilter,
-    buildingFilterOptions,
+    hostelFilter,
+    hostelFilterOptions,
     floorFilter,
     floorFilterOptions,
     selectedRoomsLength,

@@ -90,8 +90,8 @@ const {
   totalRooms,
   statusFilter,
   statusFilterOptions,
-  buildingFilter,
-  buildingFilterOptions,
+  hostelFilter,
+  hostelFilterOptions,
   floorFilter,
   floorFilterOptions,
   currentRoomsShowing,
@@ -133,7 +133,7 @@ const pagination = ref({
   pageSize: 10,
 });
 
-watch([globalFilter, statusFilter, buildingFilter, floorFilter], () => {
+watch([globalFilter, statusFilter, hostelFilter, floorFilter], () => {
   pagination.value.pageIndex = 0;
 });
 
@@ -188,10 +188,10 @@ useSeoMeta({
           <RoomSearchFilter
             v-model="globalFilter"
             v-model:status-filter="statusFilter"
-            v-model:building-filter="buildingFilter"
+            v-model:hostel-filter="hostelFilter"
             v-model:floor-filter="floorFilter"
             :status-filter-options
-            :building-filter-options
+            :hostel-filter-options
             :floor-filter-options
           >
             <template #actions>

@@ -2,52 +2,39 @@ import { roomQueries } from "~~/server/db/queries/room";
 import { handleError } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async (event) => {
-  const session = await getUserSession(event);
-
-  if (!session || !session.user || session.user.role !== "admin" || !session.user.adminData || session.user.adminData.status !== "active") {
-    throw createError({
-      statusCode: 403,
-      message: "Access denied: Must be a verified admin",
-    });
-  }
+  const { adminData } = await adminSessionCheck(event);
 
   try {
     const {
-      getUniqueBuildings,
-      getAllHostels,
-      getRoomsScoped,
-      getBuildingsByHostelId,
-      getScopedHostels,
+      getRoomStatusCount,
+      getAllHostelsScoped,
+      getScopedRooms,
     } = await roomQueries();
 
     const {
-      rooms,
-      totalAvailableRooms,
       totalRooms,
       totalOccupiedRooms,
       totalUnderMaintenance,
-      adminRecord,
-    } = await getRoomsScoped(session.user.id);
+      totalAvailableRooms,
+      totalVacantRooms,
+      totalFullyOccupiedRooms,
+      totalPartiallyOccupiedRooms,
+      totalReservedRooms,
+    } = await getRoomStatusCount(adminData);
 
-    let buildings, hostels;
-
-    if (adminRecord && adminRecord.accessLevel === "super") {
-      buildings = await getUniqueBuildings();
-      hostels = await getAllHostels();
-      // hostels = await getScopedHostels();
-    }
-    else {
-      buildings = await getBuildingsByHostelId(adminRecord.hostelId!);
-      hostels = await getScopedHostels(adminRecord.hostelId!);
-    }
+    const hostels: Hostel[] = await getAllHostelsScoped(adminData);
+    const rooms = await getScopedRooms(adminData);
 
     return {
       rooms,
       totalRooms,
-      totalUnderMaintenance,
       totalOccupiedRooms,
       totalAvailableRooms,
-      buildings,
+      totalUnderMaintenance,
+      totalFullyOccupiedRooms,
+      totalVacantRooms,
+      totalPartiallyOccupiedRooms,
+      totalReservedRooms,
       hostels,
     };
   }

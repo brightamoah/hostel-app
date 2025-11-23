@@ -86,8 +86,8 @@ const studentItems = computed(() => [
     icon: "i-lucide-door-open",
   },
   {
-    label: "Building",
-    value: visitor.student.allocations[0]?.room.building || "N/A",
+    label: "Hostel",
+    value: visitor.student.allocations[0]?.room.hostel.name || "N/A",
     icon: "i-lucide-building",
   },
   {

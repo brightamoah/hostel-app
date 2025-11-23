@@ -12,6 +12,7 @@ const {
   roomStatus: roomStatusItems,
   roomType: roomTypeItems,
   isLoading,
+  roomDataKey,
 } = storeToRefs(roomStore);
 
 const toast = useToast();
@@ -21,7 +22,7 @@ const isEditModalOpen = ref(false);
 const editRoomFormRef = useTemplateRef("editRoomFormRef");
 
 const roomNumberValue = computed(() => roomData.roomNumber);
-const buildingValue = computed(() => roomData.building);
+const hostelValue = computed(() => roomData.hostelId);
 const roomType = computed(() => roomData.roomType);
 const roomStatus = computed(() => roomData.status);
 const roomFeatures = computed(() => roomData.features ?? "");
@@ -33,7 +34,7 @@ const floor = computed(() => roomData.floor);
 const editRoomState = ref<RoomFormState>(
   {
     roomNumber: roomNumberValue.value,
-    building: buildingValue.value,
+    hostelId: hostelValue.value,
     roomType: roomType.value,
     status: roomStatus.value,
     features: roomFeatures.value,
@@ -44,6 +45,27 @@ const editRoomState = ref<RoomFormState>(
   },
 );
 
+const {
+  hostels,
+  hostelItem,
+  isLoading: isHostelsLoading,
+  handleRefresh,
+} = useFetchRoomData();
+
+watch(
+  () => isEditModalOpen.value,
+  async (open) => {
+    if (open && hostels.value.length === 0) {
+      try {
+        await handleRefresh();
+      }
+      catch (error) {
+        console.error("Failed to fetch hostels:", error);
+      }
+    }
+  },
+);
+
 const getChangedFields = computed(() => {
   const original = roomData;
   const current = editRoomState.value;
@@ -51,7 +73,7 @@ const getChangedFields = computed(() => {
 
   const fieldsToCompare: (keyof AddRoomSchema)[] = [
     "roomNumber",
-    "building",
+    "hostelId",
     "floor",
     "capacity",
     "amountPerYear",
@@ -108,7 +130,7 @@ async function submitUpdate() {
       body: payload,
     });
 
-    await refreshNuxtData("roomData");
+    await refreshNuxtData(roomDataKey.value);
     toast.add({
       title: response.message,
       description: "The room details have been updated successfully.",
@@ -172,14 +194,17 @@ async function submitUpdate() {
 
           <UFormField
             required
-            label="Building"
-            name="building"
+            label="Hostel"
+            name="hostelId"
             class="w-full"
           >
-            <UInput
-              v-model="editRoomState.building"
-              placeholder="Enter building name"
+            <USelectMenu
+              v-model="editRoomState.hostelId"
+              placeholder="Select Hostel"
               class="w-full"
+              value-key="value"
+              :items="hostelItem"
+              :loading="isHostelsLoading"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>

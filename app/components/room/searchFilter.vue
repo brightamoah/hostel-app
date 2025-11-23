@@ -3,8 +3,8 @@ const props = defineProps<{
   modelValue: string;
   statusFilter: string;
   statusFilterOptions: FilterOption[];
-  buildingFilter: string;
-  buildingFilterOptions: FilterOption[];
+  hostelFilter: string;
+  hostelFilterOptions: FilterOption[];
   floorFilter: string | number;
   floorFilterOptions: FilterOption[];
 }>();
@@ -12,7 +12,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "update:modelValue", value: string): void;
   (e: "update:statusFilter", value: string): void;
-  (e: "update:buildingFilter", value: string): void;
+  (e: "update:hostelFilter", value: string): void;
   (e: "update:floorFilter", value: string | number): void;
 }>();
 
@@ -24,9 +24,9 @@ const statusFilterModel = computed({
   get: () => props.statusFilter,
   set: (val: string) => emit("update:statusFilter", val),
 });
-const buildingFilterModel = computed({
-  get: () => props.buildingFilter,
-  set: (val: string) => emit("update:buildingFilter", val),
+const hostelFilterModel = computed({
+  get: () => props.hostelFilter,
+  set: (val: string) => emit("update:hostelFilter", val),
 });
 const floorFilterModel = computed({
   get: () => props.floorFilter,
@@ -59,12 +59,12 @@ const floorFilterModel = computed({
       />
 
       <USelect
-        v-model="buildingFilterModel"
+        v-model="hostelFilterModel"
         arrow
-        placeholder="Filter by Building"
+        placeholder="Filter by Hostel"
         size="xl"
         class="w-full sm:min-w-40 text-center cursor-pointer"
-        :items="buildingFilterOptions"
+        :items="hostelFilterOptions"
         :ui="{
           trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
           item: 'cursor-pointer',

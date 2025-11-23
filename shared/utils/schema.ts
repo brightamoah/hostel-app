@@ -135,9 +135,14 @@ const roomStatusSchema = z.union([
 
 const roomNumberSchema = z
   .string()
-  .min(1, "Room number is required")
+  .nonempty("Room number is required")
+  .min(4, "Room number must be at least 4 characters long (e.g., A100)")
   .max(10, "Room number cannot exceed 10 characters")
-  .regex(/^(?=.*\d)[A-Z0-9]+$/, "Room number must contain at least one number and can include uppercase letters, but cannot be letters only");
+  .regex(/^[A-Z]\d+$/, "Room number must start with a single uppercase letter followed by numbers (e.g., V103).")
+  .refine((val) => {
+    const numberPart = Number.parseInt(val.substring(1), 10);
+    return numberPart >= 100;
+  }, "The number part of the room number must be 100 or greater.");
 
 const roomFeatureSchema = z.union([
   z.string("Features is required")
@@ -149,7 +154,7 @@ const roomFeatureSchema = z.union([
 
 export const addRoomSchema = z.object({
   roomNumber: roomNumberSchema,
-  building: z.string("Building is required").min(1, "Building is required").max(100, "Building cannot exceed 100 characters"),
+  hostelId: z.number("Hostel ID is required").int().positive().min(1, "Invalid Maintenance ID"),
   floor: z.number("Floor is required").min(1, "Floor cannot be negative"),
   capacity: z.number("Capacity is required").min(1, "Capacity must be at least 1").max(4, "Capacity cannot exceed 4"),
   roomType: roomTypeSchema,

@@ -25,9 +25,9 @@ export const useRoomStore = defineStore("roomStore", () => {
     "reserved",
   ]);
 
-  const addRoomState = ref<RoomFormState>({
+  const addRoomState = ref<Partial<RoomFormState>>({
     amountPerYear: 0,
-    building: "",
+    hostelId: undefined,
     capacity: 0,
     currentOccupancy: 0,
     features: "",
@@ -50,24 +50,14 @@ export const useRoomStore = defineStore("roomStore", () => {
 
   watch(() => addRoomState.value.roomType, () => {
     const capacity = getRoomCapacity.value;
-    if (capacity < addRoomState.value.currentOccupancy) {
+    if (addRoomState.value.currentOccupancy && capacity < addRoomState.value.currentOccupancy) {
       addRoomState.value.currentOccupancy = capacity;
     }
     addRoomState.value.capacity = capacity;
   }, { immediate: true });
 
   const isFormValid = computed(() => {
-    return (
-      addRoomState.value.roomNumber.trim() !== ""
-      && addRoomState.value.building.trim() !== ""
-      && addRoomState.value.floor > 0
-      && addRoomState.value.capacity >= 1
-      && addRoomState.value.roomType.trim() !== ""
-      && addRoomState.value.features !== ""
-      && addRoomState.value.amountPerYear > 0
-      && addRoomState.value.status.trim() !== ""
-      && addRoomState.value.currentOccupancy >= 0
-    );
+    return addRoomSchema.safeParse(addRoomState.value).success;
   });
 
   const addNewRoom = async (payload: FormSubmitEvent<AddRoomSchema>) => {
@@ -111,7 +101,7 @@ export const useRoomStore = defineStore("roomStore", () => {
   function resetAddRoomState() {
     addRoomState.value = {
       amountPerYear: 0,
-      building: "",
+      hostelId: undefined,
       capacity: 0,
       currentOccupancy: 0,
       features: "",
@@ -168,6 +158,7 @@ export const useRoomStore = defineStore("roomStore", () => {
     isLoading,
     isModalOpen,
     deleteModalOpen,
+    roomDataKey,
     resetAddRoomState,
     addNewRoom,
     deleteRoom,
