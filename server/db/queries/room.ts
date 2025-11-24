@@ -206,14 +206,14 @@ export async function roomQueries() {
       .where(and(...whereConditions));
 
     return {
-      totalVacantRooms: Number(result.vacant),
-      totalFullyOccupiedRooms: Number(result.fullyOccupied),
-      totalPartiallyOccupiedRooms: Number(result.partiallyOccupied),
-      totalUnderMaintenance: Number(result.underMaintenance),
-      totalReservedRooms: Number(result.reserved),
-      totalAvailableRooms: Number(result.available),
-      totalRooms: Number(result.allRooms),
-      totalOccupiedRooms: Number(result.occupied),
+      totalVacantRooms: Number(result?.vacant),
+      totalFullyOccupiedRooms: Number(result?.fullyOccupied),
+      totalPartiallyOccupiedRooms: Number(result?.partiallyOccupied),
+      totalUnderMaintenance: Number(result?.underMaintenance),
+      totalReservedRooms: Number(result?.reserved),
+      totalAvailableRooms: Number(result?.available),
+      totalRooms: Number(result?.allRooms),
+      totalOccupiedRooms: Number(result?.occupied),
     };
   };
 

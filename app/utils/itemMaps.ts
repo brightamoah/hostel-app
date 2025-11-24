@@ -10,7 +10,7 @@ export const maintenanceTypeIconMap: Record<MaintenanceType["issueType"], string
   "other": "i-lucide-wrench",
 };
 
-export const maintenancePriorityColorMap: Record<MaintenanceType["priority"], ColorType> = {
+export const priorityColorMap: Record<MaintenanceType["priority"], ColorType> = {
   low: "success",
   medium: "info",
   high: "warning",
@@ -32,4 +32,21 @@ export const visitorStatusColorMap: Record<VisitorType["status"], ColorType> = {
   "checked-out": "neutral",
   "cancelled": "error",
   "denied": "error",
+};
+
+export const complaintTypeIconMap: Record<Complaint["type"], string> = {
+  "amenities": "i-lucide-plug-zap",
+  "noise": "i-lucide-volume-2",
+  "security": "i-lucide-door-closed-locked",
+  "billing issue": "i-lucide-banknote",
+  "room condition": "i-lucide-door-open",
+  "staff behavior": "i-lucide-users",
+  "other": "i-lucide-panel-bottom-dashed",
+};
+
+export const complaintStatusColorMap: Record<Complaint["status"], ColorType> = {
+  "in-progress": "info",
+  "pending": "warning",
+  "resolved": "success",
+  "rejected": "error",
 };

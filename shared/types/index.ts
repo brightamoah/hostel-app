@@ -2,6 +2,7 @@ import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Table } from "@tanstack/vue-table";
 import type { useFetch } from "#app";
 import type { User } from "#auth-utils";
+import type { ComplaintType } from "~~/server/db/queries/complaint";
 import type { Maintenance } from "~~/server/db/queries/maintenance";
 import type { Room as RoomType } from "~~/server/db/queries/room";
 import type { Visitor } from "~~/server/db/queries/visitor";
@@ -242,3 +243,13 @@ export type MaintenanceAction = "change-status" | "add-response";
 export type StatusResponseForm = Omit<MaintenanceStatusResponseSchema, "maintenanceId">;
 
 export type DataType<T> = Ref<T, T>;
+
+export type Complaint = ComplaintType;
+
+export type ComplaintDataResponse = {
+  complaints: Complaint[];
+  totalComplaints: number;
+  totalInProgress: number;
+  totalPending: number;
+  totalResolved: number;
+};

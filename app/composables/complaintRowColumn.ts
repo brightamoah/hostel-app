@@ -5,11 +5,7 @@ import { useDateFormat } from "@vueuse/core";
 
 import type { RowActionItem } from "~/types/rowAction";
 
-const MaintenanceDetailModal = defineAsyncComponent(() => import("~/components/maintenance/details.vue"));
-
-const MaintenanceStatusResponseModal = defineAsyncComponent(() => import("~/components/maintenance/statusChange.vue"));
-
-export function useMaintenanceRowColumn(
+export function useComplaintRowColumn(
   UAvatar: ComponentType,
   UButton: ComponentType,
   UBadge: ComponentType,
@@ -17,48 +13,9 @@ export function useMaintenanceRowColumn(
   UCheckbox: ComponentType,
   UIcon: ComponentType,
 ) {
-  const overlay = useOverlay();
-  const maintenanceStore = useMaintenanceStore();
-  const { isLoading, maintenanceStatusResponseState } = storeToRefs(maintenanceStore);
-  const { updateStatusAndAddResponse, addMaintenanceResponse } = maintenanceStore;
+  const getRowItems = (row: Row<Complaint>) => {
+    const complaint = row.original;
 
-  const openMaintenanceDetailModal = (maintenance: MaintenanceType) => {
-    const modal = overlay.create(MaintenanceDetailModal);
-    // const close = modal.close;
-
-    modal.open({
-      maintenance,
-    });
-  };
-
-  const openStatusResponseModal = (maintenance: MaintenanceType, action: MaintenanceAction) => {
-    const modal = overlay.create(MaintenanceStatusResponseModal);
-    const close = modal.close;
-
-    modal.open({
-      maintenance,
-      action,
-      isLoading,
-      update: async () => {
-        await updateStatusAndAddResponse({
-          maintenanceId: maintenance.id,
-          status: maintenanceStatusResponseState.value.status,
-          responseText: maintenanceStatusResponseState.value.responseText,
-        });
-        close();
-      },
-      addResponse: async () => {
-        await addMaintenanceResponse({
-          maintenanceId: maintenance.id,
-          responseText: maintenanceStatusResponseState.value.responseText,
-        });
-        close();
-      },
-    });
-  };
-
-  const getRowItems = (row: Row<MaintenanceType>) => {
-    const maintenance = row.original;
     const actions: RowActionItem[] = [
       {
         type: "label",
@@ -67,24 +24,24 @@ export function useMaintenanceRowColumn(
       {
         label: "View Details",
         icon: "i-lucide-eye",
-        onSelect: () => openMaintenanceDetailModal(maintenance),
+        onSelect: () => console.log(complaint),
       },
       {
-        label: "Change Status",
-        icon: "i-lucide-refresh-cw",
-        onSelect: () => openStatusResponseModal(maintenance, "change-status"),
+        label: "Update Status",
+        icon: "i-lucide-notebook-pen",
+        onSelect: () => { },
       },
       {
         label: "Add Response",
         icon: "i-lucide-message-circle-plus",
-        onSelect: () => openStatusResponseModal(maintenance, "add-response"),
+        onSelect: () => { },
       },
     ];
 
     return actions;
   };
 
-  const columns = ref<TableColumn<MaintenanceType>[]>([
+  const columns = ref<TableColumn<Complaint>[]>([
     {
       id: "select",
       header: ({ table }) =>
@@ -106,8 +63,7 @@ export function useMaintenanceRowColumn(
     {
       accessorKey: "student",
       header: createSortableHeader("Student", UButton),
-      cell: ({ row },
-      ) => {
+      cell: ({ row }) => {
         const student = row.original.student;
 
         if (!student) {
@@ -121,34 +77,15 @@ export function useMaintenanceRowColumn(
       },
     },
     {
-      accessorKey: "room",
-      header: createSortableHeader("Room", UButton),
-      filterFn: (row, columnId, filterValue) => {
-        const room = row.original.room;
-        const hostel = row.original.hostel;
-        const searchText = `${room.roomNumber} ${hostel.name}`.toLowerCase();
-        return searchText.includes(filterValue.toLowerCase());
-      },
-      cell: ({ row }) => {
-        const room = row.original.room;
-        const hostel = row.original.hostel;
-
-        return h("div", { class: "flex flex-col" }, [
-          h("p", { class: "font-medium text-highlighted" }, room.roomNumber),
-          h("p", { class: "text-sm" }, `${hostel.name}`),
-        ]);
-      },
-    },
-    {
-      accessorKey: "issueType",
+      accessorKey: "type",
       header: createSortableHeader("Type", UButton),
       cell: ({ row }) => {
         return h("div", { class: "flex items-center gap-3" }, [
           h(UIcon, {
-            name: maintenanceTypeIconMap[row.original.issueType],
+            name: complaintTypeIconMap[row.original.type],
             class: "text-primary size-7",
           }),
-          h("span", { class: "capitalize font-medium text-highlighted" }, row.original.issueType),
+          h("span", { class: "capitalize font-medium text-highlighted" }, row.original.type),
         ]);
       },
     },
@@ -170,17 +107,17 @@ export function useMaintenanceRowColumn(
       cell: ({ row }) => {
         return h(UBadge, {
           label: row.original.status.replace("-", " "),
-          color: maintenanceStatusColorMap[row.original.status],
+          color: complaintStatusColorMap[row.original.status],
           variant: "subtle",
           class: "capitalize",
         });
       },
     },
     {
-      accessorKey: "requestDate",
+      accessorKey: "createdAt",
       header: createSortableHeader("Date Submitted", UButton),
       cell: ({ row }) => {
-        return h("span", { class: "font-medium text-default" }, useDateFormat(row.original.requestDate, "ddd DD-MM-YYYY").value);
+        return h("span", { class: "font-medium text-default" }, useDateFormat(row.original.createdAt, "ddd DD-MM-YYYY").value);
       },
     },
     {
@@ -210,7 +147,6 @@ export function useMaintenanceRowColumn(
           ],
         ),
     },
-
   ]);
 
   return {
