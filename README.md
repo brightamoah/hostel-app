@@ -130,7 +130,7 @@ This project uses a modern, type-safe, full-stack architecture:
 
 ## 💡 Developed By
 
-**Bright Amoah**
+**Bright Kweku Amoah**
 [GitHub](https://github.com/brightamoah)
 
 ---
