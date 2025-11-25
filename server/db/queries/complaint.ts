@@ -21,7 +21,14 @@ const complaintWithRelations = {
     responses: {
       orderBy: desc(complaintResponse.responseDate),
       with: {
-        responder: true,
+        responder: {
+          columns: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
       },
     },
   },
@@ -30,13 +37,28 @@ const complaintWithRelations = {
 export async function complaintQueries() {
   const { db } = useDB();
 
-  const getScopedComplaints = async (admin: Admin) => {
+  const getAllComplaints = async (admin: Admin) => {
     if (admin.accessLevel === "super") {
-      return await db.query.complaint.findMany({
+      return await db
+        .query
+        .complaint
+        .findMany({
+          ...complaintWithRelations,
+          orderBy: desc(complaint.createdAt),
+        });
+    }
+
+    if (!admin.hostelId)
+      return [];
+
+    return await db
+      .query
+      .complaint
+      .findMany({
         ...complaintWithRelations,
+        where: eq(complaint.hostelId, admin.hostelId),
         orderBy: desc(complaint.createdAt),
       });
-    }
   };
 
   const getComplaintsById = async (complaintId: number, admin: Admin) => {
@@ -84,7 +106,7 @@ export async function complaintQueries() {
   };
 
   return {
-    getScopedComplaints,
+    getAllComplaints,
     getComplaintsById,
     getComplaintStatusCount,
   };
