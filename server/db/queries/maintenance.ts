@@ -39,20 +39,26 @@ export async function maintenanceQueries() {
 
   const getAllMaintenanceRequests = async (admin: Admin) => {
     if (admin.accessLevel === "super") {
-      return await db.query.maintenanceRequest.findMany({
-        ...maintenanceWithRelations,
-        orderBy: desc(maintenanceRequest.requestDate),
-      });
+      return await db
+        .query
+        .maintenanceRequest
+        .findMany({
+          ...maintenanceWithRelations,
+          orderBy: desc(maintenanceRequest.requestDate),
+        });
     }
 
     if (!admin.hostelId)
       return [];
 
-    return await db.query.maintenanceRequest.findMany({
-      ...maintenanceWithRelations,
-      where: eq(maintenanceRequest.hostelId, admin.hostelId),
-      orderBy: desc(maintenanceRequest.requestDate),
-    });
+    return await db
+      .query
+      .maintenanceRequest
+      .findMany({
+        ...maintenanceWithRelations,
+        where: eq(maintenanceRequest.hostelId, admin.hostelId),
+        orderBy: desc(maintenanceRequest.requestDate),
+      });
   };
 
   const getMaintenanceById = async (id: number, admin: Admin) => {

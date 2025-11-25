@@ -1,10 +1,106 @@
 <script setup lang="ts">
+import { getPaginationRowModel } from "@tanstack/table-core";
+
 definePageMeta({
   middleware: ["requires-auth", "admin"],
   layout: "admin-dashboard",
 });
 
+const UButton = resolveComponent("UButton");
+const UBadge = resolveComponent("UBadge");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
+const UCheckbox = resolveComponent("UCheckbox");
+const UAvatar = resolveComponent("UAvatar");
+const UIcon = resolveComponent("UIcon");
+
 const title = ref("Complaints Dashboard");
+const tableRef = useTemplateRef("tableRef");
+const globalFilter = ref("");
+const columnVisibility = ref<{ [key: string | number]: boolean }>({ id: false });
+const rowSelection = ref({});
+
+const {
+  data,
+  status,
+  canResend,
+  coolDownTime,
+  complaints,
+  isLoading: refreshIsLoading,
+  handleRefresh,
+} = useFetchComplaintData();
+
+const cards = computed<StatsCard[]>(() => [
+  {
+    id: 1,
+    title: "Total Complaints",
+    icon: "i-lucide-message-square-quote",
+    color: "primary",
+    value: data.value.totalComplaints,
+    percentage: 5.2,
+    period: "monthly",
+  },
+  {
+    id: 2,
+    title: "Pending Complaints",
+    icon: "i-lucide-clock",
+    color: "warning",
+    value: data.value.totalPending,
+    percentage: 8.1,
+    period: "monthly",
+  },
+  {
+    id: 3,
+    title: "In-progress",
+    icon: "i-lucide-loader",
+    color: "info",
+    value: data.value.totalInProgress,
+    percentage: 10.0,
+    period: "daily",
+  },
+  {
+    id: 4,
+    title: "Resolved Complaints",
+    icon: "i-lucide-circle-check-big",
+    color: "success",
+    value: data.value.totalResolved,
+    percentage: -3.4,
+    period: "weekly",
+  },
+]);
+
+const {
+  statusFilterOptions,
+  typeFilterOptions,
+  priorityFilterOptions,
+  studentFilterOptions,
+  priorityFilter,
+  typeFilter,
+  statusFilter,
+  studentFilter,
+  selectedComplaintLength,
+  totalComplaints,
+  currentComplaintShowing,
+  lastComplaintShowing,
+  itemsToDisplay,
+  defaultPage,
+  itemsPerPage,
+  updatePage,
+  // selectedComplaintIds,
+} = useComplaintFilter(tableRef, data);
+
+const { columns, getRowItems } = useComplaintRowColumn(
+  UAvatar,
+  UButton,
+  UBadge,
+  UDropdownMenu,
+  UCheckbox,
+  UIcon,
+);
+
+const pagination = ref({
+  pageIndex: 0,
+  pageSize: 10,
+});
 </script>
 
 <template>
@@ -15,13 +111,73 @@ const title = ref("Complaints Dashboard");
       </template>
 
       <template #body>
-        <div class="p-4">
-          <h1 class="mb-4 font-bold text-2xl">
-            Complaints Dashboard
-          </h1>
+        <div class="p-2 md:p-4">
+          <DashboardCardSkeleton v-if="status === 'pending'" />
 
-          <p>This is where you can display various complaints.</p>
+          <DashboardStatsCard
+            v-else
+            :cards
+          />
+
+          <ComplaintSearchFilter
+            v-model="globalFilter"
+            v-model:status-filter="statusFilter"
+            v-model:type-filter="typeFilter"
+            v-model:priority-filter="priorityFilter"
+            v-model:student-filter="studentFilter"
+            :status-filter-options
+            :type-filter-options
+            :priority-filter-options
+            :student-filter-options
+          >
+            <template #action>
+              <DashboardRefreshButton
+                :can-resend
+                :cool-down-time
+                :refresh-is-loading
+                :handle-refresh
+              />
+
+              <DashboardItemsToDisplay :items-to-display />
+            </template>
+          </ComplaintSearchFilter>
         </div>
+
+        <UTable
+          ref="tableRef"
+          :key="complaints.length"
+          v-model:global-filter="globalFilter"
+          v-model:pagination="pagination"
+          v-model:row-selection="rowSelection"
+          v-model:column-visibility="columnVisibility"
+          :data="complaints"
+          :columns
+          :get-row-items
+          :loading="status === 'pending'"
+          :pagination-options="{
+            getPaginationRowModel: getPaginationRowModel(),
+          }"
+          :ui="{
+            base: 'table-fixed border-separate border-spacing-0',
+            thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+            tbody: '[&>tr]:last:[&>td]:border-b-0',
+            th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+            td: 'border-b border-default',
+          }"
+        />
+
+        <DashboardPagination
+          v-if="tableRef && tableRef?.tableApi"
+          :items="complaints"
+          :total-items="totalComplaints"
+          :selected-items-length="selectedComplaintLength"
+          :current-items-showing="currentComplaintShowing"
+          :last-item-showing="lastComplaintShowing"
+          :table="tableRef!.tableApi"
+          :default-page
+          :items-per-page
+          :update-page
+        />
       </template>
     </UDashboardPanel>
   </div>
