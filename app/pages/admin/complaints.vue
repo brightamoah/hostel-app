@@ -130,7 +130,7 @@ const pagination = ref({
             :priority-filter-options
             :student-filter-options
           >
-            <template #action>
+            <template #actions>
               <DashboardRefreshButton
                 :can-resend
                 :cool-down-time
@@ -150,6 +150,8 @@ const pagination = ref({
           v-model:pagination="pagination"
           v-model:row-selection="rowSelection"
           v-model:column-visibility="columnVisibility"
+          row-key="id"
+          class="mt-6 max-w-[95dvw] md:max-w-full shrink-0"
           :data="complaints"
           :columns
           :get-row-items

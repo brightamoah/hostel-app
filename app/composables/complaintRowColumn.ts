@@ -61,7 +61,13 @@ export function useComplaintRowColumn(
         }),
     },
     {
-      accessorKey: "student",
+      id: "student",
+      accessorFn: (row) => {
+        const student = row.student;
+        if (!student)
+          return "N/A";
+        return `${student.user.name} ${student.user.email}`;
+      },
       header: createSortableHeader("Student", UButton),
       cell: ({ row }) => {
         const student = row.original.student;
@@ -75,6 +81,7 @@ export function useComplaintRowColumn(
           h("p", { class: "text-xs" }, `${student.user.email}`),
         ]);
       },
+      filterFn: "includesString",
     },
     {
       accessorKey: "type",

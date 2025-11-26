@@ -253,7 +253,8 @@ export function useVisitorRowColumn(
         }),
     },
     {
-      accessorKey: "name",
+      id: "name",
+      accessorFn: row => `${row.name} ${row.phoneNumber}`,
       header: createSortableHeader("Visitor", UButton),
       cell: ({ row }) => {
         return h("div", { class: "flex items-center gap-3" }, [
@@ -274,6 +275,12 @@ export function useVisitorRowColumn(
     },
     {
       id: "student",
+      accessorFn: (row) => {
+        const student = row.student;
+        if (!student)
+          return "N/A";
+        return `${student.user.name} ${student.user.email} ${student.allocations[0]?.room.roomNumber} (${student.allocations[0]?.room?.hostel?.name})`;
+      },
       header: createSortableHeader("Student", UButton),
       cell: ({ row }) => {
         const studentUser = row.original.student?.user;
