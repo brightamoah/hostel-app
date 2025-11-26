@@ -10,7 +10,7 @@ const UButton = resolveComponent("UButton");
 const UBadge = resolveComponent("UBadge");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UCheckbox = resolveComponent("UCheckbox");
-const UAvatar = resolveComponent("UAvatar");
+// const UAvatar = resolveComponent("UAvatar");
 const UIcon = resolveComponent("UIcon");
 
 const title = ref("Complaints Dashboard");
@@ -89,7 +89,6 @@ const {
 } = useComplaintFilter(tableRef, data);
 
 const { columns, getRowItems } = useComplaintRowColumn(
-  UAvatar,
   UButton,
   UBadge,
   UDropdownMenu,

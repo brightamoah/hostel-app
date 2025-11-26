@@ -40,5 +40,11 @@
     "nodemailer": "^7.0.6",
     "nuxt-nodemailer": "^1.1.2",
     "wrangler": "^4.49.0"
+  },
+
+  "pnpm": {
+    "overrides": {
+      "vite": "npm:rolldown-vite@latest"
+    }
   }
 }
