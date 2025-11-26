@@ -185,7 +185,8 @@ export function useUserRowColumn(
         }),
     },
     {
-      accessorKey: "name",
+      id: "name",
+      accessorFn: row => `${row.name} ${row.email}`,
       header: createSortableHeader("User", UButton),
       cell: ({ row }) => {
         return h("div", { class: "flex items-center gap-3" }, [

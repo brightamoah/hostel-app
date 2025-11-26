@@ -96,7 +96,13 @@ export function useComplaintFilter(
       label: student.name,
       value: student.name,
     }));
-    return filter;
+    return [
+      {
+        label: "All Students",
+        value: "all",
+      },
+      ...filter,
+    ];
   });
 
   const {

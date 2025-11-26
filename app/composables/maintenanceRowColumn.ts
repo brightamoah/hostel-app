@@ -104,7 +104,13 @@ export function useMaintenanceRowColumn(
         }),
     },
     {
-      accessorKey: "student",
+      id: "student",
+      accessorFn: (row) => {
+        const student = row.student;
+        if (!student)
+          return "N/A";
+        return `${student.user.name} ${student.user.email}`;
+      },
       header: createSortableHeader("Student", UButton),
       cell: ({ row },
       ) => {
@@ -121,7 +127,8 @@ export function useMaintenanceRowColumn(
       },
     },
     {
-      accessorKey: "room",
+      id: "room",
+      accessorFn: row => row.room ? `${row.room.roomNumber} ${row.hostel.name}` : "N/A",
       header: createSortableHeader("Room", UButton),
       filterFn: (row, columnId, filterValue) => {
         const room = row.original.room;
