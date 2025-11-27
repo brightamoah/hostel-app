@@ -15,36 +15,36 @@
     "db:m": "drizzle-kit migrate"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^1.0.1",
+    "@neondatabase/serverless": "^1.0.2",
     "@nuxt/eslint": "1.9.0",
     "@nuxt/image": "^2.0.0",
-    "@nuxt/ui": "^4.2.0",
+    "@nuxt/ui": "^4.2.1",
     "@nuxthub/core": "0.9.0",
     "date-fns": "^4.1.0",
-    "drizzle-orm": "^0.44.6",
-    "eslint-plugin-format": "^1.0.1",
+    "drizzle-orm": "^0.44.7",
+    "eslint-plugin-format": "^1.0.2",
     "nuxt": "4.2.1",
     "nuxt-auth-utils": "0.5.24",
-    "vue": "^3.5.21",
-    "vue-router": "^4.5.1",
-    "zod": "^4.1.12"
+    "vue": "^3.5.25",
+    "vue-router": "^4.6.3",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^5.3.0",
+    "@antfu/eslint-config": "^5.4.1",
     "@formkit/auto-animate": "^0.9.0",
-    "@iconify-json/lucide": "^1.2.67",
-    "@pinia/nuxt": "^0.11.2",
-    "@types/node": "^24.4.0",
-    "drizzle-kit": "^0.31.4",
-    "eslint": "^9.35.0",
-    "nodemailer": "^7.0.6",
-    "nuxt-nodemailer": "^1.1.2",
-    "wrangler": "^4.49.0"
+    "@iconify-json/lucide": "^1.2.76",
+    "@pinia/nuxt": "^0.11.3",
+    "@types/node": "^24.10.1",
+    "drizzle-kit": "^0.31.7",
+    "eslint": "^9.39.1",
+    "nodemailer": "^7.0.11",
+    "nuxt-nodemailer": "^1.1.4",
+    "wrangler": "^4.51.0"
   },
-
   "pnpm": {
     "overrides": {
-      "vite": "npm:rolldown-vite@latest"
+      "@nuxt/vite-builder": "npm:@nuxt/vite-builder-nightly@4.2.2-29390287.ffa14fe8",
+      "vite": "npm:rolldown-vite@7.2.5"
     }
   }
 }

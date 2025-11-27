@@ -46,9 +46,9 @@ export default defineNuxtConfig({
   experimental: {
     typedPages: true,
     typescriptPlugin: true,
-    // viteEnvironmentApi: true,
+    viteEnvironmentApi: true,
   },
-  compatibilityDate: "2025-07-15",
+  compatibilityDate: "latest",
 
   eslint: {
     config: {
