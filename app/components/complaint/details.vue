@@ -99,7 +99,7 @@ const messages = computed(() => {
         senderRole: "System",
         email: "",
         date: complaint.createdAt,
-        timeAgo: useTimeAgo(new Date(complaint.createdAt)).value,
+        timeAgo: useTimeAgo(complaint.createdAt).value,
       },
     },
     ...responseItems.value.map((response) => {
@@ -130,7 +130,7 @@ const messages = computed(() => {
           senderRole: isStudent ? "Student" : "Admin",
           email: responderInfo.email,
           date: response.responseDate,
-          timeAgo: useTimeAgo(new Date(response.responseDate)).value,
+          timeAgo: useTimeAgo(response.responseDate).value,
         },
       };
     }),
