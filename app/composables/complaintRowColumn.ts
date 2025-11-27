@@ -5,6 +5,8 @@ import { useDateFormat } from "@vueuse/core";
 
 import type { RowActionItem } from "~/types/rowAction";
 
+const ComplaintDetailModal = defineAsyncComponent(() => import("~/components/complaint/details.vue"));
+
 export function useComplaintRowColumn(
   // UAvatar: ComponentType,
   UButton: ComponentType,
@@ -13,6 +15,16 @@ export function useComplaintRowColumn(
   UCheckbox: ComponentType,
   UIcon: ComponentType,
 ) {
+  const overlay = useOverlay();
+
+  const openComplaintDetailModal = (complaint: Complaint) => {
+    const modal = overlay.create(ComplaintDetailModal);
+
+    modal.open({
+      complaint,
+    });
+  };
+
   const getRowItems = (row: Row<Complaint>) => {
     const complaint = row.original;
 
@@ -24,7 +36,7 @@ export function useComplaintRowColumn(
       {
         label: "View Details",
         icon: "i-lucide-eye",
-        onSelect: () => console.log(complaint),
+        onSelect: () => openComplaintDetailModal(complaint),
       },
       {
         label: "Update Status",

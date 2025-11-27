@@ -24,7 +24,6 @@ export function useMaintenanceRowColumn(
 
   const openMaintenanceDetailModal = (maintenance: MaintenanceType) => {
     const modal = overlay.create(MaintenanceDetailModal);
-    // const close = modal.close;
 
     modal.open({
       maintenance,

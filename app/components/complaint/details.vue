@@ -99,7 +99,7 @@ const messages = computed(() => {
         senderRole: "System",
         email: "",
         date: complaint.createdAt,
-        timeAgo: useTimeAgo(new Date(complaint.createdAt)).value,
+        timeAgo: useTimeAgo(complaint.createdAt).value,
       },
     },
     ...responseItems.value.map((response) => {
@@ -130,7 +130,7 @@ const messages = computed(() => {
           senderRole: isStudent ? "Student" : "Admin",
           email: responderInfo.email,
           date: response.responseDate,
-          timeAgo: useTimeAgo(new Date(response.responseDate)).value,
+          timeAgo: useTimeAgo(response.responseDate).value,
         },
       };
     }),
@@ -200,6 +200,23 @@ const messages = computed(() => {
                 </div>
               </template>
             </DashboardDetailItem>
+          </div>
+
+          <div class="mt-6">
+            <p class="flex items-center pb-2 font-medium text-muted text-base">
+              <UIcon
+                name="i-lucide-file-text"
+                class="mr-1 size-6 text-primary"
+              />
+              Description
+            </p>
+
+            <UCard
+              variant="subtle"
+              class="w-full"
+            >
+              {{ complaint.description }}
+            </UCard>
           </div>
         </template>
 
