@@ -6,7 +6,7 @@ import { useDateFormat } from "@vueuse/core";
 import type { RowActionItem } from "~/types/rowAction";
 
 export function useComplaintRowColumn(
-  UAvatar: ComponentType,
+  // UAvatar: ComponentType,
   UButton: ComponentType,
   UBadge: ComponentType,
   UDropdownMenu: ComponentType,

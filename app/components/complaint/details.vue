@@ -4,14 +4,14 @@ import type { TabsItem } from "@nuxt/ui";
 import { useDateFormat, useTimeAgo } from "@vueuse/core";
 import { capitalize } from "vue";
 
-const { maintenance } = defineProps<{
-  maintenance: MaintenanceType;
+const { complaint } = defineProps<{
+  complaint: Complaint;
 }>();
 
 const emit = defineEmits<{ close: [boolean] }>();
 
 const { user } = useUserSession();
-const timeAgo = useTimeAgo(maintenance.requestDate).value;
+const timeAgo = useTimeAgo(complaint.createdAt).value;
 
 const items = computed<TabsItem[]>(() => [
   {
@@ -29,47 +29,47 @@ const items = computed<TabsItem[]>(() => [
 const detailItems = computed(() => [
   {
     label: "Student Name",
-    value: maintenance.student.user.name,
+    value: complaint.student.user.name,
     icon: "i-lucide-user",
   },
   {
     label: "Student Email",
-    value: maintenance.student.user.email,
+    value: complaint.student.user.email,
     icon: "i-lucide-mail",
   },
   {
     label: "Hostel",
-    value: maintenance.hostel.name,
+    value: complaint.hostel.name,
     icon: "i-lucide-map-pinned",
   },
   {
     label: "Room Number",
-    value: maintenance.room.roomNumber,
+    value: complaint.room.roomNumber,
     icon: "i-lucide-door-open",
   },
   {
-    label: "Maintenance Type",
-    value: maintenance.issueType,
-    icon: maintenanceTypeIconMap[maintenance.issueType],
+    label: "Complaint Type",
+    value: complaint.type,
+    icon: complaintTypeIconMap[complaint.type],
   },
   {
     label: "Priority",
-    value: maintenance.priority,
-    badge: priorityColorMap[maintenance.priority],
+    value: complaint.priority,
+    badge: priorityColorMap[complaint.priority],
   },
   {
     label: "Status",
-    value: maintenance.status,
-    badge: maintenanceStatusColorMap[maintenance.status],
+    value: complaint.status,
+    badge: complaintStatusColorMap[complaint.status],
   },
   {
     label: "Date Submitted",
-    value: useDateFormat(maintenance.requestDate, "dddd Do MMMM, YYYY").value,
+    value: useDateFormat(complaint.createdAt, "dddd Do MMMM, YYYY").value,
     icon: "i-lucide-calendar-days",
   },
 ]);
 
-const responseItems = computed(() => maintenance.responses ?? []);
+const responseItems = computed(() => complaint.responses ?? []);
 
 interface MessageMetadata {
   id: number;
@@ -85,7 +85,7 @@ const messages = computed(() => {
 
   const allMessages = [
     {
-      id: maintenance.id.toString(),
+      id: complaint.id.toString(),
       role: "system" as const,
       parts: [
         {
@@ -94,12 +94,12 @@ const messages = computed(() => {
         },
       ],
       metadata: {
-        id: maintenance.id,
+        id: complaint.id,
         senderName: "System",
         senderRole: "System",
         email: "",
-        date: maintenance.requestDate,
-        timeAgo: useTimeAgo(new Date(maintenance.requestDate)).value,
+        date: complaint.createdAt,
+        timeAgo: useTimeAgo(new Date(complaint.createdAt)).value,
       },
     },
     ...responseItems.value.map((response) => {
@@ -120,7 +120,7 @@ const messages = computed(() => {
         parts: [
           {
             type: "text",
-            text: response.responseText,
+            text: response.response,
             id: response.id.toString(),
           },
         ],
@@ -132,7 +132,6 @@ const messages = computed(() => {
           date: response.responseDate,
           timeAgo: useTimeAgo(new Date(response.responseDate)).value,
         },
-
       };
     }),
   ];
@@ -147,8 +146,8 @@ const messages = computed(() => {
 
 <template>
   <UModal
-    title="Maintenance Request Details"
-    description="Detailed information about the selected maintenance request."
+    title="Complaint Details"
+    description="Detailed information about the selected complaint."
     :dismissible="false"
     :ui="{
       footer: 'justify-end',
@@ -160,7 +159,7 @@ const messages = computed(() => {
   >
     <template #body>
       <p>
-        Request ID: {{ maintenance.id }}
+        Request ID: {{ complaint.id }}
       </p>
 
       <p class="mb-2">
@@ -202,20 +201,6 @@ const messages = computed(() => {
               </template>
             </DashboardDetailItem>
           </div>
-
-          <div class="mt-6">
-            <p class="flex items-center pb-2 font-medium text-muted text-base">
-              <UIcon
-                name="i-lucide-file-text"
-                class="mr-1 size-6 text-primary"
-              />
-              Description
-            </p>
-
-            <UCard class="w-full">
-              {{ maintenance.description }}
-            </UCard>
-          </div>
         </template>
 
         <template #responses>
@@ -223,7 +208,7 @@ const messages = computed(() => {
             v-if="!responseItems.length"
             icon="i-lucide-folder-open"
             title="No Responses Yet"
-            description="There are currently no responses for this maintenance request."
+            description="There are currently no responses for this complaint request."
             class="mt-2"
           />
 
