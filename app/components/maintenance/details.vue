@@ -212,7 +212,10 @@ const messages = computed(() => {
               Description
             </p>
 
-            <UCard class="w-full">
+            <UCard
+              variant="subtle"
+              class="w-full"
+            >
               {{ maintenance.description }}
             </UCard>
           </div>

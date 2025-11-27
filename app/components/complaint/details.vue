@@ -201,6 +201,23 @@ const messages = computed(() => {
               </template>
             </DashboardDetailItem>
           </div>
+
+          <div class="mt-6">
+            <p class="flex items-center pb-2 font-medium text-muted text-base">
+              <UIcon
+                name="i-lucide-file-text"
+                class="mr-1 size-6 text-primary"
+              />
+              Description
+            </p>
+
+            <UCard
+              variant="subtle"
+              class="w-full"
+            >
+              {{ complaint.description }}
+            </UCard>
+          </div>
         </template>
 
         <template #responses>
