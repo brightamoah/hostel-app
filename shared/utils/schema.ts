@@ -166,11 +166,6 @@ export const addRoomSchema = z.object({
 
 const editRoomData = addRoomSchema.partial().omit({ roomType: true, status: true });
 
-// const updateAmountSchema = z.string("Amount per Year is required") // Change to string
-//   .min(1, "Amount per Year is required")
-//   .refine(val => !Number.isNaN(Number.parseFloat(val))
-//     && Number.parseFloat(val) > 0, "Amount per Year must be a positive number");
-
 const editRoomSchema = z.object({
   roomId: z.number().min(1, "Invalid room ID"),
   data: editRoomData.extend({
@@ -251,7 +246,7 @@ const maintenanceStatusSchema = z.union([
   z.literal(""),
 ]).refine(val => val !== "", "Status is required");
 
-const maintenanceResponseText = z
+const responseText = z
   .string()
   .trim()
   .nonempty("Response Text is required")
@@ -261,15 +256,36 @@ const maintenanceResponseText = z
 const maintenanceStatusResponseSchema = z.object({
   maintenanceId: z.number().int().positive().min(1, "Invalid Maintenance ID"),
   status: maintenanceStatusSchema,
-  responseText: maintenanceResponseText,
+  responseText,
 });
 
 export type MaintenanceStatusResponseSchema = z.output<typeof maintenanceStatusResponseSchema>;
+
+const complaintStatusSchema = z.union([
+  z.enum([
+    "pending",
+    "in-progress",
+    "resolved",
+    "rejected",
+  ], {
+    error: "Status must be one of 'pending', 'in-progress', 'resolved', 'rejected'",
+  }),
+  z.literal(""),
+]).refine(val => val !== "", "Status is required");
+
+const complaintStatusResponseSchema = z.object({
+  complaintId: z.number().int().positive().min(1, "Invalid Complaint ID"),
+  status: complaintStatusSchema,
+  responseText,
+});
+
+export type ComplaintStatusResponseSchema = z.output<typeof complaintStatusResponseSchema>;
 
 export {
   addAdminSchema,
   approveDenySchema,
   baseSignupSchema,
+  complaintStatusResponseSchema,
   confirmPasswordSchema,
   deleteItemSchema,
   editRoomSchema,

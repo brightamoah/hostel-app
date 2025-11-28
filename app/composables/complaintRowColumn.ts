@@ -7,8 +7,9 @@ import type { RowActionItem } from "~/types/rowAction";
 
 const ComplaintDetailModal = defineAsyncComponent(() => import("~/components/complaint/details.vue"));
 
+const ComplaintStatusResponseModal = defineAsyncComponent(() => import("~/components/complaint/statusResponse.vue"));
+
 export function useComplaintRowColumn(
-  // UAvatar: ComponentType,
   UButton: ComponentType,
   UBadge: ComponentType,
   UDropdownMenu: ComponentType,
@@ -17,11 +18,44 @@ export function useComplaintRowColumn(
 ) {
   const overlay = useOverlay();
 
+  const complaintStore = useComplaintStore();
+
+  const {
+    complaintStatusResponseState,
+    isLoading,
+  } = storeToRefs(complaintStore);
+
   const openComplaintDetailModal = (complaint: Complaint) => {
     const modal = overlay.create(ComplaintDetailModal);
 
     modal.open({
       complaint,
+    });
+  };
+
+  const openStatusResponseModal = (complaint: Complaint, action: ComplaintAction) => {
+    const modal = overlay.create(ComplaintStatusResponseModal);
+    const close = modal.close;
+
+    modal.open({
+      complaint,
+      action,
+      isLoading,
+      update: async () => {
+        await complaintStore.updateStatusAndAddResponse({
+          complaintId: complaint.id,
+          status: complaintStatusResponseState.value.status,
+          responseText: complaintStatusResponseState.value.responseText,
+        });
+        close();
+      },
+      addResponse: async () => {
+        await complaintStore.addComplaintResponse({
+          complaintId: complaint.id,
+          responseText: complaintStatusResponseState.value.responseText,
+        });
+        close();
+      },
     });
   };
 
@@ -41,12 +75,12 @@ export function useComplaintRowColumn(
       {
         label: "Update Status",
         icon: "i-lucide-notebook-pen",
-        onSelect: () => { },
+        onSelect: () => openStatusResponseModal(complaint, "change-status"),
       },
       {
         label: "Add Response",
         icon: "i-lucide-message-circle-plus",
-        onSelect: () => { },
+        onSelect: () => openStatusResponseModal(complaint, "add-response"),
       },
     ];
 
