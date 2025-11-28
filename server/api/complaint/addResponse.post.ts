@@ -1,4 +1,4 @@
-import { maintenanceQueries, userQueries } from "~~/server/db/queries";
+import { complaintQueries, userQueries } from "~~/server/db/queries";
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event, {
@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   const { user } = session;
 
   try {
-    const body = await readValidatedBody(event, body => maintenanceStatusResponseSchema.pick({ maintenanceId: true, responseText: true }).safeParse(body));
+    const body = await readValidatedBody(event, body => complaintStatusResponseSchema.pick({ complaintId: true, responseText: true }).safeParse(body));
 
     if (!body.success) {
       throw createError({
@@ -19,50 +19,50 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const { responseText, maintenanceId } = body.data;
+    const { responseText, complaintId } = body.data;
 
-    const { addMaintenanceResponse, findMaintenanceRequestById } = await maintenanceQueries();
+    const { addComplaintResponse, getComplaintByIdNoScope } = await complaintQueries();
     const { getAdminByUserId, getStudentByUserId } = await userQueries();
 
-    const request = await findMaintenanceRequestById(maintenanceId);
+    const complaint = await getComplaintByIdNoScope(complaintId);
 
-    if (!request) {
+    if (!complaint) {
       throw createError({
         statusCode: 404,
-        message: "Maintenance request not found.",
+        message: "Complaint not found.",
       });
     }
 
     const admin = await getAdminByUserId(user.id);
 
     if (admin) {
-      if (admin.accessLevel !== "super" && admin.hostelId !== request.hostelId) {
+      if (admin.accessLevel !== "super" && admin.hostelId !== complaint.hostelId) {
         throw createError({
           statusCode: 403,
-          message: "You do not have permission to respond to requests for this hostel.",
+          message: "You do not have permission to respond to complaints for this hostel.",
         });
       }
     }
     else {
       const student = await getStudentByUserId(user.id);
 
-      if (!student || student.id !== request.studentId) {
+      if (!student || student.id !== complaint.studentId) {
         throw createError({
           statusCode: 403,
-          message: "You can only respond to your own maintenance requests.",
+          message: "You can only respond to your own complaints.",
         });
       }
     }
 
-    const newResponse = await addMaintenanceResponse(
-      maintenanceId,
+    const newResponse = await addComplaintResponse(
+      complaintId,
       user.id,
       responseText,
     );
 
     return {
       success: true,
-      message: "Your response has been added successfully.",
+      message: `Your response to complaint with ID: ${complaintId} has been added successfully.`,
       response: newResponse,
     };
   }

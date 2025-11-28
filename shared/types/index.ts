@@ -6,12 +6,12 @@ import type { ComplaintType } from "~~/server/db/queries/complaint";
 import type { Maintenance } from "~~/server/db/queries/maintenance";
 import type { Room as RoomType } from "~~/server/db/queries/room";
 import type { Visitor } from "~~/server/db/queries/visitor";
-import type { allocation, loginAttempts, maintenanceStatusEnum, room, visitorLogs } from "~~/server/db/schema";
+import type { allocation, complaintActionTakenEnum, complaintStatusEnum, loginAttempts, maintenanceStatusEnum, room, visitorLogs } from "~~/server/db/schema";
 import type { randomUUID } from "node:crypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
-import type { MaintenanceStatusResponseSchema } from "../utils/schema";
+import type { ComplaintStatusResponseSchema, MaintenanceStatusResponseSchema } from "../utils/schema";
 
 export type Refresh = ReturnType<typeof useFetch>["refresh"];
 
@@ -160,16 +160,6 @@ export type FloorFilterOptions = ({
   value: number;
 } | { label: string; value: string })[];
 
-// export type UserTableType = Readonly<ShallowRef<ShallowUnwrapRef<{
-//   tableRef: Ref<HTMLTableElement | null, HTMLTableElement | null>;
-//   tableApi: Table<UserType>;
-// }> | null>>;
-
-// export type VisitorTableType = Readonly<ShallowRef<ShallowUnwrapRef<{
-//   tableRef: Ref<HTMLTableElement | null, HTMLTableElement | null>;
-//   tableApi: Table<Visitor>;
-// }> | null>>;
-
 export type TableType<T> = Readonly<ShallowRef<ShallowUnwrapRef<{
   tableRef: Ref<HTMLTableElement | null, HTMLTableElement | null>;
   tableApi: Table<T>;
@@ -253,3 +243,9 @@ export type ComplaintDataResponse = {
   totalPending: number;
   totalResolved: number;
 };
+
+export type ComplaintAction = MaintenanceAction;
+
+export type ComplaintStatusForm = Omit<ComplaintStatusResponseSchema, "complaintId">;
+export type ComplaintStatus = typeof complaintStatusEnum["enumValues"][number];
+export type ComplaintActionTaken = typeof complaintActionTakenEnum["enumValues"][number];

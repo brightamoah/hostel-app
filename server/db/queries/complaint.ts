@@ -1,4 +1,4 @@
-import type { Admin } from "~~/shared/types";
+import type { Admin, ComplaintActionTaken, ComplaintStatus } from "~~/shared/types";
 
 import { and, countDistinct, desc, eq, sql } from "drizzle-orm";
 
@@ -61,7 +61,7 @@ export async function complaintQueries() {
       });
   };
 
-  const getComplaintsById = async (complaintId: number, admin: Admin) => {
+  const getComplaintById = async (complaintId: number, admin: Admin) => {
     const whereConditions = [eq(complaint.id, complaintId)];
 
     if (admin.accessLevel !== "super") {
@@ -105,13 +105,82 @@ export async function complaintQueries() {
     };
   };
 
+  const actionTakenMap: Record<ComplaintStatus, ComplaintActionTaken> = {
+    "pending": "updated",
+    "in-progress": "updated",
+    "resolved": "resolved",
+    "rejected": "rejected",
+  };
+
+  const updateStatusAndAddResponse = async (
+    complaintId: number,
+    adminId: number,
+    status: ComplaintStatus,
+    responseText: string,
+    hostelId?: number,
+  ) => {
+    return db.transaction(async (tx) => {
+      const whereClause = hostelId
+        ? and(eq(complaint.id, complaintId), eq(complaint.hostelId, hostelId))
+        : eq(complaint.id, complaintId);
+
+      const [updatedComplaint] = await tx
+        .update(complaint)
+        .set({
+          status,
+          resolvedAt: status === "resolved" ? new Date() : null,
+          resolvedBy: status === "resolved" ? adminId : null,
+        })
+        .where(whereClause)
+        .returning();
+
+      const [newResponse] = await tx
+        .insert(complaintResponse)
+        .values({
+          complaintId,
+          responderId: adminId,
+          response: responseText,
+          actionTaken: actionTakenMap[status],
+        })
+        .returning();
+
+      return { updatedComplaint, newResponse };
+    });
+  };
+
+  const addComplaintResponse = async (
+    complaintId: number,
+    responderId: number,
+    response: string,
+  ) => {
+    const [newResponse] = await db
+      .insert(complaintResponse)
+      .values({
+        complaintId,
+        responderId,
+        response,
+        actionTaken: "updated",
+      })
+      .returning();
+    return newResponse;
+  };
+
+  const getComplaintByIdNoScope = async (complaintId: number) => {
+    return await db.query.complaint.findFirst({
+      where: eq(complaint.id, complaintId),
+    });
+  };
+
   return {
     getAllComplaints,
-    getComplaintsById,
+    getComplaintById,
     getComplaintStatusCount,
+    updateStatusAndAddResponse,
+    addComplaintResponse,
+    getComplaintByIdNoScope,
   };
 }
 
-type ComplaintWithRelations = Awaited<ReturnType<Awaited<ReturnType<typeof complaintQueries>>["getComplaintsById"]>>;
+type ComplaintWithRelations = Awaited<ReturnType<Awaited<ReturnType<typeof complaintQueries>>["getComplaintById"]>>;
 
 export type ComplaintType = NonNullable<ComplaintWithRelations>;

@@ -10,7 +10,6 @@ const MaintenanceDetailModal = defineAsyncComponent(() => import("~/components/m
 const MaintenanceStatusResponseModal = defineAsyncComponent(() => import("~/components/maintenance/statusChange.vue"));
 
 export function useMaintenanceRowColumn(
-  UAvatar: ComponentType,
   UButton: ComponentType,
   UBadge: ComponentType,
   UDropdownMenu: ComponentType,
