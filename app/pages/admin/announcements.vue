@@ -84,6 +84,7 @@ const isMobile = breakpoints.smaller("lg");
       <template #body>
         <UEmpty
           v-if="status === 'pending' || status === 'error' || filteredAnnouncements.length === 0"
+          class="flex flex-1 justify-center items-center"
           variant="naked"
           icon="i-lucide-bell"
           title="No announcements"
