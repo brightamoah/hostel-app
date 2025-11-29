@@ -2,11 +2,12 @@ import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Table } from "@tanstack/vue-table";
 import type { useFetch } from "#app";
 import type { User } from "#auth-utils";
+import type { AnnouncementType } from "~~/server/db/queries/announcement";
 import type { ComplaintType } from "~~/server/db/queries/complaint";
 import type { Maintenance } from "~~/server/db/queries/maintenance";
 import type { Room as RoomType } from "~~/server/db/queries/room";
 import type { Visitor } from "~~/server/db/queries/visitor";
-import type { allocation, complaintActionTakenEnum, complaintStatusEnum, loginAttempts, maintenanceStatusEnum, room, visitorLogs } from "~~/server/db/schema";
+import type { allocation, announcement, complaintActionTakenEnum, complaintStatusEnum, loginAttempts, maintenanceStatusEnum, room, visitorLogs } from "~~/server/db/schema";
 import type { randomUUID } from "node:crypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
@@ -249,3 +250,9 @@ export type ComplaintAction = MaintenanceAction;
 export type ComplaintStatusForm = Omit<ComplaintStatusResponseSchema, "complaintId">;
 export type ComplaintStatus = typeof complaintStatusEnum["enumValues"][number];
 export type ComplaintActionTaken = typeof complaintActionTakenEnum["enumValues"][number];
+
+export type AnnouncementInsert = typeof announcement.$inferInsert;
+export type Announcement = AnnouncementType;
+export type AnnouncementResponse = {
+  announcements: Announcement[];
+};
