@@ -1,11 +1,24 @@
 import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, unique } from "drizzle-orm/pg-core";
 
+import { hostel, room } from "./room";
 import { admin, user } from "./user";
 
-export const announcementPriorityEnum = pgEnum("announcement_priority", ["low", "medium", "high", "emergency"]);
+export const announcementPriorityEnum = pgEnum("announcement_priority", [
+  "low",
+  "medium",
+  "high",
+  "emergency",
+]);
 
-export const targetAudienceEnum = pgEnum("target_audience", ["all", "students", "admins", "specific"]);
+export const targetAudienceEnum = pgEnum("target_audience", [
+  "all",
+  "students",
+  "admins",
+  "hostel",
+  "room",
+  "user",
+]);
 
 export const announcement = pgTable("announcement", t => ({
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -15,6 +28,9 @@ export const announcement = pgTable("announcement", t => ({
   postedAt: t.timestamp().defaultNow().notNull(),
   priority: announcementPriorityEnum().default("medium").notNull(),
   targetAudience: targetAudienceEnum().default("all").notNull(),
+  targetHostelId: t.integer().references(() => hostel.id, { onDelete: "cascade" }),
+  targetRoomId: t.integer().references(() => room.id, { onDelete: "cascade" }),
+  targetUserId: t.integer().references(() => user.id, { onDelete: "cascade" }),
   isRead: t.boolean().default(false).notNull(),
 }));
 
@@ -31,6 +47,18 @@ export const announcementRelations = relations(announcement, ({ one, many }) => 
   postedByAdmin: one(admin, {
     fields: [announcement.postedBy],
     references: [admin.id],
+  }),
+  targetHostel: one(hostel, {
+    fields: [announcement.targetHostelId],
+    references: [hostel.id],
+  }),
+  targetRoom: one(room, {
+    fields: [announcement.targetRoomId],
+    references: [room.id],
+  }),
+  targetUser: one(user, {
+    fields: [announcement.targetUserId],
+    references: [user.id],
   }),
   reads: many(announcementReads),
 }));

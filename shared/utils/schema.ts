@@ -281,6 +281,59 @@ const complaintStatusResponseSchema = z.object({
 
 export type ComplaintStatusResponseSchema = z.output<typeof complaintStatusResponseSchema>;
 
+export const announcementPrioritySchema = z.enum([
+  "low",
+  "medium",
+  "high",
+  "emergency",
+]);
+export const targetAudienceSchema = z.enum([
+  "all",
+  "students",
+  "admins",
+  "hostel",
+  "room",
+  "user",
+]);
+
+export const createAnnouncementSchema = z.object({
+  title: z.string()
+    .nonempty("Title is required")
+    .min(5, "Title must be at least 5 characters long")
+    .max(200, "Title cannot exceed 200 characters"),
+  priority: announcementPrioritySchema,
+  targetAudience: targetAudienceSchema,
+  targetHostelId: z.number().optional(),
+  targetRoomId: z.number().optional(),
+  targetUserId: z.number().optional(),
+}).superRefine((data, ctx) => {
+  if (data.targetAudience === "hostel" && !data.targetHostelId) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Target Hostel ID is required when target audience is 'hostel'",
+      path: ["targetHostelId"],
+    });
+  }
+
+  if (data.targetAudience === "room" && !data.targetRoomId) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Target Room ID is required when target audience is 'room'",
+      path: ["targetRoomId"],
+    });
+  }
+
+  if (data.targetAudience === "user" && !data.targetUserId) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Target User ID is required when target audience is 'user'",
+      path: ["targetUserId"],
+    });
+  }
+});
+
+export type CreateAnnouncementSchema = z.output<typeof createAnnouncementSchema>;
+
 export {
   addAdminSchema,
   approveDenySchema,

@@ -1,0 +1,100 @@
+<script setup lang="ts">
+import { format, isToday } from "date-fns";
+
+const { announcements } = defineProps<{
+  announcements: Announcement[];
+}>();
+
+const announcementRefs = ref<Element[]>([]);
+
+const selectedAnnouncement = defineModel<Announcement | null>();
+
+watch(selectedAnnouncement, () => {
+  if (!selectedAnnouncement.value)
+    return;
+
+  const elementRef = announcementRefs.value[selectedAnnouncement.value.id];
+
+  if (elementRef) {
+    elementRef.scrollIntoView({ block: "nearest" });
+  }
+});
+
+defineShortcuts({
+  arrowdown: () => {
+    const index = announcements
+      .findIndex(announcement => announcement.id === selectedAnnouncement.value?.id);
+
+    if (index === -1) {
+      selectedAnnouncement.value = announcements[0];
+    }
+    else if (index < announcements.length - 1) {
+      selectedAnnouncement.value = announcements[index + 1];
+    }
+  },
+  arrowup: () => {
+    const index = announcements
+      .findIndex(announcement => announcement.id === selectedAnnouncement.value?.id);
+
+    if (index === -1) {
+      selectedAnnouncement.value = announcements[announcements.length - 1];
+    }
+    else if (index > 0) {
+      selectedAnnouncement.value = announcements[index - 1];
+    }
+  },
+});
+</script>
+
+<template>
+  <div class="divide-y divide-default overflow-y-auto">
+    <div
+      v-for="announcement in announcements"
+      :key="announcement.id"
+      :ref="el => { announcementRefs[announcement.id] = el as Element }"
+    >
+      <div
+        class="p-4 sm:px-6 border-l-2 text-sm transition-colors cursor-pointer"
+        :class="[
+          !announcement.isRead ? 'text-highlighted' : 'text-toned',
+          selectedAnnouncement && selectedAnnouncement.id === announcement.id
+            ? 'border-primary bg-primary/10'
+            : 'border-bg hover:border-primary hover:bg-primary/5',
+        ]"
+        @click="selectedAnnouncement = announcement"
+      >
+        <div
+          class="flex justify-between items-center"
+          :class="[!announcement.isRead && 'font-semibold']"
+        >
+          <div class="flex items-center gap-3">
+            {{ announcement.postedByAdmin.user.name }}
+
+            <UChip
+              v-if="!announcement.isRead"
+              color="error"
+            />
+          </div>
+
+          <span>{{ isToday(new Date(announcement.postedAt))
+            ? format(new Date(announcement.postedAt), 'HH:mm')
+            : format(new Date(announcement.postedAt), 'dd MMM') }}
+          </span>
+        </div>
+
+        <p
+          class="truncate"
+          :class="[!announcement.isRead && 'font-semibold']"
+        >
+          {{ announcement.title }}
+        </p>
+
+        <p class="text-dimmed line-clamp-1">
+          {{ announcement.content }}
+        </p>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped></style>
