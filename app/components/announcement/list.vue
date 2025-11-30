@@ -54,12 +54,12 @@ defineShortcuts({
       :ref="el => { announcementRefs[announcement.id] = el as Element }"
     >
       <div
-        class="p-4 sm:px-6 border-l-2 text-sm transition-colors cursor-pointer"
+        class="p-4 sm:px-6 border-l-2 rounded-lg text-sm transition-colors cursor-pointer"
         :class="[
           !announcement.isRead ? 'text-highlighted' : 'text-toned',
           selectedAnnouncement && selectedAnnouncement.id === announcement.id
             ? 'border-primary bg-primary/10'
-            : 'border-bg hover:border-primary hover:bg-primary/5',
+            : 'border-bg hover:border-primary/40 hover:bg-primary/2',
         ]"
         @click="selectedAnnouncement = announcement"
       >

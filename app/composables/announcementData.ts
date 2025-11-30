@@ -1,5 +1,5 @@
 export function useAnnouncementData() {
-  const { data, status, refresh } = useFetch<AnnouncementResponse>("/api/announcement/getAnnouncementData ", {
+  const { data, status, refresh } = useFetch<AnnouncementResponse>("/api/announcement/getAnnouncementData", {
     key: "admin-announcements",
     lazy: true,
     default: () => ({
@@ -16,6 +16,8 @@ export function useAnnouncementData() {
 
   const selectedAnnouncement = ref<Announcement | null>(null);
 
+  const processingIds = new Set<number>();
+
   const announcements = computed<Announcement[]>(() => data.value?.announcements ?? []);
 
   const filteredAnnouncements = computed<Announcement[]>(() => {
@@ -23,6 +25,38 @@ export function useAnnouncementData() {
       return announcements.value.filter(announcement => !announcement.isRead);
     }
     return announcements.value;
+  });
+
+  const markAsRead = async (announcementId: number) => {
+    if (!data.value?.announcements)
+      return;
+
+    const announcement = data.value.announcements.find(a => a.id === announcementId);
+
+    if (!announcement || announcement.isRead || processingIds.has(announcementId))
+      return;
+
+    announcement.isRead = true;
+    processingIds.add(announcementId);
+
+    try {
+      await $fetch(`/api/announcement/read/${announcementId}`, {
+        method: "PATCH",
+      });
+    }
+    catch (error) {
+      announcement.isRead = false;
+      console.error(`Failed to mark announcement ${announcementId} as read`, error);
+    }
+    finally {
+      processingIds.delete(announcementId);
+    }
+  };
+
+  watch(selectedAnnouncement, (newAnnouncement) => {
+    if (newAnnouncement && !newAnnouncement.isRead) {
+      markAsRead(newAnnouncement.id);
+    }
   });
 
   return {
@@ -33,5 +67,6 @@ export function useAnnouncementData() {
     filteredAnnouncements,
     selectedAnnouncement,
     refresh,
+    markAsRead,
   };
 }
