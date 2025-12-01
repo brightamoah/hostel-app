@@ -82,9 +82,8 @@ export default defineEventHandler(async (event) => {
     };
   }
   catch (error) {
-    if (error && typeof error === "object" && "statusCode" in error) {
+    if (error && typeof error === "object" && "statusCode" in error)
       throw error;
-    }
 
     handleError(error, "Update Maintenance Status/Response", event);
   }

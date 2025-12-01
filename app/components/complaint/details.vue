@@ -107,12 +107,10 @@ const messages = computed(() => {
       const isStudent = responderInfo.role === "student";
 
       let messageRole: "user" | "assistant";
-      if (isAdmin) {
+      if (isAdmin)
         messageRole = isStudent ? "assistant" : "user";
-      }
-      else {
-        messageRole = isStudent ? "user" : "assistant";
-      }
+
+      else messageRole = isStudent ? "user" : "assistant";
 
       return {
         id: response.id.toString(),

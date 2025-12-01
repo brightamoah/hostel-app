@@ -25,9 +25,7 @@ export function generateTempPassword(): string {
     randomize(special),
   ];
 
-  for (let i = passwordParts.length; i < totalLength; i++) {
-    passwordParts.push(randomize(allChars));
-  }
+  for (let i = passwordParts.length; i < totalLength; i++) passwordParts.push(randomize(allChars));
 
   for (let i = passwordParts.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

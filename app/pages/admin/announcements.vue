@@ -21,21 +21,30 @@ const {
   selectedTab,
   filteredAnnouncements,
   selectedAnnouncement,
+  refresh,
 } = useAnnouncementData();
+
+const isLoading = ref<boolean>(false);
+
+async function handleRefresh() {
+  isLoading.value = true;
+
+  await refresh().finally(() => {
+    isLoading.value = false;
+  });
+}
 
 const isAnnouncementPanelOpen = computed({
   get: () => !!selectedAnnouncement.value,
   set: (val: boolean) => {
-    if (!val) {
+    if (!val)
       selectedAnnouncement.value = null;
-    }
   },
 });
 
 watch(filteredAnnouncements, () => {
-  if (!filteredAnnouncements.value.find(announcement => announcement.id === selectedAnnouncement.value?.id)) {
+  if (!filteredAnnouncements.value.find(announcement => announcement.id === selectedAnnouncement.value?.id))
     selectedAnnouncement.value = null;
-  }
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -95,6 +104,8 @@ const isMobile = breakpoints.smaller("lg");
               label: 'Refresh',
               color: 'neutral',
               variant: 'subtle',
+              loading: isLoading,
+              onClick: handleRefresh,
             },
           ]"
         />
@@ -127,6 +138,8 @@ const isMobile = breakpoints.smaller("lg");
       <USlideover
         v-if="isMobile"
         v-model:open="isAnnouncementPanelOpen"
+        title="Announcement Detail"
+        description="View the details of the selected announcement."
       >
         <template #content>
           <AnnouncementDetail

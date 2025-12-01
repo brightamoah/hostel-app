@@ -23,9 +23,8 @@ export default defineEventHandler(async (event) => {
 
     const existingUser = await getUserByEmail(email);
 
-    if (!existingUser) {
+    if (!existingUser)
       return { success: true, message: "If an account exists, a verification email has been sent." };
-    }
 
     if (existingUser.emailVerified) {
       throw createError({

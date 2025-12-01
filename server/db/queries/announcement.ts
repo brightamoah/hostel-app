@@ -71,10 +71,13 @@ export async function announcementQueries() {
       });
   };
 
-  const markAnnouncementAsRead = async (announcementId: number) => {
+  const updateAnnouncementReadStatus = async (announcementId: number, isRead: boolean) => {
     return await db
       .update(announcement)
-      .set({ isRead: true })
+      .set({
+        isRead,
+        updatedAt: new Date(),
+      })
       .where(eq(announcement.id, announcementId))
       .returning();
   };
@@ -83,7 +86,7 @@ export async function announcementQueries() {
     createAnnouncement,
     getAllAnnouncementsForAdmin,
     getAnnouncementById,
-    markAnnouncementAsRead,
+    updateAnnouncementReadStatus,
   };
 }
 

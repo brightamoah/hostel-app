@@ -15,9 +15,8 @@ watch(selectedAnnouncement, () => {
 
   const elementRef = announcementRefs.value[selectedAnnouncement.value.id];
 
-  if (elementRef) {
+  if (elementRef)
     elementRef.scrollIntoView({ block: "nearest" });
-  }
 });
 
 defineShortcuts({
@@ -25,23 +24,21 @@ defineShortcuts({
     const index = announcements
       .findIndex(announcement => announcement.id === selectedAnnouncement.value?.id);
 
-    if (index === -1) {
+    if (index === -1)
       selectedAnnouncement.value = announcements[0];
-    }
-    else if (index < announcements.length - 1) {
+
+    else if (index < announcements.length - 1)
       selectedAnnouncement.value = announcements[index + 1];
-    }
   },
   arrowup: () => {
     const index = announcements
       .findIndex(announcement => announcement.id === selectedAnnouncement.value?.id);
 
-    if (index === -1) {
+    if (index === -1)
       selectedAnnouncement.value = announcements[announcements.length - 1];
-    }
-    else if (index > 0) {
+
+    else if (index > 0)
       selectedAnnouncement.value = announcements[index - 1];
-    }
   },
 });
 </script>
@@ -69,6 +66,13 @@ defineShortcuts({
         >
           <div class="flex items-center gap-3">
             {{ announcement.postedByAdmin.user.name }}
+
+            <UBadge
+              variant="subtle"
+              size="sm"
+              :label="announcement.priority"
+              :color="priorityColorMap[announcement.priority]"
+            />
 
             <UChip
               v-if="!announcement.isRead"

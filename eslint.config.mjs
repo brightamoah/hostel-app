@@ -96,6 +96,7 @@ export default withNuxt(
         case: "camelCase",
         ignore: ["README.md", "pnpm-workspace.yaml"],
       }],
+      // "nonblock-statement-body-position": ["error", "beside"],
     },
   }),
   {

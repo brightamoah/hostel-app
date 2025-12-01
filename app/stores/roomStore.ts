@@ -50,9 +50,9 @@ export const useRoomStore = defineStore("roomStore", () => {
 
   watch(() => addRoomState.value.roomType, () => {
     const capacity = getRoomCapacity.value;
-    if (addRoomState.value.currentOccupancy && capacity < addRoomState.value.currentOccupancy) {
+    if (addRoomState.value.currentOccupancy && capacity < addRoomState.value.currentOccupancy)
       addRoomState.value.currentOccupancy = capacity;
-    }
+
     addRoomState.value.capacity = capacity;
   }, { immediate: true });
 
@@ -164,6 +164,5 @@ export const useRoomStore = defineStore("roomStore", () => {
     deleteRoom,
   };
 });
-if (import.meta.hot) {
+if (import.meta.hot)
   import.meta.hot.accept(acceptHMRUpdate(useRoomStore, import.meta.hot));
-}

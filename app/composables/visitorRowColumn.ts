@@ -70,9 +70,8 @@ export function useVisitorRowColumn(
 
   const openCheckInCheckOutModal = (visitor: VisitorType, action: LogActionSchema["action"]) => {
     const checksPassed = checkInCheckOutChecks(visitor, action);
-    if (!checksPassed) {
+    if (!checksPassed)
       return;
-    }
 
     const modal = overlay.create(ConfirmationModal);
     const close = modal.close;
@@ -286,9 +285,8 @@ export function useVisitorRowColumn(
         const studentUser = row.original.student?.user;
         const studentAllocation = row.original.student?.allocations[0];
 
-        if (!studentUser) {
+        if (!studentUser)
           return h("span", "N/A");
-        }
 
         return h("div", { class: "flex flex-col" }, [
           h("p", { class: "font-medium text-highlighted" }, studentUser.name),
@@ -320,9 +318,9 @@ export function useVisitorRowColumn(
       header: createSortableHeader("Last Check-In", UButton),
       cell: ({ row }) => {
         const lastLog = row.original.visitorLogs.find(log => log.action === "check_in");
-        if (!lastLog) {
+        if (!lastLog)
           return h("span", "N/A");
-        }
+
         return h("span", { class: "font-medium text-default" }, useDateFormat(lastLog.timestamp, "HH:mm:ss").value);
       },
     },
@@ -332,9 +330,8 @@ export function useVisitorRowColumn(
       cell: ({ row }) => {
         const lastLog = row.original.visitorLogs[0];
 
-        if (lastLog && lastLog.action === "check_out") {
+        if (lastLog && lastLog.action === "check_out")
           return h("span", { class: "font-medium text-default" }, useDateFormat(lastLog.timestamp, "HH:mm:ss").value);
-        }
 
         return h("span", "N/A");
       },

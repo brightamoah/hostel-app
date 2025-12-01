@@ -97,23 +97,19 @@ export function useVisitorFilters(table: TableType<VisitorType>, data: DataType<
     if (!statusColumn)
       return;
 
-    if (newStatus === "all") {
+    if (newStatus === "all")
       statusColumn.setFilterValue(undefined);
-    }
-    else {
-      statusColumn.setFilterValue(newStatus);
-    }
+
+    else statusColumn.setFilterValue(newStatus);
 
     const dateColumn = tableApi.getColumn("visitDate");
     if (!dateColumn)
       return;
 
-    if (newDate === "all-dates") {
+    if (newDate === "all-dates")
       dateColumn.setFilterValue(undefined);
-    }
-    else {
-      dateColumn.setFilterValue(newDate);
-    }
+
+    else dateColumn.setFilterValue(newDate);
   }, { immediate: true });
 
   return {

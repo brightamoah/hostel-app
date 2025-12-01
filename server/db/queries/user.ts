@@ -179,9 +179,8 @@ export async function userQueries() {
   const getAdminByUserId = async (userId: number, activeOnly = false) => {
     const whereConditions = [eq(admin.userId, userId)];
 
-    if (activeOnly) {
+    if (activeOnly)
       whereConditions.push(eq(admin.status, "active"));
-    }
 
     const [result] = await db
       .select()
@@ -229,13 +228,12 @@ export async function userQueries() {
 
     // If user has both admin & student roles, nullify student
     const normalized = users.map((u) => {
-      if (u.student.allocation && u.student.allocation.id === null) {
+      if (u.student.allocation && u.student.allocation.id === null)
         u.student.allocation = null;
-      }
 
-      if (u.role === "admin" && u.admin?.id) {
+      if (u.role === "admin" && u.admin?.id)
         return { ...u, student: null };
-      }
+
       return u;
     });
 

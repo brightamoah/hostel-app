@@ -64,9 +64,8 @@ export async function maintenanceQueries() {
   const getMaintenanceById = async (id: number, admin: Admin) => {
     const whereConditions = [eq(maintenanceRequest.id, id)];
 
-    if (admin.accessLevel !== "super") {
+    if (admin.accessLevel !== "super")
       whereConditions.push(eq(maintenanceRequest.hostelId, admin.hostelId!));
-    }
 
     const maintenanceRecord = await db.query.maintenanceRequest.findFirst({
       ...maintenanceWithRelations,
@@ -95,6 +94,7 @@ export async function maintenanceQueries() {
           rejected: 0,
         };
       }
+
       whereConditions.push(eq(maintenanceRequest.hostelId, admin.hostelId));
     }
 

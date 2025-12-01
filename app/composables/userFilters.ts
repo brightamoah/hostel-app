@@ -68,24 +68,20 @@ export function useUserFilters(table: TableType<UserType>, data: DataType<UserDa
     if (!statusColumn)
       return;
 
-    if (newStatus === "all") {
+    if (newStatus === "all")
       statusColumn.setFilterValue(undefined);
-    }
-    else {
-      statusColumn.setFilterValue(newStatus);
-    }
+
+    else statusColumn.setFilterValue(newStatus);
 
     const roleColumn = tableApi.getColumn?.("role");
 
     if (!roleColumn)
       return;
 
-    if (newRole === "all") {
+    if (newRole === "all")
       roleColumn.setFilterValue(undefined);
-    }
-    else {
-      roleColumn.setFilterValue(newRole);
-    }
+
+    else roleColumn.setFilterValue(newRole);
   }, { immediate: true });
 
   return {

@@ -26,6 +26,7 @@ export function useDataRefresh(
       if (coolDownTime.value > 0) {
         coolDownTime.value -= 1;
       }
+
       else {
         clearInterval(timer!);
         timer = null;
@@ -36,10 +37,9 @@ export function useDataRefresh(
 
   if (import.meta.client) {
     onMounted(() => {
-      if (coolDownTime.value! > 0) {
+      if (coolDownTime.value! > 0)
         // Restart only if there’s a cool down left
         startCoolDown(coolDownTime.value!);
-      }
     });
 
     onBeforeUnmount(() => {
@@ -54,9 +54,8 @@ export function useDataRefresh(
     if (!canResend.value)
       return false;
 
-    if (typeof refresh !== "function") {
+    if (typeof refresh !== "function")
       throw new TypeError("Refresh function is not available");
-    }
 
     isLoading.value = true;
 

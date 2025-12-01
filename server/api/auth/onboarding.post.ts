@@ -20,9 +20,8 @@ export default defineEventHandler(async (event) => {
 
     const rawBody = await readBody(event);
 
-    if (rawBody?.dateOfBirth && typeof rawBody.dateOfBirth === "string") {
+    if (rawBody?.dateOfBirth && typeof rawBody.dateOfBirth === "string")
       rawBody.dateOfBirth = new Date(rawBody.dateOfBirth);
-    }
 
     const parsed = personalDetailsSchema.safeParse(rawBody);
     if (!parsed.success) {

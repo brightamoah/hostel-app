@@ -32,6 +32,10 @@ export const announcement = pgTable("announcement", t => ({
   targetRoomId: t.integer().references(() => room.id, { onDelete: "cascade" }),
   targetUserId: t.integer().references(() => user.id, { onDelete: "cascade" }),
   isRead: t.boolean().default(false).notNull(),
+  updatedAt: t.timestamp()
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
 }));
 
 export const announcementReads = pgTable("announcement_reads", t => ({
