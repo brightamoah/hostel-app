@@ -104,7 +104,7 @@ const isMobile = breakpoints.smaller("lg");
               label: 'Refresh',
               color: 'neutral',
               variant: 'subtle',
-              loading: isLoading,
+              loading: isLoading || status === 'pending',
               onClick: handleRefresh,
             },
           ]"
