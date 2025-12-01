@@ -20,7 +20,7 @@ export function useAnnouncementData() {
   const updateTrigger = useState("announcement-update-trigger", () => 0);
 
   const selectedTab = useState<string>(`announcement-tab-${user.value?.id}`, () => "all");
-  
+
   const selectedAnnouncement = useState<Announcement | null>(`announcement-selected-${user.value?.id}`, () => null);
 
   const processingIds = new Set<number>();
@@ -89,6 +89,11 @@ export function useAnnouncementData() {
       processingIds.delete(announcementId);
     }
   };
+
+  watch(unreadAnnouncementCount, (newCount) => {
+    if (newCount)
+      console.log("You have", newCount, "unread announcements");
+  });
 
   watch(selectedAnnouncement, (newAnnouncement) => {
     if (newAnnouncement && !newAnnouncement.isRead)
