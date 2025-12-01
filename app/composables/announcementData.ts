@@ -20,7 +20,6 @@ export function useAnnouncementData() {
   const updateTrigger = useState("announcement-update-trigger", () => 0);
 
   const selectedTab = useState<string>(`announcement-tab-${user.value?.id}`, () => "all");
-
   const selectedAnnouncement = useState<Announcement | null>(`announcement-selected-${user.value?.id}`, () => null);
 
   const processingIds = new Set<number>();
@@ -28,7 +27,6 @@ export function useAnnouncementData() {
   const announcements = computed<Announcement[]>(() => {
     // eslint-disable-next-line ts/no-unused-expressions
     updateTrigger.value;
-
     return data.value?.announcements ?? [];
   });
 
@@ -90,14 +88,15 @@ export function useAnnouncementData() {
     }
   };
 
-  watch(unreadAnnouncementCount, (newCount) => {
-    if (newCount)
-      console.log("You have", newCount, "unread announcements");
-  });
-
   watch(selectedAnnouncement, (newAnnouncement) => {
     if (newAnnouncement && !newAnnouncement.isRead)
       updateReadStatus(newAnnouncement.id, { action: "read" });
+  });
+
+  watch(unreadAnnouncementCount, (newCount) => {
+    if (newCount) {
+      console.log(`The unread announcement count is ${newCount}`);
+    }
   });
 
   return {

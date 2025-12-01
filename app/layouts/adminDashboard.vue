@@ -120,21 +120,24 @@ const links = computed(() => [[
   target: "_blank",
 }]] satisfies NavigationMenuItem[][]);
 
-const groups = computed(() => [{
-  id: "links",
-  label: "Go to",
-  items: links.value.flat(),
-}, {
-  id: "code",
-  label: "Code",
-  items: [{
-    id: "source",
-    label: "View page source",
-    icon: "i-lucide-github",
-    to: "https://github.com/brightamoah/hostel-app.git",
-    target: "_blank",
-  }],
-}]);
+const groups = computed(() => [
+  {
+    id: "links",
+    label: "Go to",
+    items: links.value.flat(),
+  },
+  {
+    id: "code",
+    label: "Code",
+    items: [{
+      id: "source",
+      label: "View page source",
+      icon: "i-lucide-github",
+      to: "https://github.com/brightamoah/hostel-app.git",
+      target: "_blank",
+    }],
+  },
+]);
 
 onMounted(async () => {
   await refreshSession();
