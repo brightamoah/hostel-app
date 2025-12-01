@@ -127,6 +127,5 @@ export const useVisitorStore = defineStore("visitorStore", () => {
   };
 });
 
-if (import.meta.hot) {
+if (import.meta.hot)
   import.meta.hot.accept(acceptHMRUpdate(useVisitorStore, import.meta.hot));
-}

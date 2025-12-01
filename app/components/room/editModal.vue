@@ -81,17 +81,15 @@ const getChangedFields = computed(() => {
   ];
 
   fieldsToCompare.forEach((field) => {
-    if (current[field] !== original[field]) {
+    if (current[field] !== original[field])
       changed[field] = current[field] as any;
-    }
   });
 
-  if (current.roomType !== original.roomType && current.roomType !== "") {
+  if (current.roomType !== original.roomType && current.roomType !== "")
     changed.roomType = current.roomType;
-  }
-  if (current.status !== original.status && current.status !== "") {
+
+  if (current.status !== original.status && current.status !== "")
     changed.status = current.status;
-  }
 
   if (current.features !== original.features) {
     changed.features = current.features

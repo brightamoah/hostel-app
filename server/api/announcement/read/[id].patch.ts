@@ -15,28 +15,43 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const { markAnnouncementAsRead } = await announcementQueries();
+    const body = await readValidatedBody(event, body => readStatusSchema.safeParse(body));
 
-    const [updatedAnnouncement] = await markAnnouncementAsRead(id);
+    if (!body.success) {
+      throw createError({
+        statusCode: 400,
+        message: `${body.error.issues
+          .map(i => i.message)
+          .join(", ")}`,
+      });
+    }
+
+    const { action } = body.data;
+
+    const { updateAnnouncementReadStatus } = await announcementQueries();
+
+    const [updatedAnnouncement] = await updateAnnouncementReadStatus(
+      id,
+      action === "read",
+    );
 
     if (!updatedAnnouncement) {
       throw createError({
-        statusCode: 500,
-        message: "Failed to mark announcement as read.",
+        statusCode: 404,
+        message: `Announcement with ID ${id} not found.`,
       });
     }
 
     return {
       success: true,
-      message: "Announcement marked as read successfully.",
+      message: `Announcement marked as ${action} successfully.`,
       id,
     };
   }
   catch (error) {
-    if (error && typeof error === "object" && "statusCode" in error) {
+    if (error && typeof error === "object" && "statusCode" in error)
       throw error;
-    }
 
-    handleError(error, "Mark Announcement as Read", event);
+    handleError(error, "Update Announcement Read Status", event);
   }
 });

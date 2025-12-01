@@ -118,9 +118,8 @@ export function useComplaintRowColumn(
       cell: ({ row }) => {
         const student = row.original.student;
 
-        if (!student) {
+        if (!student)
           return h("span", "N/A");
-        }
 
         return h("div", { class: "flex flex-col" }, [
           h("p", { class: "font-medium text-highlighted" }, student.user.name),

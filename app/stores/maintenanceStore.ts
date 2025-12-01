@@ -137,6 +137,5 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
   };
 });
 
-if (import.meta.hot) {
+if (import.meta.hot)
   import.meta.hot.accept(acceptHMRUpdate(useMaintenanceStore, import.meta.hot));
-}

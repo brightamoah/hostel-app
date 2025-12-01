@@ -132,46 +132,38 @@ export function useComplaintFilter(
     if (!typeColumn)
       return;
 
-    if (newType === "all") {
+    if (newType === "all")
       typeColumn.setFilterValue(undefined);
-    }
-    else {
-      typeColumn.setFilterValue(newType);
-    }
+
+    else typeColumn.setFilterValue(newType);
 
     const priorityColumn = tableApi.getColumn("priority");
     if (!priorityColumn)
       return;
 
-    if (newPriority === "all") {
+    if (newPriority === "all")
       priorityColumn.setFilterValue(undefined);
-    }
-    else {
-      priorityColumn.setFilterValue(newPriority);
-    }
+
+    else priorityColumn.setFilterValue(newPriority);
 
     const statusColumn = tableApi.getColumn("status");
     if (!statusColumn)
       return;
 
-    if (newStatus === "all") {
+    if (newStatus === "all")
       statusColumn.setFilterValue(undefined);
-    }
-    else {
-      statusColumn.setFilterValue(newStatus);
-    }
+
+    else statusColumn.setFilterValue(newStatus);
 
     const studentColumn = tableApi.getColumn("student");
 
     if (!studentColumn)
       return;
 
-    if (newStudent === "all") {
+    if (newStudent === "all")
       studentColumn.setFilterValue(undefined);
-    }
-    else {
-      studentColumn.setFilterValue(newStudent);
-    }
+
+    else studentColumn.setFilterValue(newStudent);
   });
 
   return {

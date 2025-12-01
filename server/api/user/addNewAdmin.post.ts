@@ -37,9 +37,8 @@ export default defineEventHandler(async (event) => {
 
   const body = await readValidatedBody(event, b => addAdminSchema.safeParse(b));
 
-  if (!body.success) {
+  if (!body.success)
     throw createError({ statusCode: 400, message: body.error.issues.map(i => i.message).join(", ") });
-  }
 
   const {
     name,
@@ -56,6 +55,7 @@ export default defineEventHandler(async (event) => {
   if (creatorAdminDetails.accessLevel === "super") {
     assignedHostelId = hostelId ?? null;
   }
+
   else {
     if (!creatorAdminDetails.hostelId) {
       throw createError({
@@ -63,6 +63,7 @@ export default defineEventHandler(async (event) => {
         message: "As a regular admin, you must be assigned to a hostel to create new admins.",
       });
     }
+
     assignedHostelId = creatorAdminDetails.hostelId;
   }
 
@@ -164,9 +165,8 @@ export default defineEventHandler(async (event) => {
     };
   }
   catch (error) {
-    if (error && typeof error === "object" && "statusCode" in error) {
+    if (error && typeof error === "object" && "statusCode" in error)
       throw error;
-    }
 
     handleError(error, "Add New Admin", event);
   }

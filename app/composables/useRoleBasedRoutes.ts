@@ -38,9 +38,9 @@ export function useRoleBasedRoute() {
 
   // Compute the role-based routes
   return computed((): Routes => {
-    if (!loggedIn.value || !user.value) {
+    if (!loggedIn.value || !user.value)
       return null;
-    }
+
     return routesByRole[user.value.role as keyof typeof routesByRole] || routesByRole.student;
   });
 }

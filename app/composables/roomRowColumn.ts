@@ -210,21 +210,19 @@ export function useRoomRowColumn(
 
         // Build vacancy phrase without referencing status
         let vacancyPhrase: string;
-        if (capacity === 0) {
+        if (capacity === 0)
           vacancyPhrase = "Capacity not specified.";
-        }
-        else if (remaining <= 0) {
+
+        else if (remaining <= 0)
           vacancyPhrase = "This room is fully occupied.";
-        }
-        else if (remaining === capacity) {
+
+        else if (remaining === capacity)
           vacancyPhrase = "This room is completely vacant";
-        }
-        else if (remaining === 1) {
+
+        else if (remaining === 1)
           vacancyPhrase = "1 space available.";
-        }
-        else {
-          vacancyPhrase = `${remaining} spaces available.`;
-        }
+
+        else vacancyPhrase = `${remaining} spaces available.`;
 
         const tooltipText = `${remaining} spaces available out of ${capacity} total capacity. ${vacancyPhrase}`;
 

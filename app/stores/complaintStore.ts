@@ -137,6 +137,5 @@ export const useComplaintStore = defineStore("complaintStore", () => {
   };
 });
 
-if (import.meta.hot) {
+if (import.meta.hot)
   import.meta.hot.accept(acceptHMRUpdate(useComplaintStore, import.meta.hot));
-}

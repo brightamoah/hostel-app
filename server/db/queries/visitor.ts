@@ -119,9 +119,8 @@ export async function visitorQueries() {
   const getVisitorById = async (visitorId: number, admin: Admin) => {
     const whereConditions = [eq(visitor.id, visitorId)];
 
-    if (admin.accessLevel !== "super") {
+    if (admin.accessLevel !== "super")
       whereConditions.push(eq(visitor.hostelId, admin.hostelId!));
-    }
 
     const visitorRecord = await db.query.visitor.findFirst({
       ...visitorWithRelations,
@@ -135,9 +134,9 @@ export async function visitorQueries() {
     const whereConditions = [];
 
     if (admin.accessLevel !== "super") {
-      if (!admin.hostelId) {
+      if (!admin.hostelId)
         return { approved: 0, checkedIn: 0, pending: 0 };
-      }
+
       whereConditions.push(eq(visitor.hostelId, admin.hostelId));
     }
 

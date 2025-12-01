@@ -31,9 +31,8 @@ const periods = computed<Period[]>(() => {
 
 // Ensure the model value is always a valid period
 watch(periods, () => {
-  if (!periods.value.includes(model.value)) {
+  if (!periods.value.includes(model.value))
     model.value = periods.value[0]!;
-  }
 });
 </script>
 

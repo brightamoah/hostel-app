@@ -334,6 +334,12 @@ export const createAnnouncementSchema = z.object({
 
 export type CreateAnnouncementSchema = z.output<typeof createAnnouncementSchema>;
 
+const readStatusSchema = z.object({
+  action: z.enum(["read", "unread"], "Action must be either 'read' or 'unread'"),
+});
+
+export type ReadStatusSchema = z.output<typeof readStatusSchema>;
+
 export {
   addAdminSchema,
   approveDenySchema,
@@ -352,6 +358,7 @@ export {
   passwordSchema,
   personalDetailsSchema,
   promoteDemoteSchema,
+  readStatusSchema,
   rememberMeSchema,
   resetPasswordSchema,
   roleSchema,

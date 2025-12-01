@@ -107,9 +107,8 @@ async function handleDeleteVisitors() {
     return;
 
   await visitorStore.deleteVisitors(payload);
-  if (tableRef.value?.tableApi) {
+  if (tableRef.value?.tableApi)
     tableRef.value.tableApi.resetRowSelection();
-  }
 }
 </script>
 

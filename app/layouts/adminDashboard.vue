@@ -7,7 +7,9 @@ const open = ref(false);
 
 const { refreshSession } = useAuthStore();
 
-const links = [[
+const { unreadAnnouncementCount } = useAnnouncementData();
+
+const links = computed(() => [[
   {
     label: "Dashboard",
     icon: "i-lucide-house",
@@ -60,7 +62,7 @@ const links = [[
     label: "Announcements",
     icon: "i-lucide-megaphone",
     to: { name: "admin-announcements" },
-    badge: "4",
+    badge: unreadAnnouncementCount.value,
     onSelect: () => {
       open.value = false;
     },
@@ -116,19 +118,19 @@ const links = [[
   icon: "i-lucide-info",
   to: "https://github.com/brightamoah/hostel-app.git",
   target: "_blank",
-}]] satisfies NavigationMenuItem[][];
+}]] satisfies NavigationMenuItem[][]);
 
 const groups = computed(() => [{
   id: "links",
   label: "Go to",
-  items: links.flat(),
+  items: links.value.flat(),
 }, {
   id: "code",
   label: "Code",
   items: [{
     id: "source",
     label: "View page source",
-    icon: "i-simple-icons-github",
+    icon: "i-lucide-github",
     to: "https://github.com/brightamoah/hostel-app.git",
     target: "_blank",
   }],
@@ -138,9 +140,8 @@ onMounted(async () => {
   await refreshSession();
 
   const cookie = useCookie("cookie-consent");
-  if (cookie.value === "accepted") {
+  if (cookie.value === "accepted")
     return;
-  }
 
   toast.add({
     title: "We use first-party cookies to enhance your experience on our website.",

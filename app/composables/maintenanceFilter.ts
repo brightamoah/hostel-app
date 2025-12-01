@@ -120,34 +120,28 @@ export function useMaintenanceFilter(table: TableType<MaintenanceType>, data: Da
     if (!statusColumn)
       return;
 
-    if (newStatus === "all") {
+    if (newStatus === "all")
       statusColumn.setFilterValue(undefined);
-    }
-    else {
-      statusColumn.setFilterValue(newStatus);
-    }
+
+    else statusColumn.setFilterValue(newStatus);
 
     const priorityColumn = tableApi.getColumn("priority");
     if (!priorityColumn)
       return;
 
-    if (newPriority === "all") {
+    if (newPriority === "all")
       priorityColumn.setFilterValue(undefined);
-    }
-    else {
-      priorityColumn.setFilterValue(newPriority);
-    }
+
+    else priorityColumn.setFilterValue(newPriority);
 
     const typeColumn = tableApi.getColumn("issueType");
     if (!typeColumn)
       return;
 
-    if (newType === "all") {
+    if (newType === "all")
       typeColumn.setFilterValue(undefined);
-    }
-    else {
-      typeColumn.setFilterValue(newType);
-    }
+
+    else typeColumn.setFilterValue(newType);
   }, { immediate: true });
 
   return {

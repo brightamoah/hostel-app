@@ -164,6 +164,7 @@ const visitHistory = computed(() => {
     if (log.action === "check_in") {
       stack.push(log);
     }
+
     else if (log.action === "check_out") {
       const checkinLog = stack.pop();
       const performer = adminName !== "-" ? adminName : checkinLog?.admin?.user?.name ?? "-";

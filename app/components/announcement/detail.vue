@@ -1,25 +1,45 @@
 <script setup lang="ts">
-import { format } from "date-fns";
+import type { DropdownMenuItem } from "@nuxt/ui";
 
-defineProps<{
+import { breakpointsTailwind, useBreakpoints, useDateFormat } from "@vueuse/core";
+
+const { announcement } = defineProps<{
   announcement: Announcement;
 }>();
 
 const emits = defineEmits<{ close: [boolean] }>();
 
-const dropdownItems = [[{
-  label: "Mark as unread",
-  icon: "i-lucide-circle-check-big",
-}, {
-  label: "Mark as important",
-  icon: "i-lucide-triangle-alert",
-}], [{
-  label: "Star thread",
-  icon: "i-lucide-star",
-}, {
-  label: "Mute thread",
-  icon: "i-lucide-circle-pause",
-}]];
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
+
+const { updateReadStatus } = useAnnouncementData();
+
+const dropdownItems: DropdownMenuItem[][] = [
+  [
+    {
+      label: "Mark as unread",
+      icon: "i-lucide-message-square-dot",
+      onSelect: () => {
+        updateReadStatus(announcement.id, { action: "unread" });
+        // emits("close", false);
+      },
+    },
+    {
+      label: "Mark as important",
+      icon: "i-lucide-triangle-alert",
+    },
+  ],
+  [
+    {
+      label: "Star thread",
+      icon: "i-lucide-star",
+    },
+    {
+      label: "Mute thread",
+      icon: "i-lucide-circle-pause",
+    },
+  ],
+];
 
 const toast = useToast();
 
@@ -60,6 +80,19 @@ function onSubmit() {
         />
       </template>
 
+      <template #title>
+        <div class="flex gap-2 text-primary text-lg truncate">
+          {{ announcement.title }}
+
+          <UBadge
+            variant="subtle"
+            size="md"
+            :label="announcement.priority"
+            :color="priorityColorMap[announcement.priority]"
+          />
+        </div>
+      </template>
+
       <template #right>
         <UTooltip text="Archive">
           <UButton
@@ -79,7 +112,12 @@ function onSubmit() {
           />
         </UTooltip>
 
-        <UDropdownMenu :items="dropdownItems">
+        <UDropdownMenu
+          :items="dropdownItems"
+          :ui="{
+            item: 'cursor-pointer',
+          }"
+        >
           <UButton
             icon="i-lucide-ellipsis-vertical"
             color="neutral"
@@ -98,7 +136,7 @@ function onSubmit() {
           :alt="announcement.postedByAdmin.user.name"
           :style="`background-color: ${generateUserColor(announcement.postedByAdmin.user.id)}`"
           :ui="{ fallback: 'text-white' }"
-          size="3xl"
+          size="xl"
         />
 
         <div class="min-w-0">
@@ -113,7 +151,7 @@ function onSubmit() {
       </div>
 
       <p class="sm:mt-2 max-sm:pl-16 text-muted text-sm">
-        {{ format(new Date(announcement.postedAt), 'dd MMM HH:mm') }}
+        {{ useDateFormat(announcement.postedAt, isMobile ? 'ddd Do MMM, YY HH:mm' : "dddd Do MMMM, YYYY HH:mm") }}
       </p>
     </div>
 

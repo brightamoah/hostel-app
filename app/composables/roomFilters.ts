@@ -76,21 +76,17 @@ export function useRoomFilters(table: TableType<Room>, data: DataType<RoomDataRe
     if (!statusColumn)
       return;
 
-    if (newStatus === "all") {
+    if (newStatus === "all")
       statusColumn.setFilterValue(undefined);
-    }
-    else {
-      statusColumn.setFilterValue(newStatus);
-    }
+
+    else statusColumn.setFilterValue(newStatus);
 
     const hostelColumn = tableApi.getColumn?.("hostel.name");
     if (hostelColumn) {
-      if (!newHostel || newHostel === "all") {
+      if (!newHostel || newHostel === "all")
         hostelColumn.setFilterValue(undefined);
-      }
-      else {
-        hostelColumn.setFilterValue(newHostel);
-      }
+
+      else hostelColumn.setFilterValue(newHostel);
     }
 
     const floorColumn = tableApi.getColumn?.("floor");
@@ -98,6 +94,7 @@ export function useRoomFilters(table: TableType<Room>, data: DataType<RoomDataRe
       if (!newFloor || newFloor === "all") {
         floorColumn.setFilterValue(undefined);
       }
+
       else {
         const floorValue = Number(newFloor);
         floorColumn.setFilterValue(floorValue);
