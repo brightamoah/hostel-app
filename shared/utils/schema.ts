@@ -281,26 +281,36 @@ const complaintStatusResponseSchema = z.object({
 
 export type ComplaintStatusResponseSchema = z.output<typeof complaintStatusResponseSchema>;
 
-export const announcementPrioritySchema = z.enum([
-  "low",
-  "medium",
-  "high",
-  "emergency",
-]);
-export const targetAudienceSchema = z.enum([
-  "all",
-  "students",
-  "admins",
-  "hostel",
-  "room",
-  "user",
-]);
+export const announcementPrioritySchema = z.union([
+  z.enum([
+    "low",
+    "medium",
+    "high",
+    "emergency",
+  ]),
+  z.literal(""),
+]).refine(val => val !== "", "Priority is required");
+export const targetAudienceSchema = z.union([
+  z.enum([
+    "all",
+    "students",
+    "admins",
+    "hostel",
+    "room",
+    "user",
+  ]),
+  z.literal(""),
+]).refine(val => val !== "", "Target Audience is required");
 
 export const createAnnouncementSchema = z.object({
   title: z.string()
     .nonempty("Title is required")
     .min(5, "Title must be at least 5 characters long")
     .max(200, "Title cannot exceed 200 characters"),
+  content: z.string()
+    .nonempty("Content is required")
+    .min(10, "Content must be at least 10 characters long")
+    .max(5000, "Content cannot exceed 5000 characters"),
   priority: announcementPrioritySchema,
   targetAudience: targetAudienceSchema,
   targetHostelId: z.number().optional(),

@@ -161,7 +161,7 @@ function onSubmit() {
       </p>
     </div>
 
-    <div class="px-4 sm:px-6 pb-4 shrink-0">
+    <!-- <div class="px-4 sm:px-6 pb-4 shrink-0">
       <UCard
         variant="subtle"
         class="mt-auto"
@@ -221,7 +221,9 @@ function onSubmit() {
           </div>
         </form>
       </UCard>
-    </div>
+    </div> -->
+
+    <AnnouncementCreateNew />
   </UDashboardPanel>
 </template>
 

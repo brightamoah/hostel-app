@@ -178,7 +178,9 @@ onMounted(async () => {
       :menu="{
         transition: true,
       }"
-      :ui="{ footer: 'lg:border-t lg:border-default',
+      :ui="{
+        footer: 'lg:border-t lg:border-default',
+        content: 'w-[65dvw] max-w-[65dvw] sm:w-full sm:max-w-xs',
       }"
     >
       <template #header="{ collapsed }">
