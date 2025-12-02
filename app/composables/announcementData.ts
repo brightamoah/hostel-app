@@ -67,7 +67,6 @@ export function useAnnouncementData() {
     announcement.isRead = shouldBeRead;
     processingIds.add(announcementId);
 
-    // triggerRef(data);
     updateTrigger.value++;
 
     try {
@@ -78,7 +77,6 @@ export function useAnnouncementData() {
     }
     catch (error) {
       announcement.isRead = previousState;
-      // triggerRef(data);
       updateTrigger.value++;
 
       console.error(`Failed to mark announcement ${announcementId} as ${actionToTake.action}`, error);
@@ -91,11 +89,6 @@ export function useAnnouncementData() {
   watch(selectedAnnouncement, (newAnnouncement) => {
     if (newAnnouncement && !newAnnouncement.isRead)
       updateReadStatus(newAnnouncement.id, { action: "read" });
-  });
-
-  watch(unreadAnnouncementCount, (newCount) => {
-    if (newCount !== undefined)
-      console.log("You have", newCount, "unread announcements");
   });
 
   return {
