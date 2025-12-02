@@ -15,6 +15,7 @@ import type { RouteLocationRaw } from "vue-router";
 import type { ComplaintStatusResponseSchema, MaintenanceStatusResponseSchema } from "../utils/schema";
 
 export type Refresh = ReturnType<typeof useFetch>["refresh"];
+export type Status = ReturnType<typeof useFetch>["status"]["value"];
 
 export type FormFieldType = "select" | "checkbox" | "password" | "otp" | "email" | "text";
 

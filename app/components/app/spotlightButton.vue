@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 <template>
   <component
     :is="props.as"
-    class="group relative inline-flex items-center overflow-hidden transition"
+    class="group inline-flex relative items-center overflow-hidden transition"
     :class="[
       props.rounded ? 'rounded-full' : 'rounded-md px-8 py-1',
       props.transparent
@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
     <!-- Spinner animation background -->
     <div
       v-if="props.animate"
-      class="absolute inset-0 flex items-center [container-type:inline-size]"
+      class="@container absolute inset-0 flex items-center"
     >
       <div class="absolute bg-[conic-gradient(from_0_at_50%_50%,rgba(0,0,0,0.2)_0deg,transparent_60deg,transparent_300deg,rgba(0,0,0,0.2)_360deg)] dark:bg-[conic-gradient(from_0_at_50%_50%,rgba(255,255,255,0.5)_0deg,transparent_60deg,transparent_300deg,rgba(255,255,255,0.5)_360deg)] opacity-0 group-hover:opacity-100 size-[100cqw] transition animate-spin duration-300" />
     </div>
@@ -44,7 +44,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 
     <!-- Subtle glow on hover -->
     <div
-      class="bottom-0 left-1/2 absolute group-hover:opacity-100 blur-md w-4/5 h-1/3 group-hover:h-2/3 transition-all -translate-x-1/2 duration-500 bg-black/10 dark:bg-white/10 opacity-30 dark:opacity-50"
+      class="bottom-0 left-1/2 absolute bg-black/10 dark:bg-white/10 opacity-30 dark:opacity-50 group-hover:opacity-100 blur-md w-4/5 h-1/3 group-hover:h-2/3 transition-all -translate-x-1/2 duration-500"
       :class="[
         props.rounded ? 'rounded-full' : 'rounded-md',
       ]"

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-
 definePageMeta({
   middleware: ["requires-auth", "admin"],
   layout: "admin-dashboard",
@@ -47,8 +45,8 @@ watch(filteredAnnouncements, () => {
     selectedAnnouncement.value = null;
 });
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
+const announcementStore = useAnnouncementStore();
+const { isMobile } = storeToRefs(announcementStore);
 </script>
 
 <template>
@@ -115,6 +113,8 @@ const isMobile = breakpoints.smaller("lg");
           v-model="selectedAnnouncement"
           :announcements="filteredAnnouncements"
         />
+
+        <AnnouncementCreateNew v-if="!selectedAnnouncement" />
       </template>
     </UDashboardPanel>
 

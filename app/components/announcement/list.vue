@@ -62,10 +62,10 @@ defineShortcuts({
       >
         <div
           class="flex justify-between items-center"
-          :class="[!announcement.isRead && 'font-semibold']"
+          :class="[!announcement.isRead && 'font-bold']"
         >
           <div class="flex items-center gap-3">
-            {{ announcement.postedByAdmin.user.name }}
+            {{ announcement.title }}
 
             <UBadge
               variant="subtle"
@@ -87,10 +87,10 @@ defineShortcuts({
         </div>
 
         <p
-          class="truncate"
+          class="text-xs truncate"
           :class="[!announcement.isRead && 'font-semibold']"
         >
-          {{ announcement.title }}
+          from {{ announcement.postedByAdmin.user.name }}
         </p>
 
         <p class="text-dimmed line-clamp-1">
