@@ -110,7 +110,7 @@ const groups = computed(() => [{
   items: [{
     id: "source",
     label: "View page source",
-    icon: "i-simple-icons-github",
+    icon: "i-lucide-github",
     to: "https://github.com/brightamoah/hostel-app.git",
     target: "_blank",
   }],

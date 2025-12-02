@@ -153,7 +153,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
   [
     {
       label: "GitHub repository",
-      icon: "i-simple-icons-github",
+      icon: "i-lucide-github",
       to: "https://github.com/brightamoah/hostel-app.git" as string,
       target: "_blank" as const,
     },

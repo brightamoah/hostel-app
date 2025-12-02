@@ -21,7 +21,7 @@ const dropdownItems: DropdownMenuItem[][] = [
       icon: "i-lucide-message-square-dot",
       onSelect: () => {
         updateReadStatus(announcement.id, { action: "unread" });
-        // emits("close", false);
+        emits("close", false);
       },
     },
     {
