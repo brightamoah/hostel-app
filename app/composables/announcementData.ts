@@ -27,7 +27,7 @@ export function useAnnouncementData() {
   const announcements = computed<Announcement[]>(() => {
     // eslint-disable-next-line ts/no-unused-expressions
     updateTrigger.value;
-    return data.value?.announcements ?? [];
+    return data.value?.announcements ? [...data.value.announcements] : [];
   });
 
   const filteredAnnouncements = computed<Announcement[]>(() => {
@@ -67,7 +67,7 @@ export function useAnnouncementData() {
     announcement.isRead = shouldBeRead;
     processingIds.add(announcementId);
 
-    triggerRef(data);
+    // triggerRef(data);
     updateTrigger.value++;
 
     try {
@@ -78,7 +78,7 @@ export function useAnnouncementData() {
     }
     catch (error) {
       announcement.isRead = previousState;
-      triggerRef(data);
+      // triggerRef(data);
       updateTrigger.value++;
 
       console.error(`Failed to mark announcement ${announcementId} as ${actionToTake.action}`, error);
@@ -94,9 +94,8 @@ export function useAnnouncementData() {
   });
 
   watch(unreadAnnouncementCount, (newCount) => {
-    if (newCount) {
-      console.log(`The unread announcement count is ${newCount}`);
-    }
+    if (newCount !== undefined)
+      console.log("You have", newCount, "unread announcements");
   });
 
   return {
