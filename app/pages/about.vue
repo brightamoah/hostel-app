@@ -9,6 +9,8 @@ const roleRoutes = useRoleBasedRoute();
   <div>
     <!-- <VisitorDetails :visitor="sampleVisitor" /> -->
 
+    <TiptapEditorMain />
+
     <ULink
       :to="roleRoutes?.profile"
       label="Go to home"

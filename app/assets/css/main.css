@@ -1,5 +1,6 @@
 @import "tailwindcss" theme(static);
 @import "@nuxt/ui";
+@plugin "@tailwindcss/typography";
 
 @theme static {
   --font-newsreader: "Newsreader", serif;
@@ -16,6 +17,68 @@
       rgba(120, 120, 120, 0.3) 50%,
       rgba(0, 0, 0, 0) 90%
     );
+  }
+}
+
+@utility prose {
+  img {
+    display: block;
+    height: auto;
+    margin: 1.5rem 0;
+    max-width: 100%;
+
+    &.ProseMirror-selectednode {
+      outline: 3px solid var(--ui-primary);
+    }
+  }
+
+  pre > code {
+    background-color: transparent !important;
+    color: white;
+  }
+
+  hr {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  code {
+    &::before,
+    &::after {
+      content: none;
+    }
+  }
+  /* Task list styling */
+  ul[data-type="taskList"] {
+    @apply list-none pl-0;
+  }
+
+  ul[data-type="taskList"] li {
+    @apply mb-2 flex items-center gap-2;
+  }
+
+  ul[data-type="taskList"] li label {
+    @apply m-0 flex cursor-pointer items-center;
+  }
+
+  ul[data-type="taskList"] li label input[type="checkbox"] {
+    @apply m-0 h-4 w-4 shrink-0 rounded-full accent-primary;
+  }
+
+  ul[data-type="taskList"] li label span {
+    @apply hidden;
+  }
+
+  ul[data-type="taskList"] li div {
+    @apply m-0 flex-1;
+  }
+
+  ul[data-type="taskList"] li div p {
+    @apply m-0 leading-6;
+  }
+
+  ul[data-type="taskList"] li[data-checked="true"] div p {
+    @apply line-through opacity-70;
   }
 }
 
