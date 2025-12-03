@@ -223,7 +223,7 @@ function onSubmit() {
       </UCard>
     </div> -->
 
-    <AnnouncementCreateNew />
+    <AnnouncementCreateNew @click="onSubmit" />
   </UDashboardPanel>
 </template>
 

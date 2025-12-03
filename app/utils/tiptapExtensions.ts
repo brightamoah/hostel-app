@@ -1,0 +1,12 @@
+export { BubbleMenu as TiptapBubbleMenu } from "@tiptap/extension-bubble-menu";
+export { CharacterCount as TiptapCharacterCount } from "@tiptap/extension-character-count";
+export { CodeBlockLowlight as TiptapCodeBlockLowlight } from "@tiptap/extension-code-block-lowlight";
+export { FloatingMenu as TiptapFloatingMenu } from "@tiptap/extension-floating-menu";
+export { FontFamily as TiptapFontFamily } from "@tiptap/extension-font-family";
+export { Highlight as TiptapHighlight } from "@tiptap/extension-highlight";
+export { Placeholder as TiptapPlaceholder } from "@tiptap/extension-placeholder";
+export { TaskItem as TiptapTaskItem } from "@tiptap/extension-task-item";
+export { TaskList as TiptapTaskList } from "@tiptap/extension-task-list";
+export { TextAlign as TiptapTextAlign } from "@tiptap/extension-text-align";
+export { TextStyle as TiptapTextStyle } from "@tiptap/extension-text-style";
+export { Underline as TiptapUnderline } from "@tiptap/extension-underline";

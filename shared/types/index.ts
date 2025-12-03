@@ -1,5 +1,6 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Table } from "@tanstack/vue-table";
+import type { useEditor } from "@tiptap/vue-3";
 import type { useFetch } from "#app";
 import type { User } from "#auth-utils";
 import type { AnnouncementType } from "~~/server/db/queries/announcement";
@@ -13,6 +14,43 @@ import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef
 import type { RouteLocationRaw } from "vue-router";
 
 import type { ComplaintStatusResponseSchema, MaintenanceStatusResponseSchema } from "../utils/schema";
+
+export interface FontFamily {
+  name: string;
+  label: string;
+  value: string;
+}
+
+export interface ButtonOption {
+  name: string;
+  label: string;
+  icon: string;
+  tooltip?: string;
+  keyboard?: string[];
+  action: () => void;
+  isActive?: () => boolean | undefined;
+  isDisabled?: () => boolean;
+  value?: FontFamily["value"];
+}
+
+export interface Button {
+  name: string;
+  icon: string;
+  tooltip: string;
+  keyboard?: string[];
+  action?: () => void;
+  isActive?: () => boolean | undefined;
+  isDisabled?: () => boolean;
+  isDropdown?: boolean;
+  options?: ButtonOption[];
+}
+
+export interface ButtonGroup {
+  name: string;
+  buttons: Button[];
+}
+
+export type TiptapEditor = ReturnType<typeof useEditor>;
 
 export type Refresh = ReturnType<typeof useFetch>["refresh"];
 export type Status = ReturnType<typeof useFetch>["status"]["value"];
