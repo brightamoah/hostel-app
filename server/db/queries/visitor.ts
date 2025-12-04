@@ -88,8 +88,7 @@ export async function visitorQueries() {
   };
 
   const getVisitorsForRegularAdmin = async (admin: Admin) => {
-    if (!admin.hostelId)
-      return [];
+    if (!admin.hostelId) return [];
 
     return await db.query.visitor.findMany({
       ...visitorWithRelations,
@@ -106,8 +105,7 @@ export async function visitorQueries() {
       });
     }
 
-    if (!admin.hostelId)
-      return [];
+    if (!admin.hostelId) return [];
 
     return await db.query.visitor.findMany({
       ...visitorWithRelations,
@@ -119,8 +117,7 @@ export async function visitorQueries() {
   const getVisitorById = async (visitorId: number, admin: Admin) => {
     const whereConditions = [eq(visitor.id, visitorId)];
 
-    if (admin.accessLevel !== "super")
-      whereConditions.push(eq(visitor.hostelId, admin.hostelId!));
+    if (admin.accessLevel !== "super") whereConditions.push(eq(visitor.hostelId, admin.hostelId!));
 
     const visitorRecord = await db.query.visitor.findFirst({
       ...visitorWithRelations,
@@ -134,8 +131,7 @@ export async function visitorQueries() {
     const whereConditions = [];
 
     if (admin.accessLevel !== "super") {
-      if (!admin.hostelId)
-        return { approved: 0, checkedIn: 0, pending: 0 };
+      if (!admin.hostelId) return { approved: 0, checkedIn: 0, pending: 0 };
 
       whereConditions.push(eq(visitor.hostelId, admin.hostelId));
     }
@@ -170,8 +166,7 @@ export async function visitorQueries() {
   };
 
   const deleteVisitorsByIds = async (visitorIds: number[]) => {
-    if (visitorIds.length === 0)
-      return [];
+    if (visitorIds.length === 0) return [];
 
     const deleteResult = await db
       .delete(visitor)

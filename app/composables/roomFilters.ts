@@ -68,23 +68,19 @@ export function useRoomFilters(table: TableType<Room>, data: DataType<RoomDataRe
   watch(() => [statusFilter.value, hostelFilter.value, floorFilter.value], async ([newStatus, newHostel, newFloor]) => {
     await nextTick();
     const tableApi = safeTableApi();
-    if (!tableApi)
-      return;
+    if (!tableApi) return;
 
     const statusColumn = tableApi.getColumn?.("status");
 
-    if (!statusColumn)
-      return;
+    if (!statusColumn) return;
 
-    if (newStatus === "all")
-      statusColumn.setFilterValue(undefined);
+    if (newStatus === "all") statusColumn.setFilterValue(undefined);
 
     else statusColumn.setFilterValue(newStatus);
 
     const hostelColumn = tableApi.getColumn?.("hostel.name");
     if (hostelColumn) {
-      if (!newHostel || newHostel === "all")
-        hostelColumn.setFilterValue(undefined);
+      if (!newHostel || newHostel === "all") hostelColumn.setFilterValue(undefined);
 
       else hostelColumn.setFilterValue(newHostel);
     }

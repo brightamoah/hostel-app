@@ -11,8 +11,7 @@ export function useAnnouncementData() {
       announcements: [],
     }),
     getCachedData: (key, nuxtApp, ctx) => {
-      if (ctx.cause === "refresh:manual" || ctx.cause === "refresh:hook")
-        return undefined;
+      if (ctx.cause === "refresh:manual" || ctx.cause === "refresh:hook") return undefined;
       return nuxtApp.payload.data[key] ?? nuxtApp.static.data[key];
     },
   });
@@ -50,18 +49,15 @@ export function useAnnouncementData() {
   const unreadAnnouncementCount = computed(() => announcements.value.filter(announcement => !announcement.isRead).length);
 
   const updateReadStatus = async (announcementId: number, actionToTake: ReadStatusSchema) => {
-    if (!data.value?.announcements)
-      return;
+    if (!data.value?.announcements) return;
 
     const announcement = data.value?.announcements.find(a => a.id === announcementId);
 
-    if (!announcement)
-      return;
+    if (!announcement) return;
 
     const shouldBeRead = actionToTake.action === "read";
 
-    if (announcement.isRead === shouldBeRead || processingIds.has(announcementId))
-      return;
+    if (announcement.isRead === shouldBeRead || processingIds.has(announcementId)) return;
 
     const previousState = announcement.isRead;
     announcement.isRead = shouldBeRead;
@@ -87,8 +83,7 @@ export function useAnnouncementData() {
   };
 
   watch(selectedAnnouncement, (newAnnouncement) => {
-    if (newAnnouncement && !newAnnouncement.isRead)
-      updateReadStatus(newAnnouncement.id, { action: "read" });
+    if (newAnnouncement && !newAnnouncement.isRead) updateReadStatus(newAnnouncement.id, { action: "read" });
   });
 
   return {

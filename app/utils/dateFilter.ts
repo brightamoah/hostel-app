@@ -1,12 +1,10 @@
 import type { Row } from "@tanstack/table-core";
 
 export function dateFilter<T>(row: Row<T>, columnId: string, filterValue?: string) {
-  if (!filterValue || filterValue === "all-dates")
-    return true;
+  if (!filterValue || filterValue === "all-dates") return true;
 
   const rowDate = row.getValue<string | Date>(columnId);
-  if (!rowDate)
-    return false;
+  if (!rowDate) return false;
 
   const toLocalDate = (d: string | Date) => {
     const date = new Date(d);

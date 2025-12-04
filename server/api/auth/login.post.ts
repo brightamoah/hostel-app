@@ -19,8 +19,7 @@ export default defineEventHandler(async (event) => {
 
     const body = await readValidatedBody(event, body => loginSchema.safeParse(body));
 
-    if (!body.success)
-      throw body.error.issues;
+    if (!body.success) throw body.error.issues;
 
     const { email, password, rememberMe } = body.data;
 
@@ -132,8 +131,7 @@ export default defineEventHandler(async (event) => {
     };
   }
   catch (error) {
-    if (error && typeof error === "object" && "statusCode" in error)
-      throw error;
+    if (error && typeof error === "object" && "statusCode" in error) throw error;
 
     handleError(error, "User Login", event);
   }

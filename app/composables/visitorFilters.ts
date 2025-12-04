@@ -90,24 +90,19 @@ export function useVisitorFilters(table: TableType<VisitorType>, data: DataType<
   watch(() => [statusFilter.value, dateFilter.value], async ([newStatus, newDate]) => {
     await nextTick();
     const tableApi = safeTableApi();
-    if (!tableApi)
-      return;
+    if (!tableApi) return;
 
     const statusColumn = tableApi.getColumn("status");
-    if (!statusColumn)
-      return;
+    if (!statusColumn) return;
 
-    if (newStatus === "all")
-      statusColumn.setFilterValue(undefined);
+    if (newStatus === "all") statusColumn.setFilterValue(undefined);
 
     else statusColumn.setFilterValue(newStatus);
 
     const dateColumn = tableApi.getColumn("visitDate");
-    if (!dateColumn)
-      return;
+    if (!dateColumn) return;
 
-    if (newDate === "all-dates")
-      dateColumn.setFilterValue(undefined);
+    if (newDate === "all-dates") dateColumn.setFilterValue(undefined);
 
     else dateColumn.setFilterValue(newDate);
   }, { immediate: true });

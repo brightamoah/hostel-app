@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const announcementStore = useAnnouncementStore();
+const { isMobile } = storeToRefs(announcementStore);
+
 const editor = useEditor({
   editorProps: {
     attributes: {
@@ -23,10 +26,10 @@ const editor = useEditor({
   ],
 });
 
-const tiptapButtonGroup = getTiptapButtonGroup(editor);
+const tiptapButtonGroup = useTiptapButtonGroup(editor, isMobile);
 
-const mainButtonGroup = computed(() => tiptapButtonGroup.filter(group => group.name !== "actions"));
-const actionButtonGroup = computed(() => tiptapButtonGroup.find(group => group.name === "actions")!);
+const mainButtonGroup = computed(() => tiptapButtonGroup.value.filter(group => group.name !== "actions"));
+const actionButtonGroup = computed(() => tiptapButtonGroup.value.find(group => group.name === "actions")!);
 
 onBeforeUnmount(() => {
   unref(editor)?.destroy();
@@ -39,7 +42,7 @@ onBeforeUnmount(() => {
       v-if="editor"
       class="flex justify-between items-center px-3 py-2 border-muted border-b rounded-t-xl w-full"
     >
-      <div class="inline-flex flex-wrap items-center gap-x-0.5">
+      <div class="inline-flex flex-wrap items-center gap-x-px md:gap-x-0.5">
         <template
           v-for="(group, groupIndex) in mainButtonGroup"
           :key="group.name"
@@ -53,6 +56,7 @@ onBeforeUnmount(() => {
               :options="button.options"
               :tooltip="button.tooltip"
               :default-icon="button.icon"
+              :is-mobile
             />
 
             <UTooltip
@@ -87,7 +91,7 @@ onBeforeUnmount(() => {
             orientation="vertical"
             color="neutral"
             size="sm"
-            class="mx-1.5 h-5"
+            class="mx-px md:mx-1.5 h-5"
           />
         </template>
       </div>
@@ -102,19 +106,10 @@ onBeforeUnmount(() => {
             :options="button.options"
             :tooltip="button.tooltip"
             :default-icon="button.icon"
+            :is-mobile
           />
           <!-- If Add button is not a dropdown, render UButton here -->
         </div>
-
-        <UTooltip
-          text="Toggle theme"
-          arrow
-        >
-          <UColorModeButton
-            size="xs"
-            class="cursor-pointer"
-          />
-        </UTooltip>
       </div>
     </section>
 

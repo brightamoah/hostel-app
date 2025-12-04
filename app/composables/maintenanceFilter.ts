@@ -113,33 +113,26 @@ export function useMaintenanceFilter(table: TableType<MaintenanceType>, data: Da
     await nextTick();
 
     const tableApi = safeTableApi();
-    if (!tableApi)
-      return;
+    if (!tableApi) return;
 
     const statusColumn = tableApi.getColumn("status");
-    if (!statusColumn)
-      return;
+    if (!statusColumn) return;
 
-    if (newStatus === "all")
-      statusColumn.setFilterValue(undefined);
+    if (newStatus === "all") statusColumn.setFilterValue(undefined);
 
     else statusColumn.setFilterValue(newStatus);
 
     const priorityColumn = tableApi.getColumn("priority");
-    if (!priorityColumn)
-      return;
+    if (!priorityColumn) return;
 
-    if (newPriority === "all")
-      priorityColumn.setFilterValue(undefined);
+    if (newPriority === "all") priorityColumn.setFilterValue(undefined);
 
     else priorityColumn.setFilterValue(newPriority);
 
     const typeColumn = tableApi.getColumn("issueType");
-    if (!typeColumn)
-      return;
+    if (!typeColumn) return;
 
-    if (newType === "all")
-      typeColumn.setFilterValue(undefined);
+    if (newType === "all") typeColumn.setFilterValue(undefined);
 
     else typeColumn.setFilterValue(newType);
   }, { immediate: true });

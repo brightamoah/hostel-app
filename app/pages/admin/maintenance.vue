@@ -102,8 +102,7 @@ const deleteModalOpen = ref(false);
 const isLoading = ref(false);
 
 async function handleDeleteUsers() {
-  if (selectedMaintenanceIds.value.ids.length === 0)
-    return;
+  if (selectedMaintenanceIds.value.ids.length === 0) return;
 
   console.warn(selectedMaintenanceIds.value);
 }

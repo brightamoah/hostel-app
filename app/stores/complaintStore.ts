@@ -28,11 +28,9 @@ export const useComplaintStore = defineStore("complaintStore", () => {
   });
 
   const updateStatusAndAddResponse = async (payload: ComplaintStatusResponseSchema) => {
-    if (!isUpdateFormValid.value)
-      return;
+    if (!isUpdateFormValid.value) return;
 
-    if (!payload.complaintId && !payload.status && !payload.responseText)
-      return;
+    if (!payload.complaintId && !payload.status && !payload.responseText) return;
 
     if (payload.status === "") {
       toast.add({
@@ -79,11 +77,9 @@ export const useComplaintStore = defineStore("complaintStore", () => {
   };
 
   const addComplaintResponse = async (payload: Omit<ComplaintStatusResponseSchema, "status">) => {
-    if (!isAddResponseFormValid.value)
-      return;
+    if (!isAddResponseFormValid.value) return;
 
-    if (!payload.complaintId && !payload.responseText)
-      return;
+    if (!payload.complaintId && !payload.responseText) return;
 
     isLoading.value = true;
 
@@ -137,5 +133,4 @@ export const useComplaintStore = defineStore("complaintStore", () => {
   };
 });
 
-if (import.meta.hot)
-  import.meta.hot.accept(acceptHMRUpdate(useComplaintStore, import.meta.hot));
+if (import.meta.hot) import.meta.hot.accept(acceptHMRUpdate(useComplaintStore, import.meta.hot));

@@ -38,20 +38,16 @@ const calendarRange = computed({
 });
 
 function isRangeSelected(range: { days?: number; months?: number; years?: number }) {
-  if (!selected.value.start || !selected.value.end)
-    return false;
+  if (!selected.value.start || !selected.value.end) return false;
 
   const currentDate = today(getLocalTimeZone());
   let startDate = currentDate.copy();
 
-  if (range.days)
-    startDate = startDate.subtract({ days: range.days });
+  if (range.days) startDate = startDate.subtract({ days: range.days });
 
-  else if (range.months)
-    startDate = startDate.subtract({ months: range.months });
+  else if (range.months) startDate = startDate.subtract({ months: range.months });
 
-  else if (range.years)
-    startDate = startDate.subtract({ years: range.years });
+  else if (range.years) startDate = startDate.subtract({ years: range.years });
 
   const selectedStart = toCalendarDate(selected.value.start);
   const selectedEnd = toCalendarDate(selected.value.end);
@@ -63,14 +59,11 @@ function selectRange(range: { days?: number; months?: number; years?: number }) 
   const endDate = today(getLocalTimeZone());
   let startDate = endDate.copy();
 
-  if (range.days)
-    startDate = startDate.subtract({ days: range.days });
+  if (range.days) startDate = startDate.subtract({ days: range.days });
 
-  else if (range.months)
-    startDate = startDate.subtract({ months: range.months });
+  else if (range.months) startDate = startDate.subtract({ months: range.months });
 
-  else if (range.years)
-    startDate = startDate.subtract({ years: range.years });
+  else if (range.years) startDate = startDate.subtract({ years: range.years });
 
   selected.value = {
     start: startDate.toDate(getLocalTimeZone()),

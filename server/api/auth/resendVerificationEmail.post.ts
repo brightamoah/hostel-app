@@ -14,8 +14,7 @@ export default defineEventHandler(async (event) => {
     const body = await readValidatedBody(event, body =>
       verifyEmailSchema.safeParse(body));
 
-    if (!body.success)
-      throw body.error.issues;
+    if (!body.success) throw body.error.issues;
 
     const { email } = body.data;
 
@@ -23,8 +22,7 @@ export default defineEventHandler(async (event) => {
 
     const existingUser = await getUserByEmail(email);
 
-    if (!existingUser)
-      return { success: true, message: "If an account exists, a verification email has been sent." };
+    if (!existingUser) return { success: true, message: "If an account exists, a verification email has been sent." };
 
     if (existingUser.emailVerified) {
       throw createError({

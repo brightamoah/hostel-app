@@ -15,8 +15,7 @@ export default defineEventHandler(async (event) => {
 
     const body = await readValidatedBody(event, body => baseSignupSchema.safeParse(body));
 
-    if (!body.success)
-      throw body.error.issues;
+    if (!body.success) throw body.error.issues;
 
     const { email, name, password } = body.data;
 

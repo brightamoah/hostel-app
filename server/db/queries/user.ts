@@ -179,8 +179,7 @@ export async function userQueries() {
   const getAdminByUserId = async (userId: number, activeOnly = false) => {
     const whereConditions = [eq(admin.userId, userId)];
 
-    if (activeOnly)
-      whereConditions.push(eq(admin.status, "active"));
+    if (activeOnly) whereConditions.push(eq(admin.status, "active"));
 
     const [result] = await db
       .select()
@@ -199,8 +198,7 @@ export async function userQueries() {
 
   const getUsersScoped = async (adminId: number) => {
     const adminRecord = await getAdminByUserId(adminId);
-    if (!adminRecord)
-      throw createError({ statusCode: 404, message: "Admin not found" });
+    if (!adminRecord) throw createError({ statusCode: 404, message: "Admin not found" });
 
     let query = db
       .select(userDetails)
@@ -228,11 +226,9 @@ export async function userQueries() {
 
     // If user has both admin & student roles, nullify student
     const normalized = users.map((u) => {
-      if (u.student.allocation && u.student.allocation.id === null)
-        u.student.allocation = null;
+      if (u.student.allocation && u.student.allocation.id === null) u.student.allocation = null;
 
-      if (u.role === "admin" && u.admin?.id)
-        return { ...u, student: null };
+      if (u.role === "admin" && u.admin?.id) return { ...u, student: null };
 
       return u;
     });
@@ -254,8 +250,7 @@ export async function userQueries() {
   };
 
   const deleteUsersByIds = async (ids: number[]) => {
-    if (ids.length === 0)
-      return [];
+    if (ids.length === 0) return [];
 
     const deletedUsers = await db
       .delete(user)
@@ -349,8 +344,7 @@ export async function userQueries() {
         .where(eq(admin.userId, userId))
         .returning();
 
-      if (!demotedAdmin)
-        return null;
+      if (!demotedAdmin) return null;
 
       await tx.update(user).set({ role: "student" }).where(eq(user.id, userId));
 

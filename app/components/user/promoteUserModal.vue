@@ -19,8 +19,7 @@ const promoteFormRef = useTemplateRef("promoteFormRef");
 
 const accessLevels = computed(() => {
   const levels: { label: string; value: PromoteDemoteSchema["accessLevel"] }[] = [{ label: "Regular", value: "regular" }, { label: "Support", value: "support" }];
-  if (currentUser.value?.adminData?.accessLevel === "super")
-    levels.push({ label: "Super Admin", value: "super" });
+  if (currentUser.value?.adminData?.accessLevel === "super") levels.push({ label: "Super Admin", value: "super" });
 
   return levels;
 });

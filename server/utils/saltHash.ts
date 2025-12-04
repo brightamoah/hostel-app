@@ -18,8 +18,7 @@ export async function hash(valueToHash: string) {
     const salt = randomBytes(16).toString("hex");
 
     scrypt(valueToHash, salt, keyLength, (err, derivedKey) => {
-      if (err)
-        reject(err);
+      if (err) reject(err);
       resolve(`${salt}.${derivedKey.toString("hex")}`);
     });
   });
@@ -44,8 +43,7 @@ export async function verifyHashedValue(storedHash: string, rawValue: string) {
       salt!,
       keyLength,
       (err, derivedKey) => {
-        if (err)
-          reject(err);
+        if (err) reject(err);
         resolve(timingSafeEqual(hashKeyBuffer, derivedKey));
       },
     );

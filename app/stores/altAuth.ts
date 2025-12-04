@@ -14,8 +14,7 @@ export const useAltAuth = defineStore("altAuth", () => {
     coolDownTime.value = seconds;
     const timer = setInterval(() => {
       coolDownTime.value--;
-      if (coolDownTime.value <= 0)
-        clearInterval(timer);
+      if (coolDownTime.value <= 0) clearInterval(timer);
     }, 1000);
   }
 
@@ -48,8 +47,7 @@ export const useAltAuth = defineStore("altAuth", () => {
   ]);
 
   async function requestPasswordReset(payload: FormSubmitEvent<VerifyEmailSchema>) {
-    if (!canResend.value)
-      return;
+    if (!canResend.value) return;
 
     isLoading.value = true;
     try {
@@ -80,8 +78,7 @@ export const useAltAuth = defineStore("altAuth", () => {
 
       if (error?.status === 429 && message.includes("wait")) {
         const minutes = message.match(/(\d+) minutes/)?.[1];
-        if (minutes)
-          startCoolDown(Number.parseInt(minutes) * 60);
+        if (minutes) startCoolDown(Number.parseInt(minutes) * 60);
       }
     }
     finally {
@@ -91,8 +88,7 @@ export const useAltAuth = defineStore("altAuth", () => {
 
   async function resendVerificationEmail(payload: FormSubmitEvent<VerifyEmailSchema>) {
     payload.preventDefault();
-    if (!canResend.value)
-      return;
+    if (!canResend.value) return;
 
     isLoading.value = true;
     try {
@@ -127,8 +123,7 @@ export const useAltAuth = defineStore("altAuth", () => {
 
       if (error?.status === 429 && message.includes("wait")) {
         const minutes = message.match(/(\d+) minutes/)?.[1];
-        if (minutes)
-          startCoolDown(Number.parseInt(minutes) * 60);
+        if (minutes) startCoolDown(Number.parseInt(minutes) * 60);
       }
     }
     finally {
@@ -191,5 +186,4 @@ export const useAltAuth = defineStore("altAuth", () => {
   };
 });
 
-if (import.meta.hot)
-  import.meta.hot.accept(acceptHMRUpdate(useAltAuth, import.meta.hot));
+if (import.meta.hot) import.meta.hot.accept(acceptHMRUpdate(useAltAuth, import.meta.hot));

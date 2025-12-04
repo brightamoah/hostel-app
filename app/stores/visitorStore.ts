@@ -10,8 +10,7 @@ export const useVisitorStore = defineStore("visitorStore", () => {
   const visitorDataKey = computed(() => `visitorData:${user.value?.adminData?.accessLevel}`);
 
   const approveDenyVisitor = async (payload: ApproveDenySchema) => {
-    if (!payload.visitorId && !payload.status)
-      return;
+    if (!payload.visitorId && !payload.status) return;
 
     isLoading.value = true;
 
@@ -47,8 +46,7 @@ export const useVisitorStore = defineStore("visitorStore", () => {
   };
 
   const checkInCheckOutVisitor = async (payload: LogActionSchema) => {
-    if (!payload.visitorId && !payload.action)
-      return;
+    if (!payload.visitorId && !payload.action) return;
 
     isLoading.value = true;
 
@@ -84,8 +82,7 @@ export const useVisitorStore = defineStore("visitorStore", () => {
   };
 
   const deleteVisitors = async (payload: DeleteItemSchema) => {
-    if (!payload.ids)
-      return;
+    if (!payload.ids) return;
 
     isLoading.value = true;
 
@@ -127,5 +124,4 @@ export const useVisitorStore = defineStore("visitorStore", () => {
   };
 });
 
-if (import.meta.hot)
-  import.meta.hot.accept(acceptHMRUpdate(useVisitorStore, import.meta.hot));
+if (import.meta.hot) import.meta.hot.accept(acceptHMRUpdate(useVisitorStore, import.meta.hot));

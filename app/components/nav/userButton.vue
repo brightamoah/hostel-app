@@ -15,8 +15,7 @@ const dashboardIcon = computed(() =>
 );
 
 const userMenuItems = computed<UserMenuItem[][]>(() => {
-  if (!isLoggedIn || !user)
-    return [];
+  if (!isLoggedIn || !user) return [];
 
   return [
     [

@@ -7,12 +7,9 @@
  * - returns "unknown" for empty/invalid inputs
  */
 export function normalizeIp(rawIp?: string) {
-  if (!rawIp)
-    return "unknown";
+  if (!rawIp) return "unknown";
   // IPv4-mapped IPv6 (node sometimes gives ::ffff:127.0.0.1)
-  if (rawIp.startsWith("::ffff:"))
-    return rawIp.split("::ffff:")[1];
-  if (rawIp === "::1")
-    return "127.0.0.1";
+  if (rawIp.startsWith("::ffff:")) return rawIp.split("::ffff:")[1];
+  if (rawIp === "::1") return "127.0.0.1";
   return rawIp;
 }

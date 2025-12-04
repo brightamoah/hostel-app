@@ -106,8 +106,7 @@ export default defineEventHandler(async (event) => {
           accessLevel,
         };
 
-        if (hostelId !== undefined)
-          promotionPayload.hostelId = hostelId;
+        if (hostelId !== undefined) promotionPayload.hostelId = hostelId;
 
         if (adminMakingRequest.accessLevel === "super") {
           const promotedAdmin = await createOrUpdateAdminForUser(userId, promotionPayload);
@@ -156,8 +155,7 @@ export default defineEventHandler(async (event) => {
     }
   }
   catch (error) {
-    if (error && typeof error === "object" && "statusCode" in error)
-      throw error;
+    if (error && typeof error === "object" && "statusCode" in error) throw error;
 
     handleError(error, "Promote/Demote User", event);
   }

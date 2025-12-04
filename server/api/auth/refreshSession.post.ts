@@ -11,15 +11,13 @@ export default defineEventHandler(async (event) => {
 
     const session = await getUserSession(event) as UserSession;
 
-    if (!session.user?.id)
-      throw createError({ statusCode: 401, statusMessage: "User not authenticated" });
+    if (!session.user?.id) throw createError({ statusCode: 401, statusMessage: "User not authenticated" });
 
     const freshUser = await db.query.user.findFirst({
       where: eq(user.id, session.user.id),
     });
 
-    if (!freshUser)
-      throw createError({ statusCode: 404, message: "User not found" });
+    if (!freshUser) throw createError({ statusCode: 404, message: "User not found" });
 
     await setUserSession(event, {
       user: {

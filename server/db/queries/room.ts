@@ -92,8 +92,7 @@ export async function roomQueries() {
   };
 
   const deleteRoomsByIds = async (ids: number[]) => {
-    if (ids.length === 0)
-      return [];
+    if (ids.length === 0) return [];
 
     const deletedRooms = await db
       .delete(room)
@@ -128,8 +127,7 @@ export async function roomQueries() {
       .where(eq(hostel.status, "active"))
       .$dynamic();
 
-    if (hostelId)
-      query = query.where(eq(hostel.id, hostelId));
+    if (hostelId) query = query.where(eq(hostel.id, hostelId));
 
     return query;
   };
@@ -142,8 +140,7 @@ export async function roomQueries() {
         .findMany({ ...roomWithRelations });
     }
 
-    if (!admin.hostelId)
-      return [];
+    if (!admin.hostelId) return [];
 
     return await db
       .query
@@ -171,8 +168,7 @@ export async function roomQueries() {
         .findMany();
     }
 
-    if (!admin.hostelId)
-      return [];
+    if (!admin.hostelId) return [];
 
     return await db
       .query
@@ -184,8 +180,7 @@ export async function roomQueries() {
     const whereConditions = [];
 
     if (admin.accessLevel !== "super") {
-      if (!admin.hostelId)
-        return { vacant: 0, fullyOccupied: 0, partiallyOccupied: 0, underMaintenance: 0, reserved: 0 };
+      if (!admin.hostelId) return { vacant: 0, fullyOccupied: 0, partiallyOccupied: 0, underMaintenance: 0, reserved: 0 };
 
       whereConditions.push(eq(room.hostelId, admin.hostelId));
     }

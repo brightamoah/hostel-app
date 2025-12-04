@@ -46,8 +46,7 @@ export function handleError(
   }
 
   // If the error already has a status code, it was thrown deliberately with createError.
-  if (err?.statusCode)
-    throw error;
+  if (err?.statusCode) throw error;
 
   const rawMessage = String(err?.data?.message ?? err?.message ?? "").trim();
   const lower = rawMessage.toLowerCase();

@@ -17,6 +17,7 @@ export default withNuxt(
     ignores: [".pnpm-store/**", "**/migrations/*", ".github/**"],
   }, {
     rules: {
+      "antfu/if-newline": "off",
       "vue/max-attributes-per-line": ["error", {
         singleline: {
           max: 1,
@@ -96,7 +97,7 @@ export default withNuxt(
         case: "camelCase",
         ignore: ["README.md", "pnpm-workspace.yaml"],
       }],
-      // "nonblock-statement-body-position": ["error", "beside"],
+      "nonblock-statement-body-position": ["error", "beside"],
     },
   }),
   {
