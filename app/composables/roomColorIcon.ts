@@ -12,8 +12,7 @@ export function useRoomColorIcon(roomRef: RoomRef) {
   });
 
   const featureIcons = computed(() => {
-    if (!room.value || !room.value.features)
-      return [];
+    if (!room.value || !room.value.features) return [];
 
     const featuresArray = Array.isArray(room.value.features)
       ? room.value.features

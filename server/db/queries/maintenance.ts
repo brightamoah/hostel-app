@@ -48,8 +48,7 @@ export async function maintenanceQueries() {
         });
     }
 
-    if (!admin.hostelId)
-      return [];
+    if (!admin.hostelId) return [];
 
     return await db
       .query
@@ -64,8 +63,7 @@ export async function maintenanceQueries() {
   const getMaintenanceById = async (id: number, admin: Admin) => {
     const whereConditions = [eq(maintenanceRequest.id, id)];
 
-    if (admin.accessLevel !== "super")
-      whereConditions.push(eq(maintenanceRequest.hostelId, admin.hostelId!));
+    if (admin.accessLevel !== "super") whereConditions.push(eq(maintenanceRequest.hostelId, admin.hostelId!));
 
     const maintenanceRecord = await db.query.maintenanceRequest.findFirst({
       ...maintenanceWithRelations,

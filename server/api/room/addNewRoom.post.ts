@@ -71,11 +71,9 @@ export default defineEventHandler(async (event) => {
   catch (error: any) {
     console.error("Error adding new room:", error);
 
-    if (error.code === "23505")
-      throw createError({ statusCode: 409, message: "Room with this number already exists" });
+    if (error.code === "23505") throw createError({ statusCode: 409, message: "Room with this number already exists" });
 
-    if (error && typeof error === "object" && "statusCode" in error)
-      throw error;
+    if (error && typeof error === "object" && "statusCode" in error) throw error;
 
     handleError(error, "Add New Room", event);
   }

@@ -49,8 +49,7 @@ export async function announcementQueries() {
         .findMany(announcementWithRelations);
     }
 
-    if (!admin.hostelId)
-      return [];
+    if (!admin.hostelId) return [];
 
     return await db
       .query

@@ -107,8 +107,7 @@ const { deleteModalOpen, isLoading } = storeToRefs(roomStore);
 
 async function handleDeleteSelectedRooms() {
   const payload = selectedRoomIds.value;
-  if (!payload?.ids?.length)
-    return;
+  if (!payload?.ids?.length) return;
   try {
     await deleteRoom(payload);
     deleteModalOpen.value = false;

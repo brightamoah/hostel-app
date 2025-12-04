@@ -38,11 +38,9 @@ const confirmButtonLabel = computed(() =>
 function onConfirm(close?: () => void) {
   emit("confirm");
 
-  if (hasIsLoading.value)
-    return;
+  if (hasIsLoading.value) return;
 
-  if (typeof close === "function")
-    close();
+  if (typeof close === "function") close();
   open.value = false;
 }
 

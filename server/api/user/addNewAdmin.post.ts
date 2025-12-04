@@ -37,8 +37,7 @@ export default defineEventHandler(async (event) => {
 
   const body = await readValidatedBody(event, b => addAdminSchema.safeParse(b));
 
-  if (!body.success)
-    throw createError({ statusCode: 400, message: body.error.issues.map(i => i.message).join(", ") });
+  if (!body.success) throw createError({ statusCode: 400, message: body.error.issues.map(i => i.message).join(", ") });
 
   const {
     name,
@@ -165,8 +164,7 @@ export default defineEventHandler(async (event) => {
     };
   }
   catch (error) {
-    if (error && typeof error === "object" && "statusCode" in error)
-      throw error;
+    if (error && typeof error === "object" && "statusCode" in error) throw error;
 
     handleError(error, "Add New Admin", event);
   }

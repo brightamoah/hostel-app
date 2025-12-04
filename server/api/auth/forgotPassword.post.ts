@@ -26,8 +26,7 @@ export default defineEventHandler(async (event) => {
 
     const existingUser = await getUserByEmail(email);
 
-    if (!existingUser || !existingUser.emailVerified)
-      return { success: true, message: "If an account exists, a reset email has been sent." };
+    if (!existingUser || !existingUser.emailVerified) return { success: true, message: "If an account exists, a reset email has been sent." };
 
     const resetToken = randomUUID();
     const hashedToken = await hash(resetToken);

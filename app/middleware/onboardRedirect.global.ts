@@ -18,8 +18,7 @@ export default defineNuxtRouteMiddleware((to) => {
     "faq",
   ];
 
-  if (authRoutes.includes(to.name))
-    return;
+  if (authRoutes.includes(to.name)) return;
 
   if (!loggedIn.value || !user.value) {
     return navigateTo({

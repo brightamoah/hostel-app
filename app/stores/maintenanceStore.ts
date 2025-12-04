@@ -28,11 +28,9 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
   });
 
   const updateStatusAndAddResponse = async (payload: MaintenanceStatusResponseSchema) => {
-    if (!isUpdateFormValid.value)
-      return;
+    if (!isUpdateFormValid.value) return;
 
-    if (!payload.maintenanceId && !payload.status && !payload.responseText)
-      return;
+    if (!payload.maintenanceId && !payload.status && !payload.responseText) return;
 
     if (payload.status === "") {
       toast.add({
@@ -79,11 +77,9 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
   };
 
   const addMaintenanceResponse = async (payload: Omit<MaintenanceStatusResponseSchema, "status">) => {
-    if (!isAddResponseFormValid.value)
-      return;
+    if (!isAddResponseFormValid.value) return;
 
-    if (!payload.maintenanceId && !payload.responseText)
-      return;
+    if (!payload.maintenanceId && !payload.responseText) return;
 
     isLoading.value = true;
 
@@ -137,5 +133,4 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
   };
 });
 
-if (import.meta.hot)
-  import.meta.hot.accept(acceptHMRUpdate(useMaintenanceStore, import.meta.hot));
+if (import.meta.hot) import.meta.hot.accept(acceptHMRUpdate(useMaintenanceStore, import.meta.hot));

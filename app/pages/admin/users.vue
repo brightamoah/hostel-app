@@ -108,8 +108,7 @@ const pagination = ref({
 async function handleDeleteUsers() {
   const payload = selectedUserIds.value;
 
-  if (!payload?.ids?.length)
-    return;
+  if (!payload?.ids?.length) return;
 
   try {
     await userStore.deleteUser(payload);

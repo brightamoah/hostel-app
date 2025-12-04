@@ -35,14 +35,12 @@ async function handleRefresh() {
 const isAnnouncementPanelOpen = computed({
   get: () => !!selectedAnnouncement.value,
   set: (val: boolean) => {
-    if (!val)
-      selectedAnnouncement.value = null;
+    if (!val) selectedAnnouncement.value = null;
   },
 });
 
 watch(filteredAnnouncements, () => {
-  if (!filteredAnnouncements.value.find(announcement => announcement.id === selectedAnnouncement.value?.id))
-    selectedAnnouncement.value = null;
+  if (!filteredAnnouncements.value.find(announcement => announcement.id === selectedAnnouncement.value?.id)) selectedAnnouncement.value = null;
 });
 
 const announcementStore = useAnnouncementStore();

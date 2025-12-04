@@ -48,8 +48,7 @@ export async function complaintQueries() {
         });
     }
 
-    if (!admin.hostelId)
-      return [];
+    if (!admin.hostelId) return [];
 
     return await db
       .query
@@ -64,8 +63,7 @@ export async function complaintQueries() {
   const getComplaintById = async (complaintId: number, admin: Admin) => {
     const whereConditions = [eq(complaint.id, complaintId)];
 
-    if (admin.accessLevel !== "super")
-      whereConditions.push(eq(complaint.hostelId, admin.hostelId!));
+    if (admin.accessLevel !== "super") whereConditions.push(eq(complaint.hostelId, admin.hostelId!));
 
     const complaintRecord = await db.query.complaint.findFirst({
       ...complaintWithRelations,
@@ -79,8 +77,7 @@ export async function complaintQueries() {
     const whereConditions = [];
 
     if (admin.accessLevel !== "super") {
-      if (!admin.hostelId)
-        return { pending: 0, inProgress: 0, resolved: 0 };
+      if (!admin.hostelId) return { pending: 0, inProgress: 0, resolved: 0 };
 
       whereConditions.push(eq(complaint.hostelId, admin.hostelId));
     }

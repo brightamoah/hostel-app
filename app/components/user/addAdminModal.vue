@@ -32,8 +32,7 @@ const {
 watch(
   () => addModalOpen.value,
   async (open) => {
-    if (!open)
-      userStore.resetAddAdminState();
+    if (!open) userStore.resetAddAdminState();
 
     if (open && hostels.value.length === 0) {
       try {

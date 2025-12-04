@@ -135,15 +135,13 @@ const historyColumns = ref<TableColumn<HistoryItem>[]>([
 
 const visitHistory = computed(() => {
   const visitLogs = visitor.visitorLogs ?? [];
-  if (!visitLogs.length)
-    return [];
+  if (!visitLogs.length) return [];
 
   const formatTimestamp = (timestamp: string | Date) => useDateFormat(timestamp, "ddd Do MMM, YYYY HH:mm:ss").value;
 
   const duration = (checkinTime: string | Date, checkoutTime: string | Date) => {
     const diff = +new Date(checkoutTime) - +new Date(checkinTime);
-    if (diff <= 0)
-      return "-";
+    if (diff <= 0) return "-";
 
     const minutes = Math.round(diff / 60000);
     const hours = Math.floor(minutes / 60);

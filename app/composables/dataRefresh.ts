@@ -17,8 +17,7 @@ export function useDataRefresh(
   let timer: ReturnType<typeof setInterval> | null = null;
 
   function startCoolDown(seconds: number) {
-    if (timer)
-      clearInterval(timer);
+    if (timer) clearInterval(timer);
 
     coolDownTime.value = seconds;
 
@@ -37,25 +36,20 @@ export function useDataRefresh(
 
   if (import.meta.client) {
     onMounted(() => {
-      if (coolDownTime.value! > 0)
-        // Restart only if there’s a cool down left
-        startCoolDown(coolDownTime.value!);
+      if (coolDownTime.value! > 0) startCoolDown(coolDownTime.value!);
     });
 
     onBeforeUnmount(() => {
-      if (timer)
-        clearInterval(timer);
+      if (timer) clearInterval(timer);
     });
   }
 
   async function handleRefresh(options: { force?: boolean } = {}): Promise<boolean> {
     const { force = false } = options;
 
-    if (!canResend.value)
-      return false;
+    if (!canResend.value) return false;
 
-    if (typeof refresh !== "function")
-      throw new TypeError("Refresh function is not available");
+    if (typeof refresh !== "function") throw new TypeError("Refresh function is not available");
 
     isLoading.value = true;
 

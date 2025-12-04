@@ -60,26 +60,21 @@ export function useUserFilters(table: TableType<UserType>, data: DataType<UserDa
   watch(() => [statusFilter.value, roleFilter.value], async ([newStatus, newRole]) => {
     await nextTick();
     const tableApi = safeTableApi();
-    if (!tableApi)
-      return;
+    if (!tableApi) return;
 
     const statusColumn = tableApi.getColumn?.("residencyStatus");
 
-    if (!statusColumn)
-      return;
+    if (!statusColumn) return;
 
-    if (newStatus === "all")
-      statusColumn.setFilterValue(undefined);
+    if (newStatus === "all") statusColumn.setFilterValue(undefined);
 
     else statusColumn.setFilterValue(newStatus);
 
     const roleColumn = tableApi.getColumn?.("role");
 
-    if (!roleColumn)
-      return;
+    if (!roleColumn) return;
 
-    if (newRole === "all")
-      roleColumn.setFilterValue(undefined);
+    if (newRole === "all") roleColumn.setFilterValue(undefined);
 
     else roleColumn.setFilterValue(newRole);
   }, { immediate: true });

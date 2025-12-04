@@ -103,12 +103,10 @@ const pagination = ref({
 async function handleDeleteVisitors() {
   const payload = selectedVisitorIds.value;
 
-  if (!payload?.ids?.length)
-    return;
+  if (!payload?.ids?.length) return;
 
   await visitorStore.deleteVisitors(payload);
-  if (tableRef.value?.tableApi)
-    tableRef.value.tableApi.resetRowSelection();
+  if (tableRef.value?.tableApi) tableRef.value.tableApi.resetRowSelection();
 }
 </script>
 

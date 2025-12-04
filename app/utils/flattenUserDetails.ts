@@ -28,18 +28,15 @@ function formatDetailKey(key: string): string {
 }
 
 function formatDetailValue(value: UserDetailValue): string {
-  if (value instanceof Date)
-    return useDateFormat(value, "Do MMMM, YYYY").value;
+  if (value instanceof Date) return useDateFormat(value, "Do MMMM, YYYY").value;
 
   const stringValue = String(value);
 
   // Skip capitalization for numbers or numeric strings
-  if (typeof value === "number" || !Number.isNaN(Number(stringValue)))
-    return stringValue;
+  if (typeof value === "number" || !Number.isNaN(Number(stringValue))) return stringValue;
 
   // Capitalize the first letter for other strings
-  if (stringValue.length > 0)
-    return stringValue.charAt(0).toUpperCase() + stringValue.slice(1);
+  if (stringValue.length > 0) return stringValue.charAt(0).toUpperCase() + stringValue.slice(1);
 
   return stringValue;
 }

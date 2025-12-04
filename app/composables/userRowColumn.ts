@@ -119,10 +119,8 @@ export function useUserRowColumn(
   const getRowItems = (row: Row<UserType>) => {
     const user = row.original;
     const roleChangeLabel = computed(() => {
-      if (user.role === "admin")
-        return "Demote to Student";
-      if (user.admin?.id)
-        return "Re-activate Admin Role";
+      if (user.role === "admin") return "Demote to Student";
+      if (user.admin?.id) return "Re-activate Admin Role";
       return "Promote to Admin";
     });
 
@@ -224,8 +222,7 @@ export function useUserRowColumn(
       accessorFn: row => row.student?.residencyStatus ?? "N/A",
       header: createSortableHeader("Residency Status", UButton),
       filterFn: (row, columnId, filterValue) => {
-        if (!filterValue || filterValue === "all")
-          return true;
+        if (!filterValue || filterValue === "all") return true;
         return row.getValue(columnId) === filterValue;
       },
       cell: ({ row }) => {

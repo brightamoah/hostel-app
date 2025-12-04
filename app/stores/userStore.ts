@@ -33,8 +33,7 @@ export const useUserStore = defineStore("userStore", () => {
   });
 
   const addNewAdmin = async (payload: FormSubmitEvent<AddAdminSchema>) => {
-    if (!isFormValid.value)
-      return;
+    if (!isFormValid.value) return;
 
     isLoading.value = true;
     try {
@@ -74,8 +73,7 @@ export const useUserStore = defineStore("userStore", () => {
   const deleteModalOpen = ref<boolean>(false);
 
   const deleteUser = async (payload: DeleteItemSchema) => {
-    if (!payload.ids)
-      return;
+    if (!payload.ids) return;
 
     isLoading.value = true;
 
@@ -109,8 +107,7 @@ export const useUserStore = defineStore("userStore", () => {
   };
 
   const promoteOrDemoteUser = async (payload: PromoteDemoteSchema) => {
-    if (!payload.userId)
-      return;
+    if (!payload.userId) return;
 
     isLoading.value = true;
 
@@ -169,5 +166,4 @@ export const useUserStore = defineStore("userStore", () => {
   };
 });
 
-if (import.meta.hot)
-  import.meta.hot.accept(acceptHMRUpdate(useUserStore, import.meta.hot));
+if (import.meta.hot) import.meta.hot.accept(acceptHMRUpdate(useUserStore, import.meta.hot));

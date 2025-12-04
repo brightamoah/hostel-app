@@ -38,12 +38,9 @@ const roomOptions = computed(() => {
 });
 
 watch(() => announcementState.value.targetAudience, (newVal) => {
-  if (newVal !== "hostel")
-    announcementState.value.targetHostelId = undefined;
-  if (newVal !== "room")
-    announcementState.value.targetRoomId = undefined;
-  if (newVal !== "user")
-    announcementState.value.targetUserId = undefined;
+  if (newVal !== "hostel") announcementState.value.targetHostelId = undefined;
+  if (newVal !== "room") announcementState.value.targetRoomId = undefined;
+  if (newVal !== "user") announcementState.value.targetUserId = undefined;
 });
 
 watch(open, (newVal) => {

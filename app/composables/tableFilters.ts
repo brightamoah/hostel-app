@@ -66,8 +66,7 @@ export function useTableFilters<T extends { id: number }>(
 
   const currentItemShowing = computed(() => {
     const state = tableState.value?.pagination;
-    if (!state)
-      return 0;
+    if (!state) return 0;
 
     const pageIndex = typeof state.pageIndex === "number" ? state.pageIndex : 0;
     const pageSize = typeof state.pageSize === "number" ? state.pageSize : 10;
@@ -78,8 +77,7 @@ export function useTableFilters<T extends { id: number }>(
 
   const lastItemShowing = computed(() => {
     const state = tableState.value?.pagination;
-    if (!state)
-      return 0;
+    if (!state) return 0;
 
     const pageIndex = typeof state.pageIndex === "number" ? state.pageIndex : 0;
     const pageSize = typeof state.pageSize === "number" ? state.pageSize : 10;
@@ -112,8 +110,7 @@ export function useTableFilters<T extends { id: number }>(
     nextTick(() => {
       const tableApi = safeTableApi();
       const pageSize = tableState.value?.pagination.pageSize || 10;
-      if (tableApi)
-        tableApi.setPageIndex(0);
+      if (tableApi) tableApi.setPageIndex(0);
       tableApi?.setPageSize(pageSize);
     });
   });

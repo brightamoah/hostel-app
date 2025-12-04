@@ -38,8 +38,7 @@ const {
 watch(
   () => isModalOpen.value,
   async (open) => {
-    if (!open)
-      roomStore.resetAddRoomState();
+    if (!open) roomStore.resetAddRoomState();
 
     if (open && hostels.value.length === 0) {
       try {

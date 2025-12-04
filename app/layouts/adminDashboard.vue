@@ -143,8 +143,7 @@ onMounted(async () => {
   await refreshSession();
 
   const cookie = useCookie("cookie-consent");
-  if (cookie.value === "accepted")
-    return;
+  if (cookie.value === "accepted") return;
 
   toast.add({
     title: "We use first-party cookies to enhance your experience on our website.",

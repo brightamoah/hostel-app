@@ -42,7 +42,7 @@ export interface Button {
   isActive?: () => boolean | undefined;
   isDisabled?: () => boolean;
   isDropdown?: boolean;
-  options?: ButtonOption[];
+  options?: (ButtonOption | Button)[];
 }
 
 export interface ButtonGroup {
@@ -50,7 +50,7 @@ export interface ButtonGroup {
   buttons: Button[];
 }
 
-export type TiptapEditor = ReturnType<typeof useEditor>;
+export type TiptapEditorType = ReturnType<typeof useEditor>;
 
 export type Refresh = ReturnType<typeof useFetch>["refresh"];
 export type Status = ReturnType<typeof useFetch>["status"]["value"];

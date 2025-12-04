@@ -110,16 +110,14 @@ export function useComplaintRowColumn(
       id: "student",
       accessorFn: (row) => {
         const student = row.student;
-        if (!student)
-          return "N/A";
+        if (!student) return "N/A";
         return `${student.user.name} ${student.user.email}`;
       },
       header: createSortableHeader("Student", UButton),
       cell: ({ row }) => {
         const student = row.original.student;
 
-        if (!student)
-          return h("span", "N/A");
+        if (!student) return h("span", "N/A");
 
         return h("div", { class: "flex flex-col" }, [
           h("p", { class: "font-medium text-highlighted" }, student.user.name),
