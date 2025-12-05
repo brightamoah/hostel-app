@@ -161,6 +161,20 @@ defineExpose({
         class="w-full"
       />
     </UFormField>
+
+    <UFormField
+      required
+      label="Content"
+      name="content"
+      class="mb-4 px-4 w-full"
+    >
+      <ClientOnly>
+        <TiptapEditorMain
+          v-model:content="announcementFormState.content"
+          class="w-full"
+        />
+      </ClientOnly>
+    </UFormField>
   </UForm>
 </template>
 

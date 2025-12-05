@@ -44,9 +44,7 @@ watch(() => announcementState.value.targetAudience, (newVal) => {
 });
 
 watch(open, (newVal) => {
-  if (!newVal) {
-    resetAnnouncementState();
-  }
+  if (!newVal) resetAnnouncementState();
 });
 </script>
 
@@ -59,7 +57,7 @@ watch(open, (newVal) => {
     :dismissible="false"
     :ui="{
       footer: 'justify-end',
-      content: 'max-w-3xl  rounded-lg shadow-lg ring ring-default overflow-hidden',
+      content: 'max-w-5xl  rounded-lg shadow-lg ring ring-default overflow-hidden',
       title: 'font-newsreader text-xl font-semibold',
       close: 'cursor-pointer',
     }"
@@ -87,7 +85,7 @@ watch(open, (newVal) => {
     </div>
 
     <template #body>
-      <AnnouncementCreateForm
+      <AnnouncementForm
         ref="formRef"
         :announcement-state
         :is-mobile
@@ -96,8 +94,8 @@ watch(open, (newVal) => {
         :user-options
         :hostel-options
         :room-options
-        :status="status"
-        :room-status="roomStatus"
+        :status
+        :room-status
       />
     </template>
 

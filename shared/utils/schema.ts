@@ -1,5 +1,11 @@
 import * as z from "zod";
 
+const linkSchema = z.object({
+  link: z.url("Invalid URL").nonempty("Link is required"),
+});
+
+export type LinkSchema = z.output<typeof linkSchema>;
+
 const passwordSchema = z
   .string({ error: "Password is required" })
   .min(8, "Must be at least 8 characters")
@@ -360,6 +366,7 @@ export {
   editRoomSchema,
   emailSchema,
   emailVerificationSchema,
+  linkSchema,
   logActionSchema,
   loginSchema,
   maintenanceStatusResponseSchema,
