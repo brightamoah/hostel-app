@@ -11,7 +11,7 @@
   "editor.letterSpacing": 0,
   "debug.console.fontSize": 13,
   "window.commandCenter": false,
-  "workbench.preferredDarkColorTheme": "Anysphere",
+  "workbench.preferredDarkColorTheme": "Tokyo Night",
   "workbench.preferredLightColorTheme": "Default Dark Modern",
   "workbench.iconTheme": "material-icon-theme",
   "window.autoDetectColorScheme": true,
@@ -139,5 +139,21 @@
   "workbench.sideBar.location": "right",
   "oxc.enable": true,
   "tailwindCSS.experimental.configFile": "app/assets/css/main.css",
-  "typescript.tsdk": "node_modules\\typescript\\lib"
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "tailwindCSS.includeLanguages": {
+    "javascript": "html",
+    "typescript": "html",
+    "vue": "html"
+  },
+  "tailwindCSS.classAttributes": [
+    "class",
+    "ui"
+  ],
+  "tailwindCSS.experimental.classRegex": [
+    [
+      "ui:\\s*{([^)]*)\\s*}",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)",
+      "(['\"`])([^\"'`]*?)\\1"
+    ]
+  ]
 }

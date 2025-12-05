@@ -8,5 +8,5 @@ export { Placeholder as TiptapPlaceholder } from "@tiptap/extension-placeholder"
 export { TaskItem as TiptapTaskItem } from "@tiptap/extension-task-item";
 export { TaskList as TiptapTaskList } from "@tiptap/extension-task-list";
 export { TextAlign as TiptapTextAlign } from "@tiptap/extension-text-align";
-export { TextStyle as TiptapTextStyle } from "@tiptap/extension-text-style";
+export { TextStyleKit as TiptapTextStyleKit } from "@tiptap/extension-text-style";
 export { Underline as TiptapUnderline } from "@tiptap/extension-underline";

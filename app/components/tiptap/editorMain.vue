@@ -2,11 +2,13 @@
 const announcementStore = useAnnouncementStore();
 const { isMobile } = storeToRefs(announcementStore);
 
+const content = defineModel<string>("content");
+
 const editor = useEditor({
   editorProps: {
     attributes: {
       class:
-        "bg-muted p-6 focus:outline-none max-w-none min-h-[20rem] max-h-[40rem] overflow-y-auto rounded-b-xl prose prose-neutral dark:prose-invert prose-sm sm:prose-base w-full text-default prose-headings:text-highlighted prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-highlighted prose-code:text-primary prose-code:px-1 prose-code:py-0.5 prose-code:rounded-sm prose-code:bg-muted prose-blockquote:border-l-muted prose-blockquote:text-muted prose-blockquote:pl-4 prose-blockquote:not-italic",
+        "bg-muted p-6 focus:outline-none max-w-none min-h-80 max-h-160 overflow-y-auto rounded-b-xl prose prose-neutral dark:prose-invert prose-sm sm:prose-base w-full text-default prose-headings:text-highlighted prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-highlighted prose-code:text-primary prose-code:px-1 prose-code:py-0.5 prose-code:rounded-sm prose-code:bg-muted prose-blockquote:border-l-muted prose-blockquote:text-muted prose-blockquote:pl-4 prose-blockquote:not-italic",
     },
   },
 
@@ -20,10 +22,17 @@ const editor = useEditor({
       emptyEditorClass: "is-editor-empty italic",
       placeholder: "Start typing your content here.....",
     }),
-    TiptapHighlight,
+    TiptapHighlight.configure({
+      multicolor: true,
+    }),
+    TiptapTextStyleKit,
     TiptapTaskList,
     TiptapTaskItem,
+    TiptapCharacterCount.configure({
+      limit: 5000,
+    }),
   ],
+  onUpdate: ({ editor }) => content.value = editor.getHTML(),
 });
 
 const tiptapButtonGroup = useTiptapButtonGroup(editor, isMobile);
@@ -37,7 +46,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="shadow-lg mx-auto my-8 border border-muted rounded-xl max-w-3xl">
+  <div class="shadow-lg mx-auto border border-muted rounded-xl w-full">
     <section
       v-if="editor"
       class="flex justify-between items-center px-3 py-2 border-muted border-b rounded-t-xl w-full"
@@ -110,8 +119,15 @@ onBeforeUnmount(() => {
           />
           <!-- If Add button is not a dropdown, render UButton here -->
         </div>
+
+        <UColorModeButton />
       </div>
     </section>
+
+    <TiptapBubble
+      v-if="editor"
+      :editor
+    />
 
     <TiptapEditorContent :editor />
   </div>

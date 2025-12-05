@@ -2,6 +2,30 @@
 @import "@nuxt/ui";
 @plugin "@tailwindcss/typography";
 
+:root {
+  --highlight-default: #ffffff;
+  --highlight-purple: #f6f3f8;
+  --highlight-red: #fdebeb;
+  --highlight-yellow: #fbf4a2;
+  --highlight-blue: #c1ecf9;
+  --highlight-green: #acf79f;
+  --highlight-orange: #faebdd;
+  --highlight-pink: #faf1f5;
+  --highlight-gray: #f1f1ef;
+}
+
+.dark {
+  --highlight-default: #000000;
+  --highlight-purple: #3f2c4b;
+  --highlight-red: #5c1a1a;
+  --highlight-yellow: #5c4b1a;
+  --highlight-blue: #1a3d5c;
+  --highlight-green: #1a5c20;
+  --highlight-orange: #5c3a1a;
+  --highlight-pink: #5c1a3a;
+  --highlight-gray: #3a3a3a;
+}
+
 @theme static {
   --font-newsreader: "Newsreader", serif;
   --font-geist: "Geist", sans-serif;
@@ -26,9 +50,40 @@
     height: auto;
     margin: 1.5rem 0;
     max-width: 100%;
+    transition: filter 0.1s ease-in-out;
+
+    &:hover {
+      cursor: pointer;
+      filter: brightness(90%);
+    }
 
     &.ProseMirror-selectednode {
       outline: 3px solid var(--ui-primary);
+      filter: brightness(90%);
+    }
+  }
+
+  .img-placeholder {
+    position: relative;
+
+    &:before {
+      content: "";
+      box-sizing: border-box;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 3px solid var(--ui-border-muted);
+      border-top-color: var(--ui-border-inverted);
+      animation: spinning 0.6s linear infinite;
+    }
+  }
+
+  @keyframes spinning {
+    to {
+      transform: rotate(360deg);
     }
   }
 
@@ -50,7 +105,7 @@
   }
   /* Task list styling */
   ul[data-type="taskList"] {
-    @apply list-none pl-0;
+    @apply list-none pl-0 mr-[0.2rem] select-none;
   }
 
   ul[data-type="taskList"] li {
@@ -62,7 +117,7 @@
   }
 
   ul[data-type="taskList"] li label input[type="checkbox"] {
-    @apply m-0 h-4 w-4 shrink-0 rounded-full accent-primary;
+    @apply m-0 size-4 shrink-0 rounded-full accent-primary cursor-pointer checked:before:scale-10;
   }
 
   ul[data-type="taskList"] li label span {
@@ -78,7 +133,30 @@
   }
 
   ul[data-type="taskList"] li[data-checked="true"] div p {
-    @apply line-through opacity-70;
+    @apply line-through text-muted decoration-2;
+  }
+
+  /* custom bullet list style */
+  ul {
+    @apply list-disc pl-5 py-0 marker:text-primary marker:size-5 marker:font-bold;
+  }
+
+  /* Custom Youtube Video CSS */
+  iframe {
+    @apply border-8 border-solid border-[#ffd00027] rounded min-w-[200px] min-h-[200px] block outline-0 outline-transparent;
+  }
+
+  div[data-youtube-video] iframe {
+    @apply cursor-move aspect-video w-full;
+  }
+
+  /* CSS for bold coloring and highlighting issue*/
+  span[style] > strong {
+    color: inherit;
+  }
+
+  mark[style] > strong {
+    color: inherit;
   }
 }
 
