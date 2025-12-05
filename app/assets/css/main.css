@@ -30,6 +30,7 @@
   --font-newsreader: "Newsreader", serif;
   --font-geist: "Geist", sans-serif;
   --font-mono: "Geist Mono", sans-serif;
+  --font-code: "Fira Code", "JetBrains Mono", monospace
 }
 
 @layer components {
@@ -87,22 +88,24 @@
     }
   }
 
-  pre > code {
-    background-color: transparent !important;
-    color: white;
+  /* custom style for inline code and code block */
+  code{
+    @apply text-toned px-1 py-0.5 rounded-md bg-accented font-code whitespace-nowrap text-sm;
+  }
+
+  pre{
+    @apply bg-accented text-toned font-code shadow-sm rounded-md overflow-x-auto text-sm;
+  }
+
+  pre code{
+    @apply bg-transparent! text-toned font-code p-1 block whitespace-pre! leading-6!;
   }
 
   hr {
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
   }
 
-  code {
-    &::before,
-    &::after {
-      content: none;
-    }
-  }
   /* Task list styling */
   ul[data-type="taskList"] {
     @apply list-none pl-0 mr-[0.2rem] select-none;
@@ -138,7 +141,28 @@
 
   /* custom bullet list style */
   ul {
-    @apply list-disc pl-5 py-0 marker:text-primary marker:size-5 marker:font-bold;
+    @apply list-disc pl-5 py-0 my-0 marker:text-muted  marker:font-bold marker:text-xl;
+  }
+
+  ul li {
+    @apply my-0 pl-0;
+  }
+
+   ul li p {
+    @apply my-0;
+  }
+
+  /* custom numbered list */
+  ol {
+    @apply list-decimal pl-5 py-0 my-0 marker:text-muted marker:font-bold;
+  }
+
+  ol li {
+    @apply my-0 pl-0;
+  }
+
+   ol li p {
+    @apply my-0;
   }
 
   /* Custom Youtube Video CSS */

@@ -8,7 +8,7 @@ const editor = useEditor({
   editorProps: {
     attributes: {
       class:
-        "bg-muted p-6 focus:outline-none max-w-none min-h-80 max-h-160 overflow-y-auto rounded-b-xl prose prose-neutral dark:prose-invert prose-sm sm:prose-base w-full text-default prose-headings:text-highlighted prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-highlighted prose-code:text-primary prose-code:px-1 prose-code:py-0.5 prose-code:rounded-sm prose-code:bg-muted prose-blockquote:border-l-muted prose-blockquote:text-muted prose-blockquote:pl-4 prose-blockquote:not-italic",
+        "bg-muted dark:prose-invert p-5 rounded-b-xl focus:outline-none w-full max-w-full min-h-80 max-h-160 overflow-y-auto prose-headings:font-newsreader font-normal text-default sm:prose-base prose prose-sm prose-neutral",
     },
   },
 
@@ -117,7 +117,6 @@ onBeforeUnmount(() => {
             :default-icon="button.icon"
             :is-mobile
           />
-          <!-- If Add button is not a dropdown, render UButton here -->
         </div>
 
         <UColorModeButton />
