@@ -27,6 +27,10 @@ export default defineNuxtConfig({
     },
   },
 
+  hub: {
+    kv: true,
+  },
+
   runtimeConfig: {
     session: {
       password: env.NUXT_SESSION_PASSWORD,
