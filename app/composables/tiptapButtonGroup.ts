@@ -74,28 +74,7 @@ export function useTiptapButtonGroup(editor: TiptapEditorType, isMobile: MaybeRe
       icon: "i-lucide-link",
       tooltip: "Link",
       keyboard: ["meta", "K"],
-      action: () => {
-        const previousUrl = editor.value?.getAttributes("link").href;
-        // eslint-disable-next-line no-alert
-        const url = window.prompt("Enter URL:", previousUrl);
-        if (url === null) return; // Cancelled
-        if (url === "") {
-          // Unset link
-          editor.value
-            ?.chain()
-            .focus()
-            .extendMarkRange("link")
-            .unsetLink()
-            .run();
-          return;
-        }
-        editor.value
-          ?.chain()
-          .focus()
-          .extendMarkRange("link")
-          .setLink({ href: url })
-          .run();
-      },
+      action: () => editor.value?.chain().focus().run(),
       isActive: () => editor.value?.isActive("link"),
     },
   ];

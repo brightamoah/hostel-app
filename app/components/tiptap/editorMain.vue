@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { useDebounceFn, useStorage } from "@vueuse/core";
+
+import { TiptapExtensions } from "./extensions";
+
 const announcementStore = useAnnouncementStore();
 const { isMobile } = storeToRefs(announcementStore);
 
@@ -12,26 +16,8 @@ const editor = useEditor({
     },
   },
 
-  content: ``,
-  extensions: [
-    TiptapStarterKit,
-    TiptapTextAlign.configure({
-      types: ["heading", "paragraph", "blockquote"],
-    }),
-    TiptapPlaceholder.configure({
-      emptyEditorClass: "is-editor-empty italic",
-      placeholder: "Start typing your content here.....",
-    }),
-    TiptapHighlight.configure({
-      multicolor: true,
-    }),
-    TiptapTextStyleKit,
-    TiptapTaskList,
-    TiptapTaskItem,
-    TiptapCharacterCount.configure({
-      limit: 5000,
-    }),
-  ],
+  content: content.value,
+  extensions: [...TiptapExtensions],
   onUpdate: ({ editor }) => content.value = editor.getHTML(),
 });
 
@@ -39,6 +25,15 @@ const tiptapButtonGroup = useTiptapButtonGroup(editor, isMobile);
 
 const mainButtonGroup = computed(() => tiptapButtonGroup.value.filter(group => group.name !== "actions"));
 const actionButtonGroup = computed(() => tiptapButtonGroup.value.find(group => group.name === "actions")!);
+
+const charCount = computed(() => editor.value?.storage.characterCount.characters() || 0);
+const charLimit = 5000;
+
+// const debouncedUpdate = useDebounceFn(({editor}) => {
+//   const html = editor.getHTML();
+//   content.value = html;
+
+// }, 750);
 
 onBeforeUnmount(() => {
   unref(editor)?.destroy();
@@ -66,6 +61,14 @@ onBeforeUnmount(() => {
               :tooltip="button.tooltip"
               :default-icon="button.icon"
               :is-mobile
+            />
+
+            <TiptapLinkSelector
+              v-else-if="button.name === 'link'"
+              :editor
+              :tooltip="button.tooltip"
+              :icon="button.icon"
+              :disabled="button.isDisabled?.()"
             />
 
             <UTooltip
@@ -129,6 +132,13 @@ onBeforeUnmount(() => {
     />
 
     <TiptapEditorContent :editor />
+
+    <div
+      class="flex justify-end px-4 py-2 text-xs"
+      :class="charCount > charLimit * 0.9 ? 'text-error' : 'text-muted'"
+    >
+      {{ charCount }} / {{ charLimit }}
+    </div>
   </div>
 </template>
 
