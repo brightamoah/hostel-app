@@ -11,7 +11,6 @@ const {
   isLoading,
   isFormValid,
 } = storeToRefs(announcementStore);
-const { resetAnnouncementState } = announcementStore;
 
 const { users, status } = useFetchUserData();
 const { hostels, rooms, status: roomStatus } = useFetchRoomData();
@@ -41,10 +40,6 @@ watch(() => announcementState.value.targetAudience, (newVal) => {
   if (newVal !== "hostel") announcementState.value.targetHostelId = undefined;
   if (newVal !== "room") announcementState.value.targetRoomId = undefined;
   if (newVal !== "user") announcementState.value.targetUserId = undefined;
-});
-
-watch(open, (newVal) => {
-  if (!newVal) resetAnnouncementState();
 });
 </script>
 

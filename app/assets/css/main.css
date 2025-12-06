@@ -102,8 +102,7 @@
   }
 
   hr {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+   @apply my-6 border-t border-accented;
   }
 
   /* Task list styling */
@@ -182,6 +181,24 @@
   mark[style] > strong {
     color: inherit;
   }
+
+  /* styling for links and <a/> tags */
+  a {
+  @apply text-primary cursor-pointer underline underline-offset-2 transition-colors duration-150;
+}
+
+a:hover {
+  @apply text-primary/80;
+}
+
+a:focus {
+  @apply outline-none ring-2 ring-primary/30 rounded-sm;
+}
+
+a:active {
+  @apply text-primary/60;
+}
+
 }
 
 /* Scrollbar */

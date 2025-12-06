@@ -89,6 +89,7 @@ function selectOption(option: (ButtonOption | Button)) {
           trailingIcon: 'size-3',
           leadingIcon: 'size-4',
         }"
+        @mousedown.prevent
       />
     </UDropdownMenu>
   </UTooltip>

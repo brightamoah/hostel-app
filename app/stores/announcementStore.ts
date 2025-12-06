@@ -1,11 +1,24 @@
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints, useStorage } from "@vueuse/core";
 import { acceptHMRUpdate, defineStore } from "pinia";
+
+const defaultState: CreateAnnouncementSchema = {
+  title: "",
+  content: "",
+  priority: "",
+  targetAudience: "",
+  targetHostelId: undefined,
+  targetRoomId: undefined,
+  targetUserId: undefined,
+};
 
 export const useAnnouncementStore = defineStore("announcementStore", () => {
   const open = ref(false);
   const isLoading = ref(false);
   const breakpoints = useBreakpoints(breakpointsTailwind);
   const isMobile = breakpoints.smaller("lg");
+  const { user } = useUserSession();
+
+  const stateKey = computed(() => `announcement-form-draft-${user.value?.id}`);
 
   const audience = ref<CreateAnnouncementSchema["targetAudience"][]>([
     "all",
@@ -23,12 +36,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
     "emergency",
   ]);
 
-  const announcementState = ref<CreateAnnouncementSchema>({
-    title: "",
-    content: "",
-    priority: "",
-    targetAudience: "",
-  });
+  const announcementState = useStorage<CreateAnnouncementSchema>(stateKey, { ...defaultState });
 
   const isFormValid = computed(() => {
     return (
@@ -41,12 +49,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
   });
 
   function resetAnnouncementState() {
-    return announcementState.value = {
-      title: "",
-      content: "",
-      priority: "",
-      targetAudience: "",
-    };
+    return announcementState.value = { ...defaultState };
   }
 
   return {

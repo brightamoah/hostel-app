@@ -2,6 +2,7 @@ import * as z from "zod";
 
 const linkSchema = z.object({
   link: z.url("Invalid URL").nonempty("Link is required"),
+  isOpen: z.boolean().default(false),
 });
 
 export type LinkSchema = z.output<typeof linkSchema>;
