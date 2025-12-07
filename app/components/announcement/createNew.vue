@@ -10,6 +10,7 @@ const {
   priority,
   isLoading,
   isFormValid,
+  isFetchingDraft,
 } = storeToRefs(announcementStore);
 
 const { users, status } = useFetchUserData();
@@ -80,7 +81,20 @@ watch(() => announcementState.value.targetAudience, (newVal) => {
     </div>
 
     <template #body>
+      <div
+        v-if="isFetchingDraft"
+        class="flex flex-col justify-center items-center py-12 text-muted"
+      >
+        <UIcon
+          name="i-lucide-loader"
+          class="mb-2 size-8 animate-spin"
+        />
+
+        <p>Restoring your draft...</p>
+      </div>
+
       <AnnouncementForm
+        v-else
         ref="formRef"
         :announcement-state
         :is-mobile
