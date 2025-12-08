@@ -52,8 +52,8 @@ const { isMobile } = storeToRefs(announcementStore);
     <UDashboardPanel
       id="announcements"
       resizable
-      :default-size="25"
-      :min-size="20"
+      :default-size="30"
+      :min-size="30"
       :max-size="30"
       :ui="{
         body: 'p-2 sm:p-0',

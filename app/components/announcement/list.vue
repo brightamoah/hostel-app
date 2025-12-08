@@ -87,9 +87,11 @@ defineShortcuts({
           from {{ announcement.postedByAdmin.user.name }}
         </p>
 
-        <p class="text-dimmed line-clamp-1">
-          {{ announcement.content }}
-        </p>
+        <div
+          v-if="announcement.content"
+          class="text-dimmed line-clamp-1"
+          v-html="announcement.content"
+        />
       </div>
     </div>
   </div>

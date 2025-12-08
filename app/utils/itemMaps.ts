@@ -50,3 +50,25 @@ export const complaintStatusColorMap: Record<Complaint["status"], ColorType> = {
   "resolved": "success",
   "rejected": "error",
 };
+
+type CharStatus = "normal" | "warning" | "error";
+
+interface CharCountInfo {
+  description: ColorType | "muted";
+  progress: ColorType;
+}
+
+export const charCountMap: Record<CharStatus, CharCountInfo> = {
+  normal: {
+    description: "muted",
+    progress: "success",
+  },
+  warning: {
+    description: "warning",
+    progress: "warning",
+  },
+  error: {
+    description: "error",
+    progress: "error",
+  },
+};

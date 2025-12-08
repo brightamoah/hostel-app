@@ -59,6 +59,8 @@ const features = ref([
     description: "Round-the-clock customer support whenever you need help.",
   },
 ]);
+
+const appConfig = useAppConfig();
 </script>
 
 <template>
@@ -80,7 +82,7 @@ const features = ref([
 
         <AppStarBg
           :star-count="1500"
-          color="rgb(168, 85, 247)"
+          :color="appConfig.ui.colors.primary"
           :size="{ min: 1, max: 6 }"
         />
       </template>

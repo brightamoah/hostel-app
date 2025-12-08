@@ -31,11 +31,7 @@ const items = ref<NavItem[]>([
     to: { name: "faq" },
     icon: "i-lucide-help-circle",
   },
-  {
-    label: "Signup",
-    to: { name: "auth-signup" },
-    icon: "i-lucide-log-out",
-  },
+
 ]);
 
 const { y } = useWindowScroll();

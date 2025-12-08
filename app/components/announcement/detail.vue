@@ -40,28 +40,6 @@ const dropdownItems: DropdownMenuItem[][] = [
     },
   ],
 ];
-
-const toast = useToast();
-
-const reply = ref("");
-const loading = ref(false);
-
-function onSubmit() {
-  loading.value = true;
-
-  setTimeout(() => {
-    reply.value = "";
-
-    toast.add({
-      title: "Email sent",
-      description: "Your email has been sent successfully",
-      icon: "i-lucide-check-circle",
-      color: "success",
-    });
-
-    loading.value = false;
-  }, 1000);
-}
 </script>
 
 <template>
@@ -156,9 +134,10 @@ function onSubmit() {
     </div>
 
     <div class="flex-1 p-4 sm:p-6 overflow-y-auto">
-      <p class="whitespace-pre-wrap">
-        {{ announcement.content }}
-      </p>
+      <p
+        class="dark:prose-invert max-w-none whitespace-pre-wrap prose"
+        v-html="announcement.content"
+      />
     </div>
 
     <!-- <div class="px-4 sm:px-6 pb-4 shrink-0">
@@ -223,7 +202,7 @@ function onSubmit() {
       </UCard>
     </div> -->
 
-    <AnnouncementCreateNew @click="onSubmit" />
+    <AnnouncementCreateNew />
   </UDashboardPanel>
 </template>
 

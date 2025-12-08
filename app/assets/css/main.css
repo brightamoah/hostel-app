@@ -82,11 +82,9 @@
     }
   }
 
-  @keyframes spinning {
-    to {
-      transform: rotate(360deg);
-    }
-  }
+  p {
+  @apply my-1 leading-6;
+}
 
   /* custom style for inline code and code block */
   code{
@@ -227,6 +225,17 @@ a:active {
   background: rgba(128, 128, 128, 0.5);
   border-radius: 3px;
 }
+
+::selection{
+  @apply bg-primary/50;
+}
+
+
+@keyframes spinning {
+    to {
+      transform: rotate(360deg);
+    }
+  }
 
 @keyframes fade-in-up {
   from {

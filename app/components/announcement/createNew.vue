@@ -13,6 +13,8 @@ const {
   isFetchingDraft,
 } = storeToRefs(announcementStore);
 
+const { createAnnouncement } = announcementStore;
+
 const { users, status } = useFetchUserData();
 const { hostels, rooms, status: roomStatus } = useFetchRoomData();
 
@@ -105,6 +107,7 @@ watch(() => announcementState.value.targetAudience, (newVal) => {
         :room-options
         :status
         :room-status
+        :create-announcement
       />
     </template>
 

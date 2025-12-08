@@ -1,4 +1,6 @@
-import { breakpointsTailwind, useBreakpoints, useDebounceFn, useStorage } from "@vueuse/core";
+import type { FormSubmitEvent } from "@nuxt/ui";
+
+import { breakpointsTailwind, useBreakpoints, useDebounceFn } from "@vueuse/core";
 import { acceptHMRUpdate, defineStore } from "pinia";
 
 const defaultState: CreateAnnouncementSchema = {
@@ -12,15 +14,18 @@ const defaultState: CreateAnnouncementSchema = {
 };
 
 export const useAnnouncementStore = defineStore("announcementStore", () => {
+  const toast = useToast();
+
   const open = ref(false);
   const isLoading = ref(false);
   const isFetchingDraft = ref(false);
 
   const breakpoints = useBreakpoints(breakpointsTailwind);
   const isMobile = breakpoints.smaller("lg");
-  // const { user } = useUserSession();
 
-  // const stateKey = computed(() => `announcement-draft-${user.value?.id}`);
+  const { user } = useUserSession();
+
+  const announcementDataKey = computed(() => `announcement-data-${user.value?.id}`);
 
   const audience = ref<CreateAnnouncementSchema["targetAudience"][]>([
     "all",
@@ -38,18 +43,31 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
     "emergency",
   ]);
 
-  // const announcementState = useStorage<CreateAnnouncementSchema>(stateKey, { ...defaultState });
-
   const announcementState = ref<CreateAnnouncementSchema>({ ...defaultState });
 
   const isFormValid = computed(() => {
-    return (
-      announcementState.value.title.trim() !== ""
-      && announcementState.value.content.trim() !== ""
-      && announcementState.value.priority.trim() !== ""
-      && announcementState.value.targetAudience.trim() !== ""
+    const { title, content, priority, targetAudience, targetUserId, targetHostelId, targetRoomId } = announcementState.value;
 
-    );
+    const hasBasicFields = title.trim() !== "" && content.trim() !== "" && priority.trim() !== "" && targetAudience.trim() !== "";
+
+    const hasValidTarget = (() => {
+      switch (targetAudience) {
+        case "user":
+          return targetUserId !== undefined;
+        case "hostel":
+          return targetHostelId !== undefined;
+        case "room":
+          return targetRoomId !== undefined;
+        case "all":
+        case "students":
+        case "admins":
+          return true;
+        default:
+          return false;
+      }
+    })();
+
+    return hasBasicFields && hasValidTarget;
   });
 
   const loadDraft = async () => {
@@ -82,11 +100,51 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
     catch (error) {
       console.error("Failed to save draft:", error);
     }
-  }, 2000);
+  }, 5000);
 
   watch(announcementState, (newState) => {
     saveDraft(newState);
   }, { deep: true });
+
+  const createAnnouncement = async (payload: FormSubmitEvent<CreateAnnouncementSchema>) => {
+    if (!isFormValid) return;
+
+    isLoading.value = true;
+
+    try {
+      const response = await $fetch("/api/announcement/create", {
+        method: "POST",
+        body: payload.data,
+      });
+
+      toast.add({
+        title: "Announcement Published Successfully",
+        description: response.message,
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+
+      await refreshNuxtData(announcementDataKey.value);
+
+      await resetAnnouncementState();
+
+      open.value = false;
+    }
+    catch (error) {
+      const message = (error as any)?.data?.message;
+
+      toast.add({
+        title: "Failed to publish the announcement",
+        description: message,
+        color: "error",
+        icon: "i-lucide-alert-circle",
+        duration: 8000,
+      });
+    }
+    finally {
+      isLoading.value = false;
+    }
+  };
 
   async function resetAnnouncementState() {
     announcementState.value = { ...defaultState };
@@ -110,6 +168,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
     isFetchingDraft,
     loadDraft,
     saveDraft,
+    createAnnouncement,
     resetAnnouncementState,
   };
 });
