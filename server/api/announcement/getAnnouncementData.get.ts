@@ -21,6 +21,12 @@ export default defineEventHandler(async (event) => {
 
     const announcements = await getAllAnnouncementsForAdmin(adminMakingRequest);
 
+    if (!announcements?.length) return [];
+
+    for (let i = 0; i < announcements.length; i++) {
+      announcements[i].content = sanitizeHtmlContent(announcements[i].content);
+    }
+
     return {
       announcements,
     };

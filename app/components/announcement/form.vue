@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { FormSubmitEvent } from "@nuxt/ui";
+
 const {
   announcementState,
   isMobile,
@@ -19,6 +21,7 @@ const {
   userOptions: FilterOption[];
   hostelOptions: FilterOption[];
   roomOptions: FilterOption[];
+  createAnnouncement: (payload: FormSubmitEvent<CreateAnnouncementSchema>) => Promise<void>;
 }>();
 
 const announcementFormState = computed(() => announcementState);
@@ -39,7 +42,7 @@ defineExpose({
     ref="formRef"
     :state="announcementFormState"
     :schema="createAnnouncementSchema"
-    @submit.prevent="console.log($event.data)"
+    @submit.prevent="createAnnouncement"
   >
     <UFormField
       required
@@ -142,22 +145,6 @@ defineExpose({
         placeholder="Search for a room..."
         searchable
         value-key="value"
-        class="w-full"
-      />
-    </UFormField>
-
-    <UFormField
-      required
-      label="Content"
-      name="content"
-      class="mb-4 px-4 w-full"
-    >
-      <UTextarea
-        v-model="announcementFormState.content"
-        required
-        autoresize
-        placeholder="Compose Announcement Content..."
-        :rows="4"
         class="w-full"
       />
     </UFormField>

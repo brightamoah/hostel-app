@@ -1,15 +1,16 @@
 <template>
-  <div>
-    <UApp :toaster="{ position: 'bottom-right', duration: 5000 }">
-      <NuxtRouteAnnouncer />
+  <UApp :toaster="{ position: 'bottom-right', duration: 5000 }">
+    <NuxtRouteAnnouncer />
 
-      <NuxtLoadingIndicator />
+    <NuxtLoadingIndicator
+      color="var(--ui-primary)"
+      :height="2"
+    />
 
-      <NuxtLayout>
-        <NuxtPage />
-      </NuxtLayout>
-    </UApp>
-  </div>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </UApp>
 </template>
 
 <style scoped>

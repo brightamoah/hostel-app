@@ -1,7 +1,7 @@
 export default defineAppConfig({
   ui: {
     colors: {
-      primary: "rose",
+      primary: "cyan",
       neutral: "neutral",
     },
     icons: {
@@ -23,5 +23,9 @@ export default defineAppConfig({
     email: "kingshostelmgt@gmail.com",
     phone: "+233 54 968 4848",
     picture: "/images/hostel.jpg",
+  },
+  theme: {
+    radius: 0.25,
+    blackAsPrimary: false,
   },
 });

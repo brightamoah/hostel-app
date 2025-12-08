@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useDebounceFn, useStorage } from "@vueuse/core";
-
 import { TiptapExtensions } from "./extensions";
 
 const announcementStore = useAnnouncementStore();
@@ -12,7 +10,7 @@ const editor = useEditor({
   editorProps: {
     attributes: {
       class:
-        "bg-muted dark:prose-invert p-5 rounded-b-xl focus:outline-none w-full max-w-full min-h-80 max-h-160 overflow-y-auto prose-headings:font-newsreader font-normal text-default sm:prose-base prose prose-sm prose-neutral",
+        "bg-muted dark:prose-invert p-5 rounded-b-xl focus:outline-none w-full max-w-full min-h-60 max-h-160 overflow-y-auto prose-headings:font-newsreader font-normal text-default sm:prose-base prose prose-sm prose-neutral",
     },
   },
 
@@ -27,13 +25,15 @@ const mainButtonGroup = computed(() => tiptapButtonGroup.value.filter(group => g
 const actionButtonGroup = computed(() => tiptapButtonGroup.value.find(group => group.name === "actions")!);
 
 const charCount = computed(() => editor.value?.storage.characterCount.characters() || 0);
+
 const charLimit = 5000;
 
-// const debouncedUpdate = useDebounceFn(({editor}) => {
-//   const html = editor.getHTML();
-//   content.value = html;
-
-// }, 750);
+const characterStatus = computed(() => {
+  const percent = (charCount.value / charLimit) * 100;
+  if (percent >= 100) return "error";
+  if (percent >= 90) return "warning";
+  return "normal";
+});
 
 onBeforeUnmount(() => {
   unref(editor)?.destroy();
@@ -133,11 +133,23 @@ onBeforeUnmount(() => {
 
     <TiptapEditorContent :editor />
 
-    <div
-      class="flex justify-end px-4 py-2 text-xs"
-      :class="charCount > charLimit * 0.9 ? 'text-error' : 'text-muted'"
-    >
-      {{ charCount }} / {{ charLimit }}
+    <div class="px-3 py-2 w-50">
+      <div class="flex justify-between items-center">
+        <UProgress
+          v-model="charCount"
+          :max="charLimit"
+          :size="isMobile ? 'sm' : 'md'"
+          :color="charCountMap[characterStatus].progress"
+          class="flex-1"
+        />
+
+        <p
+          class="ml-3 text-xs whitespace-nowrap"
+          :class="`text-${charCountMap[characterStatus].description}`"
+        >
+          {{ charCount }} / {{ charLimit }}
+        </p>
+      </div>
     </div>
   </div>
 </template>

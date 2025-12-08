@@ -1,14 +1,14 @@
 export default defineEventHandler(async (event) => {
-  const { user } = await getUserSession(event);
-
-  if (!user) throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
+  const { user } = await requireUserSession(event, {
+    message: "Unauthorized, please log in to access announcement drafts.",
+  });
 
   const kv = hubKV();
 
   const KEY = `announcement-draft-${user.id}`;
 
   if (event.method === "GET") {
-    const draft = await kv.get<CreateAnnouncementSchema>(KEY);
+    const draft = await kv.get(KEY);
     return draft || null;
   }
 

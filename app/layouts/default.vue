@@ -16,6 +16,8 @@ await refreshSession();
     </UMain>
 
     <AppStarsEffect />
+
+    <AppFooter />
   </UContainer>
 </template>
 
