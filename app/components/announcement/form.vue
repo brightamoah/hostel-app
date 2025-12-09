@@ -1,18 +1,8 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends object">
 import type { FormSubmitEvent } from "@nuxt/ui";
+import type { z } from "zod";
 
-const {
-  announcementState,
-  isMobile,
-  status,
-  roomStatus,
-  audience,
-  priority,
-  userOptions,
-  hostelOptions,
-  roomOptions,
-} = defineProps<{
-  announcementState: CreateAnnouncementSchema;
+interface Props {
   isMobile: boolean;
   status: Status;
   roomStatus: Status;
@@ -21,16 +11,36 @@ const {
   userOptions: FilterOption[];
   hostelOptions: FilterOption[];
   roomOptions: FilterOption[];
-  createAnnouncement: (payload: FormSubmitEvent<CreateAnnouncementSchema>) => Promise<void>;
+  schema: z.ZodType<T>;
+}
+
+const {
+  isMobile,
+  status,
+  roomStatus,
+  audience,
+  priority,
+  userOptions,
+  hostelOptions,
+  roomOptions,
+  schema,
+} = defineProps<Props>();
+
+const emit = defineEmits<{
+  submit: [payload: FormSubmitEvent<T>];
 }>();
 
-const announcementFormState = computed(() => announcementState);
+const announcementState = defineModel<CreateAnnouncementSchema | EditAnnouncementSchema["data"]>("announcement", { required: true });
 
 const form = useTemplateRef("formRef");
 
-const statusValue = computed(() => unref(status));
+const isPending = (s: Status) => unref(s) === "pending";
 
-const roomStatusValue = computed(() => unref(roomStatus));
+watch(() => announcementState.value.targetAudience, (newVal) => {
+  if (newVal !== "hostel") announcementState.value.targetHostelId = undefined;
+  if (newVal !== "room") announcementState.value.targetRoomId = undefined;
+  if (newVal !== "user") announcementState.value.targetUserId = undefined;
+});
 
 defineExpose({
   form,
@@ -40,9 +50,9 @@ defineExpose({
 <template>
   <UForm
     ref="formRef"
-    :state="announcementFormState"
-    :schema="createAnnouncementSchema"
-    @submit.prevent="createAnnouncement"
+    :schema
+    :state="announcementState"
+    @submit.prevent="(e) => emit('submit', e)"
   >
     <UFormField
       required
@@ -51,7 +61,7 @@ defineExpose({
       class="mb-4 px-4 w-full"
     >
       <UInput
-        v-model="announcementFormState.title"
+        v-model="announcementState.title"
         :size="isMobile ? 'lg' : 'xl'"
         placeholder="Enter Announcement Title"
         class="w-full"
@@ -66,7 +76,7 @@ defineExpose({
         class="w-full"
       >
         <USelectMenu
-          v-model="announcementFormState.targetAudience"
+          v-model="announcementState.targetAudience"
           :items="audience"
           :size="isMobile ? 'lg' : 'xl'"
           value-key="value"
@@ -82,7 +92,7 @@ defineExpose({
         class="w-full"
       >
         <USelectMenu
-          v-model="announcementFormState.priority"
+          v-model="announcementState.priority"
           :items="priority"
           :size="isMobile ? 'lg' : 'xl'"
           value-key="value"
@@ -93,16 +103,16 @@ defineExpose({
     </div>
 
     <UFormField
-      v-if="announcementFormState.targetAudience === 'user'"
+      v-if="announcementState.targetAudience === 'user'"
       required
       label="Select User"
       name="targetUserId"
       class="mb-4 px-4 w-full"
     >
       <USelectMenu
-        v-model="announcementFormState.targetUserId"
+        v-model="announcementState.targetUserId"
         :items="userOptions"
-        :loading="statusValue === 'pending'"
+        :loading="isPending(status)"
         :size="isMobile ? 'lg' : 'xl'"
         placeholder="Search for a user..."
         searchable
@@ -112,16 +122,16 @@ defineExpose({
     </UFormField>
 
     <UFormField
-      v-if="announcementFormState.targetAudience === 'hostel'"
+      v-if="announcementState.targetAudience === 'hostel'"
       required
       label="Select Hostel"
       name="targetHostelId"
       class="mb-4 px-4 w-full"
     >
       <USelectMenu
-        v-model="announcementFormState.targetHostelId"
+        v-model="announcementState.targetHostelId"
         :items="hostelOptions"
-        :loading="roomStatusValue === 'pending'"
+        :loading="isPending(roomStatus)"
         :size="isMobile ? 'lg' : 'xl'"
         placeholder="Search for a hostel..."
         searchable
@@ -131,16 +141,16 @@ defineExpose({
     </UFormField>
 
     <UFormField
-      v-if="announcementFormState.targetAudience === 'room'"
+      v-if="announcementState.targetAudience === 'room'"
       required
       label="Select Room"
       name="targetRoomId"
       class="mb-4 px-4 w-full"
     >
       <USelectMenu
-        v-model="announcementFormState.targetRoomId"
+        v-model="announcementState.targetRoomId"
         :items="roomOptions"
-        :loading="roomStatusValue === 'pending'"
+        :loading="isPending(roomStatus)"
         :size="isMobile ? 'lg' : 'xl'"
         placeholder="Search for a room..."
         searchable
@@ -157,7 +167,7 @@ defineExpose({
     >
       <ClientOnly>
         <TiptapEditorMain
-          v-model:content="announcementFormState.content"
+          v-model:content="announcementState.content"
           class="w-full"
         />
       </ClientOnly>

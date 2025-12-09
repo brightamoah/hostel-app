@@ -70,7 +70,7 @@ defineShortcuts({
 
             <UChip
               v-if="!announcement.isRead"
-              color="error"
+              color="primary"
             />
           </div>
 

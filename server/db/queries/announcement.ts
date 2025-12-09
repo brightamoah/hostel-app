@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 
 import { announcement } from "../schema";
 
@@ -39,6 +39,34 @@ export async function announcementQueries() {
       .values(data)
       .returning();
     return newAnnouncement;
+  };
+
+  const editAnnouncement = async (announcementId: number, admin: Admin, data: Partial<AnnouncementInsert>, resetReadStatus = false) => {
+    const valuesToUpdate = {
+      ...data,
+      updatedAt: new Date(),
+    };
+
+    if (resetReadStatus) valuesToUpdate.isRead = false;
+
+    if (admin.accessLevel === "super") {
+      const [updatedAnnouncement] = await db
+        .update(announcement)
+        .set(valuesToUpdate)
+        .where(eq(announcement.id, announcementId))
+        .returning();
+      return updatedAnnouncement;
+    }
+
+    const [updatedAnnouncement] = await db
+      .update(announcement)
+      .set(valuesToUpdate)
+      .where(and(
+        eq(announcement.id, announcementId),
+        eq(announcement.postedBy, admin.id),
+      ))
+      .returning();
+    return updatedAnnouncement;
   };
 
   const getAllAnnouncementsForAdmin = async (admin: Admin) => {
@@ -86,6 +114,7 @@ export async function announcementQueries() {
     getAllAnnouncementsForAdmin,
     getAnnouncementById,
     updateAnnouncementReadStatus,
+    editAnnouncement,
   };
 }
 

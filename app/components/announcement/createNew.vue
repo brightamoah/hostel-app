@@ -38,12 +38,6 @@ const roomOptions = computed(() => {
     value: room.id,
   }));
 });
-
-watch(() => announcementState.value.targetAudience, (newVal) => {
-  if (newVal !== "hostel") announcementState.value.targetHostelId = undefined;
-  if (newVal !== "room") announcementState.value.targetRoomId = undefined;
-  if (newVal !== "user") announcementState.value.targetUserId = undefined;
-});
 </script>
 
 <template>
@@ -51,7 +45,6 @@ watch(() => announcementState.value.targetAudience, (newVal) => {
     v-model:open="open"
     title="Create New Announcement"
     description="Fill in the details below to create a new announcement."
-    arrow
     :dismissible="false"
     :ui="{
       footer: 'justify-end',
@@ -98,7 +91,8 @@ watch(() => announcementState.value.targetAudience, (newVal) => {
       <AnnouncementForm
         v-else
         ref="formRef"
-        :announcement-state
+        v-model:announcement="announcementState"
+        :schema="createAnnouncementSchema"
         :is-mobile
         :audience
         :priority
@@ -107,7 +101,7 @@ watch(() => announcementState.value.targetAudience, (newVal) => {
         :room-options
         :status
         :room-status
-        :create-announcement
+        @submit="createAnnouncement"
       />
     </template>
 

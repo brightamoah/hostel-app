@@ -86,6 +86,19 @@ export function useAnnouncementData() {
     if (newAnnouncement && !newAnnouncement.isRead) updateReadStatus(newAnnouncement.id, { action: "read" });
   });
 
+  /**
+   * Get an announcement from the local cache by ID.
+   *
+   * Synchronously checks the in-memory `announcements` and returns the matching
+   * announcement or `undefined`. No network I/O is performed.
+   *
+   * @param announcementId - ID of the announcement to find.
+   * @returns The Announcement if found, otherwise `undefined`.
+   */
+  const getAnnouncementFromCache = (announcementId: number): Announcement | undefined => {
+    return announcements.value.find(a => a.id === announcementId);
+  };
+
   return {
     data,
     status,
@@ -96,5 +109,6 @@ export function useAnnouncementData() {
     unreadAnnouncementCount,
     refresh,
     updateReadStatus,
+    getAnnouncementFromCache,
   };
 }

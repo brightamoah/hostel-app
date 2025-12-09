@@ -45,6 +45,39 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
 
   const announcementState = ref<CreateAnnouncementSchema>({ ...defaultState });
 
+  const editingId = ref<number | null>(null);
+
+  const shouldResetReadStatus = ref(false);
+
+  const editAnnouncementState = ref<EditAnnouncementSchema["data"]>({
+    title: "",
+    content: "",
+    priority: "low",
+    targetAudience: "all",
+    targetHostelId: undefined,
+    targetRoomId: undefined,
+    targetUserId: undefined,
+  });
+
+  const originalEditState = ref<EditAnnouncementSchema["data"] | null>(null);
+
+  const initEditSession = (announcement: Announcement) => {
+    editingId.value = announcement.id;
+
+    const mappedState: EditAnnouncementSchema["data"] = {
+      title: announcement.title,
+      content: announcement.content,
+      priority: announcement.priority,
+      targetAudience: announcement.targetAudience,
+      targetHostelId: announcement.targetHostel?.id,
+      targetRoomId: announcement.targetRoom?.id,
+      targetUserId: announcement.targetUser?.id,
+    };
+
+    editAnnouncementState.value = structuredClone(mappedState);
+    originalEditState.value = structuredClone(mappedState);
+  };
+
   const isFormValid = computed(() => {
     const { title, content, priority, targetAudience, targetUserId, targetHostelId, targetRoomId } = announcementState.value;
 
@@ -68,6 +101,40 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
     })();
 
     return hasBasicFields && hasValidTarget;
+  });
+
+  const isEditFormValid = computed(() => {
+    const { title, content, priority, targetAudience, targetUserId, targetHostelId, targetRoomId } = editAnnouncementState.value;
+
+    const hasBasicFields = (title?.trim() ?? "") !== "" && (content?.trim() ?? "") !== "" && (priority?.trim() ?? "") !== "" && (targetAudience?.trim() ?? "") !== "";
+
+    const hasValidTarget = (() => {
+      switch (targetAudience) {
+        case "user":
+          return targetUserId !== undefined;
+        case "hostel":
+          return targetHostelId !== undefined;
+        case "room":
+          return targetRoomId !== undefined;
+        case "all":
+        case "students":
+        case "admins":
+          return true;
+        default:
+          return false;
+      }
+    })();
+
+    return hasBasicFields && hasValidTarget;
+  });
+
+  /**
+   * Computed: Check if there are actual changes
+   */
+  const hasChanges = computed(() => {
+    if (!originalEditState.value) return false;
+
+    return JSON.stringify(editAnnouncementState.value) !== JSON.stringify(originalEditState.value);
   });
 
   const loadDraft = async () => {
@@ -117,14 +184,14 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
         body: payload.data,
       });
 
+      await refreshNuxtData(announcementDataKey.value);
+
       toast.add({
         title: "Announcement Published Successfully",
         description: response.message,
         color: "success",
         icon: "i-lucide-check-circle",
       });
-
-      await refreshNuxtData(announcementDataKey.value);
 
       await resetAnnouncementState();
 
@@ -140,6 +207,73 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
         icon: "i-lucide-alert-circle",
         duration: 8000,
       });
+    }
+    finally {
+      isLoading.value = false;
+    }
+  };
+
+  const editAnnouncement = async () => {
+    if (!editingId.value) return;
+    if (!isEditFormValid) return;
+    if (!hasChanges.value) {
+      toast.add({
+        title: "No changes detected",
+        description: "There are no changes to update for this announcement.",
+        color: "warning",
+        icon: "i-lucide-alert-triangle",
+      });
+      return;
+    }
+
+    const changes: Partial<EditAnnouncementSchema["data"]> = {};
+    const current = editAnnouncementState.value;
+    const original = originalEditState.value!;
+
+    (Object.keys(current) as Array<keyof typeof current>).forEach((key) => {
+      if (current[key] !== original?.[key]) {
+        // @ts-expect-error - Typescript gets strict about partial assignments, but this is safe
+        changes[key] = current[key];
+      }
+    });
+
+    const payload = {
+      announcementId: editingId.value,
+      data: changes,
+      resetReadStatus: shouldResetReadStatus.value,
+    } satisfies EditAnnouncementSchema;
+
+    isLoading.value = true;
+
+    try {
+      const response = await $fetch(`/api/announcement/edit/${payload.announcementId}`, {
+        method: "PATCH",
+        body: payload,
+      });
+
+      await refreshNuxtData(announcementDataKey.value);
+
+      toast.add({
+        title: "Update Successful",
+        description: response.message,
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+
+      return true;
+    }
+    catch (error) {
+      const message = (error as any)?.data?.message;
+
+      toast.add({
+        title: `Failed to update announcement with id: ${payload.announcementId}`,
+        description: message,
+        color: "error",
+        icon: "i-lucide-alert-circle",
+        duration: 8000,
+      });
+
+      return false;
     }
     finally {
       isLoading.value = false;
@@ -162,13 +296,19 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
     isLoading,
     isMobile,
     announcementState,
+    editAnnouncementState,
     audience,
     priority,
     isFormValid,
+    isEditFormValid,
     isFetchingDraft,
+    hasChanges,
+    shouldResetReadStatus,
     loadDraft,
     saveDraft,
     createAnnouncement,
+    editAnnouncement,
+    initEditSession,
     resetAnnouncementState,
   };
 });

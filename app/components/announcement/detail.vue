@@ -1,45 +1,34 @@
 <script setup lang="ts">
-import type { DropdownMenuItem } from "@nuxt/ui";
-
 import { breakpointsTailwind, useBreakpoints, useDateFormat } from "@vueuse/core";
 
 const { announcement } = defineProps<{
   announcement: Announcement;
 }>();
 
-const emits = defineEmits<{ close: [boolean] }>();
+const emit = defineEmits<{ close: [boolean] }>();
+
+const overlay = useOverlay();
+const EditAnnouncementModal = defineAsyncComponent(() => import("./edit.vue"));
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
 const { updateReadStatus } = useAnnouncementData();
 
-const dropdownItems: DropdownMenuItem[][] = [
-  [
-    {
-      label: "Mark as unread",
-      icon: "i-lucide-message-square-dot",
-      onSelect: () => {
-        updateReadStatus(announcement.id, { action: "unread" });
-        emits("close", false);
-      },
+function openEditModal(announcementId: number) {
+  const modal = overlay.create(EditAnnouncementModal);
+  const close = modal.close;
+
+  modal.open({
+    announcementId,
+    "open": true,
+    "onUpdate:open": (val: boolean) => {
+      if (!val) {
+        close();
+      }
     },
-    {
-      label: "Mark as important",
-      icon: "i-lucide-triangle-alert",
-    },
-  ],
-  [
-    {
-      label: "Star thread",
-      icon: "i-lucide-star",
-    },
-    {
-      label: "Mute thread",
-      icon: "i-lucide-circle-pause",
-    },
-  ],
-];
+  });
+}
 </script>
 
 <template>
@@ -54,12 +43,12 @@ const dropdownItems: DropdownMenuItem[][] = [
           color="neutral"
           variant="ghost"
           class="-ms-1.5 cursor-pointer"
-          @click="emits('close', false)"
+          @click="emit('close', false)"
         />
       </template>
 
       <template #title>
-        <div class="flex gap-2 text-primary text-lg truncate">
+        <div class="flex gap-2 text-lg truncate">
           {{ announcement.title }}
 
           <UBadge
@@ -72,37 +61,25 @@ const dropdownItems: DropdownMenuItem[][] = [
       </template>
 
       <template #right>
-        <UTooltip text="Archive">
+        <UTooltip text="Edit Announcement">
           <UButton
-            icon="i-lucide-inbox"
+            icon="i-lucide-notebook-pen"
             color="neutral"
             variant="ghost"
             class="cursor-pointer"
+            @click="openEditModal(announcement.id)"
           />
         </UTooltip>
 
-        <UTooltip text="Reply">
+        <UTooltip text="Mark as unread">
           <UButton
-            icon="i-lucide-reply"
+            icon="i-lucide-message-square-dot"
             color="neutral"
             variant="ghost"
             class="cursor-pointer"
+            @click="updateReadStatus(announcement.id, { action: 'unread' }); emit('close', false)"
           />
         </UTooltip>
-
-        <UDropdownMenu
-          :items="dropdownItems"
-          :ui="{
-            item: 'cursor-pointer',
-          }"
-        >
-          <UButton
-            icon="i-lucide-ellipsis-vertical"
-            color="neutral"
-            variant="ghost"
-            class="cursor-pointer"
-          />
-        </UDropdownMenu>
       </template>
     </UDashboardNavbar>
 
