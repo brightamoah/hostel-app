@@ -30,7 +30,7 @@
   --font-newsreader: "Newsreader", serif;
   --font-geist: "Geist", sans-serif;
   --font-mono: "Geist Mono", sans-serif;
-  --font-code: "Fira Code", "JetBrains Mono", monospace
+  --font-code: "Fira Code", "JetBrains Mono", monospace;
 }
 
 @layer components {
@@ -83,24 +83,24 @@
   }
 
   p {
-  @apply my-1 leading-6;
-}
+    @apply my-1 leading-6;
+  }
 
   /* custom style for inline code and code block */
-  code{
+  code {
     @apply text-toned px-1 py-0.5 rounded-md bg-accented font-code whitespace-nowrap text-sm;
   }
 
-  pre{
+  pre {
     @apply bg-accented text-toned font-code shadow-sm rounded-md overflow-x-auto text-sm;
   }
 
-  pre code{
+  pre code {
     @apply bg-transparent! text-toned font-code p-1 block whitespace-pre! leading-6!;
   }
 
   hr {
-   @apply my-6 border-t border-accented;
+    @apply my-6 border-t border-accented;
   }
 
   /* Task list styling */
@@ -145,7 +145,7 @@
     @apply my-0 pl-0;
   }
 
-   ul li p {
+  ul li p {
     @apply my-0;
   }
 
@@ -158,7 +158,7 @@
     @apply my-0 pl-0;
   }
 
-   ol li p {
+  ol li p {
     @apply my-0;
   }
 
@@ -182,21 +182,20 @@
 
   /* styling for links and <a/> tags */
   a {
-  @apply text-primary cursor-pointer underline underline-offset-2 transition-colors duration-150;
-}
+    @apply text-primary cursor-pointer underline underline-offset-2 transition-colors duration-150;
+  }
 
-a:hover {
-  @apply text-primary/80;
-}
+  a:hover {
+    @apply text-primary/80;
+  }
 
-a:focus {
-  @apply outline-none ring-2 ring-primary/30 rounded-sm;
-}
+  a:focus {
+    @apply outline-none ring-2 ring-primary/30 rounded-sm;
+  }
 
-a:active {
-  @apply text-primary/60;
-}
-
+  a:active {
+    @apply text-primary/60;
+  }
 }
 
 /* Scrollbar */
@@ -226,16 +225,15 @@ a:active {
   border-radius: 3px;
 }
 
-::selection{
+::selection {
   @apply bg-primary/50;
 }
 
-
 @keyframes spinning {
-    to {
-      transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
   }
+}
 
 @keyframes fade-in-up {
   from {

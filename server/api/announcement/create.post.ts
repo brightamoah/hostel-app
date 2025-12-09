@@ -1,5 +1,4 @@
 import { announcementQueries } from "~~/server/db/queries";
-import sanitizeHtml from "sanitize-html";
 
 export default defineEventHandler(async (event) => {
   const { adminData } = await adminSessionCheck(event);
@@ -20,14 +19,7 @@ export default defineEventHandler(async (event) => {
 
     const { content, priority, targetAudience, title, targetHostelId, targetRoomId, targetUserId } = body.data;
 
-    const cleanContent = sanitizeHtml(content, {
-      allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"]),
-      allowedAttributes: {
-        ...sanitizeHtml.defaults.allowedAttributes,
-        "img": ["src", "srcset", "alt", "title", "width", "height", "loading"],
-        "*": ["style", "class"],
-      },
-    });
+    const cleanContent = sanitizeHtmlContent(content);
 
     if (priority === "" || targetAudience === "") {
       throw createError({
@@ -49,7 +41,7 @@ export default defineEventHandler(async (event) => {
 
     return {
       success: true,
-      message: "Announcement created successfully. Your announcement has been posted and will be visible to the target audience shortly.",
+      message: "Your announcement has been posted and will be visible to the target audience shortly.",
       data: newAnnouncement,
     };
   }

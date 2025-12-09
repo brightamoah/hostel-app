@@ -357,6 +357,32 @@ const readStatusSchema = z.object({
 
 export type ReadStatusSchema = z.output<typeof readStatusSchema>;
 
+const editAnnouncementData = createAnnouncementSchema.partial().omit({ priority: true, targetAudience: true });
+
+const editAnnouncementSchema = z.object({
+  announcementId: z.number().min(1, "Invalid Announcement ID"),
+  data: editAnnouncementData.extend({
+    priority: z.enum([
+      "low",
+      "medium",
+      "high",
+      "emergency",
+    ], "Priority is required").optional(),
+
+    targetAudience: z.enum([
+      "all",
+      "students",
+      "admins",
+      "hostel",
+      "room",
+      "user",
+    ], "Target Audience is required").optional(),
+  }),
+  resetReadStatus: z.boolean().optional().default(false),
+});
+
+export type EditAnnouncementSchema = z.output<typeof editAnnouncementSchema>;
+
 export {
   addAdminSchema,
   approveDenySchema,
@@ -364,6 +390,7 @@ export {
   complaintStatusResponseSchema,
   confirmPasswordSchema,
   deleteItemSchema,
+  editAnnouncementSchema,
   editRoomSchema,
   emailSchema,
   emailVerificationSchema,

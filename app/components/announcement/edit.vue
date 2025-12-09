@@ -1,0 +1,128 @@
+<script setup lang="ts">
+const { announcementId } = defineProps<{ announcementId: number }>();
+
+const { getAnnouncementFromCache } = useAnnouncementData();
+const announcementStore = useAnnouncementStore();
+const {
+  isLoading,
+  isEditFormValid,
+  audience,
+  priority,
+  isMobile,
+  editAnnouncementState,
+  shouldResetReadStatus,
+} = storeToRefs(announcementStore);
+const { editAnnouncement, initEditSession } = announcementStore;
+
+const { users, status } = useFetchUserData();
+const { hostels, rooms, status: roomStatus } = useFetchRoomData();
+
+const userOptions = computed(() => {
+  return users.value.map(user => ({
+    label: `${user.name} (${user.email})`,
+    value: user.id,
+  }));
+});
+
+const hostelOptions = computed(() => {
+  return hostels.value.map(hostel => ({
+    label: hostel.name,
+    value: hostel.id,
+  }));
+});
+
+const roomOptions = computed(() => {
+  return rooms.value.map(room => ({
+    label: room.roomNumber,
+    value: room.id,
+  }));
+});
+
+const isOpen = defineModel<boolean>("open", { required: true });
+const announcementFormRef = useTemplateRef("formRef");
+
+const data = getAnnouncementFromCache(announcementId);
+
+if (data) initEditSession(data!);
+
+async function handleSubmit() {
+  const success = await editAnnouncement();
+
+  if (success) isOpen.value = false;
+}
+
+function handleFormError(event: any) {
+  console.error("Form validation failed:", event);
+}
+</script>
+
+<template>
+  <UModal
+    v-model:open="isOpen"
+    :title="`Edit Announcement with ID: ${announcementId}`"
+    description="Modify the details of the announcement below"
+    :dismissible="false"
+    :ui="{
+      footer: 'justify-end',
+      content: 'max-w-5xl  rounded-lg shadow-lg ring ring-default overflow-hidden',
+      title: 'font-newsreader text-xl font-semibold',
+      close: 'cursor-pointer',
+    }"
+  >
+    <template #body>
+      <AnnouncementForm
+        ref="formRef"
+        v-model:announcement="editAnnouncementState"
+        :schema="editAnnouncementSchema.shape.data"
+        :is-mobile
+        :audience
+        :priority
+        :user-options
+        :hostel-options
+        :room-options
+        :status
+        :room-status
+        @submit="handleSubmit"
+        @error="handleFormError"
+      />
+    </template>
+
+    <template #footer="{ close }">
+      <div class="flex justify-between items-center w-full">
+        <UCheckbox
+          v-model="shouldResetReadStatus"
+          label="Mark as unread (Notify users)"
+          :ui="{
+            root: 'cursor-pointer',
+            label: 'cursor-pointer',
+            wrapper: 'cursor-pointer',
+          }"
+        />
+
+        <div class="flex gap-2 5">
+          <UButton
+            label="Cancel"
+            color="error"
+            variant="outline"
+            class="cursor-pointer"
+            @click="close"
+          />
+
+          <UButton
+            color="primary"
+            icon="i-lucide-send"
+            class="cursor-pointer"
+            :label=" isLoading ? 'Submitting...' : 'Update Announcement'"
+            :loading="isLoading"
+            :disabled="!isEditFormValid"
+            @click="announcementFormRef?.form?.submit()"
+          />
+        </div>
+      </div>
+    </template>
+  </UModal>
+</template>
+
+<style scoped>
+
+</style>
