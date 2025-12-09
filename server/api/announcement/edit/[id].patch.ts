@@ -4,6 +4,8 @@ export default defineEventHandler(async (event) => {
   const { adminData } = await adminSessionCheck(event);
 
   try {
+    const idFromParams = Number(event.context.params?.id);
+
     const body = await readValidatedBody(event, body => editAnnouncementSchema.safeParse(body));
 
     if (!body.success) {
@@ -16,6 +18,13 @@ export default defineEventHandler(async (event) => {
     }
 
     const { announcementId, data, resetReadStatus } = body.data;
+
+    if (announcementId !== idFromParams) {
+      throw createError({
+        statusCode: 400,
+        message: "Announcement ID in the URL does not match the ID in the request body.",
+      });
+    }
 
     if (data.content) {
       data.content = sanitizeHtmlContent(data.content);

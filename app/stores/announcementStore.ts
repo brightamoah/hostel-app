@@ -1,6 +1,7 @@
 import type { FormSubmitEvent } from "@nuxt/ui";
 
 import { breakpointsTailwind, useBreakpoints, useDebounceFn } from "@vueuse/core";
+// import { isDeepStrictEqual } from "node:util";
 import { acceptHMRUpdate, defineStore } from "pinia";
 
 const defaultState: CreateAnnouncementSchema = {
@@ -137,6 +138,10 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
     return JSON.stringify(editAnnouncementState.value) !== JSON.stringify(originalEditState.value);
   });
 
+  // const isSame = isDeepStrictEqual(editAnnouncementState.value, originalEditState.value);
+
+  // console.log("isSame:", isSame);
+
   const loadDraft = async () => {
     isFetchingDraft.value = true;
 
@@ -215,7 +220,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
 
   const editAnnouncement = async () => {
     if (!editingId.value) return;
-    if (!isEditFormValid) return;
+    if (!isEditFormValid.value) return;
     if (!hasChanges.value) {
       toast.add({
         title: "No changes detected",
@@ -259,6 +264,9 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
         color: "success",
         icon: "i-lucide-check-circle",
       });
+
+      originalEditState.value = null;
+      editingId.value = null;
 
       return true;
     }

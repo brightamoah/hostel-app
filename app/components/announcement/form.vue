@@ -32,7 +32,7 @@ const emit = defineEmits<{
 
 const announcementState = defineModel<CreateAnnouncementSchema | EditAnnouncementSchema["data"]>("announcement", { required: true });
 
-const form = useTemplateRef("formRef");
+const form = useTemplateRef("announcementForm");
 
 const isPending = (s: Status) => unref(s) === "pending";
 
@@ -49,7 +49,7 @@ defineExpose({
 
 <template>
   <UForm
-    ref="formRef"
+    ref="announcementForm"
     :schema
     :state="announcementState"
     @submit.prevent="(e) => emit('submit', e)"

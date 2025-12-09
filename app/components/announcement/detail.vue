@@ -15,6 +15,11 @@ const isMobile = breakpoints.smaller("lg");
 
 const { updateReadStatus } = useAnnouncementData();
 
+function markAsUnread() {
+  updateReadStatus(announcement.id, { action: "unread" });
+  emit("close", false);
+}
+
 function openEditModal(announcementId: number) {
   const modal = overlay.create(EditAnnouncementModal);
   const close = modal.close;
@@ -77,7 +82,7 @@ function openEditModal(announcementId: number) {
             color="neutral"
             variant="ghost"
             class="cursor-pointer"
-            @click="updateReadStatus(announcement.id, { action: 'unread' }); emit('close', false)"
+            @click="markAsUnread"
           />
         </UTooltip>
       </template>
