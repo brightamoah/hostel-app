@@ -1,3 +1,12 @@
+<script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("md");
+
+provide("isMobile", isMobile);
+</script>
+
 <template>
   <UApp :toaster="{ position: 'bottom-right', duration: 5000 }">
     <NuxtRouteAnnouncer />

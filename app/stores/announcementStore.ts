@@ -1,6 +1,6 @@
 import type { FormSubmitEvent } from "@nuxt/ui";
 
-import { breakpointsTailwind, useBreakpoints, useDebounceFn } from "@vueuse/core";
+import { useDebounceFn } from "@vueuse/core";
 import { acceptHMRUpdate, defineStore } from "pinia";
 
 const defaultState: CreateAnnouncementSchema = {
@@ -19,9 +19,6 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
   const open = ref(false);
   const isLoading = ref(false);
   const isFetchingDraft = ref(false);
-
-  const breakpoints = useBreakpoints(breakpointsTailwind);
-  const isMobile = breakpoints.smaller("lg");
 
   const { user } = useUserSession();
 
@@ -131,10 +128,10 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
   /**
    * Computed: Check if there are actual changes
    */
-  const hasChanges = computed(() => {
+  const hasNoChanges = computed(() => {
     if (!originalEditState.value) return false;
 
-    return JSON.stringify(editAnnouncementState.value) !== JSON.stringify(originalEditState.value);
+    return isDeepEqual(editAnnouncementState.value, originalEditState.value);
   });
 
   const loadDraft = async () => {
@@ -215,8 +212,8 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
 
   const editAnnouncement = async () => {
     if (!editingId.value) return;
-    if (!isEditFormValid) return;
-    if (!hasChanges.value) {
+    if (!isEditFormValid.value) return;
+    if (hasNoChanges.value) {
       toast.add({
         title: "No changes detected",
         description: "There are no changes to update for this announcement.",
@@ -260,6 +257,9 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
         icon: "i-lucide-check-circle",
       });
 
+      originalEditState.value = null;
+      editingId.value = null;
+
       return true;
     }
     catch (error) {
@@ -294,7 +294,6 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
   return {
     open,
     isLoading,
-    isMobile,
     announcementState,
     editAnnouncementState,
     audience,
@@ -302,7 +301,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
     isFormValid,
     isEditFormValid,
     isFetchingDraft,
-    hasChanges,
+    hasNoChanges,
     shouldResetReadStatus,
     loadDraft,
     saveDraft,

@@ -3,13 +3,10 @@ import type { CalendarDate } from "@internationalized/date";
 import type { FormSubmitEvent } from "@nuxt/ui";
 
 import { DateFormatter, getLocalTimeZone } from "@internationalized/date";
-import { useMediaQuery } from "@vueuse/core";
 
 definePageMeta({
   layout: "onboard",
 });
-
-const isMobile = useMediaQuery("(max-width: 640px)");
 
 const desktopDateFormat = new DateFormatter("en-GH", {
   dateStyle: "full",
@@ -18,6 +15,8 @@ const desktopDateFormat = new DateFormatter("en-GH", {
 const mobileDateFormat = new DateFormatter("en-GH", {
   dateStyle: "long",
 });
+
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
 const dateVal = shallowRef<CalendarDate | null>(null);
 
@@ -113,7 +112,7 @@ function submitForm(payload: FormSubmitEvent<PersonalDetailsSchema>) {
             <USelectMenu
               v-model="state.gender"
               :items="genderItems"
-              class="w-[100%] cursor-pointer"
+              class="w-full cursor-pointer"
               placeholder="Select your gender"
               :size="isMobile ? 'lg' : 'xl'"
             />
@@ -131,7 +130,7 @@ function submitForm(payload: FormSubmitEvent<PersonalDetailsSchema>) {
                 variant="subtle"
                 icon="i-lucide-calendar-days"
                 :size="isMobile ? 'lg' : 'xl'"
-                class="bg-transparent w-[100%] text-muted cursor-pointer"
+                class="bg-transparent w-full text-muted cursor-pointer"
               >
                 {{ dateVal ? formattedDate : "Select your date of birth" }}
               </UButton>
@@ -157,7 +156,7 @@ function submitForm(payload: FormSubmitEvent<PersonalDetailsSchema>) {
               v-model="state.phoneNumber"
               placeholder="Enter your phone number"
               icon="i-lucide-phone"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
               type="tel"
             />
@@ -173,7 +172,7 @@ function submitForm(payload: FormSubmitEvent<PersonalDetailsSchema>) {
               v-model="state.emergencyContactName"
               placeholder="Enter your emergency contact name"
               icon="i-lucide-users"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -190,7 +189,7 @@ function submitForm(payload: FormSubmitEvent<PersonalDetailsSchema>) {
               v-model="state.emergencyContactPhoneNumber"
               placeholder="Enter your emergency contact's phone number"
               icon="i-lucide-phone"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
               type="tel"
             />
@@ -206,7 +205,7 @@ function submitForm(payload: FormSubmitEvent<PersonalDetailsSchema>) {
               v-model="state.emergencyContactEmail"
               placeholder="Enter your emergency contact's email"
               icon="i-lucide-mail"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -223,7 +222,7 @@ function submitForm(payload: FormSubmitEvent<PersonalDetailsSchema>) {
               v-model="state.address"
               placeholder="Enter your house address"
               icon="i-lucide-home"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
@@ -237,7 +236,7 @@ function submitForm(payload: FormSubmitEvent<PersonalDetailsSchema>) {
               v-model="state.healthConditions"
               placeholder="Enter any health conditions you have (separated by commas)"
               icon="i-lucide-heart-pulse"
-              class="w-[100%]"
+              class="w-full"
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>

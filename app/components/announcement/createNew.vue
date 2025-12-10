@@ -5,7 +5,6 @@ const announcementStore = useAnnouncementStore();
 const {
   open,
   announcementState,
-  isMobile,
   audience,
   priority,
   isLoading,
@@ -17,6 +16,8 @@ const { createAnnouncement } = announcementStore;
 
 const { users, status } = useFetchUserData();
 const { hostels, rooms, status: roomStatus } = useFetchRoomData();
+
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
 const userOptions = computed(() => {
   return users.value.map(user => ({
@@ -38,6 +39,8 @@ const roomOptions = computed(() => {
     value: room.id,
   }));
 });
+
+const submitLabel = computed(() => isMobile.value ? "Publish" : "Publish Announcement");
 </script>
 
 <template>
@@ -119,7 +122,7 @@ const roomOptions = computed(() => {
           color="primary"
           icon="i-lucide-send"
           class="cursor-pointer"
-          :label=" isLoading ? 'Submitting...' : 'Create Announcement'"
+          :label=" isLoading ? 'Submitting...' : submitLabel"
           :loading="isLoading"
           :disabled="!isFormValid"
           @click="announcementFormRef?.form?.submit()"

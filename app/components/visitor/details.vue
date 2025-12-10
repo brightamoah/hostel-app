@@ -2,7 +2,7 @@
 import type { TableColumn, TabsItem } from "@nuxt/ui";
 import type { Visitor } from "~~/server/db/queries/visitor";
 
-import { breakpointsTailwind, useBreakpoints, useDateFormat } from "@vueuse/core";
+import { useDateFormat } from "@vueuse/core";
 
 const { visitor } = defineProps<{
   visitor: Visitor;
@@ -13,8 +13,8 @@ const { visitor } = defineProps<{
 const emit = defineEmits<{ close: [boolean] }>();
 
 const UButton = resolveComponent("UButton");
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("md");
+
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
 const visitorInitials = generateInitials(visitor.name);
 const avatarBgColor = generateUserColor(visitor.name);

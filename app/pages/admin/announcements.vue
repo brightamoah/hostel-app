@@ -22,6 +22,8 @@ const {
   refresh,
 } = useAnnouncementData();
 
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
+
 const isLoading = ref<boolean>(false);
 
 async function handleRefresh() {
@@ -42,9 +44,6 @@ const isAnnouncementPanelOpen = computed({
 watch(filteredAnnouncements, () => {
   if (!filteredAnnouncements.value.find(announcement => announcement.id === selectedAnnouncement.value?.id)) selectedAnnouncement.value = null;
 });
-
-const announcementStore = useAnnouncementStore();
-const { isMobile } = storeToRefs(announcementStore);
 </script>
 
 <template>

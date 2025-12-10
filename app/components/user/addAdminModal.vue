@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { useMediaQuery } from "@vueuse/core";
-
 const { user } = useUserSession();
 const admin = user.value?.adminData;
 
-const isMobile = useMediaQuery("(max-width: 640px)");
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
 const addAdminFormRef = useTemplateRef("addAdminFormRef");
 

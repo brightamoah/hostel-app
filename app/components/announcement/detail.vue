@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints, useDateFormat } from "@vueuse/core";
+import { useDateFormat } from "@vueuse/core";
 
 const { announcement } = defineProps<{
   announcement: Announcement;
@@ -10,10 +10,14 @@ const emit = defineEmits<{ close: [boolean] }>();
 const overlay = useOverlay();
 const EditAnnouncementModal = defineAsyncComponent(() => import("./edit.vue"));
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
 const { updateReadStatus } = useAnnouncementData();
+
+function markAsUnread() {
+  updateReadStatus(announcement.id, { action: "unread" });
+  emit("close", false);
+}
 
 function openEditModal(announcementId: number) {
   const modal = overlay.create(EditAnnouncementModal);
@@ -23,9 +27,7 @@ function openEditModal(announcementId: number) {
     announcementId,
     "open": true,
     "onUpdate:open": (val: boolean) => {
-      if (!val) {
-        close();
-      }
+      if (!val) close();
     },
   });
 }
@@ -77,7 +79,7 @@ function openEditModal(announcementId: number) {
             color="neutral"
             variant="ghost"
             class="cursor-pointer"
-            @click="updateReadStatus(announcement.id, { action: 'unread' }); emit('close', false)"
+            @click="markAsUnread"
           />
         </UTooltip>
       </template>

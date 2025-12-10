@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { useMediaQuery } from "@vueuse/core";
-
-const isMobile = useMediaQuery("(max-width: 640px)");
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
 const roomStore = useRoomStore();
 const {

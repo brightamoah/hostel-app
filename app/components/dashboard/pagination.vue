@@ -14,6 +14,8 @@ const { table, totalItems, defaultPage = 1, itemsPerPage = 10 } = defineProps<{
 }>();
 
 const displayTotal = computed<number>(() => totalItems);
+
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
 </script>
 
 <template>
@@ -40,8 +42,9 @@ const displayTotal = computed<number>(() => totalItems);
 
     <div class="flex items-center gap-1.5">
       <UPagination
-        :page="defaultPage"
         :items-per-page
+        :size="isMobile ? 'xs' : 'md'"
+        :page="defaultPage"
         :total="displayTotal"
         @update:page="updatePage"
       />

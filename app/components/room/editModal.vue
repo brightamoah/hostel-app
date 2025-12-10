@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useMediaQuery } from "@vueuse/core";
-
 const { roomData, roomId, closeModal } = defineProps<{
   roomId: number;
   roomData: RoomFormState;
   closeModal: () => void;
 }>();
+
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
 const roomStore = useRoomStore();
 const {
@@ -17,7 +17,6 @@ const {
 
 const toast = useToast();
 
-const isMobile = useMediaQuery("(max-width: 640px)");
 const isEditModalOpen = ref(false);
 const editRoomFormRef = useTemplateRef("editRoomFormRef");
 

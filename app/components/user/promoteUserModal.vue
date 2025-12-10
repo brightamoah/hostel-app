@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
 
-import { useMediaQuery } from "@vueuse/core";
-
 const { user, isLoading } = defineProps<{
   user: UserType;
   isLoading: boolean | Ref<boolean>;
@@ -12,9 +10,10 @@ const emit = defineEmits<{
   (e: "confirm", payload: PromoteDemoteSchema): void;
 }>();
 
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
+
 const { user: currentUser } = useUserSession();
 const open = defineModel<boolean>("open");
-const isMobile = useMediaQuery("(max-width: 640px)");
 const promoteFormRef = useTemplateRef("promoteFormRef");
 
 const accessLevels = computed(() => {
