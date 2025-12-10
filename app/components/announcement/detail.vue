@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints, useDateFormat } from "@vueuse/core";
+import { useDateFormat } from "@vueuse/core";
 
 const { announcement } = defineProps<{
   announcement: Announcement;
@@ -10,8 +10,7 @@ const emit = defineEmits<{ close: [boolean] }>();
 const overlay = useOverlay();
 const EditAnnouncementModal = defineAsyncComponent(() => import("./edit.vue"));
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
 const { updateReadStatus } = useAnnouncementData();
 
@@ -28,9 +27,7 @@ function openEditModal(announcementId: number) {
     announcementId,
     "open": true,
     "onUpdate:open": (val: boolean) => {
-      if (!val) {
-        close();
-      }
+      if (!val) close();
     },
   });
 }

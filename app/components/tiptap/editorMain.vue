@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { TiptapExtensions } from "./extensions";
 
-const announcementStore = useAnnouncementStore();
-const { isMobile } = storeToRefs(announcementStore);
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
 const content = defineModel<string>("content");
 
@@ -122,7 +121,7 @@ onBeforeUnmount(() => {
           />
         </div>
 
-        <UColorModeButton />
+        <!-- <UColorModeButton /> -->
       </div>
     </section>
 

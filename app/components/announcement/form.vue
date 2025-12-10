@@ -58,7 +58,7 @@ defineExpose({
       required
       label="Announcement Title"
       name="title"
-      class="mb-4 px-4 w-full"
+      class="mb-4 px-1 md:px-4 w-full"
     >
       <UInput
         v-model="announcementState.title"
@@ -68,7 +68,7 @@ defineExpose({
       />
     </UFormField>
 
-    <div class="flex md:flex-row flex-col justify-between gap-5 mb-4 px-4">
+    <div class="flex md:flex-row flex-col justify-between gap-5 mb-4 px-1 md:px-4">
       <UFormField
         required
         label="Target Audience"
@@ -107,7 +107,7 @@ defineExpose({
       required
       label="Select User"
       name="targetUserId"
-      class="mb-4 px-4 w-full"
+      class="mb-4 px-1 md:px-4 w-full"
     >
       <USelectMenu
         v-model="announcementState.targetUserId"
@@ -126,7 +126,7 @@ defineExpose({
       required
       label="Select Hostel"
       name="targetHostelId"
-      class="mb-4 px-4 w-full"
+      class="mb-4 px-1 md:px-4 w-full"
     >
       <USelectMenu
         v-model="announcementState.targetHostelId"
@@ -145,7 +145,7 @@ defineExpose({
       required
       label="Select Room"
       name="targetRoomId"
-      class="mb-4 px-4 w-full"
+      class="mb-4 px-1 md:px-4 w-full"
     >
       <USelectMenu
         v-model="announcementState.targetRoomId"
@@ -163,7 +163,7 @@ defineExpose({
       required
       label="Content"
       name="content"
-      class="mb-4 px-4 w-full"
+      class="mb-4 px-1 md:px-4 w-full"
     >
       <ClientOnly>
         <TiptapEditorMain

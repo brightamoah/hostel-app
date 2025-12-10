@@ -8,7 +8,6 @@ const {
   isEditFormValid,
   audience,
   priority,
-  isMobile,
   editAnnouncementState,
   shouldResetReadStatus,
 } = storeToRefs(announcementStore);
@@ -38,8 +37,12 @@ const roomOptions = computed(() => {
   }));
 });
 
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
+
 const isOpen = defineModel<boolean>("open", { required: true });
 const announcementFormRef = useTemplateRef("formRef");
+const submitLabel = computed(() => isMobile.value ? "Update" : "Update Announcement");
+const checkboxLabel = computed(() => isMobile.value ? "Mark as unread" : "Mark as unread (Notify users)");
 
 const data = getAnnouncementFromCache(announcementId);
 
@@ -65,7 +68,7 @@ function handleFormError(event: any) {
     :ui="{
       footer: 'justify-end',
       content: 'max-w-5xl  rounded-lg shadow-lg ring ring-default overflow-hidden',
-      title: 'font-newsreader text-xl font-semibold',
+      title: 'font-newsreader text-base md:text-xl font-semibold',
       close: 'cursor-pointer',
     }"
   >
@@ -91,7 +94,7 @@ function handleFormError(event: any) {
       <div class="flex justify-between items-center w-full">
         <UCheckbox
           v-model="shouldResetReadStatus"
-          label="Mark as unread (Notify users)"
+          :label="checkboxLabel"
           :ui="{
             root: 'cursor-pointer',
             label: 'cursor-pointer',
@@ -111,8 +114,9 @@ function handleFormError(event: any) {
           <UButton
             color="primary"
             icon="i-lucide-send"
+            :size="isMobile ? 'sm' : 'md'"
             class="cursor-pointer"
-            :label=" isLoading ? 'Submitting...' : 'Update Announcement'"
+            :label="isLoading ? 'Submitting...' : submitLabel"
             :loading="isLoading"
             :disabled="!isEditFormValid"
             @click="announcementFormRef?.form?.submit()"

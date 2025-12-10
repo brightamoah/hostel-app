@@ -3,17 +3,17 @@ import type { CalendarDate } from "@internationalized/date";
 import type { FormSubmitEvent } from "@nuxt/ui";
 
 import { DateFormatter, getLocalTimeZone } from "@internationalized/date";
-import { useMediaQuery } from "@vueuse/core";
 
 definePageMeta({
   layout: "onboard",
 });
 
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
+
 const toast = useToast();
 const router = useRouter();
 const { fetch: refreshSession, user: loggedInUser } = useUserSession();
 
-const isMobile = useMediaQuery("(max-width: 640px)");
 const errorMessage = ref<string | null>(null);
 
 const desktopDateFormat = new DateFormatter("en-GH", {

@@ -1,4 +1,4 @@
-export function useTiptapButtonGroup(editor: TiptapEditorType, isMobile: MaybeRef<boolean>) {
+export function useTiptapButtonGroup(editor: TiptapEditorType, isMobile: MaybeRefOrGetter<boolean>) {
   const formattingButtons: Button[] = [
     {
       name: "bold",
