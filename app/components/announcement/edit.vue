@@ -45,9 +45,6 @@ const announcementFormRef = useTemplateRef("formRef");
 const submitLabel = computed(() => isMobile.value ? "Update" : "Update Announcement");
 const checkboxLabel = computed(() => isMobile.value ? "Mark as unread" : "Mark as unread (Notify users)");
 
-const submitLabel = computed(() => isMobile.value ? "Update" : "Update Announcement");
-const checkboxLabel = computed(() => isMobile.value ? "Mark as unread" : "Mark as unread (Notify users)");
-
 const data = getAnnouncementFromCache(announcementId);
 
 if (data) initEditSession(data!);
