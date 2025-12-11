@@ -26,16 +26,5 @@
       "id": "cca2659eb4634ffd9a0b682961585ce3"
     }
   ],
-  "vars": {},
-  "env": {
-    "preview": {
-      "kv_namespaces": [
-        {
-          "binding": "KV",
-          "id": "a9144194dd0f4af3b396b87fd24a3124"
-        }
-      ],
-      "vars": {}
-    }
-  }
+  "vars": {}
 }
