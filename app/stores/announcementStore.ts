@@ -171,7 +171,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
   }, { deep: true });
 
   const createAnnouncement = async (payload: FormSubmitEvent<CreateAnnouncementSchema>) => {
-    if (!isFormValid) return;
+    if (!isFormValid.value) return;
 
     isLoading.value = true;
 

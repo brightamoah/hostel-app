@@ -40,6 +40,7 @@ const roomOptions = computed(() => {
 const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
 const isOpen = defineModel<boolean>("open", { required: true });
+
 const announcementFormRef = useTemplateRef("formRef");
 const submitLabel = computed(() => isMobile.value ? "Update" : "Update Announcement");
 const checkboxLabel = computed(() => isMobile.value ? "Mark as unread" : "Mark as unread (Notify users)");

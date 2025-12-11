@@ -1,7 +1,7 @@
 /**
  * Deeply compares two values for equality.
  *
- * Handles primitives, arrays, objects, RegExp, and skips React's `_owner` to avoid circular refs.
+ * Handles primitives, arrays, objects, RegExp
  *
  * @example
  * isDeepEqual({a: 1}, {a: 1}) // true
@@ -38,11 +38,6 @@ export function isDeepEqual(x: any, y: any): boolean {
     }
 
     for (const key of keys) {
-      // React-specific: avoid traversing React elements' _owner.
-      //  _owner contains circular references
-      // and is not needed when comparing the actual elements (and not their owners)
-      if (key === "_owner" && x.$$typeof) continue;
-
       if (!isDeepEqual(x[key], y[key])) return false;
     }
 
