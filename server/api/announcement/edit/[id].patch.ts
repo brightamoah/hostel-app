@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
   const { adminData } = await adminSessionCheck(event);
 
   try {
-    const idFromParams = Number(event.context.params?.id);
+    const idFromParams = Number(getRouterParams(event).id);
 
     const body = await readValidatedBody(event, body => editAnnouncementSchema.safeParse(body));
 

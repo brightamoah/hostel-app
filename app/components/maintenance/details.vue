@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TabsItem } from "@nuxt/ui";
 
-import { useDateFormat, useTimeAgo } from "@vueuse/core";
+import { useDateFormat } from "@vueuse/core";
 import { capitalize } from "vue";
 
 const { maintenance } = defineProps<{
@@ -11,7 +11,8 @@ const { maintenance } = defineProps<{
 const emit = defineEmits<{ close: [boolean] }>();
 
 const { user } = useUserSession();
-const timeAgo = useTimeAgo(maintenance.requestDate).value;
+
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
 const items = computed<TabsItem[]>(() => [
   {
@@ -99,7 +100,7 @@ const messages = computed(() => {
         senderRole: "System",
         email: "",
         date: maintenance.requestDate,
-        timeAgo: useTimeAgo(new Date(maintenance.requestDate)).value,
+        timeAgo: useFormattedTimeAgo(new Date(maintenance.requestDate), isMobile).value,
       },
     },
     ...responseItems.value.map((response) => {
@@ -127,7 +128,7 @@ const messages = computed(() => {
           senderRole: isStudent ? "Student" : "Admin",
           email: responderInfo.email,
           date: response.responseDate,
-          timeAgo: useTimeAgo(new Date(response.responseDate)).value,
+          timeAgo: useFormattedTimeAgo(new Date(response.responseDate), isMobile).value,
         },
 
       };
@@ -161,7 +162,7 @@ const messages = computed(() => {
       </p>
 
       <p class="mb-2">
-        Submitted {{ capitalize(timeAgo) }}
+        Submitted {{ useFormattedTimeAgo(new Date(maintenance.requestDate), isMobile) }}
       </p>
 
       <UTabs
@@ -255,7 +256,9 @@ const messages = computed(() => {
               <template #content="{ message }">
                 <div class="space-y-2">
                   <div class="flex items-center gap-2 text-xs">
-                    <span class="font-semibold">{{ (message.metadata as MessageMetadata).senderName }}</span>
+                    <p class="font-semibold truncate">
+                      {{ (message.metadata as MessageMetadata).senderName }}
+                    </p>
 
                     <UBadge
                       :label="(message.metadata as MessageMetadata).senderRole"
