@@ -5,6 +5,7 @@
 .nitro
 .cache
 dist
+.wrangler
 
 # Node dependencies
 node_modules
@@ -17,6 +18,7 @@ logs
 .DS_Store
 .fleet
 .idea
+*.tsbuildinfo
 
 # Local env files
 .env
