@@ -19,7 +19,7 @@
     "@nuxt/eslint": "1.9.0",
     "@nuxt/image": "^2.0.0",
     "@nuxt/ui": "^4.2.1",
-    "@nuxthub/core": "^0.10.0",
+    "@nuxthub/core": "0.10.1",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.44.7",
     "eslint-plugin-format": "^1.1.0",

@@ -10,7 +10,6 @@ on:
     types: [opened, synchronize, reopened]
 
 env:
-  # ... your existing global env vars ...
   NUXT_SESSION_PASSWORD: ${{ secrets.NUXT_SESSION_PASSWORD }}
   NUXT_SESSION_NAME: ${{ secrets.NUXT_SESSION_NAME }}
   NUXT_NODE_ENV: ${{ secrets.NUXT_NODE_ENV }}
@@ -22,6 +21,12 @@ env:
   NUXT_NODEMAILER_PORT: ${{ secrets.NUXT_NODEMAILER_PORT }}
   NUXT_HUB_PROJECT_KEY: ${{ secrets.NUXT_HUB_PROJECT_KEY }}
   NUXT_HUB_USER_TOKEN: ${{ secrets.NUXT_HUB_USER_TOKEN }}
+  NUXT_HUB_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.NUXT_HUB_CLOUDFLARE_ACCOUNT_ID }}
+  NUXT_HUB_CLOUDFLARE_API_TOKEN: ${{ secrets.NUXT_HUB_CLOUDFLARE_API_TOKEN}}
+  NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_ID: ${{ secrets.NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_ID }}
+  NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_PREVIEW_ID: ${{ secrets.NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_PREVIEW_ID }}
+  NUXT_HUB_KV_NAMESPACE_ID: ${{ secrets.NUXT_HUB_KV_NAMESPACE_ID }}
+  NUXT_HUB_KV_NAMESPACE_PREVIEW_ID: ${{ secrets.NUXT_HUB_KV_NAMESPACE_PREVIEW_ID }}
 
 jobs:
   deploy:
@@ -59,17 +64,17 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3.14.1
         with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
+          apiToken: ${{ secrets.NUXT_HUB_CLOUDFLARE_API_TOKEN }}
           command: deploy
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.NUXT_HUB_CLOUDFLARE_API_TOKEN }}
 
       # PREVIEW DEPLOY
       - name: Deploy to Cloudflare (Preview)
         if: github.ref != 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3.14.1
         with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
+          apiToken: ${{ secrets.NUXT_HUB_CLOUDFLARE_API_TOKEN }}
           command: deploy --env preview
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.NUXT_HUB_CLOUDFLARE_API_TOKEN }}

@@ -3,8 +3,6 @@ export default defineEventHandler(async (event) => {
     message: "Unauthorized, please log in to access announcement drafts.",
   });
 
-  const kv = hubKV();
-
   const KEY = `announcement-draft-${user.id}`;
 
   if (event.method === "GET") {
