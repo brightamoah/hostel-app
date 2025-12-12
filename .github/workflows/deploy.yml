@@ -50,17 +50,13 @@ jobs:
 
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@v3.14.1
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-
-          # Production deploy
-          command: |
-            bash -lc '
-              if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
-                echo "🚀 Deploying PRODUCTION..."
-                pnpm wrangler deploy
-              else
-                echo "🚀 Deploying PREVIEW..."
-                pnpm wrangler deploy --env preview
-              fi
-            '
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          run: |
+            if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+              echo "🚀 Deploying PRODUCTION..."
+              pnpm wrangler deploy
+            else
+              echo "🚀 Deploying PREVIEW..."
+              pnpm wrangler deploy --env preview
+            fi
