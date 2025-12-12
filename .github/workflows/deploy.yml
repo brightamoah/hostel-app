@@ -1,49 +1,62 @@
 name: Deploy Production
 
 on:
-    push:
-        branches:
-            - main
-            - preview
+  push:
+    branches:
+      - main
+      - preview
 
-    pull_request: # PR → Preview environment
-        types: [opened, synchronize, reopened]
+  pull_request: # PR → Preview environment
+    types: [opened, synchronize, reopened]
+
+env:
+  NUXT_SESSION_PASSWORD: ${{ secrets.NUXT_SESSION_PASSWORD }}
+  NUXT_SESSION_NAME: ${{ secrets.NUXT_SESSION_NAME }}
+  NUXT_NODE_ENV: ${{ secrets.NUXT_NODE_ENV }}
+  NUXT_DATABASE_URL: ${{ secrets.NUXT_DATABASE_URL }}
+  NUXT_NODEMAILER_AUTH_PASS: ${{ secrets.NUXT_NODEMAILER_AUTH_PASS }}
+  NUXT_NODEMAILER_AUTH_USER: ${{ secrets.NUXT_NODEMAILER_AUTH_USER }}
+  NUXT_NODEMAILER_FROM: ${{ secrets.NUXT_NODEMAILER_FROM }}
+  NUXT_NODEMAILER_HOST: ${{ secrets.NUXT_NODEMAILER_HOST }}
+  NUXT_NODEMAILER_PORT: ${{ secrets.NUXT_NODEMAILER_PORT }}
+  NUXT_HUB_PROJECT_KEY: ${{ secrets.NUXT_HUB_PROJECT_KEY }}
+  NUXT_HUB_USER_TOKEN: ${{ secrets.NUXT_HUB_USER_TOKEN }}
 
 jobs:
-    deploy:
-        runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v6.0.1
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.1
 
-            - name: Install pnpm
-              uses: pnpm/action-setup@v4.2.0
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4.2.0
 
-            - name: Install Node.js
-              uses: actions/setup-node@v6.1.0
-              with:
-                  node-version: "24"
-                  cache: "pnpm"
+      - name: Install Node.js
+        uses: actions/setup-node@v6.1.0
+        with:
+          node-version: "24"
+          cache: "pnpm"
 
-            - name: Install dependencies
-              run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
-            - name: Ensure NuxtHub module is installed
-              run: pnpx nuxthub@latest ensure
+      - name: Ensure NuxtHub module is installed
+        run: pnpx nuxthub@latest ensure
 
-            - name: Build Project
-              run: pnpm build
+      - name: Build Project
+        run: pnpm build
 
-            - name: Deploy to Cloudflare
-              uses: cloudflare/wrangler-action@v3.14.1
-              with:
-                  apiToken: ${{ secrets.CF_API_TOKEN }}
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3.14.1
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
 
-                  # Production deploy
-                  command: |
-                      if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-                        pnpm wrangler deploy --env ""
-                      else
-                        pnpm wrangler deploy --env preview
-                      fi
+          # Production deploy
+          command: |
+            if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+              pnpm wrangler deploy --env ""
+            else
+              pnpm wrangler deploy --env preview
+            fi
