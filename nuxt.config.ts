@@ -2,6 +2,8 @@
 import { env } from "./app/lib/env";
 
 export default defineNuxtConfig({
+  compatibilityDate: "latest",
+
   modules: [
     "@nuxt/eslint",
     "@nuxt/image",
@@ -25,7 +27,7 @@ export default defineNuxtConfig({
     experimental: {
       openAPI: true,
     },
-    preset: "cloudflare-module",
+    preset: "cloudflare_module",
     cloudflare: {
       deployConfig: true,
       nodeCompat: true,
@@ -59,7 +61,6 @@ export default defineNuxtConfig({
     typescriptPlugin: true,
     viteEnvironmentApi: true,
   },
-  compatibilityDate: "latest",
 
   eslint: {
     config: {

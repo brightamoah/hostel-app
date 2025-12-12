@@ -1,47 +1,4 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "kings-hostel",
-  "main": "./.output/server/index.mjs",
-  "compatibility_date": "2025-12-11",
-  "compatibility_flags": ["nodejs_compat_v2"],
-  "assets": {
-    "directory": "./.output/public/",
-    "binding": "ASSETS"
-  },
-  "observability": {
-    "enabled": true,
-    "logs": {
-      "enabled": true,
-      "head_sampling_rate": 1,
-      "persist": true,
-      "invocation_logs": true
-    },
-    "traces": {
-      "enabled": true,
-      "head_sampling_rate": 1,
-      "persist": true
-    }
-  },
-  "kv_namespaces": [
-    {
-      "binding": "KV",
-      "id": "cca2659eb4634ffd9a0b682961585ce3"
-    },
-    {
-      "binding": "CACHE",
-      "id": "cca2659eb4634ffd9a0b682961585ce3"
-    }
-  ],
-  "vars": {},
-  "env": {
-    "preview": {
-      "kv_namespaces": [
-        {
-          "binding": "KV",
-          "id": "a9144194dd0f4af3b396b87fd24a3124"
-        }
-      ],
-      "vars": {}
-    }
-  }
+  "name": "kings-hostel-management"
 }

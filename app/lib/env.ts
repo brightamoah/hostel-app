@@ -15,7 +15,6 @@ const EnvSchema = z.object({
   NUXT_HUB_PROJECT_KEY: z.string(),
   NUXT_HUB_USER_TOKEN: z.string(),
   NUXT_HUB_CLOUDFLARE_ACCOUNT_ID: z.string(),
-  NUXT_HUB_CLOUDFLARE_API_TOKEN: z.string(),
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;
