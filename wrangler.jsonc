@@ -25,11 +25,11 @@
   "kv_namespaces": [
     {
       "binding": "KV",
-      "id": "${KV_ID}"
+      "id": "cca2659eb4634ffd9a0b682961585ce3"
     },
     {
       "binding": "CACHE",
-      "id": "${KV_ID}"
+      "id": "cca2659eb4634ffd9a0b682961585ce3"
     }
   ],
   "vars": {},
@@ -38,11 +38,11 @@
       "kv_namespaces": [
         {
           "binding": "KV",
-          "id": "${KV_PREVIEW_ID}"
+          "id": "a9144194dd0f4af3b396b87fd24a3124"
         },
         {
           "binding": "CACHE",
-          "id": "${KV_PREVIEW_ID}"
+          "id": "a9144194dd0f4af3b396b87fd24a3124"
         }
       ],
       "vars": {}

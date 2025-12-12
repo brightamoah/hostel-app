@@ -68,8 +68,6 @@ jobs:
           command: deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.NUXT_HUB_CLOUDFLARE_API_TOKEN }}
-          KV_ID: ${{ secrets.NUXT_HUB_KV_NAMESPACE_ID }}
-          KV_PREVIEW_ID: ${{ secrets.NUXT_HUB_KV_NAMESPACE_PREVIEW_ID }}
 
       # PREVIEW DEPLOY
       - name: Deploy to Cloudflare (Preview)
@@ -80,5 +78,3 @@ jobs:
           command: deploy --env preview
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.NUXT_HUB_CLOUDFLARE_API_TOKEN }}
-          KV_ID: ${{ secrets.NUXT_HUB_KV_NAMESPACE_ID }}
-          KV_PREVIEW_ID: ${{ secrets.NUXT_HUB_KV_NAMESPACE_PREVIEW_ID }}
