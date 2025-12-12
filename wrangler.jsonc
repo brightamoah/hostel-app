@@ -3,6 +3,7 @@
   "name": "kings-hostel",
   "main": "./.output/server/index.mjs",
   "compatibility_date": "2025-12-11",
+  "compatibility_flags": ["nodejs_compat_v2"],
   "assets": {
     "directory": "./.output/public/",
     "binding": "ASSETS"
