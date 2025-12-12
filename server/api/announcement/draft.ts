@@ -33,7 +33,7 @@ export default defineEventHandler(async (event) => {
 
     await kv.set(KEY, body);
 
-    return { success: true };
+    return { success: true, message: "Draft saved successfully." };
   }
 
   if (event.method === "DELETE") {
