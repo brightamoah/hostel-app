@@ -59,17 +59,17 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3.14.1
         with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
+          apiToken: ${{ secrets.NUXT_HUB_CLOUDFLARE_API_TOKEN }}
           command: deploy
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.NUXT_HUB_CLOUDFLARE_API_TOKEN }}
 
       # PREVIEW DEPLOY
       - name: Deploy to Cloudflare (Preview)
         if: github.ref != 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3.14.1
         with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
+          apiToken: ${{ secrets.NUXT_HUB_CLOUDFLARE_API_TOKEN }}
           command: deploy --env preview
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.NUXT_HUB_CLOUDFLARE_API_TOKEN }}
