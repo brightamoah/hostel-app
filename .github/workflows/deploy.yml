@@ -6,10 +6,11 @@ on:
       - main
       - preview
 
-  pull_request: # PR → Preview environment
+  pull_request:
     types: [opened, synchronize, reopened]
 
 env:
+  # ... your existing global env vars ...
   NUXT_SESSION_PASSWORD: ${{ secrets.NUXT_SESSION_PASSWORD }}
   NUXT_SESSION_NAME: ${{ secrets.NUXT_SESSION_NAME }}
   NUXT_NODE_ENV: ${{ secrets.NUXT_NODE_ENV }}
@@ -50,18 +51,25 @@ jobs:
 
       - name: Clean up conflicting Wrangler configs
         run: |
-          rm .output/server/wrangler.json
+          rm -f .output/server/wrangler.json
           rm -rf .wrangler
 
-      - name: Deploy to Cloudflare
+      # PRODUCTION DEPLOY
+      - name: Deploy to Cloudflare (Production)
+        if: github.ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3.14.1
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          command: deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-          run: |
-            if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
-              echo "🚀 Deploying PRODUCTION..."
-              pnpm wrangler deploy
-            else
-              echo "🚀 Deploying PREVIEW..."
-              pnpm wrangler deploy --env preview
-            fi
+
+      # PREVIEW DEPLOY
+      - name: Deploy to Cloudflare (Preview)
+        if: github.ref != 'refs/heads/main'
+        uses: cloudflare/wrangler-action@v3.14.1
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          command: deploy --env preview
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
