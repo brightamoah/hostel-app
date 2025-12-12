@@ -26,6 +26,10 @@
     {
       "binding": "KV",
       "id": "cca2659eb4634ffd9a0b682961585ce3"
+    },
+    {
+      "binding": "CACHE",
+      "id": "cca2659eb4634ffd9a0b682961585ce3"
     }
   ],
   "vars": {},

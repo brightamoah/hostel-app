@@ -10,8 +10,8 @@ export default defineNuxtConfig({
     "nuxt-auth-utils",
     "nuxt-nodemailer",
     "@formkit/auto-animate",
-    "@nuxthub/core",
     "nuxt-tiptap-editor",
+    "@nuxthub/core",
   ],
   devtools: { enabled: true },
 
@@ -34,6 +34,7 @@ export default defineNuxtConfig({
 
   hub: {
     kv: true,
+    cache: true,
   },
 
   runtimeConfig: {
