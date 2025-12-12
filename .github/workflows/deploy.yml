@@ -55,8 +55,12 @@ jobs:
 
           # Production deploy
           command: |
-            if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-              pnpm wrangler deploy --env ""
-            else
-              pnpm wrangler deploy --env preview
-            fi
+            bash -lc '
+              if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+                echo "🚀 Deploying PRODUCTION..."
+                pnpm wrangler deploy
+              else
+                echo "🚀 Deploying PREVIEW..."
+                pnpm wrangler deploy --env preview
+              fi
+            '
