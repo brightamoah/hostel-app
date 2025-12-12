@@ -1,0 +1,49 @@
+name: Deploy Production
+
+on:
+    push:
+        branches:
+            - main
+            - preview
+
+    pull_request: # PR → Preview environment
+        types: [opened, synchronize, reopened]
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v6.0.1
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4.2.0
+
+            - name: Install Node.js
+              uses: actions/setup-node@v6.1.0
+              with:
+                  node-version: "24.12.2"
+                  cache: "pnpm"
+
+            - name: Install dependencies
+              run: pnpm install
+
+            - name: Ensure NuxtHub module is installed
+              run: pnpx nuxthub@latest ensure
+
+            - name: Build Project
+              run: pnpm build
+
+            - name: Deploy to Cloudflare
+              uses: cloudflare/wrangler-action@v3.14.1
+              with:
+                  apiToken: ${{ secrets.CF_API_TOKEN }}
+
+                  # Production deploy
+                  command: |
+                      if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+                        pnpm wrangler deploy --env ""
+                      else
+                        pnpm wrangler deploy --env preview
+                      fi
