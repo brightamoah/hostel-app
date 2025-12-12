@@ -48,6 +48,9 @@ jobs:
       - name: Build Project
         run: pnpm build
 
+      - name: Remove conflicting generated config
+        run: rm .output/server/wrangler.json
+
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@v3.14.1
         env:
