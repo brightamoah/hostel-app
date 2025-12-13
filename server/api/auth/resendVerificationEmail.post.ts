@@ -11,6 +11,8 @@ export default defineEventHandler(async (event) => {
   try {
     const { db } = useDB();
 
+    const runtimeConfig = useRuntimeConfig(event);
+
     const body = await readValidatedBody(event, body =>
       verifyEmailSchema.safeParse(body));
 
@@ -18,9 +20,11 @@ export default defineEventHandler(async (event) => {
 
     const { email } = body.data;
 
+    const normalizedEmail = email.trim().toLowerCase();
+
     const { getUserByEmail } = await userQueries();
 
-    const existingUser = await getUserByEmail(email);
+    const existingUser = await getUserByEmail(normalizedEmail);
 
     if (!existingUser) return { success: true, message: "If an account exists, a verification email has been sent." };
 
@@ -54,15 +58,31 @@ export default defineEventHandler(async (event) => {
 
     const verificationUrl = `${event.headers.get("origin")}/auth/verifyEmail?token=${verificationToken}&id=${existingUser.id}`;
 
-    const { sendMail } = useNodeMailer();
     const { htmlTemplate, textTemplate } = getEmailTemplate(verificationUrl, existingUser);
 
-    await sendMail({
-      to: email,
-      subject: "Verify your email address - Kings Hostel Management",
-      html: htmlTemplate,
-      text: textTemplate,
-    });
+    if (import.meta.dev) {
+      const { sendMail } = useNodeMailer();
+
+      await sendMail({
+        to: normalizedEmail,
+        subject: "Verify your email address - Kings Hostel Management",
+        html: htmlTemplate,
+        text: textTemplate,
+      });
+    }
+    else {
+      const mailer = await useWorkerMailer();
+
+      await mailer.send({
+        from: { name: runtimeConfig.emailFromName, email: runtimeConfig.emailFromEmail },
+        to: { name: existingUser.name, email: existingUser.email },
+        subject: "Verify your email address - Kings Hostel Management",
+        html: htmlTemplate,
+        text: textTemplate,
+      });
+
+      mailer.close();
+    }
 
     return {
       success: true,

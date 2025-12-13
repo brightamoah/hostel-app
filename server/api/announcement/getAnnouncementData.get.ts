@@ -23,8 +23,8 @@ export default defineEventHandler(async (event) => {
 
     if (!announcements?.length) return [];
 
-    for (let i = 0; i < announcements.length; i++) {
-      announcements[i].content = sanitizeHtmlContent(announcements[i].content);
+    for (const announcement of announcements) {
+      announcement.content = sanitizeHtmlContent(announcement.content);
     }
 
     return {

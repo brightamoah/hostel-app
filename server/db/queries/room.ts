@@ -1,5 +1,6 @@
 import type { Admin } from "~~/shared/types";
 
+import { useDB } from "~~/server/utils/db";
 import { and, asc, countDistinct, eq, gt, inArray, or, sql } from "drizzle-orm";
 
 import { hostel, room } from "../schema";

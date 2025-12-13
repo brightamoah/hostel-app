@@ -10,10 +10,10 @@ export default defineNuxtConfig({
     "@nuxt/ui",
     "@pinia/nuxt",
     "nuxt-auth-utils",
-    "nuxt-nodemailer",
     "@formkit/auto-animate",
     "nuxt-tiptap-editor",
     "@nuxthub/core",
+    (env.NODE_ENV === "development" ? "nuxt-nodemailer" : ""),
   ],
   devtools: { enabled: true },
 
@@ -24,13 +24,14 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
 
   nitro: {
-    experimental: {
-      openAPI: true,
-    },
+
     preset: "cloudflare_module",
     cloudflare: {
       deployConfig: true,
       nodeCompat: true,
+    },
+    rollupConfig: {
+      external: ["cloudflare:sockets"],
     },
   },
 
@@ -53,6 +54,8 @@ export default defineNuxtConfig({
     nodemailerPort: env.NUXT_NODEMAILER_PORT,
     nodemailerAuthUser: env.NUXT_NODEMAILER_AUTH_USER,
     nodemailerAuthPass: env.NUXT_NODEMAILER_AUTH_PASS,
+    emailFromName: env.NUXT_EMAIL_FROM_NAME,
+    emailFromEmail: env.NUXT_EMAIL_FROM_EMAIL,
     nodeEnv: env.NODE_ENV,
   },
 
@@ -68,14 +71,17 @@ export default defineNuxtConfig({
     },
   },
 
-  nodemailer: {
-    from: env.NUXT_NODEMAILER_FROM,
-    host: env.NUXT_NODEMAILER_HOST,
-    port: env.NUXT_NODEMAILER_PORT,
-    secure: true,
-    auth: {
-      user: env.NUXT_NODEMAILER_AUTH_USER,
-      pass: env.NUXT_NODEMAILER_AUTH_PASS,
+  ...(env.NODE_ENV === "development" && {
+    nodemailer: {
+      from: env.NUXT_NODEMAILER_FROM,
+      host: env.NUXT_NODEMAILER_HOST,
+      port: env.NUXT_NODEMAILER_PORT,
+      secure: true,
+      auth: {
+        user: env.NUXT_NODEMAILER_AUTH_USER,
+        pass: env.NUXT_NODEMAILER_AUTH_PASS,
+      },
     },
-  },
+  }),
+
 });

@@ -10,6 +10,8 @@ export default defineEventHandler(async (event) => {
   try {
     await clearUserSession(event);
 
+    const runtimeConfig = useRuntimeConfig(event);
+
     const { db } = useDB();
     const { getUserByEmail } = await userQueries();
 
@@ -26,7 +28,9 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const existingUser = await getUserByEmail(email);
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const existingUser = await getUserByEmail(normalizedEmail);
     if (existingUser) {
       throw createError({
         statusCode: 409,
@@ -43,7 +47,7 @@ export default defineEventHandler(async (event) => {
     const verificationTokenExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 mins from now
 
     const [newUser] = await db.insert(user).values({
-      email,
+      email: normalizedEmail,
       password: passwordHash,
       verificationToken: hashedVerificationToken,
       verificationTokenExpiresAt,
@@ -58,16 +62,31 @@ export default defineEventHandler(async (event) => {
     }
 
     const verificationUrl = `${event.headers.get("origin")}/auth/verifyEmail?token=${verificationToken}&id=${newUser.id}`;
+    const { htmlTemplate, textTemplate } = getEmailTemplate(verificationUrl, newUser);
 
-    const { sendMail } = useNodeMailer();
-    const { htmlTemplate, textTemplate } = getEmailTemplate(verificationUrl, newUser!);
+    if (import.meta.dev) {
+      const { sendMail } = useNodeMailer();
 
-    await sendMail({
-      to: email,
-      subject: "Verify your email address - Kings Hostel Management",
-      html: htmlTemplate,
-      text: textTemplate,
-    });
+      await sendMail({
+        to: email,
+        subject: "Verify your email address - Kings Hostel Management",
+        html: htmlTemplate,
+        text: textTemplate,
+      });
+    }
+    else {
+      const mailer = await useWorkerMailer();
+
+      await mailer.send({
+        from: { name: runtimeConfig.emailFromName, email: runtimeConfig.emailFromEmail },
+        to: { name: newUser.name, email },
+        subject: "Verify your email address - Kings Hostel Management",
+        html: htmlTemplate,
+        text: textTemplate,
+      });
+
+      mailer.close();
+    }
 
     return {
       success: true,

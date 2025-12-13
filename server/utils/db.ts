@@ -3,9 +3,9 @@ import { drizzle } from "drizzle-orm/neon-serverless";
 import * as schema from "../db/schema/index";
 
 export function useDB() {
-  const { databaseUrl } = useRuntimeConfig();
+  const runtimeConfig = useRuntimeConfig();
 
-  const db = drizzle(databaseUrl, {
+  const db = drizzle(runtimeConfig.databaseUrl, {
     schema,
     casing: "snake_case",
   });

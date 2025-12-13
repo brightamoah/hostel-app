@@ -1,7 +1,6 @@
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Table } from "@tanstack/vue-table";
 import type { useEditor } from "@tiptap/vue-3";
-import type { useFetch } from "#app";
 import type { User } from "#auth-utils";
 import type { AnnouncementType } from "~~/server/db/queries/announcement";
 import type { ComplaintType } from "~~/server/db/queries/complaint";
@@ -52,8 +51,16 @@ export interface ButtonGroup {
 
 export type TiptapEditorType = ReturnType<typeof useEditor>;
 
-export type Refresh = ReturnType<typeof useFetch>["refresh"];
-export type Status = ReturnType<typeof useFetch>["status"]["value"];
+type AsyncDataRequestStatus = "idle" | "pending" | "success" | "error";
+
+interface AsyncDataExecuteOptions {
+  dedupe?: "cancel" | "defer";
+  timeout?: number;
+  signal?: AbortSignal;
+}
+
+export type Refresh = (opts?: AsyncDataExecuteOptions) => Promise<void>;
+export type Status = AsyncDataRequestStatus;
 
 export type FormFieldType = "select" | "checkbox" | "password" | "otp" | "email" | "text";
 

@@ -1,5 +1,6 @@
 import type { Admin, MaintenanceStatus } from "~~/shared/types";
 
+import { useDB } from "~~/server/utils/db";
 import { and, count, countDistinct, desc, eq, sql } from "drizzle-orm";
 
 import { maintenanceRequest, maintenanceResponse } from "../schema";
