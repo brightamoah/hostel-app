@@ -10,6 +10,8 @@ import { getResetPasswordTemplate } from "~/utils/emailTemplate";
 export default defineEventHandler(async (event) => {
   try {
     const { db } = useDB();
+    const runtimeConfig = useRuntimeConfig(event);
+
     const body = await readValidatedBody(event, body => verifyEmailSchema.safeParse(body));
 
     if (!body.success) {
@@ -42,14 +44,30 @@ export default defineEventHandler(async (event) => {
     const resetUrl = `${event.headers.get("origin")}/auth/resetPassword?token=${resetToken}&id=${existingUser.id}`;
 
     const { html, text } = getResetPasswordTemplate(resetUrl, existingUser.name);
-    const { sendMail } = useNodeMailer();
 
-    await sendMail({
-      to: email,
-      subject: "Reset Your Password - Kings Hostel Management",
-      html,
-      text,
-    });
+    if (import.meta.dev) {
+      const { sendMail } = useNodeMailer();
+
+      await sendMail({
+        to: email,
+        subject: "Reset Your Password - Kings Hostel Management",
+        html,
+        text,
+      });
+    }
+    else {
+      const mailer = await useWorkerMailer();
+
+      await mailer.send({
+        from: { name: runtimeConfig.emailFromName, email: runtimeConfig.emailFromEmail },
+        to: { name: existingUser.name, email },
+        subject: "Reset Your Password - Kings Hostel Management",
+        html,
+        text,
+      });
+
+      mailer.close();
+    }
 
     return {
       success: true,
