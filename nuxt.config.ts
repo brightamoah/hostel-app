@@ -27,6 +27,14 @@ export default defineNuxtConfig({
     experimental: {
       openAPI: true,
     },
+    unenv: {
+      external: ["node:assert"],
+    },
+    preset: "cloudflare-module",
+    cloudflare: {
+      deployConfig: true,
+      nodeCompat: true,
+    },
   },
 
   hub: {
@@ -73,4 +81,5 @@ export default defineNuxtConfig({
       pass: env.NUXT_NODEMAILER_AUTH_PASS,
     },
   },
+
 });

@@ -22,8 +22,9 @@ export default defineEventHandler(async (event) => {
     const visitorsToDelete = await getVisitorByIds(ids);
 
     if (visitorsToDelete.length !== ids.length) {
-      const foundIds = visitorsToDelete.map(v => v.id);
-      const missingIds = ids.filter(id => !foundIds.includes(id));
+      const foundIds = new Set(visitorsToDelete.map(v => v.id));
+
+      const missingIds = ids.filter(id => !foundIds.has(id));
 
       const message = missingIds.length > 1
         ? `Visitors with IDs ${missingIds.join(", ")} not found`
@@ -36,8 +37,7 @@ export default defineEventHandler(async (event) => {
     }
 
     if (adminData.accessLevel !== "super") {
-      const adminHostelId = adminData.hostelId;
-      const unauthorizedVisitors = visitorsToDelete.filter(v => v.hostelId !== adminHostelId);
+      const unauthorizedVisitors = visitorsToDelete.filter(v => v.hostelId !== adminData.hostelId);
 
       if (unauthorizedVisitors.length > 0) {
         throw createError({
@@ -47,14 +47,24 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    const nonDeletableVisitors = visitorsToDelete.filter(visitor => visitor.status !== "pending" && visitor.status !== "cancelled");
+    const nonDeletableVisitors = visitorsToDelete.filter(visitor => !["pending", "cancelled"].includes(visitor.status));
 
     if (nonDeletableVisitors.length > 0) {
-      const details = nonDeletableVisitors.map(v => `${v.name} (Status: ${v.status})`).join("; ");
+      const firstItem = nonDeletableVisitors[0];
 
-      const message = nonDeletableVisitors.length > 1
-        ? `Action denied: Some visitors cannot be deleted due to their status: ${details}`
-        : `Action denied: Visitor "${nonDeletableVisitors[0].name}" cannot be deleted due to its status: ${nonDeletableVisitors[0].status}`;
+      if (!firstItem) throw new Error("Unexpected error processing visitors");
+
+      let message = "";
+
+      if (nonDeletableVisitors.length > 1) {
+        const details = nonDeletableVisitors
+          .map(v => `${v.name} (${v.status})`)
+          .join("; ");
+        message = `Action denied: Some visitors cannot be deleted due to their status: ${details}`;
+      }
+      else {
+        message = `Action denied: Visitor "${firstItem.name}" cannot be deleted due to its status: ${firstItem.status}`;
+      }
 
       throw createError({
         statusCode: 400,

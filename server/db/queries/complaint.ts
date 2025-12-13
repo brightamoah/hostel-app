@@ -1,5 +1,6 @@
 import type { Admin, ComplaintActionTaken, ComplaintStatus } from "~~/shared/types";
 
+import { useDB } from "~~/server/utils/db";
 import { and, countDistinct, desc, eq, sql } from "drizzle-orm";
 
 import { complaint, complaintResponse } from "../schema";

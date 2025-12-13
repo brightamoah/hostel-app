@@ -9,6 +9,13 @@ export default defineEventHandler(async (event) => {
     const rawIp = getRequestIP(event, { xForwardedFor: true }) || event.node?.req?.socket?.remoteAddress;
     const ip = normalizeIp(rawIp);
 
+    if (!ip || ip === "undefined") {
+      throw createError({
+        statusCode: 400,
+        message: "Invalid request",
+      });
+    }
+
     const {
       updateUserLastLogin,
       getOnboardedStudent,
