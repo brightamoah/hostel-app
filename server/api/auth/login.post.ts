@@ -6,6 +6,7 @@ import { handleError } from "~~/server/utils/errorHandler";
 export default defineEventHandler(async (event) => {
   try {
     const { session, nodeEnv } = useRuntimeConfig();
+
     const rawIp = getRequestIP(event, { xForwardedFor: true }) || event.node?.req?.socket?.remoteAddress;
     const ip = normalizeIp(rawIp);
 
@@ -37,9 +38,11 @@ export default defineEventHandler(async (event) => {
       });
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
+
     await checkUserLockedOutByIp(ip);
 
-    const currentUser = await getUserByEmail(email);
+    const currentUser = await getUserByEmail(normalizedEmail);
 
     if (!currentUser) {
       await recordLoginAttempt(null, ip);
@@ -51,7 +54,7 @@ export default defineEventHandler(async (event) => {
 
     await checkUserLockOutByUserId(currentUser.id, ip);
 
-    const isValid = await verifyPassword(currentUser!.password, password);
+    const isValid = await verifyPassword(currentUser.password, password);
     if (!isValid) {
       await recordLoginAttempt(currentUser.id, ip);
       throw createError({
@@ -89,14 +92,14 @@ export default defineEventHandler(async (event) => {
 
     await setUserSession(event, {
       user: {
-        id: currentUser!.id,
-        email: currentUser!.email,
-        role: currentUser!.role,
-        image: currentUser!.image,
-        name: currentUser!.name,
-        emailVerified: currentUser!.emailVerified,
-        updatedAt: currentUser!.updatedAt,
-        lastLogin: currentUser!.lastLogin,
+        id: currentUser.id,
+        email: currentUser.email,
+        role: currentUser.role,
+        image: currentUser.image,
+        name: currentUser.name,
+        emailVerified: currentUser.emailVerified,
+        updatedAt: currentUser.updatedAt,
+        lastLogin: currentUser.lastLogin,
         adminData,
       } as User,
       loggedInAt: Date.now(),

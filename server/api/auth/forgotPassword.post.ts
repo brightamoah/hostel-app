@@ -26,7 +26,9 @@ export default defineEventHandler(async (event) => {
     const { email } = body.data;
     const { getUserByEmail } = await userQueries();
 
-    const existingUser = await getUserByEmail(email);
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const existingUser = await getUserByEmail(normalizedEmail);
 
     if (!existingUser || !existingUser.emailVerified) return { success: true, message: "If an account exists, a reset email has been sent." };
 
@@ -49,7 +51,7 @@ export default defineEventHandler(async (event) => {
       const { sendMail } = useNodeMailer();
 
       await sendMail({
-        to: email,
+        to: normalizedEmail,
         subject: "Reset Your Password - Kings Hostel Management",
         html,
         text,
@@ -60,7 +62,7 @@ export default defineEventHandler(async (event) => {
 
       await mailer.send({
         from: { name: runtimeConfig.emailFromName, email: runtimeConfig.emailFromEmail },
-        to: { name: existingUser.name, email },
+        to: { name: existingUser.name, email: normalizedEmail },
         subject: "Reset Your Password - Kings Hostel Management",
         html,
         text,

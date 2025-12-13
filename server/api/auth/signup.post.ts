@@ -28,7 +28,9 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const existingUser = await getUserByEmail(email);
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const existingUser = await getUserByEmail(normalizedEmail);
     if (existingUser) {
       throw createError({
         statusCode: 409,
@@ -45,7 +47,7 @@ export default defineEventHandler(async (event) => {
     const verificationTokenExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 mins from now
 
     const [newUser] = await db.insert(user).values({
-      email,
+      email: normalizedEmail,
       password: passwordHash,
       verificationToken: hashedVerificationToken,
       verificationTokenExpiresAt,
@@ -60,7 +62,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const verificationUrl = `${event.headers.get("origin")}/auth/verifyEmail?token=${verificationToken}&id=${newUser.id}`;
-    const { htmlTemplate, textTemplate } = getEmailTemplate(verificationUrl, newUser!);
+    const { htmlTemplate, textTemplate } = getEmailTemplate(verificationUrl, newUser);
 
     if (import.meta.dev) {
       const { sendMail } = useNodeMailer();

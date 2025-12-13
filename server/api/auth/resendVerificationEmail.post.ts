@@ -20,9 +20,11 @@ export default defineEventHandler(async (event) => {
 
     const { email } = body.data;
 
+    const normalizedEmail = email.trim().toLowerCase();
+
     const { getUserByEmail } = await userQueries();
 
-    const existingUser = await getUserByEmail(email);
+    const existingUser = await getUserByEmail(normalizedEmail);
 
     if (!existingUser) return { success: true, message: "If an account exists, a verification email has been sent." };
 
@@ -62,7 +64,7 @@ export default defineEventHandler(async (event) => {
       const { sendMail } = useNodeMailer();
 
       await sendMail({
-        to: email,
+        to: normalizedEmail,
         subject: "Verify your email address - Kings Hostel Management",
         html: htmlTemplate,
         text: textTemplate,
