@@ -3,7 +3,6 @@ import { env } from "./app/lib/env";
 
 export default defineNuxtConfig({
   compatibilityDate: "latest",
-
   modules: [
     "@nuxt/eslint",
     "@nuxt/image",
@@ -24,7 +23,6 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
 
   nitro: {
-
     preset: "cloudflare_module",
     cloudflare: {
       deployConfig: true,
