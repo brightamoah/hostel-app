@@ -128,7 +128,7 @@ This project uses a modern, type-safe, full-stack architecture:
 └── nuxt.config.ts       # Nuxt configuration
 ```
 
-## 💡 Developed By
+## Developed By
 
 **Bright Kweku Amoah**
 [GitHub](https://github.com/brightamoah)
