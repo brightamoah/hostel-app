@@ -12,7 +12,7 @@ export default defineNuxtConfig({
     "@formkit/auto-animate",
     "nuxt-tiptap-editor",
     "@nuxthub/core",
-    (env.NODE_ENV === "development" ? "nuxt-nodemailer" : ""),
+    ...(env.NODE_ENV === "development" ? ["nuxt-nodemailer"] : []),
   ],
   devtools: { enabled: true },
 
@@ -39,6 +39,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    public: {
+      siteUrl: env.NODE_ENV === "development" ? "http://localhost:3000" : env.NUXT_PUBLIC_SITE_URL,
+    },
     session: {
       password: env.NUXT_SESSION_PASSWORD,
       name: env.NUXT_SESSION_NAME,

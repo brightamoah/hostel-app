@@ -17,6 +17,7 @@ const EnvSchema = z.object({
   NUXT_HUB_CLOUDFLARE_ACCOUNT_ID: z.string(),
   NUXT_EMAIL_FROM_NAME: z.string(),
   NUXT_EMAIL_FROM_EMAIL: z.email(),
+  NUXT_PUBLIC_SITE_URL: z.url(),
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;
