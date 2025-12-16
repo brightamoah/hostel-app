@@ -1,7 +1,7 @@
 $envFile = ".env"
 
 if (-Not (Test-Path $envFile)) {
-    Write-Host "❌ .env file not found at $envFile"
+    Write-Host ".env file not found at $envFile"
     exit
 }
 
@@ -26,7 +26,7 @@ foreach ($key in $secrets.Keys) {
     $value = $secrets[$key]
 
     # Pipe the value to Wrangler properly
-    $value | pnpm wrangler secret put $key
+    $value | pnpm wrangler secret put $key --env="preview"
 
     Start-Sleep -Milliseconds 400  # Avoid Windows async crash
 }

@@ -5,7 +5,7 @@ import { handleError } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async (event) => {
   try {
-    const { session, nodeEnv } = useRuntimeConfig();
+    const { session: sessionConfig, nodeEnv } = useRuntimeConfig();
 
     const rawIp = getRequestIP(event, { xForwardedFor: true }) || event.node?.req?.socket?.remoteAddress;
     const ip = normalizeIp(rawIp);
@@ -27,7 +27,14 @@ export default defineEventHandler(async (event) => {
 
     const body = await readValidatedBody(event, body => loginSchema.safeParse(body));
 
-    if (!body.success) throw body.error.issues;
+    if (!body.success) {
+      throw createError({
+        statusCode: 400,
+        message: `Invalid request: ${body.error.issues
+          .map(i => i.message)
+          .join(", ")}`,
+      });
+    }
 
     const { email, password, rememberMe } = body.data;
 
@@ -48,7 +55,7 @@ export default defineEventHandler(async (event) => {
       await recordLoginAttempt(null, ip);
       throw createError({
         statusCode: 401,
-        message: "Invalid email or password",
+        message: "Invalid email or password: please try again.",
       });
     }
 
@@ -90,6 +97,19 @@ export default defineEventHandler(async (event) => {
       true,
     );
 
+    let isOnboarded = false;
+
+    if (currentUser.role === "student") {
+      const existingStudent = await getOnboardedStudent(currentUser.id);
+
+      isOnboarded = !!existingStudent;
+    }
+
+    const now = new Date();
+
+    const sessionDurationMs = 1000 * 60 * 60 * 24 * 7; // 7 days
+    const expiresAt = new Date(now.getTime() + sessionDurationMs);
+
     await setUserSession(event, {
       user: {
         id: currentUser.id,
@@ -102,23 +122,14 @@ export default defineEventHandler(async (event) => {
         lastLogin: currentUser.lastLogin,
         adminData,
       } as User,
-      loggedInAt: Date.now(),
+      loggedInAt: now,
+      expiresAt,
+      onboarded: isOnboarded,
     });
 
-    if (currentUser.role === "student") {
-      const existingStudent = await getOnboardedStudent(currentUser.id);
-      if (existingStudent) {
-        // Update session to mark as onboarded
-        await setUserSession(event, {
-          ...session,
-          onboarded: true,
-        });
-      }
-    }
-
     if (rememberMe) {
-      const sessionCookieName = session.name!;
-      const currentSessionCookie = getCookie(event, sessionCookieName);
+      const sessionCookieName = sessionConfig.name;
+      const currentSessionCookie = getCookie(event, sessionCookieName)!;
 
       if (currentSessionCookie) {
         setCookie(event, sessionCookieName, currentSessionCookie, {
