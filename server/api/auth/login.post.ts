@@ -62,6 +62,9 @@ export default defineEventHandler(async (event) => {
     await checkUserLockOutByUserId(currentUser.id, ip);
 
     const isValid = await verifyPassword(currentUser.password, password);
+
+    console.log(isValid)
+
     if (!isValid) {
       await recordLoginAttempt(currentUser.id, ip);
       throw createError({
