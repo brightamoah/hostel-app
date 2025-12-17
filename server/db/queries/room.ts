@@ -70,6 +70,7 @@ export async function roomQueries() {
       .query
       .room
       .findMany({
+        ...roomWithRelations,
         where: or(
           eq(room.status, "vacant"),
           eq(room.status, "partially occupied"),

@@ -63,8 +63,6 @@ export default defineEventHandler(async (event) => {
 
     const isValid = await verifyPassword(currentUser.password, password);
 
-    console.log(isValid)
-
     if (!isValid) {
       await recordLoginAttempt(currentUser.id, ip);
       throw createError({

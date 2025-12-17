@@ -167,6 +167,8 @@ export type RoomDataResponse = {
   hostels: Hostel[];
 };
 
+export type StudentRoomData = Pick<RoomDataResponse, "rooms" | "hostels" | "totalRooms">;
+
 export type UserDataResponse = {
   users: UserType[];
   totalUsers: number;

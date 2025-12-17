@@ -192,6 +192,7 @@ useSeoMeta({
             :status-filter-options
             :hostel-filter-options
             :floor-filter-options
+            class="mt-10"
           >
             <template #actions>
               <DashboardRefreshButton

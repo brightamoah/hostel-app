@@ -35,7 +35,7 @@ const floorFilterModel = computed({
 </script>
 
 <template>
-  <div class="md:flex md:justify-between md:items-center md:gap-4 space-y-4 md:space-y-0 mt-10">
+  <div class="md:flex md:justify-between md:items-center md:gap-4 space-y-4 md:space-y-0">
     <UInput
       v-model="globalFilterModel"
       class="w-full md:max-w-sm"

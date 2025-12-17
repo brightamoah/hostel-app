@@ -12,8 +12,29 @@ export default defineNuxtConfig({
     "@formkit/auto-animate",
     "nuxt-tiptap-editor",
     "@nuxthub/core",
-    ...(env.NODE_ENV === "development" ? ["nuxt-nodemailer"] : []),
   ],
+
+  $development: {
+    modules: ["nuxt-nodemailer"],
+
+    runtimeConfig: {
+      public: {
+        siteUrl: "http://localhost:3000",
+      },
+    },
+
+    nodemailer: {
+      from: env.NUXT_NODEMAILER_FROM,
+      host: env.NUXT_NODEMAILER_HOST,
+      port: env.NUXT_NODEMAILER_PORT,
+      secure: true,
+      auth: {
+        user: env.NUXT_NODEMAILER_AUTH_USER,
+        pass: env.NUXT_NODEMAILER_AUTH_PASS,
+      },
+    },
+  },
+
   devtools: { enabled: true },
 
   app: {
@@ -40,7 +61,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      siteUrl: env.NODE_ENV === "development" ? "http://localhost:3000" : env.NUXT_PUBLIC_SITE_URL,
+      siteUrl: env.NUXT_PUBLIC_SITE_URL,
     },
     session: {
       password: env.NUXT_SESSION_PASSWORD,
@@ -71,18 +92,4 @@ export default defineNuxtConfig({
       standalone: false,
     },
   },
-
-  ...(env.NODE_ENV === "development" && {
-    nodemailer: {
-      from: env.NUXT_NODEMAILER_FROM,
-      host: env.NUXT_NODEMAILER_HOST,
-      port: env.NUXT_NODEMAILER_PORT,
-      secure: true,
-      auth: {
-        user: env.NUXT_NODEMAILER_AUTH_USER,
-        pass: env.NUXT_NODEMAILER_AUTH_PASS,
-      },
-    },
-  }),
-
 });

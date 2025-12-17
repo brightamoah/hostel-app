@@ -72,3 +72,11 @@ export const charCountMap: Record<CharStatus, CharCountInfo> = {
     progress: "error",
   },
 };
+
+export const roomStatusColorMap: Record<Room["status"], ColorType> = {
+  "vacant": "success",
+  "partially occupied": "info",
+  "fully occupied": "error",
+  "under maintenance": "warning",
+  "reserved": "neutral",
+};

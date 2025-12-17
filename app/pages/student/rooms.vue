@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { getPaginationRowModel } from "@tanstack/table-core";
+
 definePageMeta({
   middleware: ["requires-auth"],
   layout: "student-dashboard",
@@ -6,44 +8,58 @@ definePageMeta({
 
 const title = ref("Student Rooms");
 
-const cards = ref<StatsCard[]>([
-  {
-    id: 1,
-    title: "Total Rooms",
-    icon: "i-lucide-building-2",
-    color: "primary",
-    value: 150,
-    percentage: 5.2,
-    period: "monthly",
-  },
-  {
-    id: 2,
-    title: "Occupied Rooms",
-    icon: "i-lucide-users",
-    color: "info",
-    value: 120,
-    percentage: 8.1,
-    period: "monthly",
-  },
-  {
-    id: 3,
-    title: "Available Rooms",
-    icon: "i-lucide-check-circle",
-    color: "success",
-    value: 30,
-    percentage: -3.4,
-    period: "weekly",
-  },
-  {
-    id: 4,
-    title: "Maintenance Needed",
-    icon: "i-heroicons-wrench-screwdriver",
-    color: "warning",
-    value: 5,
-    percentage: 10.0,
-    period: "daily",
-  },
-]);
+const table = useTemplateRef("tableRef");
+
+const globalFilter = ref("");
+
+const columnVisibility = ref<{ [key: string | number]: boolean }>({ id: false });
+
+const UButton = resolveComponent("UButton");
+const UBadge = resolveComponent("UBadge");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
+const UTooltip = resolveComponent("UTooltip");
+
+const {
+  columns,
+  getRowItems,
+} = useStudentRoomRowColumn(
+  UButton,
+  UBadge,
+  UDropdownMenu,
+  UTooltip,
+);
+
+const {
+  data,
+  status,
+  rooms,
+  isLoading: refreshIsLoading,
+  canResend,
+  coolDownTime,
+  handleRefresh,
+} = useFetchStudentRoomData();
+
+const {
+  selectedRoomsLength,
+  defaultPage,
+  itemsPerPage,
+  totalRooms,
+  statusFilter,
+  statusFilterOptions,
+  hostelFilter,
+  hostelFilterOptions,
+  floorFilter,
+  floorFilterOptions,
+  currentRoomsShowing,
+  lastRoomShowing,
+  updatePage,
+  itemsToDisplay,
+} = useStudentRoomFilters(table, data);
+
+const pagination = ref({
+  pageIndex: 0,
+  pageSize: 10,
+});
 </script>
 
 <template>
@@ -54,15 +70,68 @@ const cards = ref<StatsCard[]>([
       </template>
 
       <template #body>
-        <div class="p-4">
-          <DashboardStatsCard :cards />
+        <div class="p-2">
+          <UCard variant="subtle">
+            <RoomSearchFilter
+              v-model="globalFilter"
+              v-model:status-filter="statusFilter"
+              v-model:hostel-filter="hostelFilter"
+              v-model:floor-filter="floorFilter"
+              class="m-0"
+              :status-filter-options
+              :hostel-filter-options
+              :floor-filter-options
+            >
+              <template #actions>
+                <DashboardRefreshButton
+                  :can-resend
+                  :cool-down-time
+                  :refresh-is-loading
+                  :handle-refresh
+                />
 
-          <h1 class="mb-4 font-bold text-2xl">
-            Rooms Dashboard
-          </h1>
-          <!-- Analytics content goes here -->
-          <p>This is where you can display various rooms data.</p>
+                <DashboardItemsToDisplay :items-to-display />
+              </template>
+            </RoomSearchFilter>
+          </UCard>
         </div>
+
+        <UTable
+          ref="tableRef"
+          :key="rooms.length"
+          v-model:global-filter="globalFilter"
+          v-model:column-visibility="columnVisibility"
+          v-model:pagination="pagination"
+          row-key="id"
+          class="mt-6 max-w-[95dvw] md:max-w-full shrink-0"
+          :columns="columns"
+          :data="rooms"
+          :get-row-items="getRowItems"
+          :loading="status === 'pending'"
+          :pagination-options="{
+            getPaginationRowModel: getPaginationRowModel(),
+          }"
+          :ui="{
+            base: 'table-fixed border-separate border-spacing-0',
+            thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+            tbody: '[&>tr]:last:[&>td]:border-b-0',
+            th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+            td: 'border-b border-default',
+          }"
+        />
+
+        <DashboardPagination
+          v-if="table && table?.tableApi"
+          :items="rooms"
+          :total-items="totalRooms"
+          :selected-items-length="selectedRoomsLength"
+          :current-items-showing="currentRoomsShowing"
+          :last-item-showing="lastRoomShowing"
+          :table="table!.tableApi"
+          :default-page
+          :items-per-page
+          :update-page
+        />
       </template>
     </UDashboardPanel>
   </div>

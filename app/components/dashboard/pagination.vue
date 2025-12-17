@@ -46,6 +46,9 @@ const isMobile = inject("isMobile") as ComputedRef<boolean>;
         :size="isMobile ? 'xs' : 'md'"
         :page="defaultPage"
         :total="displayTotal"
+        :ui="{
+          item: 'cursor-pointer',
+        }"
         @update:page="updatePage"
       />
     </div>
