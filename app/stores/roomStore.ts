@@ -5,7 +5,8 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 export const useRoomStore = defineStore("roomStore", () => {
   const toast = useToast();
   const { user } = useUserSession();
-  const roomDataKey = computed(() => `roomData:${user.value?.adminData?.accessLevel}`);
+  const roomDataKey = computed(() => user.value?.role === "admin" ? `roomData:${user.value?.adminData?.accessLevel}` : `roomData:${user.value?.role}`);
+
   const isModalOpen = ref<boolean>(false);
 
   const isLoading = ref<boolean>(false);
@@ -146,6 +147,41 @@ export const useRoomStore = defineStore("roomStore", () => {
     }
   };
 
+  const bookRoom = async (payload: BookRoomSchema, roomNumber: string) => {
+    if (!payload.roomId || !payload.userId) return;
+
+    isLoading.value = true;
+
+    try {
+      const response = await $fetch("/api/room/student/book", {
+        method: "POST",
+        body: payload,
+      });
+
+      toast.add({
+        title: response.message,
+        description: `Room ${roomNumber} has been booked successfully.`,
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+
+      await refreshNuxtData(roomDataKey.value);
+    }
+    catch (error) {
+      const message = (error as any)?.data?.message;
+      toast.add({
+        title: "Failed to Book Room",
+        description: message,
+        color: "error",
+        icon: "i-lucide-alert-circle",
+        duration: 8000,
+      });
+    }
+    finally {
+      isLoading.value = false;
+    }
+  };
+
   return {
     addRoomState,
     roomType,
@@ -159,6 +195,7 @@ export const useRoomStore = defineStore("roomStore", () => {
     resetAddRoomState,
     addNewRoom,
     deleteRoom,
+    bookRoom,
   };
 });
 if (import.meta.hot) import.meta.hot.accept(acceptHMRUpdate(useRoomStore, import.meta.hot));

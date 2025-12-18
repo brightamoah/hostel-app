@@ -383,10 +383,19 @@ const editAnnouncementSchema = z.object({
 
 export type EditAnnouncementSchema = z.output<typeof editAnnouncementSchema>;
 
+const bookRoomSchema = z.object({
+  roomId: z.number().int().positive().min(1, "Invalid Room ID"),
+  userId: z.number().int().positive().min(1, "Invalid Student ID"),
+  endDate: z.date().optional(),
+});
+
+export type BookRoomSchema = z.output<typeof bookRoomSchema>;
+
 export {
   addAdminSchema,
   approveDenySchema,
   baseSignupSchema,
+  bookRoomSchema,
   complaintStatusResponseSchema,
   confirmPasswordSchema,
   deleteItemSchema,

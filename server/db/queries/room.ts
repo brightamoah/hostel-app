@@ -3,7 +3,7 @@ import type { Admin } from "~~/shared/types";
 import { useDB } from "~~/server/utils/db";
 import { and, asc, countDistinct, eq, gt, inArray, or, sql } from "drizzle-orm";
 
-import { hostel, room } from "../schema";
+import { allocation, hostel, room } from "../schema";
 // import { userQueries } from "./user";
 
 const roomWithRelations = {
@@ -213,6 +213,57 @@ export async function roomQueries() {
     };
   };
 
+  const cancelAllocation = async (allocationId: number) => {
+    return await db.transaction(async (tx) => {
+      const [targetAllocation] = await tx
+        .select()
+        .from(allocation)
+        .where(eq(allocation.id, allocationId))
+        .for("update");
+
+      if (!targetAllocation) throw new Error("Allocation not found");
+      if (targetAllocation.status === "cancelled" || targetAllocation.status === "expired") return targetAllocation;
+
+      const [updatedAllocation] = await tx
+        .update(allocation)
+        .set({ status: "cancelled" })
+        .where(eq(allocation.id, allocationId))
+        .returning();
+
+      const [targetRoom] = await tx
+        .select()
+        .from(room)
+        .where(eq(room.id, targetAllocation.roomId))
+        .for("update");
+
+      if (targetRoom) {
+        const newOccupancy = Math.max(0, targetRoom.currentOccupancy - 1);
+
+        let newStatus: typeof room.$inferSelect.status = "partially occupied";
+
+        if (newOccupancy === 0) {
+          newStatus = "vacant";
+        }
+        else if (newOccupancy < targetRoom.capacity) {
+          newStatus = "partially occupied";
+        }
+        else {
+          newStatus = "fully occupied";
+        }
+
+        await tx
+          .update(room)
+          .set({
+            currentOccupancy: newOccupancy,
+            status: newStatus,
+          })
+          .where(eq(room.id, targetAllocation.roomId));
+      }
+
+      return updatedAllocation;
+    });
+  };
+
   // const getRoomsCount = async () => {
   //   const count = await db
   //     .query
@@ -308,6 +359,7 @@ export async function roomQueries() {
     getScopedRooms,
     getAllHostelsScoped,
     getRoomStatusCount,
+    cancelAllocation,
     // getRoomsCount,
     // getRoomsScoped,
     // getBuildingsByHostelId,
