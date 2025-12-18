@@ -1,12 +1,11 @@
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/table-core";
 
-import ConfirmationModal from "~/components/dashboard/confirmationModal.vue";
-
 type Toast = ReturnType<typeof useToast>;
 
 const RoomDetailsModal = defineAsyncComponent(() => import("~/components/room/detailsModal.vue"));
 const EditModal = defineAsyncComponent(() => import("~/components/room/editModal.vue"));
+const ConfirmationModal = defineAsyncComponent(() => import("~/components/dashboard/confirmationModal.vue"));
 
 export function useRoomRowColumn(
   toast: Toast,

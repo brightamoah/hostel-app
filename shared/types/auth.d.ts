@@ -10,6 +10,7 @@ declare module "#auth-utils" {
     role: "student" | "admin";
     lastLogin?: Date;
     adminData?: Admin;
+    studentData?: Student;
   };
 
   /**

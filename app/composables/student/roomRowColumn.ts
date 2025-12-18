@@ -1,19 +1,48 @@
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/table-core";
 
+const RoomDetailsModal = defineAsyncComponent(() => import("~/components/room/detailsModal.vue"));
+const ConfirmationModal = defineAsyncComponent(() => import("~/components/dashboard/confirmationModal.vue"));
+
 export function useStudentRoomRowColumn(
   UButton: ComponentType,
   UBadge: ComponentType,
   UDropdownMenu: ComponentType,
   UTooltip: ComponentType,
 ) {
-  const toast = useToast();
+  const { user } = useUserSession();
+
+  const overlay = useOverlay();
+  const roomStore = useRoomStore();
+  const { isLoading } = storeToRefs(roomStore);
+  const { bookRoom } = roomStore;
 
   const openDetailsModal = (room: Room) => {
-    toast.add({
-      title: `Room Details: ${room.roomNumber}`,
-      description: `Details for room ${room.roomNumber} would be shown here.`,
-      color: "info",
+    const modal = overlay.create(RoomDetailsModal);
+    modal.open({
+      room,
+    });
+  };
+
+  const openBookRoomModal = async (room: Room) => {
+    const modal = overlay.create(ConfirmationModal);
+    const close = modal.close;
+
+    modal.open({
+      title: `Book Room ${room.roomNumber} in ${room.hostel?.name} Hostel`,
+      confirmLabel: "Book Room",
+      description: `This action will reserve room ${room.roomNumber} for you.`,
+      renderTrigger: false,
+      body: `Are you sure you want to proceed with booking room ${room.roomNumber}? \n After booking the room, you have five(5) days to make 60% payment to confirm your allocation.`,
+      isLoading,
+      confirmColor: "primary",
+      onConfirm: async () => {
+        const userId = user.value?.role === "student" ? user.value.id : undefined;
+        if (!userId) return;
+
+        await bookRoom({ roomId: room.id, userId }, room.roomNumber);
+        close();
+      },
     });
   };
 
@@ -163,29 +192,32 @@ export function useStudentRoomRowColumn(
       cell: ({ row }) =>
         h(
           "div",
-          { class: "flex items-center gap-2" },
+          { class: "flex justify-center items-center gap-2" },
           [
             h(
               UButton,
               {
                 variant: "subtle",
-                size: "sm",
+                size: "md",
                 label: "Book Room",
-                icon: "i-lucide-calendar",
+                icon: "i-lucide-calendar-plus",
                 color: "primary",
                 class: "cursor-pointer",
-                onClick: () => console.log(row.original.roomNumber),
+                onClick: () => openBookRoomModal(row.original),
 
               },
             ),
-            h(UButton, {
-              variant: "ghost",
-              size: "lg",
-              icon: "i-lucide-eye",
-              color: "neutral",
-              class: "cursor-pointer",
-              onClick: () => openDetailsModal(row.original),
-            }),
+            h(UTooltip, {
+              text: "View Room Details",
+            }, () =>
+              h(UButton, {
+                variant: "ghost",
+                size: "lg",
+                icon: "i-lucide-eye",
+                color: "neutral",
+                class: "cursor-pointer",
+                onClick: () => openDetailsModal(row.original),
+              })),
           ],
         ),
     },
