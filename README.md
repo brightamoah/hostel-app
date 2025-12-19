@@ -68,7 +68,7 @@ pnpm drizzle-kit migrate
 Build for production:
 
 ```bash
-pnpm build
+pnpm build && npx wrangler deploy
 ```
 
 Preview locally:
