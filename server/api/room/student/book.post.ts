@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
 
     return {
       success: true,
-      message: "Room allocated successfully",
+      message: "Room booked successfully. An invoice has been generated.",
       allocation,
     };
   }

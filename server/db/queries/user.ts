@@ -1,7 +1,7 @@
 import { useDB } from "~~/server/utils/db";
 import { and, count, eq, gt, inArray, isNotNull, lt, or, sql } from "drizzle-orm";
 
-import { admin, allocation, hostel, loginAttempts, room, student, user } from "../schema";
+import { admin, allocation, billing, hostel, loginAttempts, maintenanceRequest, room, student, user, visitor } from "../schema";
 
 const ATTEMPT_WINDOW_MINUTES = 15;
 
@@ -44,6 +44,36 @@ const userDetails = {
     status: admin.status,
   },
 };
+
+const studentWithRelations = {
+  with: {
+    user: {
+      columns: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        role: true,
+        emailVerified: true,
+        lastLogin: true,
+      },
+    },
+    allocation: {
+      with: {
+        room: {
+          with: {
+            hostel: true,
+          },
+        },
+      },
+    },
+    billings: true,
+    payments: true,
+    maintenanceRequests: true,
+    complaints: true,
+    visitors: true,
+  },
+} as const;
 
 export async function userQueries() {
   const { db } = useDB();
@@ -352,6 +382,59 @@ export async function userQueries() {
     });
   };
 
+  const getStudentForDashboardByUserId = async (userId: number) => {
+    const studentRecord = await db.query.student.findFirst({
+      where: eq(student.userId, userId),
+      ...studentWithRelations,
+    });
+
+    if (!studentRecord) return null;
+
+    const studentId = studentRecord.id;
+
+    const [[billingStats], [maintenanceStats], [visitorStats]] = await Promise.all([
+      db
+        .select({
+          totalBilled: sql<string>`coalesce(sum(${billing.amount}), '0')`,
+          totalPaid: sql<string>`coalesce(sum(${billing.paidAmount}), '0')`,
+        })
+
+        .from(billing)
+        .where(eq(billing.studentId, studentId)),
+
+      db
+        .select({ count: count() })
+        .from(maintenanceRequest)
+        .where(and(
+          eq(maintenanceRequest.studentId, studentId),
+          eq(maintenanceRequest.status, "pending"),
+        )),
+
+      db.select({ count: count() })
+        .from(visitor)
+        .where(
+          eq(visitor.studentId, studentId),
+        ),
+    ]);
+
+    const totalBilled = Number.parseFloat(billingStats?.totalBilled || "0");
+    const totalPaid = Number.parseFloat(billingStats?.totalPaid || "0");
+    const outstandingBalance = totalBilled - totalPaid;
+
+    const pendingMaintenanceCount = maintenanceStats?.count || 0;
+
+    const totalVisitors = visitorStats?.count || 0;
+
+    return {
+      studentRecord,
+      totalBilled,
+      totalPaid,
+      outstandingBalance,
+      pendingMaintenanceCount,
+      totalVisitors,
+    };
+  };
+
   return {
     updateUserLastLogin,
     cleanupExpiredVerificationTokens,
@@ -372,5 +455,9 @@ export async function userQueries() {
     getFailedAttemptsCount,
     recordLoginAttempt,
     getStudentByUserId,
+    getStudentForDashboardByUserId,
   };
 }
+
+type StudentWithRelations = Awaited<ReturnType<Awaited<ReturnType<typeof userQueries>>["getStudentForDashboardByUserId"]>>;
+export type StudentDashboard = NonNullable<StudentWithRelations>;
