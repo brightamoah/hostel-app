@@ -4,7 +4,6 @@ import { useDB } from "~~/server/utils/db";
 import { and, asc, countDistinct, eq, gt, inArray, or, sql } from "drizzle-orm";
 
 import { allocation, hostel, room } from "../schema";
-// import { userQueries } from "./user";
 
 const roomWithRelations = {
   with: {
@@ -14,7 +13,6 @@ const roomWithRelations = {
 
 export async function roomQueries() {
   const { db } = useDB();
-  // const { getAdminByUserId } = await userQueries();
 
   const getAllRooms = async () => {
     const rooms = await db

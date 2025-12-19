@@ -6,6 +6,7 @@ import type { AnnouncementType } from "~~/server/db/queries/announcement";
 import type { ComplaintType } from "~~/server/db/queries/complaint";
 import type { Maintenance } from "~~/server/db/queries/maintenance";
 import type { Room as RoomType } from "~~/server/db/queries/room";
+import type { StudentDashboard } from "~~/server/db/queries/user";
 import type { Visitor } from "~~/server/db/queries/visitor";
 import type { allocation, announcement, complaintActionTakenEnum, complaintStatusEnum, loginAttempts, maintenanceStatusEnum, room, visitorLogs } from "~~/server/db/schema";
 import type { randomUUID } from "node:crypto";
@@ -133,7 +134,7 @@ export type StatsCard = {
   title: string;
   icon: string;
   color: ColorType;
-  value: number;
+  value: number | string;
   percentage?: number;
   period?: Period;
   to?: RouteLocationRaw;
@@ -231,6 +232,15 @@ export type Student = {
   enrollmentDate: Date;
   roomNumber: string;
   residencyStatus: "N/A" | "active" | "inactive" | "suspended" | "graduated" | "withdrawn";
+};
+
+export type DashboardStudent = {
+  student: StudentDashboard["studentRecord"];
+  totalBilled: StudentDashboard["totalBilled"];
+  totalPaid: StudentDashboard["totalPaid"];
+  balance: StudentDashboard["outstandingBalance"];
+  totalVisitors: StudentDashboard["totalVisitors"];
+  pendingMaintenance: StudentDashboard["pendingMaintenanceCount"];
 };
 
 export type Admin = {

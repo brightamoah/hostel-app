@@ -117,11 +117,14 @@ export const studentRelations = relations(student, ({ one, many }) => ({
     fields: [student.userId],
     references: [user.id],
   }),
+  allocation: one(allocation, {
+    fields: [student.id],
+    references: [allocation.studentId],
+  }),
   billings: many(billing),
   payments: many(payment),
   complaints: many(complaint),
   maintenanceRequests: many(maintenanceRequest),
-  allocations: many(allocation),
   visitors: many(visitor),
 }));
 
@@ -141,10 +144,3 @@ export type UserWithRelations = typeof user & {
   student?: typeof student;
   admin?: typeof admin;
 };
-
-// to be run manually in the database to set the starting value of the sequences
-// ALTER SEQUENCE user_id_seq INCREMENT BY 1 MINVALUE 10000000 MAXVALUE 99999999 START WITH 10000000 CYCLE RESTART WITH 10000000
-
-// ALTER SEQUENCE student_id_seq INCREMENT BY 1 MINVALUE 10000000 MAXVALUE 99999999 START WITH 10000000 CYCLE RESTART WITH 10000000
-
-// ALTER SEQUENCE admin_id_seq INCREMENT BY 1 MINVALUE 10000000 MAXVALUE 99999999 START WITH 10000000 CYCLE RESTART WITH 10000000

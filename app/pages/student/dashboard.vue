@@ -1,10 +1,56 @@
 <script setup lang="ts">
+import { capitalize } from "vue";
+
 definePageMeta({
   middleware: ["requires-auth"],
   layout: "student-dashboard",
 });
 
 const title = ref("Student Dashboard");
+
+const { user } = useUserSession();
+const userName = computed(() => user.value?.name ?? "Student");
+
+const { data, status, student } = useFetchStudentDashboardData();
+
+const cards = computed<StatsCard[]>(() => [
+  {
+    id: 1,
+    title: "Room Allocation",
+    icon: "i-lucide-house",
+    color: "primary",
+    value: student.value?.allocation?.room?.roomNumber ?? "Not Allocated",
+    percentage: 0,
+    period: "monthly",
+  },
+  {
+    id: 2,
+    title: "Amount Paid / Due (GH₵)",
+    icon: "i-lucide-banknote",
+    color: data.value.balance < 0 ? "success" : "error",
+    value: `${data.value.totalPaid.toFixed(2)} / ${data.value.balance.toFixed(2)}`,
+    percentage: 0,
+    period: "monthly",
+  },
+  {
+    id: 3,
+    title: "Maintenance Requests",
+    icon: "i-heroicons-wrench-screwdriver",
+    color: "warning",
+    value: data.value.pendingMaintenance,
+    percentage: 0,
+    period: "daily",
+  },
+  {
+    id: 4,
+    title: "Total Visitors",
+    icon: "i-lucide-users",
+    color: "info",
+    value: data.value.totalVisitors,
+    percentage: 0,
+    period: "weekly",
+  },
+]);
 </script>
 
 <template>
@@ -15,20 +61,75 @@ const title = ref("Student Dashboard");
       </template>
 
       <template #body>
-        <div class="p-4">
-          <h1 class="mb-4 font-bold text-2xl">
-            Student dashboard
-          </h1>
-          <!-- Analytics content goes here -->
-          <p>This is where you can display various announcements.</p>
+        <DashboardWelcome :user-name />
 
-          <UButton
-            color="primary"
-            class="mt-4 px-4 py-2 rounded-md cursor-pointer"
-            :to="{ name: 'auth-onboarding' }"
+        <DashboardCardSkeleton v-if="status === 'pending'" />
+
+        <DashboardStatsCard
+          v-else
+          :cards
+        >
+          <template
+            v-if="student?.allocation"
+            #value="{ card }"
           >
-            View Announcements
-          </UButton>
+            <p class="font-bold text-highlighted text-lg">
+              {{ card.value }}
+              <span
+                v-if="card.id === 1"
+                class="text-primary"
+              >({{ capitalize(student?.allocation?.status ?? "") }})</span>
+
+              <span
+                v-if="card.id === 3"
+                class="text-warning"
+              >(Pending)</span>
+
+              <span
+                v-if="card.id === 4"
+                class="text-info"
+              >(Recorded)</span>
+            </p>
+          </template>
+
+          <template
+            v-if="student?.allocation"
+            #description="{ card }"
+          >
+            <span
+              v-if="card.id === 1"
+              class="block font-normal text-muted text-sm"
+            >
+              Amount: {{ formatCurrency(Number(student.allocation.room.amountPerYear ?? 0)) }}
+            </span>
+
+            <span
+              v-if="card.id === 2"
+              class="block font-normal text-error text-sm"
+            >
+              Payment Due
+            </span>
+
+            <span
+              v-if="card.id === 3"
+              class="block font-normal text-muted text-sm"
+            >
+              Open Issues
+            </span>
+
+            <span
+              v-if="card.id === 4"
+              class="block font-normal text-muted text-sm"
+            >
+              All time
+            </span>
+          </template>
+        </DashboardStatsCard>
+
+        <StudentCard />
+
+        <div class="p-2 md:p-4">
+          hello world
         </div>
       </template>
     </UDashboardPanel>

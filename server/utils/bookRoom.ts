@@ -1,6 +1,6 @@
 import { and, eq, inArray } from "drizzle-orm";
 
-import { allocation, room } from "../db/schema";
+import { allocation, billing, room } from "../db/schema";
 
 export async function bookRoom(
   studentId: number,
@@ -15,8 +15,29 @@ export async function bookRoom(
 
   const allocationEndDate = (endDate ? new Date(endDate) : defaultEndDate).toISOString();
 
+  const billDueDate = new Date();
+  billDueDate.setMonth(billDueDate.getMonth() + 7);
+  const billingDueDate = billDueDate.toISOString();
+
   return await db
     .transaction(async (tx) => {
+      const hasOverdueBills = await tx
+        .query
+        .billing
+        .findFirst({
+          where: and(
+            eq(billing.studentId, studentId),
+            eq(billing.status, "overdue"),
+          ),
+        });
+
+      if (hasOverdueBills) {
+        throw createError({
+          statusCode: 400,
+          message: "You cannot book a new room while you have outstanding overdue bills. Please clear your debt first.",
+        });
+      }
+
       const existingAllocation = await tx.query.allocation.findFirst({
         where: and(
           eq(allocation.studentId, studentId),
@@ -73,7 +94,22 @@ export async function bookRoom(
           allocationDate,
           status: "pending",
           endDate: allocationEndDate,
-        })
+        } satisfies typeof allocation.$inferInsert)
+        .returning();
+
+      await tx
+        .insert(billing)
+        .values({
+          studentId,
+          allocationId: newAllocation.id,
+          amount: targetRoom.amountPerYear.toString(),
+          description: `Accommodation Fee for Room ${targetRoom.roomNumber}`,
+          dateIssued: new Date(),
+          dueDate: billingDueDate,
+          status: "unpaid",
+          paidAmount: "0.00",
+          hostelId: targetRoom.hostelId,
+        } satisfies typeof billing.$inferInsert)
         .returning();
 
       const newOccupancy = targetRoom.currentOccupancy + 1;
