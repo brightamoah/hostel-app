@@ -243,6 +243,8 @@ export type DashboardStudent = {
   pendingMaintenance: StudentDashboard["pendingMaintenanceCount"];
 };
 
+export type Roommate = DashboardStudent["student"]["allocation"]["room"]["allocations"][number]["student"];
+
 export type Admin = {
   id: number;
   phoneNumber: string;
