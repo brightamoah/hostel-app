@@ -63,6 +63,27 @@ const studentWithRelations = {
         room: {
           with: {
             hostel: true,
+            allocations: {
+              with: {
+                student: {
+                  columns: {
+                    id: true,
+                    residencyStatus: true,
+                    phoneNumber: true,
+                  },
+                  with: {
+                    user: {
+                      columns: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        image: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
         },
       },

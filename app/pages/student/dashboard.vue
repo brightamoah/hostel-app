@@ -13,6 +13,13 @@ const userName = computed(() => user.value?.name ?? "Student");
 
 const { data, status, student } = useFetchStudentDashboardData();
 
+const roommates = computed<Roommate[]>(() => {
+  return student.value?.allocation?.room?.allocations.filter(allocation => allocation.student.id !== student.value?.id)
+    .map(allocation => allocation.student) ?? [];
+});
+
+provide("roommates", roommates);
+
 const cards = computed<StatsCard[]>(() => [
   {
     id: 1,
@@ -126,7 +133,7 @@ const cards = computed<StatsCard[]>(() => [
           </template>
         </DashboardStatsCard>
 
-        <StudentCard />
+        <StudentCard class="p-4" />
 
         <div class="p-2 md:p-4">
           hello world

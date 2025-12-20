@@ -165,7 +165,7 @@ export const useRoomStore = defineStore("roomStore", () => {
         icon: "i-lucide-check-circle",
       });
 
-      await refreshNuxtData(roomDataKey.value);
+      await refreshNuxtData();
     }
     catch (error) {
       const message = (error as any)?.data?.message;
