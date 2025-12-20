@@ -245,6 +245,10 @@ export type DashboardStudent = {
 
 export type Roommate = DashboardStudent["student"]["allocation"]["room"]["allocations"][number]["student"];
 
+export type StudentRoom = DashboardStudent["student"]["allocation"]["room"];
+
+export type StudentVisitor = DashboardStudent["student"]["visitors"][number];
+
 export type Admin = {
   id: number;
   phoneNumber: string;
