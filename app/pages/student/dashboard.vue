@@ -18,7 +18,12 @@ const roommates = computed<Roommate[]>(() => {
     .map(allocation => allocation.student) ?? [];
 });
 
-provide("roommates", roommates);
+const room = computed(() => student.value?.allocation?.room);
+
+provide(dashboardKey, {
+  roommates,
+  room,
+});
 
 const cards = computed<StatsCard[]>(() => [
   {

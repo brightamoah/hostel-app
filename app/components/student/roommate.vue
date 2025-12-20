@@ -1,5 +1,9 @@
 <script setup lang="ts">
-const roommates = inject<Roommate[]>("roommates", []);
+const context = inject(dashboardKey);
+
+if (!context) throw new Error("DashboardContext not found");
+
+const { roommates } = context;
 </script>
 
 <template>
@@ -12,7 +16,7 @@ const roommates = inject<Roommate[]>("roommates", []);
   >
     <UButton
       icon="i-lucide-users"
-      label="View Roommates"
+      label="Roommates"
       class="cursor-pointer"
       :ui="{
         base: 'text-center flex items-center justify-center gap-2',
@@ -21,7 +25,7 @@ const roommates = inject<Roommate[]>("roommates", []);
 
     <template #body>
       <UEmpty
-        v-if="roommates.length === 0"
+        v-if="roommates && roommates.length === 0"
         class="flex flex-1 justify-center items-center"
         variant="naked"
         icon="i-lucide-users"
