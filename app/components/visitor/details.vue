@@ -77,17 +77,17 @@ const studentItems = computed(() => [
   },
   {
     label: "Student ID",
-    value: visitor.student.allocations[0]?.studentId || "N/A",
+    value: visitor.student.allocation?.studentId || "N/A",
     icon: "i-lucide-id-card",
   },
   {
     label: "Room Number",
-    value: visitor.student.allocations[0] ? `${visitor.student.allocations[0].room.roomNumber} (${visitor.student.allocations[0].room.roomType})` : "N/A",
+    value: visitor.student.allocation ? `${visitor.student.allocation.room.roomNumber} (${visitor.student.allocation.room.roomType})` : "N/A",
     icon: "i-lucide-door-open",
   },
   {
     label: "Hostel",
-    value: visitor.student.allocations[0]?.room.hostel.name || "N/A",
+    value: visitor.student.allocation?.room.hostel.name || "N/A",
     icon: "i-lucide-building",
   },
   {
