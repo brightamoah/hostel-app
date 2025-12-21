@@ -64,6 +64,8 @@ export const useAltAuth = defineStore("altAuth", () => {
       });
       startCoolDown(120);
       errorMessage.value = null;
+
+      await navigateTo({ name: "auth-login" });
     }
     catch (error: any) {
       const message = error?.data?.message || "Failed to send email reset email. Please try again.";

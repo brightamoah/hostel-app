@@ -4,6 +4,7 @@ import { and, count, desc, eq, gt, inArray, isNotNull, lt, or, sql } from "drizz
 import { admin, allocation, billing, hostel, loginAttempts, maintenanceRequest, room, student, user, visitor } from "../schema";
 
 const ATTEMPT_WINDOW_MINUTES = 15;
+// type Allocation = typeof allocation.$inferSelect;
 
 const userDetails = {
   id: user.id,

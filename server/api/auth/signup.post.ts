@@ -45,7 +45,8 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const passwordHash = await hashPassword(password);
+    // const passwordHash = await hashPassword(password);
+    const passwordHash = await hash(password);
 
     const verificationToken = randomUUID();
 
@@ -108,6 +109,8 @@ export default defineEventHandler(async (event) => {
     };
   }
   catch (error) {
+    if (error && typeof error === "object" && "statusCode" in error) throw error;
+
     handleError(error, "User Signup", event);
   }
 });

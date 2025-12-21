@@ -63,7 +63,8 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const newHashedPassword = await hashPassword(newPassword);
+    // const newHashedPassword = await hashPassword(newPassword);
+    const newHashedPassword = await hash(newPassword);
 
     await db.update(user).set({
       password: newHashedPassword,
@@ -77,6 +78,8 @@ export default defineEventHandler(async (event) => {
     };
   }
   catch (error) {
+    if (error && typeof error === "object" && "statusCode" in error) throw error;
+
     handleError(error, "Reset Password", event);
   }
 });

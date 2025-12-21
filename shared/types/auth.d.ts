@@ -8,9 +8,8 @@ declare module "#auth-utils" {
     emailVerified: boolean;
     image: string | null;
     role: "student" | "admin";
-    lastLogin?: Date;
+    lastLogin?: Date | null;
     adminData?: Admin;
-    studentData?: Student;
   };
 
   /**
@@ -28,7 +27,7 @@ declare module "#auth-utils" {
 
   interface UserSession {
     user: User;
-    loggedInAt: Date;
+    loggedInAt: Date | null;
     secure?: SecureSessionData;
     expiresAt: Date;
     onboarded: boolean;

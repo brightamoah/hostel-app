@@ -124,6 +124,7 @@ const complaints = [
           </h2>
         </template>
 
+        {{ payments }}
         <!-- <UTable
           :rows="payments"
           :columns="[

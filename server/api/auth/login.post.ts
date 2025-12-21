@@ -61,7 +61,8 @@ export default defineEventHandler(async (event) => {
 
     await checkUserLockOutByUserId(currentUser.id, ip);
 
-    const isValid = await verifyPassword(currentUser.password, password);
+    // const isValid = await verifyPassword(currentUser.password, password);
+    const isValid = await verifyHashedValue(currentUser.password, password);
 
     if (!isValid) {
       await recordLoginAttempt(currentUser.id, ip);
@@ -129,18 +130,18 @@ export default defineEventHandler(async (event) => {
     });
 
     if (rememberMe) {
-      const sessionCookieName = sessionConfig.name;
-      const currentSessionCookie = getCookie(event, sessionCookieName)!;
+      const sessionCookieName = sessionConfig.name || "hostelmanagementapp";
+      const currentSessionCookie = getCookie(event, sessionCookieName);
 
-      if (currentSessionCookie) {
-        setCookie(event, sessionCookieName, currentSessionCookie, {
-          maxAge: 60 * 60 * 24 * 7, // 7 days
-          httpOnly: true,
-          sameSite: "lax",
-          path: "/",
-          secure: nodeEnv === "production",
-        });
-      }
+      if (!currentSessionCookie) throw createError({ statusCode: 500, message: "Session not found" });
+
+      setCookie(event, sessionCookieName, currentSessionCookie, {
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: nodeEnv === "production",
+      });
     }
 
     await updateUserLastLogin(currentUser.id);
