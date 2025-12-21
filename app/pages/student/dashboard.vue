@@ -20,9 +20,12 @@ const roommates = computed<Roommate[]>(() => {
 
 const room = computed(() => student.value?.allocation?.room);
 
+const visitors = computed(() => student.value?.visitors ?? null);
+
 provide(dashboardKey, {
   roommates,
   room,
+  visitors,
 });
 
 const cards = computed<StatsCard[]>(() => [
@@ -138,7 +141,7 @@ const cards = computed<StatsCard[]>(() => [
           </template>
         </DashboardStatsCard>
 
-        <StudentCard class="p-4" />
+        <StudentCard />
 
         <div class="p-2 md:p-4">
           hello world

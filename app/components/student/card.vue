@@ -12,7 +12,7 @@ const cards = ref([
   },
   {
     id: "visitors",
-    title: "Incoming Visitors",
+    title: "Visitors For Today",
     icon: "i-lucide-users",
     color: "success",
     value: "Room 101",
@@ -40,7 +40,7 @@ const context = inject(dashboardKey);
 
 if (!context) throw new Error("DashboardContext not found");
 
-const { room: roomVal } = context;
+const { room: roomVal, visitors } = context;
 
 const roomDetails = computed(() => {
   const room = unref(roomVal);
@@ -91,7 +91,7 @@ function getOrdinal(n: number) {
 </script>
 
 <template>
-  <UPageGrid>
+  <div class="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-4">
     <UCard
       v-for="card in cards"
       :key="card.id"
@@ -126,6 +126,11 @@ function getOrdinal(n: number) {
         :room-val
       />
 
+      <StudentVisitor
+        v-else-if="card.id === 'visitors'"
+        :visitors
+      />
+
       <template
         v-if="card.id === 'room' && roomVal"
         #footer
@@ -150,7 +155,7 @@ function getOrdinal(n: number) {
       label="Test Button"
       :to="{ name: 'new' }"
     />
-  </UPageGrid>
+  </div>
 </template>
 
 <style scoped>

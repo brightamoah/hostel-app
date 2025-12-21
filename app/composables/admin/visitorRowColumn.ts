@@ -276,12 +276,12 @@ export function useVisitorRowColumn(
       accessorFn: (row) => {
         const student = row.student;
         if (!student) return "N/A";
-        return `${student.user.name} ${student.user.email} ${student.allocations[0]?.room.roomNumber} (${student.allocations[0]?.room?.hostel?.name})`;
+        return `${student.user.name} ${student.user.email} ${student.allocation?.room.roomNumber} (${student.allocation?.room?.hostel?.name})`;
       },
       header: createSortableHeader("Student", UButton),
       cell: ({ row }) => {
         const studentUser = row.original.student?.user;
-        const studentAllocation = row.original.student?.allocations[0];
+        const studentAllocation = row.original.student?.allocation;
 
         if (!studentUser) return h("span", "N/A");
 

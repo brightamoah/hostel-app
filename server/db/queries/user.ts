@@ -1,5 +1,5 @@
 import { useDB } from "~~/server/utils/db";
-import { and, count, eq, gt, inArray, isNotNull, lt, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, gt, inArray, isNotNull, lt, or, sql } from "drizzle-orm";
 
 import { admin, allocation, billing, hostel, loginAttempts, maintenanceRequest, room, student, user, visitor } from "../schema";
 
@@ -44,6 +44,8 @@ const userDetails = {
     status: admin.status,
   },
 };
+
+const today = new Date().toISOString();
 
 const studentWithRelations = {
   with: {
@@ -92,7 +94,10 @@ const studentWithRelations = {
     payments: true,
     maintenanceRequests: true,
     complaints: true,
-    visitors: true,
+    visitors: {
+      where: eq(visitor.visitDate, today),
+      orderBy: desc(visitor.visitDate),
+    },
   },
 } as const;
 

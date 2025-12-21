@@ -1,7 +1,7 @@
 import type { Admin } from "~~/shared/types";
 
 import { useDB } from "~~/server/utils/db";
-import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, count, desc, eq, inArray, or, sql } from "drizzle-orm";
 
 import { allocation, visitor, visitorLogs } from "../schema";
 
@@ -19,8 +19,8 @@ const visitorWithRelations = {
             image: true,
           },
         },
-        allocations: {
-          where: eq(allocation.status, "active"),
+        allocation: {
+          where: or(eq(allocation.status, "active"), eq(allocation.status, "pending")),
           with: {
             room: {
               columns: {
