@@ -8,7 +8,7 @@ export const TiptapExtensions = [
       width: 4,
     },
     gapcursor: false,
-  }).extend() as any,
+  }) as any,
   TiptapHorizontalRule.extend({
     addInputRules() {
       return [

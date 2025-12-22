@@ -22,7 +22,7 @@ export async function hash(valueToHash: string): Promise<string> {
       salt,
       keyLength,
       (err, derivedKey) => {
-        if (err) reject(err);
+        if (err) return reject(err);
         resolve(`${salt}.${derivedKey.toString("hex")}`);
       },
     );
@@ -50,7 +50,7 @@ export async function verifyHashedValue(storedHash: string, rawValue: string): P
       salt,
       keyLength,
       (err, derivedKey) => {
-        if (err) reject(err);
+        if (err) return reject(err);
 
         if (derivedKey.length !== hashKeyBuffer.length) return resolve(false);
 

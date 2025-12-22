@@ -5,8 +5,6 @@ import { handleError } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async (event) => {
   try {
-    const { session: sessionConfig, nodeEnv } = useRuntimeConfig();
-
     const rawIp = getRequestIP(event, { xForwardedFor: true }) || event.node?.req?.socket?.remoteAddress;
     const ip = normalizeIp(rawIp);
 
@@ -130,17 +128,10 @@ export default defineEventHandler(async (event) => {
     });
 
     if (rememberMe) {
-      const sessionCookieName = sessionConfig.name || "hostelmanagementapp";
-      const currentSessionCookie = getCookie(event, sessionCookieName);
-
-      if (!currentSessionCookie) throw createError({ statusCode: 500, message: "Session not found" });
-
-      setCookie(event, sessionCookieName, currentSessionCookie, {
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: nodeEnv === "production",
+      const extendedExpiresAt = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 7));
+      await replaceUserSession(event, {
+        ...await getUserSession(event),
+        expiresAt: extendedExpiresAt,
       });
     }
 

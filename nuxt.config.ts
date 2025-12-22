@@ -12,7 +12,6 @@ export default defineNuxtConfig({
     "@formkit/auto-animate",
     "nuxt-tiptap-editor",
     "@nuxthub/core",
-    "nuxt-nodemailer",
   ],
 
   $development: {

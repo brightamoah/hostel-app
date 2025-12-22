@@ -44,7 +44,7 @@ const assignedHostel = ref<string | null>(null);
       </div>
 
       <div
-        v-if="user.role === 'admin' && !user.admin.hostel?.name"
+        v-if="user.role === 'admin' && user.admin && !user.admin.hostel?.name"
         class="flex items-center gap-4 mt-5 w-full"
       >
         <USelectMenu

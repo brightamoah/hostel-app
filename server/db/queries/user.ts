@@ -41,48 +41,6 @@ const userWithRelations = {
   },
 } as const;
 
-// const userDetails = {
-//   id: user.id,
-//   name: user.name,
-//   email: user.email,
-//   image: user.image,
-//   role: user.role,
-//   isEmailVerified: user.emailVerified,
-//   createdAt: user.createdAt,
-//   updatedAt: user.updatedAt,
-//   hostelName: hostel.name,
-//   student: {
-//     id: student.id,
-//     gender: student.gender,
-//     dateOfBirth: student.dateOfBirth,
-//     phoneNumber: student.phoneNumber,
-//     address: student.address,
-//     emergencyContactName: student.emergencyContactName,
-//     emergencyContactPhoneNumber: student.emergencyContactPhoneNumber,
-//     healthConditions: student.healthConditions,
-//     enrollmentDate: student.enrollmentDate,
-//     residencyStatus: student.residencyStatus,
-//     roomNumber: room.roomNumber,
-//     allocation: sql<Allocation | null>`
-//             json_build_object(
-//               'id', ${allocation.id},
-//               'status', ${allocation.status},
-//               'roomId', ${allocation.roomId}
-//             )
-//           `.as("allocation"),
-//   },
-//   admin: {
-//     id: admin.id,
-//     phoneNumber: admin.phoneNumber,
-//     department: admin.department,
-//     accessLevel: admin.accessLevel,
-//     hostelId: admin.hostelId,
-//     status: admin.status,
-//   },
-// };
-
-const today = new Date().toISOString();
-
 const today = new Date().toISOString();
 
 const studentWithRelations = {
@@ -232,12 +190,29 @@ export async function userQueries() {
 
   const getUsers = async (currentAdmin: Admin) => {
     let users = [];
+    let totalUsers = 0;
+    let totalStudents = 0;
+    let totalAdmins = 0;
+    let activeStudents = 0;
 
     if (currentAdmin.accessLevel === "super") {
       users = await db.query.user.findMany({
         ...userWithRelations,
         orderBy: asc(user.id),
       });
+
+      totalUsers = users.length;
+      totalStudents = users.filter(u => u.role === "student").length;
+      totalAdmins = users.filter(u => u.role === "admin").length;
+      activeStudents = users.filter(u => u.role === "student" && u.student.residencyStatus === "active").length;
+
+      return {
+        users,
+        totalUsers,
+        totalStudents,
+        totalAdmins,
+        activeStudents,
+      };
     }
 
     if (!currentAdmin.hostelId) {
@@ -272,10 +247,10 @@ export async function userQueries() {
       orderBy: asc(user.id),
     });
 
-    const totalUsers = users.length;
-    const totalStudents = users.filter(u => u.role === "student").length;
-    const totalAdmins = users.filter(u => u.role === "admin").length;
-    const activeStudents = users.filter(u => u.role === "student" && u.student.residencyStatus === "active").length;
+    totalUsers = users.length;
+    totalStudents = users.filter(u => u.role === "student").length;
+    totalAdmins = users.filter(u => u.role === "admin").length;
+    activeStudents = users.filter(u => u.role === "student" && u.student.residencyStatus === "active").length;
 
     return {
       users,

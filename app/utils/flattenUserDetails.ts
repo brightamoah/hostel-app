@@ -85,7 +85,7 @@ export function flattenUserDetails(user: Partial<UserNew>): UserDetail[] {
 
     details.push({
       key: "Room",
-      value: user.student.allocation.room.roomNumber ?? "N/A",
+      value: user.student.allocation?.room?.roomNumber ?? "N/A",
     });
   }
 
