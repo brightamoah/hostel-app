@@ -150,11 +150,6 @@ function getOrdinal(n: number) {
         </div>
       </template>
     </UCard>
-
-    <UButton
-      label="Test Button"
-      :to="{ name: 'new' }"
-    />
   </div>
 </template>
 

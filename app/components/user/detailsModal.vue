@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { user } = defineProps<{
-  user: UserNew;
+  user: UserWithRelations;
 }>();
 
 const emit = defineEmits<{

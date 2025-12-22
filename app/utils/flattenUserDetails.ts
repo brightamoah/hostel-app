@@ -1,5 +1,3 @@
-import type { UserNew } from "~~/shared/types";
-
 import { useDateFormat } from "@vueuse/core";
 
 type UserDetailValue = string | number | boolean | Date | null | undefined;
@@ -43,7 +41,7 @@ function formatDetailValue(value: UserDetailValue): string {
   return stringValue;
 }
 
-export function flattenUserDetails(user: Partial<UserNew>): UserDetail[] {
+export function flattenUserDetails(user: Partial<UserWithRelations>): UserDetail[] {
   const dataToProcess = {
     ...user,
     ...(user.role === "student" && user.student),

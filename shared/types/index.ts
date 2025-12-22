@@ -8,16 +8,16 @@ import type { AnnouncementType } from "~~/server/db/queries/announcement";
 import type { ComplaintType } from "~~/server/db/queries/complaint";
 import type { Maintenance } from "~~/server/db/queries/maintenance";
 import type { Room as RoomType } from "~~/server/db/queries/room";
-import type { StudentDashboard, UserWR } from "~~/server/db/queries/user";
+import type { StudentDashboard } from "~~/server/db/queries/user";
 import type { Visitor } from "~~/server/db/queries/visitor";
-import type { allocation, announcement, complaintActionTakenEnum, complaintStatusEnum, loginAttempts, maintenanceStatusEnum, room, visitorLogs } from "~~/server/db/schema";
+import type { admin, allocation, announcement, complaintActionTakenEnum, complaintStatusEnum, hostel, loginAttempts, maintenanceStatusEnum, room, student, user, visitorLogs } from "~~/server/db/schema";
+import type { InferSelectModel } from "drizzle-orm";
 import type { randomUUID } from "node:crypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 import type { ComplaintStatusResponseSchema, MaintenanceStatusResponseSchema } from "../utils/schema";
 
-export type UserNew = UserWR;
 export interface FontFamily {
   name: string;
   label: string;
@@ -322,4 +322,39 @@ export type AnnouncementInsert = typeof announcement.$inferInsert;
 export type Announcement = AnnouncementType;
 export type AnnouncementResponse = {
   announcements: Announcement[];
+};
+
+type BaseUser = Omit<InferSelectModel<typeof user>, "password"
+  | "verificationToken"
+  | "verificationTokenExpiresAt"
+  | "resetToken"
+  | "resetTokenExpiresAt"
+  | "lastLogin">;
+type BaseStudent = InferSelectModel<typeof student>;
+type BaseAdmin = InferSelectModel<typeof admin>;
+type BaseAllocation = InferSelectModel<typeof allocation>;
+type BaseRoom = InferSelectModel<typeof room>;
+type BaseHostel = InferSelectModel<typeof hostel>;
+
+type HostelData = BaseHostel;
+
+type RoomWithHostel = BaseRoom & {
+  hostel: HostelData | null;
+};
+
+type AllocationWithDetails = BaseAllocation & {
+  room: RoomWithHostel | null;
+};
+
+type StudentWithDetails = BaseStudent & {
+  allocation?: AllocationWithDetails | null;
+};
+
+type AdminWithDetails = BaseAdmin & {
+  hostel: HostelData | null;
+};
+
+export type UserWithRelations = BaseUser & {
+  student?: StudentWithDetails | null;
+  admin?: AdminWithDetails | null;
 };
