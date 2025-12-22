@@ -43,7 +43,7 @@ function formatDetailValue(value: UserDetailValue): string {
   return stringValue;
 }
 
-export function flattenUserDetails(user: Partial<UserNew>): UserDetail[] {
+export function flattenUserDetails(user: Partial<UserWithRelations>): UserDetail[] {
   const dataToProcess = {
     ...user,
     ...(user.role === "student" && user.student),

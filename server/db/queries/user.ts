@@ -1,4 +1,4 @@
-import type { Admin, FailedAttempts } from "~~/shared/types";
+import type { Admin, FailedAttempts, UserWithRelations } from "~~/shared/types";
 
 import { useDB } from "~~/server/utils/db";
 import { and, asc, count, desc, eq, gt, inArray, isNotNull, lt, sql } from "drizzle-orm";
@@ -7,6 +7,14 @@ import { admin, allocation, billing, loginAttempts, maintenanceRequest, room, st
 
 const ATTEMPT_WINDOW_MINUTES = 15;
 type Allocation = typeof allocation.$inferSelect;
+
+type UserStats = {
+  users: UserWithRelations[];
+  totalUsers: number;
+  totalStudents: number;
+  totalAdmins: number;
+  activeStudents: number;
+};
 
 const userWithRelations = {
   columns: {
@@ -188,76 +196,73 @@ export async function userQueries() {
     return existingStudent;
   };
 
-  const getUsers = async (currentAdmin: Admin) => {
-    let users = [];
-    let totalUsers = 0;
-    let totalStudents = 0;
-    let totalAdmins = 0;
-    let activeStudents = 0;
+  const getUsers = async (currentAdmin: Admin): Promise<UserStats> => {
+    let targetUserIds: number[] | null = null;
 
-    if (currentAdmin.accessLevel === "super") {
-      users = await db.query.user.findMany({
-        ...userWithRelations,
-        orderBy: asc(user.id),
-      });
-
-      totalUsers = users.length;
-      totalStudents = users.filter(u => u.role === "student").length;
-      totalAdmins = users.filter(u => u.role === "admin").length;
-      activeStudents = users.filter(u => u.role === "student" && u.student.residencyStatus === "active").length;
-
-      return {
-        users,
-        totalUsers,
-        totalStudents,
-        totalAdmins,
-        activeStudents,
-      };
-    }
-
-    if (!currentAdmin.hostelId) {
-      return {
-        users: [],
-        totalUsers: 0,
-        totalStudents: 0,
-        totalAdmins: 0,
-        activeStudents: 0,
-      };
-    }
-
-    const [adminUserIds, studentUserIds] = await Promise.all([
-      db.query.admin.findMany({
-        where: eq(admin.hostelId, currentAdmin.hostelId),
-        columns: { userId: true },
-      }).then(admins => admins.map(a => a.userId)),
-
-      db.select({ userId: student.userId })
-        .from(student)
-        .innerJoin(allocation, eq(allocation.studentId, student.id))
-        .innerJoin(room, eq(room.id, allocation.roomId))
-        .where(eq(room.hostelId, currentAdmin.hostelId))
-        .then(students => students.map(s => s.userId)),
-    ]);
-
-    const allowedUserIds = [...new Set([...adminUserIds, ...studentUserIds])];
-
-    users = await db.query.user.findMany({
-      ...userWithRelations,
-      where: inArray(user.id, allowedUserIds),
-      orderBy: asc(user.id),
+    const emptyStats = (): UserStats => ({
+      users: [],
+      totalUsers: 0,
+      totalStudents: 0,
+      totalAdmins: 0,
+      activeStudents: 0,
     });
 
-    totalUsers = users.length;
-    totalStudents = users.filter(u => u.role === "student").length;
-    totalAdmins = users.filter(u => u.role === "admin").length;
-    activeStudents = users.filter(u => u.role === "student" && u.student?.residencyStatus === "active").length;
+    if (currentAdmin.accessLevel !== "super") {
+      if (!currentAdmin.hostelId) return emptyStats();
+
+      const [adminUserIds, studentUserIds] = await Promise.all([
+        db
+          .select({ userId: admin.userId })
+          .from(admin)
+          .where(eq(admin.hostelId, currentAdmin.hostelId))
+          .then(rows => rows.map(r => r.userId)),
+
+        db.select({ userId: student.userId })
+          .from(student)
+          .innerJoin(allocation, eq(allocation.studentId, student.id))
+          .innerJoin(room, eq(room.id, allocation.roomId))
+          .where(eq(room.hostelId, currentAdmin.hostelId))
+          .then(students => students.map(s => s.userId)),
+      ]);
+
+      targetUserIds = [...new Set([...adminUserIds, ...studentUserIds])];
+
+      if (targetUserIds.length === 0) return emptyStats();
+    }
+
+    const [users, [stats]] = await Promise.all([
+      db.query.user.findMany({
+        ...userWithRelations,
+        where: targetUserIds ? inArray(user.id, targetUserIds) : undefined,
+        orderBy: asc(user.id),
+      }),
+
+      db.select({
+        totalUsers: count(user.id),
+        totalStudents: count(sql`CASE WHEN ${user.role} = 'student' THEN 1 END`),
+        totalAdmins: count(sql`CASE WHEN ${user.role} = 'admin' THEN 1 END`),
+        activeStudents: count(sql`CASE WHEN ${user.role} = 'student' AND ${student.residencyStatus} = 'active' THEN 1 END`),
+      })
+        .from(user)
+        .leftJoin(student, eq(student.userId, user.id))
+        .where(
+          targetUserIds ? inArray(user.id, targetUserIds) : undefined,
+        ),
+    ]);
+
+    const result = stats || {
+      totalUsers: 0,
+      totalStudents: 0,
+      totalAdmins: 0,
+      activeStudents: 0,
+    };
 
     return {
       users,
-      totalUsers,
-      totalStudents,
-      totalAdmins,
-      activeStudents,
+      totalUsers: result.totalUsers,
+      totalStudents: result.totalStudents,
+      totalAdmins: result.totalAdmins,
+      activeStudents: result.activeStudents,
     };
   };
 
@@ -552,5 +557,5 @@ export async function userQueries() {
 type StudentWithRelations = Awaited<ReturnType<Awaited<ReturnType<typeof userQueries>>["getStudentForDashboardByUserId"]>>;
 export type StudentDashboard = NonNullable<StudentWithRelations>;
 
-type UserWithRelations = Awaited<ReturnType<Awaited<ReturnType<typeof userQueries>>["getUser"]>>;
-export type UserWR = NonNullable<UserWithRelations>;
+// type UserWithRelations = Awaited<ReturnType<Awaited<ReturnType<typeof userQueries>>["getUser"]>>;
+// export type UserWR = NonNullable<UserWithRelations>;
