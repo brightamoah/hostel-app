@@ -58,9 +58,9 @@
   },
   "pnpm": {
     "overrides": {
-     "@nuxt/vite-builder": "npm:@nuxt/vite-builder-nightly@latest",
-    "@tiptap/*": "3.13.0",
-    "vite": "npm:rolldown-vite@latest"
+      "@nuxt/vite-builder": "npm:@nuxt/vite-builder-nightly@latest",
+      "@tiptap/*": "3.13.0",
+      "vite": "npm:rolldown-vite@latest"
     }
   }
 }

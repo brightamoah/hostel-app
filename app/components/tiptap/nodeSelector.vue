@@ -20,21 +20,21 @@ const items = [
     name: "Heading 1",
     icon: "i-lucide-heading-1",
     command: () =>
-      editor.chain().focus().toggleHeading({ level: 1 }).run(),
+      editor.chain().focus().toggleNode("heading", "heading", { level: 1 }).run(),
     isActive: () => editor.isActive("heading", { level: 1 }),
   },
   {
     name: "Heading 2",
     icon: "i-lucide-heading-2",
     command: () =>
-      editor.chain().focus().toggleHeading({ level: 2 }).run(),
+      editor.chain().focus().toggleNode("heading", "heading", { level: 2 }).run(),
     isActive: () => editor.isActive("heading", { level: 2 }),
   },
   {
     name: "Heading 3",
     icon: "i-lucide-heading-3",
     command: () =>
-      editor.chain().focus().toggleHeading({ level: 3 }).run(),
+      editor.chain().focus().toggleNode("heading", "heading", { level: 3 }).run(),
     isActive: () => editor.isActive("heading", { level: 3 }),
   },
   {
@@ -63,7 +63,7 @@ const items = [
         .chain()
         .focus()
         .toggleNode("paragraph", "paragraph")
-        .toggleBlockquote()
+        .toggleNode("blockquote", "blockquote")
         .run(),
     isActive: () => editor.isActive("blockquote"),
   },

@@ -19,7 +19,7 @@ export function useUserRowColumn(
   const userStore = useUserStore();
   const { isLoading } = storeToRefs(userStore);
 
-  const openDetailsModal = (user: UserType) => {
+  const openDetailsModal = (user: UserNew) => {
     overlay.create(UserDetailsModal).open({
       user,
     });
@@ -132,7 +132,7 @@ export function useUserRowColumn(
       {
         label: "View user details",
         icon: "i-lucide-eye",
-        onSelect: () => openDetailsModal(user),
+        onSelect: () => openDetailsModal(user as unknown as UserNew),
       },
       {
         label: roleChangeLabel.value,

@@ -1,3 +1,5 @@
+import type { UserNew } from "~~/shared/types";
+
 import { useDateFormat } from "@vueuse/core";
 
 type UserDetailValue = string | number | boolean | Date | null | undefined;
@@ -41,7 +43,7 @@ function formatDetailValue(value: UserDetailValue): string {
   return stringValue;
 }
 
-export function flattenUserDetails(user: UserType): UserDetail[] {
+export function flattenUserDetails(user: Partial<UserNew>): UserDetail[] {
   const dataToProcess = {
     ...user,
     ...(user.role === "student" && user.student),
@@ -58,6 +60,7 @@ export function flattenUserDetails(user: UserType): UserDetail[] {
     "emergencyContactName",
     "allocation",
     "emergencyContactPhoneNumber",
+    "hostel",
   ]);
 
   const formatters: Record<string, (value: any) => UserDetailValue> = {
@@ -82,19 +85,14 @@ export function flattenUserDetails(user: UserType): UserDetail[] {
 
     details.push({
       key: "Room",
-      value: (user.hostelName && user.student.roomNumber) ? `${user.hostelName} - ${user.student.roomNumber}` : "N/A",
+      value: user.student.allocation.room.roomNumber ?? "N/A",
     });
   }
 
   details.push({
     key: "Email Verified",
-    value: user.isEmailVerified ? "Yes" : "No",
+    value: user.emailVerified ? "Yes" : "No",
   });
 
-  details.push({
-    key: "Hostel Name",
-    value: user.hostelName ?? "N/A",
-  });
-
-  return details;
+  return details.sort((a, b) => a.key.localeCompare(b.key));
 }

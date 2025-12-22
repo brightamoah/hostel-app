@@ -25,10 +25,10 @@ export function useTiptapButtonGroup(editor: TiptapEditorType, isMobile: MaybeRe
       icon: "i-lucide-strikethrough",
       tooltip: "Strikethrough",
       keyboard: ["meta", "shift", "S"],
-      action: () => editor.value?.chain().focus().toggleNode("strike", "strike").run(),
+      action: () => editor.value?.chain().focus().toggleMark("strike").run(),
       isActive: () => editor.value?.isActive("strike"),
       isDisabled: () =>
-        !editor.value?.can().chain().focus().toggleNode("strike", "strike").run(),
+        !editor.value?.can().chain().focus().toggleMark("strike").run(),
     },
     {
       name: "code",
