@@ -8,7 +8,7 @@ import type { AnnouncementType } from "~~/server/db/queries/announcement";
 import type { ComplaintType } from "~~/server/db/queries/complaint";
 import type { Maintenance } from "~~/server/db/queries/maintenance";
 import type { Room as RoomType } from "~~/server/db/queries/room";
-import type { StudentDashboard } from "~~/server/db/queries/user";
+import type { StudentDashboard, UserWR } from "~~/server/db/queries/user";
 import type { Visitor } from "~~/server/db/queries/visitor";
 import type { admin, allocation, announcement, complaintActionTakenEnum, complaintStatusEnum, hostel, loginAttempts, maintenanceStatusEnum, room, student, user, visitorLogs } from "~~/server/db/schema";
 import type { InferSelectModel } from "drizzle-orm";
@@ -18,6 +18,7 @@ import type { RouteLocationRaw } from "vue-router";
 
 import type { ComplaintStatusResponseSchema, MaintenanceStatusResponseSchema } from "../utils/schema";
 
+export type UserNew = UserWR;
 export interface FontFamily {
   name: string;
   label: string;
