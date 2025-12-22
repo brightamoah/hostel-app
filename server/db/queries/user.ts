@@ -83,6 +83,8 @@ const userWithRelations = {
 
 const today = new Date().toISOString();
 
+const today = new Date().toISOString();
+
 const studentWithRelations = {
   with: {
     user: {
