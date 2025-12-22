@@ -1,21 +1,17 @@
-import type { UserSession } from "#auth-utils";
-
-import { user } from "~~/server/db/schema";
-import { useDB } from "~~/server/utils/db";
+import { userQueries } from "~~/server/db/queries";
 import { handleError } from "~~/server/utils/errorHandler";
-import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   try {
-    const { db } = useDB();
-
-    const session = await getUserSession(event) as UserSession;
-
-    if (!session.user?.id) throw createError({ statusCode: 401, statusMessage: "User not authenticated" });
-
-    const freshUser = await db.query.user.findFirst({
-      where: eq(user.id, session.user.id),
+    const { user, expiresAt, onboarded } = await requireUserSession(event, {
+      message: "User not authenticated",
     });
+
+    const userId = user.id;
+
+    const { getUserById } = await userQueries();
+
+    const freshUser = await getUserById(userId);
 
     if (!freshUser) throw createError({ statusCode: 404, message: "User not found" });
 
@@ -27,15 +23,20 @@ export default defineEventHandler(async (event) => {
         image: freshUser.image,
         name: freshUser.name,
         emailVerified: freshUser.emailVerified,
+        createdAt: freshUser.createdAt,
         updatedAt: freshUser.updatedAt,
         lastLogin: freshUser.lastLogin,
       },
-      loggedInAt: session.loggedInAt,
+      loggedInAt: freshUser.lastLogin,
+      expiresAt,
+      onboarded,
     });
 
     return { success: true, message: "Session refreshed" };
   }
   catch (error) {
+    if (error && typeof error === "object" && "statusCode" in error) throw error;
+
     handleError(error, "Refresh Session", event);
   }
 });

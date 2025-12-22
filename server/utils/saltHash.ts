@@ -13,14 +13,19 @@ const keyLength = 64;
  * @returns A promise that resolves to the hashed value as a string in the format "salt.derivedKey".
  * @throws Will throw an error if the scrypt operation fails.
  */
-export async function hash(valueToHash: string) {
-  return new Promise<string>((resolve, reject) => {
+export async function hash(valueToHash: string): Promise<string> {
+  return new Promise((resolve, reject) => {
     const salt = randomBytes(16).toString("hex");
 
-    scrypt(valueToHash, salt, keyLength, (err, derivedKey) => {
-      if (err) reject(err);
-      resolve(`${salt}.${derivedKey.toString("hex")}`);
-    });
+    scrypt(
+      valueToHash,
+      salt,
+      keyLength,
+      (err, derivedKey) => {
+        if (err) return reject(err);
+        resolve(`${salt}.${derivedKey.toString("hex")}`);
+      },
+    );
   });
 }
 
@@ -32,18 +37,23 @@ export async function hash(valueToHash: string) {
  * @returns A promise that resolves to true if the raw value matches the stored hash, false otherwise.
  * @throws Will reject with an error if the scrypt operation fails.
  */
-export async function verifyHashedValue(storedHash: string, rawValue: string) {
-  return new Promise<boolean>((resolve, reject) => {
+export async function verifyHashedValue(storedHash: string, rawValue: string): Promise<boolean> {
+  return new Promise((resolve, reject) => {
     const [salt, hashKey] = storedHash.split(".");
 
-    const hashKeyBuffer = Buffer.from(hashKey!, "hex");
+    if (!salt || !hashKey) return resolve(false);
+
+    const hashKeyBuffer = Buffer.from(hashKey, "hex");
 
     scrypt(
       rawValue,
-      salt!,
+      salt,
       keyLength,
       (err, derivedKey) => {
-        if (err) reject(err);
+        if (err) return reject(err);
+
+        if (derivedKey.length !== hashKeyBuffer.length) return resolve(false);
+
         resolve(timingSafeEqual(hashKeyBuffer, derivedKey));
       },
     );

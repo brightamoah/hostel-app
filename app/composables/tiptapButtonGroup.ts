@@ -5,40 +5,40 @@ export function useTiptapButtonGroup(editor: TiptapEditorType, isMobile: MaybeRe
       icon: "i-lucide-bold",
       tooltip: "Bold",
       keyboard: ["meta", "B"],
-      action: () => editor.value?.chain().focus().toggleBold().run(),
+      action: () => editor.value?.chain().focus().toggleMark("bold").run(),
       isActive: () => editor.value?.isActive("bold"),
       isDisabled: () =>
-        !editor.value?.can().chain().focus().toggleBold().run(),
+        !editor.value?.can().chain().focus().toggleMark("bold").run(),
     },
     {
       name: "italic",
       icon: "i-lucide-italic",
       tooltip: "Italic",
       keyboard: ["meta", "I"],
-      action: () => editor.value?.chain().focus().toggleItalic().run(),
+      action: () => editor.value?.chain().focus().toggleMark("italic").run(),
       isActive: () => editor.value?.isActive("italic"),
       isDisabled: () =>
-        !editor.value?.can().chain().focus().toggleItalic().run(),
+        !editor.value?.can().chain().focus().toggleMark("italic").run(),
     },
     {
       name: "strike",
       icon: "i-lucide-strikethrough",
       tooltip: "Strikethrough",
       keyboard: ["meta", "shift", "S"],
-      action: () => editor.value?.chain().focus().toggleStrike().run(),
+      action: () => editor.value?.chain().focus().toggleMark("strike").run(),
       isActive: () => editor.value?.isActive("strike"),
       isDisabled: () =>
-        !editor.value?.can().chain().focus().toggleStrike().run(),
+        !editor.value?.can().chain().focus().toggleMark("strike").run(),
     },
     {
       name: "code",
       icon: "i-lucide-code",
       tooltip: "Inline Code",
       keyboard: ["meta", "E"],
-      action: () => editor.value?.chain().focus().toggleCode().run(),
+      action: () => editor.value?.chain().focus().toggleMark("code").run(),
       isActive: () => editor.value?.isActive("code"),
       isDisabled: () =>
-        !editor.value?.can().chain().focus().toggleCode().run(),
+        !editor.value?.can().chain().focus().toggleMark("code").run(),
     },
     {
       name: "underline",
@@ -58,7 +58,7 @@ export function useTiptapButtonGroup(editor: TiptapEditorType, isMobile: MaybeRe
       icon: "i-lucide-quote",
       tooltip: "Quote",
       keyboard: ["meta", "shift", "B"],
-      action: () => editor.value?.chain().focus().toggleBlockquote().run(),
+      action: () => editor.value?.chain().focus().toggleNode("blockquote", "blockquote").run(),
       isActive: () => editor.value?.isActive("blockquote"),
     },
     {
@@ -166,7 +166,7 @@ export function useTiptapButtonGroup(editor: TiptapEditorType, isMobile: MaybeRe
                 icon: "i-material-symbols-format-paragraph-rounded",
                 tooltip: "Paragraph",
                 keyboard: ["meta", "alt", "0"],
-                action: () => editor.value?.chain().focus().setParagraph().run(),
+                action: () => editor.value?.chain().focus().setNode("paragraph").run(),
                 isActive: () => editor.value?.isActive("paragraph"),
               },
               {
@@ -176,7 +176,7 @@ export function useTiptapButtonGroup(editor: TiptapEditorType, isMobile: MaybeRe
                 tooltip: "Heading 1",
                 keyboard: ["meta", "alt", "1"],
                 action: () =>
-                  editor.value?.chain().focus().toggleHeading({ level: 1 }).run(),
+                  editor.value?.chain().focus().toggleNode("heading", "heading", { level: 1 }).run(),
                 isActive: () => editor.value?.isActive("heading", { level: 1 }),
               },
               {
@@ -186,7 +186,7 @@ export function useTiptapButtonGroup(editor: TiptapEditorType, isMobile: MaybeRe
                 tooltip: "Heading 2",
                 keyboard: ["meta", "alt", "2"],
                 action: () =>
-                  editor.value?.chain().focus().toggleHeading({ level: 2 }).run(),
+                  editor.value?.chain().focus().toggleNode("heading", "heading", { level: 2 }).run(),
                 isActive: () => editor.value?.isActive("heading", { level: 2 }),
               },
               {
@@ -196,7 +196,7 @@ export function useTiptapButtonGroup(editor: TiptapEditorType, isMobile: MaybeRe
                 tooltip: "Heading 3",
                 keyboard: ["meta", "alt", "3"],
                 action: () =>
-                  editor.value?.chain().focus().toggleHeading({ level: 3 }).run(),
+                  editor.value?.chain().focus().toggleNode("heading", "heading", { level: 3 }).run(),
                 isActive: () => editor.value?.isActive("heading", { level: 3 }),
               },
             ],
@@ -315,14 +315,14 @@ export function useTiptapButtonGroup(editor: TiptapEditorType, isMobile: MaybeRe
                 icon: "i-lucide-minus",
                 tooltip: "Add horizontal rule",
                 action: () =>
-                  editor.value?.chain().focus().setHorizontalRule().run(),
+                  editor.value?.chain().focus().setNode("horizontalRule").run(),
               },
               {
                 name: "hard-break",
                 label: "Line Break",
                 icon: "i-lucide-wrap-text",
                 tooltip: "Add line break",
-                action: () => editor.value?.chain().focus().setHardBreak().run(),
+                action: () => editor.value?.chain().focus().setNode("hardBreak").run(),
               },
               {
                 name: "clear-formatting",

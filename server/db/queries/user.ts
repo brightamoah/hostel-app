@@ -1,49 +1,45 @@
-import { useDB } from "~~/server/utils/db";
-import { and, count, desc, eq, gt, inArray, isNotNull, lt, or, sql } from "drizzle-orm";
+import type { Admin, FailedAttempts } from "~~/shared/types";
 
-import { admin, allocation, billing, hostel, loginAttempts, maintenanceRequest, room, student, user, visitor } from "../schema";
+import { useDB } from "~~/server/utils/db";
+import { and, asc, count, desc, eq, gt, inArray, isNotNull, lt, sql } from "drizzle-orm";
+
+import { admin, allocation, billing, loginAttempts, maintenanceRequest, room, student, user, visitor } from "../schema";
 
 const ATTEMPT_WINDOW_MINUTES = 15;
+type Allocation = typeof allocation.$inferSelect;
 
-const userDetails = {
-  id: user.id,
-  name: user.name,
-  email: user.email,
-  image: user.image,
-  role: user.role,
-  isEmailVerified: user.emailVerified,
-  createdAt: user.createdAt,
-  updatedAt: user.updatedAt,
-  hostelName: hostel.name,
-  student: {
-    id: student.id,
-    gender: student.gender,
-    dateOfBirth: student.dateOfBirth,
-    phoneNumber: student.phoneNumber,
-    address: student.address,
-    emergencyContactName: student.emergencyContactName,
-    emergencyContactPhoneNumber: student.emergencyContactPhoneNumber,
-    healthConditions: student.healthConditions,
-    enrollmentDate: student.enrollmentDate,
-    residencyStatus: student.residencyStatus,
-    roomNumber: room.roomNumber,
-    allocation: sql<Allocation | null>`
-            json_build_object(
-              'id', ${allocation.id},
-              'status', ${allocation.status},
-              'roomId', ${allocation.roomId}
-            )
-          `.as("allocation"),
+const userWithRelations = {
+  columns: {
+    id: true,
+    name: true,
+    email: true,
+    image: true,
+    role: true,
+    emailVerified: true,
+    createdAt: true,
+    updatedAt: true,
   },
-  admin: {
-    id: admin.id,
-    phoneNumber: admin.phoneNumber,
-    department: admin.department,
-    accessLevel: admin.accessLevel,
-    hostelId: admin.hostelId,
-    status: admin.status,
+  with: {
+    student: {
+      with: {
+        allocation: {
+          with: {
+            room: {
+              with: {
+                hostel: true,
+              },
+            },
+          },
+        },
+      },
+    },
+    admin: {
+      with: {
+        hostel: true,
+      },
+    },
   },
-};
+} as const;
 
 const today = new Date().toISOString();
 
@@ -192,18 +188,77 @@ export async function userQueries() {
     return existingStudent;
   };
 
-  const getAllUsers = async () => {
-    const users = await db
-      .select(userDetails)
-      .from(user)
-      .leftJoin(student, eq(student.userId, user.id))
-      .leftJoin(admin, eq(admin.userId, user.id))
-      .leftJoin(allocation, eq(allocation.studentId, student.id))
-      .leftJoin(room, eq(room.id, allocation.roomId))
-      .leftJoin(hostel, or(eq(hostel.id, admin.hostelId), eq(hostel.id, room.hostelId)))
-      .orderBy(user.id);
+  const getUsers = async (currentAdmin: Admin) => {
+    let users = [];
+    let totalUsers = 0;
+    let totalStudents = 0;
+    let totalAdmins = 0;
+    let activeStudents = 0;
 
-    return users;
+    if (currentAdmin.accessLevel === "super") {
+      users = await db.query.user.findMany({
+        ...userWithRelations,
+        orderBy: asc(user.id),
+      });
+
+      totalUsers = users.length;
+      totalStudents = users.filter(u => u.role === "student").length;
+      totalAdmins = users.filter(u => u.role === "admin").length;
+      activeStudents = users.filter(u => u.role === "student" && u.student.residencyStatus === "active").length;
+
+      return {
+        users,
+        totalUsers,
+        totalStudents,
+        totalAdmins,
+        activeStudents,
+      };
+    }
+
+    if (!currentAdmin.hostelId) {
+      return {
+        users: [],
+        totalUsers: 0,
+        totalStudents: 0,
+        totalAdmins: 0,
+        activeStudents: 0,
+      };
+    }
+
+    const [adminUserIds, studentUserIds] = await Promise.all([
+      db.query.admin.findMany({
+        where: eq(admin.hostelId, currentAdmin.hostelId),
+        columns: { userId: true },
+      }).then(admins => admins.map(a => a.userId)),
+
+      db.select({ userId: student.userId })
+        .from(student)
+        .innerJoin(allocation, eq(allocation.studentId, student.id))
+        .innerJoin(room, eq(room.id, allocation.roomId))
+        .where(eq(room.hostelId, currentAdmin.hostelId))
+        .then(students => students.map(s => s.userId)),
+    ]);
+
+    const allowedUserIds = [...new Set([...adminUserIds, ...studentUserIds])];
+
+    users = await db.query.user.findMany({
+      ...userWithRelations,
+      where: inArray(user.id, allowedUserIds),
+      orderBy: asc(user.id),
+    });
+
+    totalUsers = users.length;
+    totalStudents = users.filter(u => u.role === "student").length;
+    totalAdmins = users.filter(u => u.role === "admin").length;
+    activeStudents = users.filter(u => u.role === "student" && u.student?.residencyStatus === "active").length;
+
+    return {
+      users,
+      totalUsers,
+      totalStudents,
+      totalAdmins,
+      activeStudents,
+    };
   };
 
   const getTotalStudents = async () => {
@@ -252,58 +307,58 @@ export async function userQueries() {
     return !!existingUser;
   };
 
-  const getUsersScoped = async (adminId: number) => {
-    const adminRecord = await getAdminByUserId(adminId);
-    if (!adminRecord) throw createError({ statusCode: 404, message: "Admin not found" });
+  // const getUsersScoped = async (adminId: number) => {
+  //   const adminRecord = await getAdminByUserId(adminId);
+  //   if (!adminRecord) throw createError({ statusCode: 404, message: "Admin not found" });
 
-    let query = db
-      .select(userDetails)
-      .from(user)
-      .leftJoin(student, eq(student.userId, user.id))
-      .leftJoin(admin, eq(admin.userId, user.id))
-      .leftJoin(allocation, eq(allocation.studentId, student.id))
-      .leftJoin(room, eq(room.id, allocation.roomId))
-      .leftJoin(hostel, or(eq(hostel.id, admin.hostelId), eq(hostel.id, room.hostelId)))
-      .$dynamic();
+  //   let query = db
+  //     .select(userDetails)
+  //     .from(user)
+  //     .leftJoin(student, eq(student.userId, user.id))
+  //     .leftJoin(admin, eq(admin.userId, user.id))
+  //     .leftJoin(allocation, eq(allocation.studentId, student.id))
+  //     .leftJoin(room, eq(room.id, allocation.roomId))
+  //     .leftJoin(hostel, or(eq(hostel.id, admin.hostelId), eq(hostel.id, room.hostelId)))
+  //     .$dynamic();
 
-    // Filter for non-super admins
-    if (adminRecord.accessLevel !== "super") {
-      if (!adminRecord.hostelId) {
-        throw createError({
-          statusCode: 403,
-          message: "Access denied: Your admin account is not assigned to a hostel.",
-        });
-      }
+  //   // Filter for non-super admins
+  //   if (adminRecord.accessLevel !== "super") {
+  //     if (!adminRecord.hostelId) {
+  //       throw createError({
+  //         statusCode: 403,
+  //         message: "Access denied: Your admin account is not assigned to a hostel.",
+  //       });
+  //     }
 
-      query = query.where(eq(hostel.id, adminRecord.hostelId));
-    }
+  //     query = query.where(eq(hostel.id, adminRecord.hostelId));
+  //   }
 
-    const users = await query.orderBy(user.id);
+  //   const users = await query.orderBy(user.id);
 
-    // If user has both admin & student roles, nullify student
-    const normalized = users.map((u) => {
-      if (u.student.allocation && u.student.allocation.id === null) u.student.allocation = null;
+  //   // If user has both admin & student roles, nullify student
+  //   const normalized = users.map((u) => {
+  //     if (u.student.allocation && u.student.allocation.id === null) u.student.allocation = null;
 
-      if (u.role === "admin" && u.admin?.id) return { ...u, student: null };
+  //     if (u.role === "admin" && u.admin?.id) return { ...u, student: null };
 
-      return u;
-    });
+  //     return u;
+  //   });
 
-    // Compute counts dynamically
-    const totalUsers = normalized.length;
-    const totalAdmins = normalized.filter(u => u.role === "admin").length;
-    const totalStudents = normalized.filter(u => u.role === "student").length;
-    const activeStudents = normalized.filter(u => u.student?.residencyStatus === "active").length;
+  //   // Compute counts dynamically
+  //   const totalUsers = normalized.length;
+  //   const totalAdmins = normalized.filter(u => u.role === "admin").length;
+  //   const totalStudents = normalized.filter(u => u.role === "student").length;
+  //   const activeStudents = normalized.filter(u => u.student?.residencyStatus === "active").length;
 
-    return {
-      users: normalized,
-      totalUsers,
-      totalStudents,
-      totalAdmins,
-      activeStudents,
-      adminRecord,
-    };
-  };
+  //   return {
+  //     users: normalized,
+  //     totalUsers,
+  //     totalStudents,
+  //     totalAdmins,
+  //     activeStudents,
+  //     adminRecord,
+  //   };
+  // };
 
   const deleteUsersByIds = async (ids: number[]) => {
     if (ids.length === 0) return [];
@@ -461,19 +516,26 @@ export async function userQueries() {
     };
   };
 
+  const getUser = async (userId: number) => {
+    const userRecord = await db.query.user.findFirst({
+      where: eq(user.id, userId),
+      ...userWithRelations,
+    });
+    return userRecord;
+  };
+
   return {
     updateUserLastLogin,
     cleanupExpiredVerificationTokens,
     getUserByEmail,
     getUserById,
     getOnboardedStudent,
-    getAllUsers,
     getTotalStudents,
     getTotalAdmins,
     getActiveStudentsCount,
     getAdminByUserId,
     checkIfUserExists,
-    getUsersScoped,
+    // getUsersScoped,
     deleteUsersByIds,
     getUserByIds,
     createOrUpdateAdminForUser,
@@ -482,8 +544,13 @@ export async function userQueries() {
     recordLoginAttempt,
     getStudentByUserId,
     getStudentForDashboardByUserId,
+    getUsers,
+    getUser,
   };
 }
 
 type StudentWithRelations = Awaited<ReturnType<Awaited<ReturnType<typeof userQueries>>["getStudentForDashboardByUserId"]>>;
 export type StudentDashboard = NonNullable<StudentWithRelations>;
+
+type UserWithRelations = Awaited<ReturnType<Awaited<ReturnType<typeof userQueries>>["getUser"]>>;
+export type UserWR = NonNullable<UserWithRelations>;

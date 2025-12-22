@@ -11,13 +11,13 @@ const items = [
   {
     name: "bold",
     isActive: () => editor?.isActive("bold"),
-    command: () => editor?.chain().focus().toggleBold().run(),
+    command: () => editor?.chain().focus().toggleMark("bold").run(),
     icon: "i-lucide-bold",
   },
   {
     name: "italic",
     isActive: () => editor?.isActive("italic"),
-    command: () => editor?.chain().focus().toggleItalic().run(),
+    command: () => editor?.chain().focus().toggleMark("italic").run(),
     icon: "i-lucide-italic",
   },
   {
@@ -29,13 +29,13 @@ const items = [
   {
     name: "strike",
     isActive: () => editor?.isActive("strike"),
-    command: () => editor?.chain().focus().toggleStrike().run(),
+    command: () => editor?.chain().focus().toggleMark("strike").run(),
     icon: "i-lucide-strikethrough",
   },
   {
     name: "code",
     isActive: () => editor?.isActive("code"),
-    command: () => editor?.chain().focus().toggleCode().run(),
+    command: () => editor?.chain().focus().toggleMark("code").run(),
     icon: "i-lucide-code",
   },
 ];

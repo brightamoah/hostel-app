@@ -5,8 +5,6 @@ import { handleError } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async (event) => {
   try {
-    const { session: sessionConfig, nodeEnv } = useRuntimeConfig();
-
     const rawIp = getRequestIP(event, { xForwardedFor: true }) || event.node?.req?.socket?.remoteAddress;
     const ip = normalizeIp(rawIp);
 
@@ -61,7 +59,8 @@ export default defineEventHandler(async (event) => {
 
     await checkUserLockOutByUserId(currentUser.id, ip);
 
-    const isValid = await verifyPassword(currentUser.password, password);
+    // const isValid = await verifyPassword(currentUser.password, password);
+    const isValid = await verifyHashedValue(currentUser.password, password);
 
     if (!isValid) {
       await recordLoginAttempt(currentUser.id, ip);
@@ -129,18 +128,11 @@ export default defineEventHandler(async (event) => {
     });
 
     if (rememberMe) {
-      const sessionCookieName = sessionConfig.name;
-      const currentSessionCookie = getCookie(event, sessionCookieName)!;
-
-      if (currentSessionCookie) {
-        setCookie(event, sessionCookieName, currentSessionCookie, {
-          maxAge: 60 * 60 * 24 * 7, // 7 days
-          httpOnly: true,
-          sameSite: "lax",
-          path: "/",
-          secure: nodeEnv === "production",
-        });
-      }
+      const extendedExpiresAt = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 7));
+      await replaceUserSession(event, {
+        ...await getUserSession(event),
+        expiresAt: extendedExpiresAt,
+      });
     }
 
     await updateUserLastLogin(currentUser.id);

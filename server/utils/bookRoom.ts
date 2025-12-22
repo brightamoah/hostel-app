@@ -97,6 +97,8 @@ export async function bookRoom(
         } satisfies typeof allocation.$inferInsert)
         .returning();
 
+      if (!newAllocation) throw createError({ statusCode: 500, message: "Failed to create allocation" });
+
       await tx
         .insert(billing)
         .values({

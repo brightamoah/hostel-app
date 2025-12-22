@@ -1,0 +1,1 @@
+ALTER TABLE "student" ADD COLUMN "emergency_contact_email" varchar(255);

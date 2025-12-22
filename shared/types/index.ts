@@ -1,3 +1,5 @@
+/// <reference lib="dom" />
+
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Table } from "@tanstack/vue-table";
 import type { useEditor } from "@tiptap/vue-3";
@@ -6,7 +8,7 @@ import type { AnnouncementType } from "~~/server/db/queries/announcement";
 import type { ComplaintType } from "~~/server/db/queries/complaint";
 import type { Maintenance } from "~~/server/db/queries/maintenance";
 import type { Room as RoomType } from "~~/server/db/queries/room";
-import type { StudentDashboard } from "~~/server/db/queries/user";
+import type { StudentDashboard, UserWR } from "~~/server/db/queries/user";
 import type { Visitor } from "~~/server/db/queries/visitor";
 import type { allocation, announcement, complaintActionTakenEnum, complaintStatusEnum, loginAttempts, maintenanceStatusEnum, room, visitorLogs } from "~~/server/db/schema";
 import type { randomUUID } from "node:crypto";
@@ -15,6 +17,7 @@ import type { RouteLocationRaw } from "vue-router";
 
 import type { ComplaintStatusResponseSchema, MaintenanceStatusResponseSchema } from "../utils/schema";
 
+export type UserNew = UserWR;
 export interface FontFamily {
   name: string;
   label: string;

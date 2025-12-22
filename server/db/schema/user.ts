@@ -70,6 +70,7 @@ export const student = pgTable("student", t => ({
   address: t.text().notNull(),
   emergencyContactName: t.text().notNull(),
   emergencyContactPhoneNumber: t.varchar({ length: 20 }).notNull(),
+  emergencyContactEmail: t.varchar({ length: 255 }),
   healthConditions: t.text(),
   enrollmentDate: t.date(),
   residencyStatus: residencyStatusEnum().default("inactive").notNull(),

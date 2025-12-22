@@ -1,18 +1,12 @@
 import { userQueries } from "~~/server/db/queries/user";
 
 export default defineEventHandler(async (event) => {
-  const session = await getUserSession(event);
-
-  if (!session || !session.user || session.user.role !== "admin" || !session.user.adminData || session.user.adminData.status !== "active") {
-    throw createError({
-      statusCode: 403,
-      message: "Access denied: Must be a verified active admin",
-    });
-  }
+  const { adminData } = await adminSessionCheck(event);
 
   try {
-    const { getUsersScoped } = await userQueries();
-    const data = await getUsersScoped(session.user.id);
+    const { getUsers } = await userQueries();
+
+    const data = await getUsers(adminData);
 
     const {
       users,
@@ -22,13 +16,29 @@ export default defineEventHandler(async (event) => {
       activeStudents,
     } = data;
 
+    const flattenUsers = users.map((u) => {
+      const hostelName
+        = u.student?.allocation?.room?.hostel?.name
+          || u.admin?.hostel?.name
+          || "N/A";
+
+      const { emailVerified, ...rest } = u;
+
+      return {
+        ...rest,
+        hostelName,
+        isEmailVerified: emailVerified,
+        emailVerified,
+      };
+    });
+
     return {
-      users,
+      users: flattenUsers,
       totalUsers,
       totalStudents,
       totalAdmins,
       activeStudents,
-      message: `Fetched user data for ${data.adminRecord.accessLevel} admin`,
+      message: `Fetched user data for ${adminData.accessLevel} admin`,
     };
   }
   catch (error) {
