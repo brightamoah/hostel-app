@@ -250,7 +250,7 @@ export async function userQueries() {
     totalUsers = users.length;
     totalStudents = users.filter(u => u.role === "student").length;
     totalAdmins = users.filter(u => u.role === "admin").length;
-    activeStudents = users.filter(u => u.role === "student" && u.student.residencyStatus === "active").length;
+    activeStudents = users.filter(u => u.role === "student" && u.student?.residencyStatus === "active").length;
 
     return {
       users,

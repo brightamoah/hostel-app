@@ -22,11 +22,12 @@ export default defineEventHandler(async (event) => {
     if (rawBody?.dateOfBirth && typeof rawBody.dateOfBirth === "string") rawBody.dateOfBirth = new Date(rawBody.dateOfBirth);
 
     const parsed = personalDetailsSchema.safeParse(rawBody);
+
     if (!parsed.success) {
       errorMessage = `Invalid data: ${parsed.error.issues.map(i => i.message).join(", ")}`;
       throw createError({
         statusCode: 400,
-        message: `Invalid data: ${parsed.error.issues}`,
+        message: errorMessage,
       });
     }
 
@@ -62,7 +63,7 @@ export default defineEventHandler(async (event) => {
     const studentData: typeof student.$inferInsert = {
       userId: session.user.id,
       address,
-      dateOfBirth: dateOfBirth.toISOString(),
+      dateOfBirth: dateOfBirth.toDateString(),
       emergencyContactEmail,
       emergencyContactName,
       emergencyContactPhoneNumber,
@@ -70,7 +71,7 @@ export default defineEventHandler(async (event) => {
       healthConditions,
       gender,
       residencyStatus: "inactive",
-      enrollmentDate: new Date().toISOString(),
+      enrollmentDate: new Date().toDateString(),
 
     };
 
