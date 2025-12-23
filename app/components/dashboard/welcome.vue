@@ -33,7 +33,7 @@ defineProps<{
       <NuxtImg
         src="/new.png"
         width="400"
-        height="250"
+        height="270"
         class="hidden md:block aspect-video"
       />
     </UCard>
