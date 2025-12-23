@@ -8,7 +8,7 @@ defineProps<{
   <div>
     <UCard
       variant="subtle"
-      class="bg-accented"
+      class="bg-accented max-h-64"
       :ui="{
         body: 'flex flex-col justify-between md:flex-row md:items-center',
       }"
@@ -34,7 +34,7 @@ defineProps<{
         src="/new.png"
         width="400"
         height="250"
-        class="md:-mt-5 md:-mb-4 max-w-full h-auto"
+        class="md:-mt-5 md:-mb-4 max-w-full"
       />
     </UCard>
   </div>
