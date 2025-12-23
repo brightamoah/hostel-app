@@ -34,7 +34,7 @@ defineProps<{
         src="/new.png"
         width="400"
         height="250"
-        class="hidden md:block w-auto max-h-60 object-contain"
+        class="hidden md:block w-auto max-h-64 object-contain"
       />
     </UCard>
   </div>
