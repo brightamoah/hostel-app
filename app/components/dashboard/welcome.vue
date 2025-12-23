@@ -5,10 +5,10 @@ defineProps<{
 </script>
 
 <template>
-  <div class="max-h-64">
+  <div>
     <UCard
       variant="subtle"
-      class="bg-accented"
+      class="bg-accented max-h-64"
       :ui="{
         body: 'flex flex-col justify-between md:flex-row md:items-center sm:p-2',
       }"
@@ -34,7 +34,7 @@ defineProps<{
         src="/new.png"
         width="400"
         height="270"
-        class="hidden md:block aspect-video"
+        class="hidden md:block"
       />
     </UCard>
   </div>
