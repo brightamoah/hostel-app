@@ -8,7 +8,7 @@ defineProps<{
   <div>
     <UCard
       variant="subtle"
-      class="bg-accented"
+      class="bg-accented max-h-64"
       :ui="{
         body: 'flex flex-col justify-between md:flex-row md:items-center',
       }"
