@@ -174,7 +174,7 @@ export type RoomDataResponse = {
 export type StudentRoomData = Pick<RoomDataResponse, "rooms" | "hostels" | "totalRooms">;
 
 export type UserDataResponse = {
-  users: UserType[];
+  users: UserWithRelations[];
   totalUsers: number;
   totalStudents: number;
   totalAdmins: number;
@@ -261,12 +261,12 @@ export type Admin = {
   status: "active" | "inactive";
 };
 
-export type UserType = {
-  student: Student | null;
-  admin?: Admin | null;
-  isEmailVerified: boolean;
-  hostelName?: string | null;
-} & Omit<User, "emailVerified">;
+// export type UserType = {
+//   student: Student | null;
+//   admin?: Admin | null;
+//   isEmailVerified: boolean;
+//   hostelName?: string | null;
+// } & Omit<User, "emailVerified">;
 
 export type AdminUser = {
   name: string;

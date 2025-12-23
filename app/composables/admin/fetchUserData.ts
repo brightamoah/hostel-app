@@ -18,7 +18,7 @@ export function useFetchUserData() {
     },
   });
 
-  const users = computed<UserType[]>(() => data.value?.users ?? []);
+  const users = computed<UserWithRelations[]>(() => data.value?.users ?? []);
 
   const {
     canResend,

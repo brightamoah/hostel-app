@@ -48,7 +48,7 @@ export function useUserRowColumn(
     });
   };
 
-  const openPromoteDemoteUserModal = (user: UserType) => {
+  const openPromoteDemoteUserModal = (user: UserWithRelations) => {
     if (user.role === "admin" && user.admin?.status === "active") {
       const modal = overlay.create(ConfirmationModal);
       const close = modal.close;
@@ -116,7 +116,7 @@ export function useUserRowColumn(
     }
   };
 
-  const getRowItems = (row: Row<UserType>) => {
+  const getRowItems = (row: Row<UserWithRelations>) => {
     const user = row.original;
     const roleChangeLabel = computed(() => {
       if (user.role === "admin") return "Demote to Student";
@@ -132,7 +132,7 @@ export function useUserRowColumn(
       {
         label: "View user details",
         icon: "i-lucide-eye",
-        onSelect: () => openDetailsModal(user as unknown as UserWithRelations),
+        onSelect: () => openDetailsModal(user),
       },
       {
         label: roleChangeLabel.value,
@@ -149,21 +149,10 @@ export function useUserRowColumn(
     ];
   };
 
-  type Student = NonNullable<UserType["student"]>;
-
-  const statusColorMap: Record<Student["residencyStatus"], ColorType> = {
-    "active": "success",
-    "graduated": "info",
-    "inactive": "error",
-    "suspended": "warning",
-    "withdrawn": "neutral",
-    "N/A": "neutral",
-  };
-
-  const userIcon = (userRole?: UserType["role"]) =>
+  const userIcon = (userRole?: UserWithRelations["role"]) =>
     userRole === "admin" ? "i-lucide-monitor" : "i-lucide-graduation-cap";
 
-  const columns = ref<TableColumn<UserType>[]>([
+  const columns = ref<TableColumn<UserWithRelations>[]>([
     {
       id: "select",
       header: ({ table }) =>
@@ -229,7 +218,7 @@ export function useUserRowColumn(
         const residencyStatus = row.original.role === "admin" ? "N/A" : row.original.student?.residencyStatus ?? "N/A";
         return h(UBadge, {
           label: residencyStatus,
-          color: statusColorMap[residencyStatus],
+          color: studentStatusColorMap[residencyStatus],
           variant: "subtle",
           class: "capitalize",
         });
@@ -248,7 +237,7 @@ export function useUserRowColumn(
       accessorKey: "emailVerified",
       header: createSortableHeader("Email Status", UButton),
       cell: ({ row }) => {
-        return row.original.isEmailVerified
+        return row.original.emailVerified
           ? h(UBadge, {
               label: "Verified",
               color: "success",

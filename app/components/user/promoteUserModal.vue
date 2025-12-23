@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from "@nuxt/ui";
 
 const { user, isLoading } = defineProps<{
-  user: UserType;
+  user: UserWithRelations;
   isLoading: boolean | Ref<boolean>;
 }>();
 

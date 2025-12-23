@@ -17,6 +17,15 @@ export const priorityColorMap: Record<MaintenanceType["priority"], ColorType> = 
   emergency: "error",
 };
 
+export const studentStatusColorMap: Record<Student["residencyStatus"] | "N/A", ColorType> = {
+  "active": "success",
+  "graduated": "info",
+  "inactive": "error",
+  "suspended": "warning",
+  "withdrawn": "neutral",
+  "N/A": "neutral",
+};
+
 export const maintenanceStatusColorMap: Record<MaintenanceType["status"], ColorType> = {
   "in-progress": "secondary",
   "assigned": "neutral",

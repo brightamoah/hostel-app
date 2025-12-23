@@ -1,4 +1,4 @@
-export function useUserFilters(table: TableType<UserType>, data: DataType<UserDataResponse>) {
+export function useUserFilters(table: TableType<UserWithRelations>, data: DataType<UserDataResponse>) {
   const statusFilter = ref("");
 
   const statusFilterOptions = ref<FilterOption[]>([
@@ -55,7 +55,7 @@ export function useUserFilters(table: TableType<UserType>, data: DataType<UserDa
     // tableState,
     itemsPerPage,
     defaultPage,
-  } = useTableFilters<UserType>(table, data, "users");
+  } = useTableFilters<UserWithRelations>(table, data, "users");
 
   watch(() => [statusFilter.value, roleFilter.value], async ([newStatus, newRole]) => {
     await nextTick();
