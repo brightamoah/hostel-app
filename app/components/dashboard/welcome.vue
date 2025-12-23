@@ -10,7 +10,7 @@ defineProps<{
       variant="subtle"
       class="bg-accented max-h-64"
       :ui="{
-        body: 'flex flex-col justify-between md:flex-row md:items-center sm:p-2',
+        body: 'flex flex-col justify-between md:flex-row md:items-center sm:p-2 h-full',
       }"
     >
       <div class="sm:p-6">
@@ -34,7 +34,7 @@ defineProps<{
         src="/new.png"
         width="400"
         height="270"
-        class="hidden md:block"
+        class="hidden md:block w-auto max-h-full object-contain"
       />
     </UCard>
   </div>
