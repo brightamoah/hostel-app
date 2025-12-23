@@ -3,7 +3,7 @@ import { capitalize } from "vue";
 
 const cards = ref([
   {
-    id: "room",
+    id: "room" as const,
     title: "Room Details",
     icon: "i-lucide-house",
     color: "primary",
@@ -11,7 +11,7 @@ const cards = ref([
     class: "",
   },
   {
-    id: "visitors",
+    id: "visitors" as const,
     title: "Visitors For Today",
     icon: "i-lucide-users",
     color: "success",
@@ -19,7 +19,7 @@ const cards = ref([
     class: "lg:col-span-2",
   },
   {
-    id: "requests",
+    id: "requests" as const,
     title: "Pending Requests",
     icon: "i-lucide-inbox",
     color: "warning",
@@ -27,7 +27,7 @@ const cards = ref([
     class: "lg:col-span-2",
   },
   {
-    id: "billing",
+    id: "billing" as const,
     title: "Billing & Payments",
     icon: "i-lucide-credit-card",
     color: "error",
@@ -130,6 +130,11 @@ function getOrdinal(n: number) {
         v-else-if="card.id === 'visitors'"
         :visitors
       />
+
+      <div v-else-if="card.id === 'requests'">
+        {{
+          card.value }}
+      </div>
 
       <template
         v-if="card.id === 'room' && roomVal"

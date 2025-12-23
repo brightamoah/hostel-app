@@ -33,8 +33,8 @@ defineProps<{
       <NuxtImg
         src="/new.png"
         width="400"
-        height="270"
-        class="hidden md:block w-auto max-h-full object-contain"
+        height="250"
+        class="hidden md:block w-auto object-contain"
       />
     </UCard>
   </div>
