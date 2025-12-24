@@ -15,6 +15,16 @@ const UAvatar = resolveComponent("UAvatar");
 const UBadge = resolveComponent("UBadge");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 
+const overlay = useOverlay();
+
+const VisitorDetailsModal = defineAsyncComponent(() => import("~/components/student/visitorDetails.vue"));
+
+function openDetailsModal(visitor: StudentVisitor) {
+  overlay.create(VisitorDetailsModal).open({
+    visitor,
+  });
+}
+
 function getRowItems(row: Row<StudentVisitor>) {
   const visitor = row.original;
 
@@ -26,7 +36,7 @@ function getRowItems(row: Row<StudentVisitor>) {
     {
       label: "View Details",
       icon: "i-lucide-eye",
-      onSelect: () => {},
+      onSelect: () => openDetailsModal(visitor),
     },
   ];
 

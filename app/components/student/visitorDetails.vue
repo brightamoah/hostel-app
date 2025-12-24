@@ -4,16 +4,14 @@ import type { TableColumn, TabsItem } from "@nuxt/ui";
 import { useDateFormat } from "@vueuse/core";
 
 const { visitor } = defineProps<{
-  visitor: VisitorType;
-  approve?: () => void;
-  deny?: () => void;
+  visitor: StudentVisitor;
 }>();
 
 const emit = defineEmits<{ close: [boolean] }>();
 
 const UButton = resolveComponent("UButton");
 
-const isMobile = inject("isMobile") as ComputedRef<boolean>;
+const isMobile = inject("isMobile", computed(() => false)) as ComputedRef<boolean>;
 
 const visitorInitials = generateInitials(visitor.name);
 const avatarBgColor = generateUserColor(visitor.name);
@@ -27,11 +25,6 @@ const items = computed<TabsItem[]>(() => [
     label: isMobile.value ? "Visitor" : "Visitor Info",
     icon: "i-lucide-user",
     slot: "visitor" as const,
-  },
-  {
-    label: isMobile.value ? "Student" : "Student Info",
-    icon: "i-lucide-graduation-cap",
-    slot: "student" as const,
   },
   {
     label: isMobile.value ? "History" : "Visit History",
@@ -65,39 +58,6 @@ const visitorItems = computed(() => [
     label: "Date Registered",
     value: useDateFormat(visitor.createdAt, "dddd Do MMMM, YYYY").value,
     icon: "i-lucide-calendar-plus",
-  },
-]);
-
-const studentItems = computed(() => [
-  {
-    label: "Student Name",
-    value: visitor.student.user.name,
-    icon: "i-lucide-user",
-  },
-  {
-    label: "Student ID",
-    value: visitor.student.allocation?.studentId || "N/A",
-    icon: "i-lucide-id-card",
-  },
-  {
-    label: "Room Number",
-    value: visitor.student.allocation ? `${visitor.student.allocation.room.roomNumber} (${visitor.student.allocation.room.roomType})` : "N/A",
-    icon: "i-lucide-door-open",
-  },
-  {
-    label: "Hostel",
-    value: visitor.student.allocation?.room.hostel.name || "N/A",
-    icon: "i-lucide-building",
-  },
-  {
-    label: "Email Address",
-    value: visitor.student.user.email,
-    icon: "i-lucide-mail",
-  },
-  {
-    label: "Phone Number",
-    value: visitor.student.phoneNumber,
-    icon: "i-lucide-phone-call",
   },
 ]);
 
@@ -244,32 +204,7 @@ const visitHistory = computed(() => {
         </UUser>
 
         <div
-          v-if="visitor.status === 'pending'"
-          class="flex md:flex-row flex-col items-center gap-3"
-        >
-          <UButton
-            label="Approve"
-            icon="i-lucide-check-circle"
-            variant="subtle"
-            color="success"
-            :size="isMobile ? 'md' : 'lg'"
-            class="justify-center w-full sm:w-auto cursor-pointer"
-            @click="approve?.()"
-          />
-
-          <UButton
-            label="Deny"
-            icon="i-lucide-x-circle"
-            variant="subtle"
-            color="error"
-            :size="isMobile ? 'md' : 'lg'"
-            class="justify-center cursor-pointer"
-            @click="deny?.()"
-          />
-        </div>
-
-        <div
-          v-else-if="visitor.status === 'denied' || visitor.status === 'cancelled'"
+          v-if="visitor.status === 'denied' || visitor.status === 'cancelled'"
           class="flex items-center text-sm text-end"
         >
           No actions available
@@ -292,27 +227,6 @@ const visitHistory = computed(() => {
           <div class="gap-4 grid grid-cols-1 md:grid-cols-2 w-full">
             <DashboardDetailItem
               v-for="item in visitorItems"
-              :key="item.label"
-              :label="item.label"
-            >
-              <template #default>
-                <div class="flex items-center gap-2">
-                  <UIcon
-                    :name="item.icon"
-                    class="size-5 text-primary"
-                  />
-
-                  <p>{{ item.value }}</p>
-                </div>
-              </template>
-            </DashboardDetailItem>
-          </div>
-        </template>
-
-        <template #student>
-          <div class="gap-4 grid grid-cols-1 md:grid-cols-2 w-full">
-            <DashboardDetailItem
-              v-for="item in studentItems"
               :key="item.label"
               :label="item.label"
             >

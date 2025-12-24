@@ -1,6 +1,10 @@
 <script setup lang="ts">
 defineProps<{
   userName: string;
+  refreshIsLoading: boolean;
+  canResend: boolean;
+  coolDownTime: number;
+  handleRefresh: () => Promise<boolean>;
 }>();
 </script>
 
@@ -22,12 +26,24 @@ defineProps<{
           Manage your hostel stay efficiently from here!
         </p>
 
-        <UButton
-          label="View Profile"
-          size="lg"
-          class="mt-4 cursor-pointer"
-          :to="{ name: 'student-profile' }"
-        />
+        <div class="flex md:flex-row flex-col md:items-center gap-4 mt-4">
+          <UButton
+            label="View Profile"
+            icon="i-lucide-circle-user-round"
+            size="lg"
+            class="cursor-pointer"
+            :to="{ name: 'student-profile' }"
+          />
+
+          <DashboardRefreshButton
+            variant="solid"
+            color="neutral"
+            :can-resend
+            :cool-down-time
+            :refresh-is-loading
+            :handle-refresh
+          />
+        </div>
       </div>
 
       <NuxtImg
