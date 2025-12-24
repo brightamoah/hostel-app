@@ -1,8 +1,12 @@
 <script setup lang="ts">
-defineProps<{
+type Variant = "link" | "outline" | "solid" | "soft" | "subtle" | "ghost" | undefined;
+
+const { variant = "outline", color = "primary" } = defineProps<{
   refreshIsLoading: boolean;
   canResend: boolean;
   coolDownTime: number;
+  variant?: Variant;
+  color?: ColorType;
   handleRefresh: () => Promise<boolean>;
 
 }>();
@@ -15,9 +19,9 @@ defineProps<{
     :loading="refreshIsLoading"
     :disabled="!canResend || refreshIsLoading"
     size="lg"
-    variant="outline"
-    color="primary"
-    class="justify-center items-center w-full md:max-w-sm cursor-pointer"
+    :variant
+    :color
+    class="justify-center items-center cursor-pointer"
     @click="handleRefresh()"
   />
 </template>

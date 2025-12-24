@@ -3,7 +3,7 @@ import type { Admin, FailedAttempts, UserWithRelations } from "~~/shared/types";
 import { useDB } from "~~/server/utils/db";
 import { and, asc, count, desc, eq, gt, inArray, isNotNull, lt, sql } from "drizzle-orm";
 
-import { admin, allocation, billing, loginAttempts, maintenanceRequest, room, student, user, visitor } from "../schema";
+import { admin, allocation, billing, loginAttempts, maintenanceRequest, room, student, user, visitor, visitorLogs } from "../schema";
 
 const ATTEMPT_WINDOW_MINUTES = 15;
 type Allocation = typeof allocation.$inferSelect;
@@ -101,6 +101,25 @@ const studentWithRelations = {
     visitors: {
       where: eq(visitor.visitDate, today),
       orderBy: desc(visitor.visitDate),
+      with: {
+        visitorLogs: {
+          orderBy: desc(visitorLogs.timestamp),
+          with: {
+            admin: {
+              columns: {},
+              with: {
+                user: {
+                  columns: {
+                    name: true,
+                    email: true,
+                    image: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
   },
 } as const;

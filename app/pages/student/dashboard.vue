@@ -11,7 +11,15 @@ const title = ref("Student Dashboard");
 const { user } = useUserSession();
 const userName = computed(() => user.value?.name ?? "Student");
 
-const { data, status, student } = useFetchStudentDashboardData();
+const {
+  data,
+  status,
+  student,
+  isLoading: refreshIsLoading,
+  canResend,
+  coolDownTime,
+  handleRefresh,
+} = useFetchStudentDashboardData();
 
 const roommates = computed<Roommate[]>(() => {
   return student.value?.allocation?.room?.allocations.filter(allocation => allocation.student.id !== student.value?.id)
@@ -76,7 +84,13 @@ const cards = computed<StatsCard[]>(() => [
       </template>
 
       <template #body>
-        <DashboardWelcome :user-name />
+        <DashboardWelcome
+          :user-name
+          :can-resend
+          :cool-down-time
+          :refresh-is-loading
+          :handle-refresh
+        />
 
         <DashboardCardSkeleton v-if="status === 'pending'" />
 

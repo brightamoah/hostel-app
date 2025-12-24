@@ -131,10 +131,7 @@ function getOrdinal(n: number) {
         :visitors
       />
 
-      <div v-else-if="card.id === 'requests'">
-        {{
-          card.value }}
-      </div>
+      <StudentRequest v-else-if="card.id === 'requests'" />
 
       <template
         v-if="card.id === 'room' && roomVal"
