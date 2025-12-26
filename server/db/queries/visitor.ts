@@ -175,6 +175,33 @@ export async function visitorQueries() {
     return deleteResult;
   };
 
+  const getVisitorsForStudent = async (studentId: number) => {
+    return await db.query.visitor.findMany({
+      where: eq(visitor.studentId, studentId),
+      ...visitorWithRelations,
+      orderBy: desc(visitor.visitDate),
+    });
+  };
+
+  const getVisitorStatusCountForStudent = async (studentId: number) => {
+    const [result] = await db
+      .select({
+        totalVisitors: count(visitor.id),
+        approved: count(sql`CASE WHEN ${visitor.status} = 'approved' THEN 1 END`),
+        checkedIn: count(sql`CASE WHEN ${visitor.status} = 'checked-in' THEN 1 END`),
+        pending: count(sql`CASE WHEN ${visitor.status} = 'pending' THEN 1 END`),
+      })
+      .from(visitor)
+      .where(eq(visitor.studentId, studentId));
+
+    return {
+      totalVisitors: result?.totalVisitors,
+      approved: result?.approved,
+      checkedIn: result?.checkedIn,
+      pending: result?.pending,
+    };
+  };
+
   return {
     getScopedVisitors,
     getVisitorById,
@@ -183,6 +210,8 @@ export async function visitorQueries() {
     getVisitorsForSuperAdmin,
     getVisitorsForRegularAdmin,
     deleteVisitorsByIds,
+    getVisitorsForStudent,
+    getVisitorStatusCountForStudent,
   };
 }
 

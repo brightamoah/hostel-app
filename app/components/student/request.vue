@@ -1,5 +1,7 @@
 <script setup lang="ts">
-
+defineProps<{
+  requests: Array<unknown>;
+}>();
 </script>
 
 <template>

@@ -1,3 +1,4 @@
+import { isBefore, parseISO, startOfDay } from "date-fns";
 import { eq } from "drizzle-orm";
 
 import { visitorQueries } from "../db/queries";
@@ -20,6 +21,18 @@ export async function updateVisitorStatus(visitorId: number, status: "approved" 
     throw createError({
       statusCode: 400,
       message: `This visit cannot be modified as it is already '${visitorToUpdate.status}'`,
+    });
+  }
+
+  const today = startOfDay(new Date());
+  const visitDate = typeof visitorToUpdate.visitDate === "string"
+    ? startOfDay(parseISO(visitorToUpdate.visitDate))
+    : startOfDay(new Date(visitorToUpdate.visitDate));
+
+  if (isBefore(visitDate, today)) {
+    throw createError({
+      statusCode: 400,
+      message: `This visit cannot be modified as the visit date has already passed.`,
     });
   }
 

@@ -2,26 +2,14 @@ import { userQueries } from "~~/server/db/queries/user";
 import { visitorQueries } from "~~/server/db/queries/visitor";
 
 export default defineEventHandler(async (event) => {
-  const session = await getUserSession(event);
-
-  if (!session
-    || !session.user
-    || session.user.role !== "admin"
-    || !session.user.adminData
-    || session.user.adminData.status !== "active") {
-    throw createError({
-      statusCode: 403,
-      message: "Access denied: Must be a verified active admin",
-    });
-  }
+  const { userId } = await adminSessionCheck(event);
 
   try {
     const { getAdminByUserId } = await userQueries();
     const { getScopedVisitors, getVisitorStatusCount } = await visitorQueries();
-    const currentUserId = session.user.id;
 
     const adminMakingRequest = await getAdminByUserId(
-      currentUserId,
+      userId,
       true,
     );
 
@@ -32,9 +20,19 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const visitors = await getScopedVisitors(adminMakingRequest);
-
-    const { approved, checkedIn, pending, totalVisitors } = await getVisitorStatusCount(adminMakingRequest);
+    const [
+      visitors,
+      {
+        approved,
+        checkedIn,
+        pending,
+        totalVisitors,
+      },
+    ]
+      = await Promise.all([
+        getScopedVisitors(adminMakingRequest),
+        getVisitorStatusCount(adminMakingRequest),
+      ]);
 
     return {
       visitors,

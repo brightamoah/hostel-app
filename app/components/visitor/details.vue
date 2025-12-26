@@ -3,8 +3,9 @@ import type { TableColumn, TabsItem } from "@nuxt/ui";
 
 import { useDateFormat } from "@vueuse/core";
 
-const { visitor } = defineProps<{
+const { visitor, isAdmin = false } = defineProps<{
   visitor: VisitorType;
+  isAdmin?: boolean | ComputedRef<boolean>;
   approve?: () => void;
   deny?: () => void;
 }>();
@@ -16,7 +17,7 @@ const UButton = resolveComponent("UButton");
 const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
 const visitorInitials = generateInitials(visitor.name);
-const avatarBgColor = generateUserColor(visitor.name);
+const avatarBgColor = generateUserColor(visitor.id);
 
 const visitorBadgeColor = computed<ColorType>(() => {
   return visitorStatusColorMap[visitor.status];
@@ -185,6 +186,16 @@ const visitHistory = computed(() => {
 
   return rows.reverse();
 });
+
+const isVisitDateInFuture = computed(() => {
+  const visitDate = new Date(visitor.visitDate);
+  visitDate.setHours(0, 0, 0, 0);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return visitDate.getTime() >= today.getTime();
+});
 </script>
 
 <template>
@@ -244,7 +255,7 @@ const visitHistory = computed(() => {
         </UUser>
 
         <div
-          v-if="visitor.status === 'pending'"
+          v-if="visitor.status === 'pending' && isAdmin"
           class="flex md:flex-row flex-col items-center gap-3"
         >
           <UButton
@@ -276,10 +287,17 @@ const visitHistory = computed(() => {
         </div>
 
         <div
-          v-else
+          v-else-if="isVisitDateInFuture"
           class="flex items-center text-sm text-end"
         >
           Check-in available on {{ useDateFormat(visitor.visitDate, "dddd Do MMMM, YYYY").value }}
+        </div>
+
+        <div
+          v-else-if="!isVisitDateInFuture"
+          class="flex items-center text-sm text-end"
+        >
+          Visit date has passed. No actions available.
         </div>
       </div>
 

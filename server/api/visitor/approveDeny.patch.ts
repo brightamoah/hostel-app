@@ -1,23 +1,14 @@
-import { userQueries } from "~~/server/db/queries";
-
 export default defineEventHandler(async (event) => {
-  const session = await getUserSession(event);
-
-  if (
-    !session
-    || !session.user
-    || session.user.role !== "admin"
-    || !session.user.adminData
-    || session.user.adminData.status !== "active") {
-    throw createError({
-      statusCode: 403,
-      message: "Access denied: Must be a verified active admin",
-    });
-  }
-
-  const userId = session.user.id;
+  const { adminData } = await adminSessionCheck(event);
 
   try {
+    if (!adminData) {
+      throw createError({
+        statusCode: 403,
+        message: "Account for the admin making the request not found or is inactive.",
+      });
+    }
+
     const body = await readValidatedBody(event, body => approveDenySchema.safeParse(body));
 
     if (!body.success) {
@@ -31,21 +22,7 @@ export default defineEventHandler(async (event) => {
 
     const { visitorId, status } = body.data;
 
-    const { getAdminByUserId } = await userQueries();
-
-    const adminMakingRequest = await getAdminByUserId(
-      userId,
-      true,
-    );
-
-    if (!adminMakingRequest) {
-      throw createError({
-        statusCode: 403,
-        message: "Account for the admin making the request not found or is inactive.",
-      });
-    }
-
-    const updatedVisitor = await updateVisitorStatus(visitorId, status, adminMakingRequest);
+    const updatedVisitor = await updateVisitorStatus(visitorId, status, adminData);
 
     return {
       success: true,
