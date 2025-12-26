@@ -17,6 +17,8 @@ export function useVisitorRowColumn(
   UCheckbox: ComponentType,
   // UIcon: Component,
 ) {
+  const { user } = useUserSession();
+  const isAdmin = computed<boolean>(() => user.value?.role === "admin");
   const toast = useToast();
   const overlay = useOverlay();
   const visitorStore = useVisitorStore();
@@ -56,6 +58,7 @@ export function useVisitorRowColumn(
 
     modal.open({
       visitor,
+      isAdmin,
       approve: () => {
         openApproveDenyModal(visitor, "approved");
         close();
@@ -163,7 +166,7 @@ export function useVisitorRowColumn(
       },
     ];
 
-    if (visitor.status === "pending") {
+    if (isAdmin.value && visitor.status === "pending") {
       actions.push(
         {
           type: "separator",
@@ -185,7 +188,7 @@ export function useVisitorRowColumn(
       );
     }
 
-    if ((visitor.status === "approved" || visitor.status === "checked-out") && visitor.visitDate === today) {
+    if (isAdmin.value && (visitor.status === "approved" || visitor.status === "checked-out") && visitor.visitDate === today) {
       actions.push(
         {
           label: "Check In Visitor",
@@ -196,7 +199,7 @@ export function useVisitorRowColumn(
       );
     }
 
-    if (visitor.status === "checked-in" && visitor.visitDate === today) {
+    if (isAdmin.value && visitor.status === "checked-in" && visitor.visitDate === today) {
       actions.push(
         {
           label: "Check Out Visitor",
@@ -376,5 +379,6 @@ export function useVisitorRowColumn(
   return {
     getRowItems,
     columns,
+    isAdmin,
   };
 }

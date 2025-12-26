@@ -7,7 +7,11 @@ export const useVisitorStore = defineStore("visitorStore", () => {
   const isLoading = ref<boolean>(false);
   const deleteModalOpen = ref<boolean>(false);
 
-  const visitorDataKey = computed(() => `visitorData:${user.value?.adminData?.accessLevel}`);
+  const visitorDataKey = computed(() =>
+    user.value?.role === "admin"
+      ? `visitorData:${user.value?.adminData?.accessLevel}`
+      : `visitorData:${user.value?.id}`,
+  );
 
   const approveDenyVisitor = async (payload: ApproveDenySchema) => {
     if (!payload.visitorId && !payload.status) return;

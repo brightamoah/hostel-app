@@ -1,5 +1,6 @@
 /// <reference lib="dom" />
 
+import type { DateValue } from "@internationalized/date";
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Table } from "@tanstack/vue-table";
 import type { useEditor } from "@tiptap/vue-3";
@@ -10,13 +11,20 @@ import type { Maintenance } from "~~/server/db/queries/maintenance";
 import type { Room as RoomType } from "~~/server/db/queries/room";
 import type { StudentDashboard } from "~~/server/db/queries/user";
 import type { Visitor } from "~~/server/db/queries/visitor";
-import type { admin, allocation, announcement, complaintActionTakenEnum, complaintStatusEnum, hostel, loginAttempts, maintenanceStatusEnum, room, student, user, visitorLogs } from "~~/server/db/schema";
+import type { admin, allocation, announcement, complaintActionTakenEnum, complaintStatusEnum, hostel, loginAttempts, maintenanceStatusEnum, room, student, user, visitor, visitorLogs } from "~~/server/db/schema";
 import type { InferSelectModel } from "drizzle-orm";
 import type { randomUUID } from "node:crypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 import type { ComplaintStatusResponseSchema, MaintenanceStatusResponseSchema } from "../utils/schema";
+
+export type DateRange = {
+  start: DateValue;
+  end: DateValue;
+};
+
+export type DateModel = DateValue | DateRange | null;
 
 export interface FontFamily {
   name: string;
@@ -282,6 +290,8 @@ export type FailedAttempts = (typeof loginAttempts)["_"]["columns"][keyof (typeo
 export type VisitorType = Visitor;
 export type VisitorStatus = Visitor["status"];
 export type AllowedStatusesForCheckIn = Extract<VisitorStatus, "approved" | "checked-out">;
+
+export type VisitorCreate = typeof visitor.$inferInsert;
 
 export type MaintenanceType = Maintenance;
 export type MaintenanceDataResponse = {

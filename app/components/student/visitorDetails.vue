@@ -13,8 +13,8 @@ const UButton = resolveComponent("UButton");
 
 const isMobile = inject("isMobile", computed(() => false)) as ComputedRef<boolean>;
 
-const visitorInitials = generateInitials(visitor.name);
-const avatarBgColor = generateUserColor(visitor.name);
+const visitorInitials = computed(() => generateInitials(visitor.name));
+const avatarBgColor = computed(() => generateUserColor(visitor.name));
 
 const visitorBadgeColor = computed<ColorType>(() => {
   return visitorStatusColorMap[visitor.status];

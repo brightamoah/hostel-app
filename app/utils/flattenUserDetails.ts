@@ -1,5 +1,3 @@
-import type { UserNew } from "~~/shared/types";
-
 import { useDateFormat } from "@vueuse/core";
 
 type UserDetailValue = string | number | boolean | Date | null | undefined;

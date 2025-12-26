@@ -52,6 +52,9 @@ export default defineNuxtConfig({
     rollupConfig: {
       external: ["cloudflare:sockets"],
     },
+    experimental: {
+      tasks: true,
+    },
   },
 
   hub: {

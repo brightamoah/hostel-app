@@ -1,3 +1,4 @@
+import { CalendarDate } from "@internationalized/date";
 import * as z from "zod";
 
 const linkSchema = z.object({
@@ -240,6 +241,43 @@ const logActionSchema = z.object({
 });
 export type LogActionSchema = z.output<typeof logActionSchema>;
 
+const relationshipSchema = z.string("Relationship is required")
+  .nonempty("Relationship is required")
+  .trim()
+  .min(2, "Relationship must be at least 2 characters long")
+  .max(50, "Relationship must be at most 50 characters long");
+
+const purposeOfVisitSchema = z.string("Purpose of Visit is required")
+  .nonempty("Purpose of Visit is required")
+  .trim()
+  .min(2, "Purpose of Visit must be at least 2 characters long")
+  .max(50, "Purpose of Visit must be at most 50 characters long");
+
+const visitorStatusSchema = z.enum(
+  ["pending", "approved", "denied", "checked-in", "checked-out", "cancelled"],
+  {
+    error: "Status is required",
+  },
+).optional().default("pending");
+
+const dateOfVisitSchema = z.custom<CalendarDate>(val => val instanceof CalendarDate, {
+  error: "Date of Visit must be a valid CalendarDate",
+}).refine(val => val !== null, "Date of Visit is required");
+
+const registerVisitorSchema = z.object({
+  name: nameSchema,
+  email: emailSchema,
+  phoneNumber: phoneNumberSchema,
+  dateOfVisit: dateOfVisitSchema,
+  relationship: relationshipSchema,
+  purposeOfVisit: purposeOfVisitSchema,
+  hostelId: z.number("Hostel ID is required").int().positive().min(1, "Invalid Hostel ID"),
+  studentId: z.number("Student ID is required").int().positive().min(1, "Invalid Student ID"),
+  status: visitorStatusSchema,
+});
+
+export type RegisterVisitorSchema = z.output<typeof registerVisitorSchema>;
+
 const maintenanceStatusSchema = z.union([
   z.enum([
     "pending",
@@ -413,6 +451,7 @@ export {
   personalDetailsSchema,
   promoteDemoteSchema,
   readStatusSchema,
+  registerVisitorSchema,
   rememberMeSchema,
   resetPasswordSchema,
   roleSchema,
