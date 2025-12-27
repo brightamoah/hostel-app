@@ -162,8 +162,6 @@ async function submitUpdate() {
       close: 'cursor-pointer',
     }"
   >
-    <h1>editModal</h1>
-
     <template #body>
       <UForm
         ref="editRoomFormRef"

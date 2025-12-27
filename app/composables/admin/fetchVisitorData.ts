@@ -31,6 +31,10 @@ export function useFetchVisitorData() {
     refresh,
   );
 
+  const getVisitorFromCache = (visitorId: number) => {
+    return visitors.value.find(v => v.id === visitorId);
+  };
+
   return {
     data,
     visitors,
@@ -40,5 +44,6 @@ export function useFetchVisitorData() {
     coolDownTime,
     handleRefresh,
     refresh,
+    getVisitorFromCache,
   };
 }

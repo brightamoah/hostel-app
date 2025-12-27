@@ -227,12 +227,13 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
     const current = editAnnouncementState.value;
     const original = originalEditState.value!;
 
-    (Object.keys(current) as Array<keyof typeof current>).forEach((key) => {
-      if (current[key] !== original?.[key]) {
+    for (const key in current) {
+      const k = key as keyof EditAnnouncementSchema["data"];
+      if (!isDeepEqual(current[k], original[k])) {
         // @ts-expect-error - Typescript gets strict about partial assignments, but this is safe
-        changes[key] = current[key];
+        changes[k] = current[k];
       }
-    });
+    }
 
     const payload = {
       announcementId: editingId.value,

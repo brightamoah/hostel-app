@@ -1,28 +1,16 @@
 <script setup lang="ts">
-import type { CalendarDate } from "@internationalized/date";
+const visitorStore = useVisitorStore();
+const { registerVisitorState, isLoading } = storeToRefs(visitorStore);
 
-import { getLocalTimeZone, today } from "@internationalized/date";
+const { submitVisitorForm } = visitorStore;
 
-const minDate = today(getLocalTimeZone());
-
-type CreateVisitor = Omit<RegisterVisitorSchema, "status" | "hostelId" | "studentId" | "dateOfVisit"> & {
-  dateOfVisit: CalendarDate | undefined;
-};
-
-const state = reactive<CreateVisitor>({
-  name: "",
-  email: "",
-  phoneNumber: "",
-  relationship: "",
-  dateOfVisit: undefined,
-  purposeOfVisit: "",
-});
+const form = useTemplateRef("form");
 </script>
 
 <template>
   <UModal
     title="Register New Visitor"
-    description="Fill in the details below to add a new visitor to the system."
+    description="Fill in the details below register visitor."
     :dismissible="false"
     :ui="{
       footer: 'justify-end',
@@ -41,68 +29,34 @@ const state = reactive<CreateVisitor>({
     />
 
     <template #body>
-      <UForm
-        :state
-        :schema="registerVisitorSchema"
-      >
-        <div class="flex md:flex-row flex-col justify-between gap-5 mb-4 px-4">
-          <UFormField
-            required
-            label="Name"
-            name="name"
-            class="w-full"
-          >
-            <UInput
-              v-model="state.name"
-              placeholder="Enter visitor name"
-              class="w-full"
-              size="xl"
-            />
-          </UFormField>
+      <VisitorForm
+        ref="form"
+        :state="registerVisitorState as CreateVisitor"
+        :schema="registerVisitorSchema.omit({ status: true, hostelId: true, studentId: true })"
+        @update:state="registerVisitorState = $event as CreateVisitor"
+        @submit="submitVisitorForm"
+      />
+    </template>
 
-          <UFormField
-            required
-            label="Visit Date"
-            name="visitDate"
-            class="w-full"
-          >
-            <AppDatePicker
-              v-model:date="state.dateOfVisit as CalendarDate"
-              :min="minDate"
-            />
-          </UFormField>
-        </div>
+    <template #footer="{ close }">
+      <div class="flex gap-2.5">
+        <UButton
+          label="Cancel"
+          color="error"
+          variant="outline"
+          class="cursor-pointer"
+          @click="close"
+        />
 
-        <div class="flex md:flex-row flex-col justify-between gap-5 mb-4 px-4">
-          <UFormField
-            required
-            label="Purpose of Visit"
-            name="purpose"
-            class="w-full"
-          >
-            <UInput
-              v-model="state.purposeOfVisit"
-              placeholder="Enter purpose of visit"
-              class="w-full"
-              size="xl"
-            />
-          </UFormField>
-
-          <UFormField
-            required
-            label="Contact Number"
-            name="contactNumber"
-            class="w-full"
-          >
-            <UInput
-              v-model="state.phoneNumber"
-              placeholder="Enter contact number"
-              class="w-full"
-              size="xl"
-            />
-          </UFormField>
-        </div>
-      </UForm>
+        <UButton
+          color="primary"
+          icon="i-lucide-send"
+          class="cursor-pointer"
+          :label=" isLoading ? 'Submitting...' : 'Submit Visitor'"
+          :loading="isLoading"
+          @click="form?.visitorForm?.submit()"
+        />
+      </div>
     </template>
   </UModal>
 </template>

@@ -1,4 +1,4 @@
-import type { Admin } from "~~/shared/types";
+import type { Admin, VisitorCreate } from "~~/shared/types";
 
 import { useDB } from "~~/server/utils/db";
 import { and, count, desc, eq, inArray, or, sql } from "drizzle-orm";
@@ -202,6 +202,14 @@ export async function visitorQueries() {
     };
   };
 
+  const createVisitor = async (data: VisitorCreate) => {
+    const [newVisitor] = await db
+      .insert(visitor)
+      .values(data)
+      .returning();
+    return newVisitor;
+  };
+
   return {
     getScopedVisitors,
     getVisitorById,
@@ -212,6 +220,7 @@ export async function visitorQueries() {
     deleteVisitorsByIds,
     getVisitorsForStudent,
     getVisitorStatusCountForStudent,
+    createVisitor,
   };
 }
 
