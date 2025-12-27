@@ -37,7 +37,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
         title: "Failed to Update Complaint Status",
         description: "Status cannot be empty.",
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
       return;
@@ -67,7 +67,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
         title: "Failed to Update Complaint Status",
         description: message,
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
     }
@@ -105,7 +105,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
         title: "Failed to Add Complaint Response",
         description: message,
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
     }

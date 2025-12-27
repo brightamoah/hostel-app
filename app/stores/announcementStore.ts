@@ -201,7 +201,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
         title: "Failed to publish the announcement",
         description: message,
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
     }
@@ -270,7 +270,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
         title: `Failed to update announcement with id: ${payload.announcementId}`,
         description: message,
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
 

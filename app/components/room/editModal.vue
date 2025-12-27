@@ -139,7 +139,7 @@ async function submitUpdate() {
       title: "Update Failed",
       description: message,
       color: "error",
-      icon: "i-lucide-alert-circle",
+      icon: "i-lucide-circle-alert",
       duration: 8000,
     });
   }

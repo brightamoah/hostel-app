@@ -1,4 +1,4 @@
-import { CalendarDate, getLocalTimeZone, today } from "@internationalized/date";
+import { CalendarDate, getLocalTimeZone, parseDate, today } from "@internationalized/date";
 import * as z from "zod";
 
 const linkSchema = z.object({
@@ -262,7 +262,28 @@ const visitorStatusSchema = z.enum(
   },
 ).optional().default("pending");
 
-const dateOfVisitSchema = z.custom<CalendarDate>((val) => {
+const dateOfVisitSchema = z.preprocess((val) => {
+  if (typeof val === "string") {
+    try {
+      return parseDate(val);
+    }
+    catch {
+      return val;
+    }
+  }
+
+  if (val && typeof val === "object" && "year" in val && "month" in val && "day" in val) {
+    const d = val as { year: number; month: number; day: number };
+    try {
+      return new CalendarDate(d.year, d.month, d.day);
+    }
+    catch {
+      return val;
+    }
+  }
+
+  return val;
+}, z.custom<CalendarDate>((val) => {
   if (val instanceof CalendarDate) return true;
 
   return (
@@ -279,7 +300,7 @@ const dateOfVisitSchema = z.custom<CalendarDate>((val) => {
 
   const now = today(getLocalTimeZone());
   return date.compare(now) >= 0;
-}, "Date of Visit cannot be in the past");
+}, "Date of Visit cannot be in the past"));
 
 const registerVisitorSchema = z.object({
   name: nameSchema,
@@ -295,7 +316,7 @@ const registerVisitorSchema = z.object({
 
 const editVisitorSchema = z.object({
   visitorId: z.number().int().positive().min(1, "Invalid Visitor ID"),
-  data: registerVisitorSchema.omit({ hostelId: true, studentId: true }).partial(),
+  data: registerVisitorSchema.omit({ hostelId: true, studentId: true, status: true }).partial(),
 });
 
 export type EditVisitorSchema = z.output<typeof editVisitorSchema>;
