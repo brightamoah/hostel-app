@@ -22,8 +22,8 @@ const passwordSchema = z
 
 const nameSchema = z
   .string({ error: "Name is required" })
-  .nonempty("Name is required")
   .trim()
+  .nonempty("Name is required")
   .min(5, "Name must be at least 5 characters long")
   .max(50, "Name must be at most 50 characters long")
   .refine(
@@ -244,14 +244,14 @@ const logActionSchema = z.object({
 export type LogActionSchema = z.output<typeof logActionSchema>;
 
 const relationshipSchema = z.string("Relationship is required")
-  .nonempty("Relationship is required")
   .trim()
+  .nonempty("Relationship is required")
   .min(2, "Relationship must be at least 2 characters long")
   .max(50, "Relationship must be at most 50 characters long");
 
 const purposeOfVisitSchema = z.string("Purpose of Visit is required")
-  .nonempty("Purpose of Visit is required")
   .trim()
+  .nonempty("Purpose of Visit is required")
   .min(2, "Purpose of Visit must be at least 2 characters long")
   .max(50, "Purpose of Visit must be at most 50 characters long");
 

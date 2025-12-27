@@ -5,6 +5,10 @@ export default defineEventHandler(async (event) => {
     message: "Unauthorized Access: Please log in to continue.",
   });
 
+  if (user.role !== "student") {
+    throw createError({ statusCode: 403, message: "Forbidden: This endpoint is only accessible to students." });
+  }
+
   try {
     const userId = user.id;
 
@@ -44,6 +48,6 @@ export default defineEventHandler(async (event) => {
   catch (error) {
     if (error && typeof error === "object" && "statusCode" in error) throw error;
 
-    return handleError(error, "Get Student Visitors", event);
+    handleError(error, "Get Student Visitors", event);
   }
 });

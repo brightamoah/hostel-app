@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const { getStudentForDashboardByUserId } = await userQueries();
-    const { CreateVisitor } = await visitorQueries();
+    const { createVisitor } = await visitorQueries();
 
     const studentData = await getStudentForDashboardByUserId(user.id);
 
@@ -50,6 +50,13 @@ export default defineEventHandler(async (event) => {
     }
 
     const student = studentData.studentRecord;
+
+    if (!student.allocation || !student.allocation.room || !student.allocation.room.hostel) {
+      throw createError({
+        statusCode: 403,
+        message: "Access denied: You must have an active room allocation to register a visitor.",
+      });
+    }
 
     if (student.allocation.status !== "active" || student.residencyStatus !== "active") {
       throw createError({
@@ -66,17 +73,7 @@ export default defineEventHandler(async (event) => {
       visitDate: dateOfVisit.toString(),
     };
 
-    const validate = registerVisitorSchema.omit({ visitDate: true }).safeParse(data);
-    if (!validate.success) {
-      throw createError({
-        statusCode: 400,
-        message: `${validate.error.issues
-          .map(i => i.message)
-          .join(", ")}`,
-      });
-    }
-
-    const visitor = await CreateVisitor(data);
+    const visitor = await createVisitor(data);
 
     return {
       success: true,
@@ -87,6 +84,6 @@ export default defineEventHandler(async (event) => {
   catch (error) {
     if (error && typeof error === "object" && "statusCode" in error) throw error;
 
-    return handleError(error, "Get Student Visitors", event);
+    handleError(error, "Register Visitor", event);
   }
 });

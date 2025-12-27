@@ -202,7 +202,7 @@ export async function visitorQueries() {
     };
   };
 
-  const CreateVisitor = async (data: VisitorCreate) => {
+  const createVisitor = async (data: VisitorCreate) => {
     const [newVisitor] = await db
       .insert(visitor)
       .values(data)
@@ -220,7 +220,7 @@ export async function visitorQueries() {
     deleteVisitorsByIds,
     getVisitorsForStudent,
     getVisitorStatusCountForStudent,
-    CreateVisitor,
+    createVisitor,
   };
 }
 

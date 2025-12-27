@@ -44,7 +44,14 @@ const hasNoChanges = computed(() => {
 function initEditSession(visitor: VisitorType) {
   editingId.value = visitor.id;
 
-  const visitDate = parseDate(visitor.visitDate);
+  let visitDate;
+  try {
+    visitDate = parseDate(visitor.visitDate);
+  }
+  catch {
+    console.error("Invalid visitDate format:", visitor.visitDate);
+    visitDate = undefined;
+  }
 
   const mappedState: EditVisitor["data"] = {
     name: visitor.name,
@@ -102,8 +109,8 @@ onMounted(() => {
 
 <template>
   <UModal
-    title="Register New Visitor"
-    description="Fill in the details below register visitor."
+    title="Edit Visitor"
+    description="Update visitor details below."
     :dismissible="false"
     :ui="{
       footer: 'justify-end',
@@ -115,7 +122,7 @@ onMounted(() => {
     <template #body>
       <VisitorForm
         ref="editForm"
-        :state="editVisitorState as EditVisitor['data']"
+        v-model:state="editVisitorState as EditVisitor['data']"
         :schema="editVisitorSchema.shape.data"
         @submit="submitEditForm"
         @error="handleFormError"

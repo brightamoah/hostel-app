@@ -154,7 +154,6 @@ export function useVisitorRowColumn(
 
   const openEditVisitorModal = (visitor: VisitorType) => {
     const modal = overlay.create(EditVisitorModal);
-    // const close = modal.close;
 
     modal.open({
       visitor,

@@ -54,7 +54,7 @@ defineExpose({
       >
         <UInput
           v-model="state.email"
-          placeholder="Enter visitor name"
+          placeholder="Enter visitor email"
           class="w-full"
           size="xl"
         />
