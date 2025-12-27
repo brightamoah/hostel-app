@@ -178,6 +178,7 @@ const visitHistory = computed(() => {
 
               <USeparator
                 orientation="vertical"
+
                 class="h-5"
                 size="sm"
                 :ui="{

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-const { cards } = defineProps<{
+const { cards, pretty = true } = defineProps<{
   cards: StatsCard[];
+  pretty?: boolean;
 }>();
 </script>
 
@@ -9,9 +10,13 @@ const { cards } = defineProps<{
     <UCard
       v-for="card in cards"
       :key="card.id"
-      variant="subtle"
-      class="border-b hover:border-b-[2.5px] rounded-xl transition-all duration-300 ease-in-out cursor-pointer"
-      :class="getColorClass(card.color, 'border-b', 10)"
+      :variant="pretty ? 'subtle' : 'outline'"
+      class="transition-all duration-300 ease-in-out cursor-pointer"
+      :class="[
+        pretty
+          ? `border-b hover:border-b-[2.5px] ${getColorClass(card.color, 'border-b', 10)}`
+          : 'border-[2.5px] border-muted bg-elevated',
+      ]"
     >
       <div class="flex justify-between items-center">
         <div class="space-y-2">

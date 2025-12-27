@@ -1,3 +1,5 @@
+import type { FormSubmitEvent } from "@nuxt/ui";
+
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { capitalize } from "vue";
 
@@ -119,12 +121,69 @@ export const useVisitorStore = defineStore("visitorStore", () => {
     }
   };
 
+  const registerVisitorState = ref<CreateVisitor>({
+    name: "",
+    email: "",
+    phoneNumber: "",
+    relationship: "",
+    visitDate: undefined,
+    purpose: "",
+  });
+
+  const submitVisitorForm = async (payload: FormSubmitEvent<CreateVisitor>) => {
+    if (!payload?.data) return;
+
+    isLoading.value = true;
+    try {
+      const response = await $fetch("/api/visitor/register", {
+        method: "POST",
+        body: payload.data,
+      });
+
+      toast.add({
+        title: response.message,
+        description: "Your visitor has been registered successfully.",
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+
+      await refreshNuxtData();
+    }
+    catch (error) {
+      const message = (error as any)?.data?.message;
+      toast.add({
+        title: "Failed to Register Visitor",
+        description: message,
+        color: "error",
+        icon: "i-lucide-alert-circle",
+        duration: 8000,
+      });
+    }
+    finally {
+      isLoading.value = false;
+    }
+  };
+
+  const clearState = () => {
+    registerVisitorState.value = {
+      name: "",
+      email: "",
+      phoneNumber: "",
+      relationship: "",
+      visitDate: undefined,
+      purpose: "",
+    };
+  };
+
   return {
     isLoading,
     deleteModalOpen,
+    registerVisitorState,
     deleteVisitors,
     approveDenyVisitor,
     checkInCheckOutVisitor,
+    submitVisitorForm,
+    clearState,
   };
 });
 

@@ -26,12 +26,12 @@ defineProps<{
           Manage your hostel stay efficiently from here!
         </p>
 
-        <div class="flex md:flex-row flex-col md:items-center gap-4 mt-4">
+        <div class="flex md:flex-row md:items-center gap-4 mt-4">
           <UButton
             label="View Profile"
             icon="i-lucide-circle-user-round"
             size="lg"
-            class="cursor-pointer"
+            class="justify-center items-center cursor-pointer"
             :to="{ name: 'student-profile' }"
           />
 

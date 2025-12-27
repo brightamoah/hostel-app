@@ -109,6 +109,7 @@ const { columns, getRowItems } = useVisitorRowColumn(
 
           <DashboardStatsCard
             v-else
+            :pretty="false"
             :cards
           />
 

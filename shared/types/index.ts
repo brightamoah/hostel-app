@@ -1,6 +1,6 @@
 /// <reference lib="dom" />
 
-import type { DateValue } from "@internationalized/date";
+import type { CalendarDate, DateValue } from "@internationalized/date";
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Table } from "@tanstack/vue-table";
 import type { useEditor } from "@tiptap/vue-3";
@@ -17,7 +17,7 @@ import type { randomUUID } from "node:crypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
-import type { ComplaintStatusResponseSchema, MaintenanceStatusResponseSchema } from "../utils/schema";
+import type { ComplaintStatusResponseSchema, MaintenanceStatusResponseSchema, RegisterVisitorSchema } from "../utils/schema";
 
 export type DateRange = {
   start: DateValue;
@@ -25,6 +25,15 @@ export type DateRange = {
 };
 
 export type DateModel = DateValue | DateRange | null;
+
+export type CreateVisitor = Omit<RegisterVisitorSchema, "status" | "hostelId" | "studentId" | "visitDate"> & {
+  visitDate: CalendarDate | undefined;
+};
+
+export type EditVisitor = {
+  visitorId: number;
+  data: Partial<CreateVisitor>;
+};
 
 export interface FontFamily {
   name: string;

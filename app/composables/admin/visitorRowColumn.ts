@@ -9,6 +9,8 @@ const VisitorDetailsModal = defineAsyncComponent(() => import("~/components/visi
 
 const ConfirmationModal = defineAsyncComponent(() => import("~/components/dashboard/confirmationModal.vue"));
 
+const EditVisitorModal = defineAsyncComponent(() => import("~/components/visitor/edit.vue"));
+
 export function useVisitorRowColumn(
   UAvatar: ComponentType,
   UButton: ComponentType,
@@ -150,6 +152,16 @@ export function useVisitorRowColumn(
     });
   };
 
+  const openEditVisitorModal = (visitor: VisitorType) => {
+    const modal = overlay.create(EditVisitorModal);
+    // const close = modal.close;
+
+    modal.open({
+      visitor,
+      isLoading,
+    });
+  };
+
   const getRowItems = (row: Row<VisitorType>) => {
     const visitor = row.original;
     const today = new Date().toISOString().split("T")[0];
@@ -208,6 +220,14 @@ export function useVisitorRowColumn(
           onSelect: () => openCheckInCheckOutModal(visitor, "check_out"),
         },
       );
+    }
+
+    if (!isAdmin.value && visitor.status === "pending") {
+      actions.push({
+        label: "Edit Visitor",
+        icon: "i-lucide-notebook-pen",
+        onSelect: () => openEditVisitorModal(visitor),
+      });
     }
 
     actions.push(

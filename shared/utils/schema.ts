@@ -1,4 +1,4 @@
-import { CalendarDate } from "@internationalized/date";
+import { CalendarDate, getLocalTimeZone, today } from "@internationalized/date";
 import * as z from "zod";
 
 const linkSchema = z.object({
@@ -22,11 +22,13 @@ const passwordSchema = z
 
 const nameSchema = z
   .string({ error: "Name is required" })
+  .nonempty("Name is required")
+  .trim()
   .min(5, "Name must be at least 5 characters long")
   .max(50, "Name must be at most 50 characters long")
   .refine(
     val => /^[a-z\s]+$/i.test(val),
-    "Full name can only contain letters and spaces",
+    "Name can only contain letters and spaces",
   );
 
 const roleSchema = z.enum(["student", "admin"], {
@@ -260,21 +262,43 @@ const visitorStatusSchema = z.enum(
   },
 ).optional().default("pending");
 
-const dateOfVisitSchema = z.custom<CalendarDate>(val => val instanceof CalendarDate, {
-  error: "Date of Visit must be a valid CalendarDate",
-}).refine(val => val !== null, "Date of Visit is required");
+const dateOfVisitSchema = z.custom<CalendarDate>((val) => {
+  if (val instanceof CalendarDate) return true;
+
+  return (
+    val !== null
+    && typeof val === "object"
+    && "calendar" in val
+    && "era" in val
+    && "year" in val
+    && "month" in val
+    && "day" in val
+  );
+}, "Date of Visit is required").refine((date) => {
+  if (!date) return false;
+
+  const now = today(getLocalTimeZone());
+  return date.compare(now) >= 0;
+}, "Date of Visit cannot be in the past");
 
 const registerVisitorSchema = z.object({
   name: nameSchema,
   email: emailSchema,
   phoneNumber: phoneNumberSchema,
-  dateOfVisit: dateOfVisitSchema,
+  visitDate: dateOfVisitSchema,
   relationship: relationshipSchema,
-  purposeOfVisit: purposeOfVisitSchema,
+  purpose: purposeOfVisitSchema,
   hostelId: z.number("Hostel ID is required").int().positive().min(1, "Invalid Hostel ID"),
   studentId: z.number("Student ID is required").int().positive().min(1, "Invalid Student ID"),
   status: visitorStatusSchema,
 });
+
+const editVisitorSchema = z.object({
+  visitorId: z.number().int().positive().min(1, "Invalid Visitor ID"),
+  data: registerVisitorSchema.omit({ hostelId: true, studentId: true }).partial(),
+});
+
+export type EditVisitorSchema = z.output<typeof editVisitorSchema>;
 
 export type RegisterVisitorSchema = z.output<typeof registerVisitorSchema>;
 
@@ -439,6 +463,7 @@ export {
   deleteItemSchema,
   editAnnouncementSchema,
   editRoomSchema,
+  editVisitorSchema,
   emailSchema,
   emailVerificationSchema,
   linkSchema,
