@@ -122,8 +122,9 @@ onMounted(() => {
     <template #body>
       <VisitorForm
         ref="editForm"
-        v-model:state="editVisitorState as EditVisitor['data']"
+        :state="editVisitorState as EditVisitor['data']"
         :schema="editVisitorSchema.shape.data"
+        @update:state="editVisitorState = $event"
         @submit="submitEditForm"
         @error="handleFormError"
       />

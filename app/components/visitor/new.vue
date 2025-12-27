@@ -31,8 +31,9 @@ const form = useTemplateRef("form");
     <template #body>
       <VisitorForm
         ref="form"
-        v-model:state="registerVisitorState as CreateVisitor"
+        :state="registerVisitorState as CreateVisitor"
         :schema="registerVisitorSchema.omit({ status: true, hostelId: true, studentId: true })"
+        @update:state="registerVisitorState = $event as CreateVisitor"
         @submit="submitVisitorForm"
       />
     </template>
