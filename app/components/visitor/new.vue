@@ -1,14 +1,19 @@
 <script setup lang="ts">
 const visitorStore = useVisitorStore();
-const { registerVisitorState, isLoading } = storeToRefs(visitorStore);
+const {
+  registerVisitorState,
+  isLoading,
+  isModalOpen,
+} = storeToRefs(visitorStore);
 
-const { submitVisitorForm } = visitorStore;
+const { registerVisitor } = visitorStore;
 
 const form = useTemplateRef("form");
 </script>
 
 <template>
   <UModal
+    v-model:open="isModalOpen"
     title="Register New Visitor"
     description="Fill in the details below register visitor."
     :dismissible="false"
@@ -34,7 +39,7 @@ const form = useTemplateRef("form");
         :state="registerVisitorState as CreateVisitor"
         :schema="registerVisitorSchema.omit({ status: true, hostelId: true, studentId: true })"
         @update:state="registerVisitorState = $event as CreateVisitor"
-        @submit="submitVisitorForm"
+        @submit="registerVisitor"
       />
     </template>
 

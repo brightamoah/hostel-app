@@ -74,7 +74,7 @@ export const useAltAuth = defineStore("altAuth", () => {
         title: "Failed to Send",
         description: message,
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
 
@@ -119,7 +119,7 @@ export const useAltAuth = defineStore("altAuth", () => {
         title: "Failed to Send",
         description: message,
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
 
@@ -164,7 +164,7 @@ export const useAltAuth = defineStore("altAuth", () => {
         title: "Failed to Reset",
         description: message,
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
       handleError(error, "Reset Password");

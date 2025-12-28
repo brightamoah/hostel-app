@@ -19,7 +19,7 @@ onMounted(async () => {
       title: "Invalid Token",
       description: "No token provided.",
       color: "error",
-      icon: "i-lucide-alert-circle",
+      icon: "i-lucide-circle-alert",
       duration: 8000,
     });
     await router.push({ name: "auth-forgotPassword" });

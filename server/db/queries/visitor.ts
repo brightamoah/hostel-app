@@ -202,12 +202,28 @@ export async function visitorQueries() {
     };
   };
 
+  const getVisitorForStudentById = (visitorId: number) => {
+    return db.query.visitor.findFirst({
+      ...visitorWithRelations,
+      where: eq(visitor.id, visitorId),
+    });
+  };
+
   const createVisitor = async (data: VisitorCreate) => {
     const [newVisitor] = await db
       .insert(visitor)
       .values(data)
       .returning();
     return newVisitor;
+  };
+
+  const updateVisitor = async (visitorId: number, data: InsertEditVisitor) => {
+    const [updatedVisitor] = await db
+      .update(visitor)
+      .set(data)
+      .where(eq(visitor.id, visitorId))
+      .returning();
+    return updatedVisitor;
   };
 
   return {
@@ -220,7 +236,9 @@ export async function visitorQueries() {
     deleteVisitorsByIds,
     getVisitorsForStudent,
     getVisitorStatusCountForStudent,
+    getVisitorForStudentById,
     createVisitor,
+    updateVisitor,
   };
 }
 

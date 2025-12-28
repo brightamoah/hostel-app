@@ -1,5 +1,5 @@
+import { getLocalTimeZone, today } from "@internationalized/date";
 import { userQueries, visitorQueries } from "~~/server/db/queries";
-import { isBefore, parseISO, startOfDay } from "date-fns";
 
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event, {
@@ -14,7 +14,9 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const body = await readValidatedBody(event, body => registerVisitorSchema.omit({ status: true, hostelId: true, studentId: true }).safeParse(body));
+    const body = await readValidatedBody(event, body => registerVisitorSchema
+      .omit({ status: true, hostelId: true, studentId: true })
+      .safeParse(body));
 
     if (!body.success) {
       throw createError({
@@ -27,10 +29,9 @@ export default defineEventHandler(async (event) => {
 
     const { visitDate, ...formData } = body.data;
 
-    const dateOfVisit = parseISO(visitDate.toString());
-    const today = startOfDay(new Date());
+    const now = today(getLocalTimeZone());
 
-    if (isBefore(dateOfVisit, today)) {
+    if (visitDate.compare(now) < 0) {
       throw createError({
         statusCode: 400,
         message: "Date of visit cannot be in the past.",
@@ -70,7 +71,7 @@ export default defineEventHandler(async (event) => {
       status: "pending" as const,
       hostelId: student.allocation.room.hostel.id,
       studentId: student.id,
-      visitDate: dateOfVisit.toString(),
+      visitDate: visitDate.toString(),
     };
 
     const visitor = await createVisitor(data);

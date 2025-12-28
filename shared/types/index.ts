@@ -301,6 +301,7 @@ export type VisitorStatus = Visitor["status"];
 export type AllowedStatusesForCheckIn = Extract<VisitorStatus, "approved" | "checked-out">;
 
 export type VisitorCreate = typeof visitor.$inferInsert;
+export type InsertEditVisitor = Omit<EditVisitor["data"], "visitDate"> & { visitDate?: string };
 
 export type MaintenanceType = Maintenance;
 export type MaintenanceDataResponse = {

@@ -83,7 +83,7 @@ export const useAuthStore = defineStore("authStore", () => {
         title: "Signup Failed",
         description: message,
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
     }
@@ -162,7 +162,7 @@ export const useAuthStore = defineStore("authStore", () => {
         title: "Login Failed",
         description: message,
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
     }

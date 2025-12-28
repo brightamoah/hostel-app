@@ -88,7 +88,7 @@ export const useRoomStore = defineStore("roomStore", () => {
         title: "Failed to Add Room",
         description: message,
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
     }
@@ -138,7 +138,7 @@ export const useRoomStore = defineStore("roomStore", () => {
         title: "Failed to Delete Room",
         description: message,
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
     }
@@ -173,7 +173,7 @@ export const useRoomStore = defineStore("roomStore", () => {
         title: "Failed to Book Room",
         description: message,
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
     }

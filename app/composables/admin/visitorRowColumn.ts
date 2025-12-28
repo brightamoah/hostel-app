@@ -24,8 +24,21 @@ export function useVisitorRowColumn(
   const toast = useToast();
   const overlay = useOverlay();
   const visitorStore = useVisitorStore();
-  const { isLoading } = storeToRefs(visitorStore);
-  const { approveDenyVisitor, checkInCheckOutVisitor, deleteVisitors } = visitorStore;
+  const {
+    isLoading,
+    editVisitorState,
+    editingId,
+  } = storeToRefs(visitorStore);
+
+  const {
+    approveDenyVisitor,
+    checkInCheckOutVisitor,
+    deleteVisitors,
+    initEditSession,
+    editVisitor,
+    handleFormError,
+    clearState,
+  } = visitorStore;
 
   const openApproveDenyModal = (visitor: VisitorType, status: "approved" | "denied") => {
     const modal = overlay.create(ConfirmationModal);
@@ -135,7 +148,7 @@ export function useVisitorRowColumn(
               title: `Failed to Delete Visitor`,
               description: `Action denied: Visitor "${visitor.name}" cannot be deleted due to its status: ${visitor.status}`,
               color: "error",
-              icon: "i-lucide-alert-circle",
+              icon: "i-lucide-circle-alert",
               duration: 8000,
             });
             close();
@@ -153,11 +166,21 @@ export function useVisitorRowColumn(
   };
 
   const openEditVisitorModal = (visitor: VisitorType) => {
+    initEditSession(visitor);
+
     const modal = overlay.create(EditVisitorModal);
+    const close = modal.close;
 
     modal.open({
-      visitor,
       isLoading,
+      editVisitorState: editVisitorState.value as EditVisitor["data"],
+      handleFormError,
+      clearState,
+      editVisitor: async () => {
+        await editVisitor();
+
+        if (!editingId.value) close();
+      },
     });
   };
 

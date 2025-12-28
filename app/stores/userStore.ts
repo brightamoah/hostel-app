@@ -61,7 +61,7 @@ export const useUserStore = defineStore("userStore", () => {
         title: "Failed to Add Admin",
         description: message,
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
     }
@@ -97,7 +97,7 @@ export const useUserStore = defineStore("userStore", () => {
         title: "Failed to Delete User(s)",
         description: message,
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
     }
@@ -132,7 +132,7 @@ export const useUserStore = defineStore("userStore", () => {
         title: "Failed to Update User Role",
         description: message,
         color: "error",
-        icon: "i-lucide-alert-circle",
+        icon: "i-lucide-circle-alert",
         duration: 8000,
       });
     }
