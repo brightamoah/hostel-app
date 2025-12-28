@@ -16,6 +16,8 @@ export const useVisitorStore = defineStore("visitorStore", () => {
       : `visitorData:${user.value?.id}`,
   );
 
+  const dashboardKey = computed(() => `dashboardData:${user.value?.id}`);
+
   const approveDenyVisitor = async (payload: ApproveDenySchema) => {
     if (!payload.visitorId && !payload.status) return;
 
@@ -143,7 +145,8 @@ export const useVisitorStore = defineStore("visitorStore", () => {
         body: payload.data,
       });
 
-      await refreshNuxtData();
+      await refreshNuxtData(visitorDataKey.value);
+      await refreshNuxtData(dashboardKey.value);
 
       toast.add({
         title: response.message,
@@ -265,6 +268,7 @@ export const useVisitorStore = defineStore("visitorStore", () => {
       });
 
       await refreshNuxtData(visitorDataKey.value);
+      await refreshNuxtData(dashboardKey.value);
 
       toast.add({
         title: "Visitor Updated Successfully",
