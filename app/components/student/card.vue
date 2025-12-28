@@ -40,7 +40,7 @@ const context = inject(dashboardKey);
 
 if (!context) throw new Error("DashboardContext not found");
 
-const { room: roomVal, visitors } = context;
+const { room: roomVal } = context;
 
 const roomDetails = computed(() => {
   const room = unref(roomVal);
@@ -126,10 +126,7 @@ function getOrdinal(n: number) {
         :room-val
       />
 
-      <StudentVisitor
-        v-else-if="card.id === 'visitors'"
-        :visitors
-      />
+      <StudentVisitor v-else-if="card.id === 'visitors'" />
 
       <StudentRequest
         v-else-if="card.id === 'requests'"
