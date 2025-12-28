@@ -2,30 +2,65 @@
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/table-core";
 
-import { useDateFormat } from "@vueuse/core";
+import { useDateFormat, useNow } from "@vueuse/core";
 
 import type { RowActionItem } from "~/types/rowAction";
 
-const { visitors } = defineProps<{
-  visitors: StudentVisitor[] | null;
-}>();
+const { visitors: AllVisitors } = useFetchStudentVisitorData();
+
+const today = useDateFormat(useNow(), "YYYY-MM-DD");
+
+const visitors = computed<VisitorType[]>(() => AllVisitors.value.filter(visitor => visitor.visitDate === today.value) ?? []);
 
 const UButton = resolveComponent("UButton");
 const UAvatar = resolveComponent("UAvatar");
 const UBadge = resolveComponent("UBadge");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
-
 const overlay = useOverlay();
 
 const VisitorDetailsModal = defineAsyncComponent(() => import("~/components/student/visitorDetails.vue"));
+const EditVisitorModal = defineAsyncComponent(() => import("~/components/visitor/edit.vue"));
 
-function openDetailsModal(visitor: StudentVisitor) {
+const visitorStore = useVisitorStore();
+const {
+  isLoading,
+  editVisitorState,
+  editingId,
+} = storeToRefs(visitorStore);
+
+const {
+  initEditSession,
+  editVisitor,
+  handleFormError,
+  clearState,
+} = visitorStore;
+
+function openDetailsModal(visitor: VisitorType) {
   overlay.create(VisitorDetailsModal).open({
     visitor,
   });
 }
 
-function getRowItems(row: Row<StudentVisitor>) {
+function openEditModal(visitor: VisitorType) {
+  initEditSession(visitor);
+
+  const modal = overlay.create(EditVisitorModal);
+  const close = modal.close;
+
+  modal.open({
+    isLoading,
+    editVisitorState: editVisitorState.value as EditVisitor["data"],
+    handleFormError,
+    clearState,
+    editVisitor: async () => {
+      await editVisitor();
+
+      if (!editingId.value) close();
+    },
+  });
+}
+
+function getRowItems(row: Row<VisitorType>) {
   const visitor = row.original;
 
   const actions: RowActionItem[] = [
@@ -45,7 +80,7 @@ function getRowItems(row: Row<StudentVisitor>) {
       {
         label: "Edit Visitor",
         icon: "i-lucide-notebook-pen",
-        onSelect: () => {},
+        onSelect: () => openEditModal(visitor),
       },
     );
   }
@@ -67,7 +102,7 @@ function getRowItems(row: Row<StudentVisitor>) {
   return actions;
 }
 
-const columns = ref<TableColumn<StudentVisitor>[]>([
+const columns = ref<TableColumn<VisitorType>[]>([
   {
     id: "name",
     header: createSortableHeader("Name", UButton),
@@ -150,7 +185,7 @@ const columns = ref<TableColumn<StudentVisitor>[]>([
 
 <template>
   <div>
-    <div v-if="visitors?.length">
+    <div v-if="visitors.length">
       <UTable
         :columns
         :data="visitors"
