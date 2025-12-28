@@ -2,14 +2,15 @@
 import type { TableColumn } from "@nuxt/ui";
 import type { Row } from "@tanstack/table-core";
 
-import { useDateFormat } from "@vueuse/core";
+import { useDateFormat, useNow } from "@vueuse/core";
 
 import type { RowActionItem } from "~/types/rowAction";
 
 const { visitors: AllVisitors } = useFetchStudentVisitorData();
 
-const today = useDateFormat(new Date(), "YYYY-MM-DD").value;
-const visitors = computed<VisitorType[]>(() => AllVisitors.value.filter(visitor => visitor.visitDate === today) ?? []);
+const today = useDateFormat(useNow(), "YYYY-MM-DD");
+
+const visitors = computed<VisitorType[]>(() => AllVisitors.value.filter(visitor => visitor.visitDate === today.value) ?? []);
 
 const UButton = resolveComponent("UButton");
 const UAvatar = resolveComponent("UAvatar");
