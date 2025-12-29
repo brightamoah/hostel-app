@@ -9,6 +9,7 @@ export { useRoomRowColumn } from "./admin/roomRowColumn";
 export { useUserRowColumn } from "./admin/userRowColumn";
 export { useVisitorRowColumn } from "./admin/visitorRowColumn";
 export { useFetchStudentDashboardData } from "./student/fetchDashboardData";
+export { useFetchMaintenance } from "./student/fetchMaintenance";
 export { useFetchStudentRoomData } from "./student/fetchRoomData";
 export { useFetchStudentVisitorData } from "./student/fetchStudentVisitorData";
 export { useStudentRoomFilters } from "./student/roomFilters";

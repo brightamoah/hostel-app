@@ -351,6 +351,47 @@ const maintenanceStatusResponseSchema = z.object({
 
 export type MaintenanceStatusResponseSchema = z.output<typeof maintenanceStatusResponseSchema>;
 
+const maintenanceIssueTypeSchema = z.union([
+  z.enum([
+    "plumbing",
+    "electrical",
+    "appliance",
+    "structural",
+    "pest control",
+    "other",
+    "furniture",
+    "cleaning",
+    "internet/Wi-Fi",
+  ], {
+    error: "Issue Type is required",
+  }),
+  z.literal(""),
+]).refine(val => val !== "", "Issue Type is required");
+
+const maintenancePrioritySchema = z.union([
+  z.enum([
+    "low",
+    "medium",
+    "high",
+    "emergency",
+  ]),
+  z.literal(""),
+]).refine(val => val !== "", "Priority is required");
+
+const createMaintenanceSchema = z.object({
+  hostelId: z.number("Hostel ID is required").int().positive().min(1, "Invalid Hostel ID"),
+  roomId: z.number("Room ID is required").int().positive().min(1, "Invalid Room ID"),
+  studentId: z.number("Student ID is required").int().positive().min(1, "Invalid Student ID"),
+  description: z.string()
+    .nonempty("Description is required")
+    .min(10, "Description must be at least 10 characters long")
+    .max(200, "Description cannot exceed 200 characters"),
+  issueType: maintenanceIssueTypeSchema,
+  priority: maintenancePrioritySchema,
+});
+
+export type CreateMaintenanceSchema = z.output<typeof createMaintenanceSchema>;
+
 const complaintStatusSchema = z.union([
   z.enum([
     "pending",
@@ -481,6 +522,7 @@ export {
   bookRoomSchema,
   complaintStatusResponseSchema,
   confirmPasswordSchema,
+  createMaintenanceSchema,
   deleteItemSchema,
   editAnnouncementSchema,
   editRoomSchema,

@@ -119,6 +119,36 @@ export async function maintenanceQueries() {
     };
   };
 
+  const getStudentMaintenanceRequests = async (studentId: number) => {
+    const requests = await db.query.maintenanceRequest.findMany({
+      ...maintenanceWithRelations,
+      where: eq(maintenanceRequest.studentId, studentId),
+      orderBy: desc(maintenanceRequest.requestDate),
+    });
+
+    const [result] = await db
+      .select({
+        totalMaintenance: countDistinct(maintenanceRequest.id),
+        inProgress: count(sql`CASE WHEN ${maintenanceRequest.status} = 'in-progress' THEN 1 END`),
+        assigned: count(sql`CASE WHEN ${maintenanceRequest.status} = 'assigned' THEN 1 END`),
+        pending: count(sql`CASE WHEN ${maintenanceRequest.status} = 'pending' THEN 1 END`),
+        completed: count(sql`CASE WHEN ${maintenanceRequest.status} = 'completed' THEN 1 END`),
+        rejected: count(sql`CASE WHEN ${maintenanceRequest.status} = 'rejected' THEN 1 END`),
+      })
+      .from(maintenanceRequest)
+      .where(eq(maintenanceRequest.studentId, studentId));
+
+    return {
+      requests,
+      totalMaintenance: result?.totalMaintenance,
+      inProgress: result?.inProgress,
+      assigned: result?.assigned,
+      pending: result?.pending,
+      completed: result?.completed,
+      rejected: result?.rejected,
+    };
+  };
+
   const updateStatusAndAddResponse = async (
     maintenanceId: number,
     adminId: number,
@@ -171,6 +201,38 @@ export async function maintenanceQueries() {
     return newResponse;
   };
 
+  const createMaintenance = async (data: MaintenanceCreate) => {
+    const [newRequest] = await db
+      .insert(maintenanceRequest)
+      .values({
+        ...data,
+        status: "pending",
+      })
+      .returning();
+    return newRequest;
+  };
+
+  const updateMaintenance = async (
+    requestId: number,
+    studentId: number,
+    data: Partial<MaintenanceCreate>,
+  ) => {
+    const [updateRequest] = await db
+      .update(maintenanceRequest)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(and(
+        eq(maintenanceRequest.id, requestId),
+        eq(maintenanceRequest.studentId, studentId),
+        eq(maintenanceRequest.status, "pending"),
+      ))
+      .returning();
+
+    return updateRequest;
+  };
+
   return {
     getAllMaintenanceRequests,
     getMaintenanceById,
@@ -178,6 +240,9 @@ export async function maintenanceQueries() {
     updateStatusAndAddResponse,
     addMaintenanceResponse,
     findMaintenanceRequestById,
+    getStudentMaintenanceRequests,
+    createMaintenance,
+    updateMaintenance,
   };
 }
 
