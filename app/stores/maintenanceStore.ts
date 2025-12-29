@@ -7,7 +7,13 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
 
   const isLoading = ref<boolean>(false);
   const isModalOpen = ref<boolean>(false);
-  const maintenanceDataKey = computed(() => `maintenanceData:${user.value?.adminData?.accessLevel}`);
+
+  const maintenanceDataKey = computed(() => user.value?.role === "admin"
+    ? `maintenanceData:${user.value?.adminData?.accessLevel}`
+    : `maintenanceData:${user.value?.id}`,
+  );
+
+  const dashboardKey = computed(() => `dashboardData:${user.value?.id}`);
 
   const maintenanceStatusResponseState = ref<StatusResponseForm>({
     responseText: "",
@@ -114,10 +120,79 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
     }
   };
 
+  const isCreateModalOpen = ref(false);
+  const createMaintenanceState = ref<Partial<CreateMaintenanceSchema>>({
+    issueType: "",
+    description: "",
+    priority: "",
+    hostelId: undefined,
+    studentId: undefined,
+    roomId: undefined,
+  });
+
+  const isCreateFormValid = computed(() => {
+    return (
+      createMaintenanceState.value.issueType?.trim() !== ""
+      && createMaintenanceState.value.description?.trim() !== ""
+      && createMaintenanceState.value.priority?.trim() !== ""
+      && createMaintenanceState.value.hostelId !== undefined
+      && createMaintenanceState.value.studentId !== undefined
+      && createMaintenanceState.value.roomId !== undefined
+    );
+  });
+
+  const createMaintenance = async () => {
+    if (!isCreateFormValid.value) return;
+
+    isLoading.value = true;
+
+    try {
+      const response = await $fetch("/api/maintenance/student/createRequest", {
+        method: "POST",
+        body: createMaintenanceState.value,
+      });
+
+      await refreshNuxtData(maintenanceDataKey.value);
+      await refreshNuxtData(dashboardKey.value);
+
+      toast.add({
+        title: "Success",
+        description: response.message,
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+
+      isCreateModalOpen.value = false;
+      clearState();
+    }
+    catch (error) {
+      const message = (error as any)?.data?.message;
+      toast.add({
+        title: "Failed to Create Maintenance",
+        description: message,
+        color: "error",
+        icon: "i-lucide-circle-alert",
+        duration: 8000,
+      });
+    }
+    finally {
+      isLoading.value = false;
+    }
+  };
+
   function clearState() {
     maintenanceStatusResponseState.value = {
       responseText: "",
       status: "",
+    };
+
+    createMaintenanceState.value = {
+      issueType: "",
+      description: "",
+      priority: "",
+      hostelId: undefined,
+      studentId: undefined,
+      roomId: undefined,
     };
   };
 
@@ -127,9 +202,12 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
     isUpdateFormValid,
     isAddResponseFormValid,
     maintenanceStatusResponseState,
+    createMaintenanceState,
+    isCreateModalOpen,
     updateStatusAndAddResponse,
     addMaintenanceResponse,
     clearState,
+    createMaintenance,
   };
 });
 

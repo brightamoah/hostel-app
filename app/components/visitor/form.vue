@@ -1,7 +1,7 @@
 <script lang="ts" setup generic="T extends object">
 import type { CalendarDate } from "@internationalized/date";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import type { z } from "zod";
+import type z from "zod";
 
 import { getLocalTimeZone, today } from "@internationalized/date";
 

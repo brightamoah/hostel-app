@@ -67,7 +67,7 @@ const roomDetails = computed(() => {
     },
     {
       label: "floor",
-      value: `${room.floor}${getOrdinal(room.floor)} Floor`,
+      value: `${getOrdinalString(room.floor)} Floor`,
       icon: "i-lucide-layers",
     },
     {
@@ -82,12 +82,6 @@ const roomDetails = computed(() => {
     },
   ];
 });
-
-function getOrdinal(n: number) {
-  const s = ["th", "st", "nd", "rd"];
-  const value = n % 100;
-  return s[(value - 20) % 10] || s[value] || s[0];
-}
 </script>
 
 <template>

@@ -262,84 +262,6 @@ export async function roomQueries() {
     });
   };
 
-  // const getRoomsCount = async () => {
-  //   const count = await db
-  //     .query
-  //     .room
-  //     .findMany()
-  //     .then(rooms => rooms.length);
-  //   return count;
-  // };
-
-  // const getRoomsScoped = async (adminId: number) => {
-  //   const adminRecord = await getAdminByUserId(adminId);
-  //   if (!adminRecord) {
-  //     throw createError({
-  //       statusCode: 404,
-  //       message: "Admin not found",
-  //     });
-  //   }
-
-  //   const query = db.select().from(room).leftJoin(hostel, eq(room.hostelId, hostel.id));
-
-  //   if (adminRecord.accessLevel !== "super") {
-  //     if (!adminRecord.hostelId) {
-  //       throw createError({
-  //         statusCode: 403,
-  //         message: "Access denied: Your admin account is not assigned to a hostel.",
-  //       });
-  //     }
-
-  //     query.where(eq(room.hostelId, adminRecord.hostelId));
-  //   }
-
-  //   const result = await query.orderBy(asc(room.id)).limit(100);
-
-  //   const rooms = result.map(r => ({ ...r.room, hostel: r.hostel }));
-
-  //   const totalRooms = rooms.length;
-  //   const totalOccupiedRooms = rooms.filter(r => r.currentOccupancy > 0).length;
-  //   const totalAvailableRooms = rooms.filter(r =>
-  //     r.status === "vacant" || r.status === "partially occupied",
-  //   ).length;
-  //   const totalUnderMaintenance = rooms.filter(r => r.status === "under maintenance").length;
-
-  //   return {
-  //     rooms,
-  //     totalRooms,
-  //     totalOccupiedRooms,
-  //     totalAvailableRooms,
-  //     totalUnderMaintenance,
-  //     adminRecord,
-  //   };
-  // };
-
-  // const getUniqueBuildings = async () => {
-  //   const buildings = await db
-  //     .selectDistinct({ building: room.building })
-  //     .from(room)
-  //     .orderBy(asc(room.building));
-  //   return buildings;
-  // };
-
-  // const getBuildingsByHostelId = async (hostelId: number) => {
-  //   const buildings = await db
-  //     .selectDistinct({ building: room.building })
-  //     .from(room)
-  //     .where(eq(room.hostelId, hostelId))
-  //     .orderBy(asc(room.building));
-  //   return buildings;
-  // };
-
-  // const getRoomByNumberAndBuilding = async (roomNumber: string, building: string) => {
-  //   return await db.query.room.findFirst({
-  //     where: and(
-  //       eq(room.roomNumber, roomNumber),
-  //       eq(room.building, building),
-  //     ),
-  //   });
-  // };
-
   return {
     getAllRooms,
     getRoomById,
@@ -358,12 +280,6 @@ export async function roomQueries() {
     getAllHostelsScoped,
     getRoomStatusCount,
     cancelAllocation,
-    // getRoomsCount,
-    // getRoomsScoped,
-    // getBuildingsByHostelId,
-    // getUniqueBuildings,
-    // getRoomByNumberAndBuilding,
-    // getExistingRoomByRoomNumber,
   };
 }
 

@@ -11,7 +11,7 @@ import type { Maintenance } from "~~/server/db/queries/maintenance";
 import type { Room as RoomType } from "~~/server/db/queries/room";
 import type { StudentDashboard } from "~~/server/db/queries/user";
 import type { Visitor } from "~~/server/db/queries/visitor";
-import type { admin, allocation, announcement, complaintActionTakenEnum, complaintStatusEnum, hostel, loginAttempts, maintenanceStatusEnum, room, student, user, visitor, visitorLogs } from "~~/server/db/schema";
+import type { admin, allocation, announcement, complaintActionTakenEnum, complaintStatusEnum, hostel, loginAttempts, maintenanceRequest, maintenanceStatusEnum, room, student, user, visitor, visitorLogs } from "~~/server/db/schema";
 import type { InferSelectModel } from "drizzle-orm";
 import type { randomUUID } from "node:crypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
@@ -303,6 +303,7 @@ export type AllowedStatusesForCheckIn = Extract<VisitorStatus, "approved" | "che
 export type VisitorCreate = typeof visitor.$inferInsert;
 export type InsertEditVisitor = Omit<EditVisitor["data"], "visitDate"> & { visitDate?: string };
 
+export type MaintenanceCreate = typeof maintenanceRequest.$inferInsert;
 export type MaintenanceType = Maintenance;
 export type MaintenanceDataResponse = {
   maintenanceRequests: MaintenanceType[];
