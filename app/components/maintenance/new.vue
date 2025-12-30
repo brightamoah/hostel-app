@@ -33,8 +33,8 @@ const createMaintenanceFormRef = useTemplateRef("createMaintenanceFormRef");
       icon="i-lucide-plus"
       variant="solid"
       color="primary"
-      size="xl"
-      class="justify-center items-center w-full sm:w-auto cursor-pointer"
+      size="lg"
+      class="justify-center items-center cursor-pointer"
     />
 
     <template #body>
@@ -58,7 +58,7 @@ const createMaintenanceFormRef = useTemplateRef("createMaintenanceFormRef");
         />
 
         <UButton
-          label="Submit"
+          :label="isLoading ? 'Submitting...' : 'Submit'"
           color="primary"
           icon="i-lucide-send"
           class="cursor-pointer"

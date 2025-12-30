@@ -107,6 +107,8 @@ export function useMaintenanceFilter(table: TableType<MaintenanceType>, data: Da
     itemsToDisplay,
     tableState,
     itemsPerPage,
+    hideColumns,
+    setVisibleColumns,
   } = useTableFilters<MaintenanceType>(table, data, "maintenance");
 
   watch(() => [statusFilter.value, priorityFilter.value, typeFilter.value], async ([newStatus, newPriority, newType]) => {
@@ -154,5 +156,8 @@ export function useMaintenanceFilter(table: TableType<MaintenanceType>, data: Da
     tableState,
     itemsToDisplay,
     updatePage,
+    hideColumns,
+    setVisibleColumns,
+    safeTableApi,
   };
 }

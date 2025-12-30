@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { RouteLocationRaw } from "vue-router";
+
 import { capitalize } from "vue";
 
 const cards = ref([
@@ -9,6 +11,7 @@ const cards = ref([
     color: "primary",
     value: "Room 101",
     class: "",
+    to: { name: "student-rooms" } as RouteLocationRaw,
   },
   {
     id: "visitors" as const,
@@ -17,6 +20,7 @@ const cards = ref([
     color: "success",
     value: "Room 101",
     class: "lg:col-span-2",
+    to: { name: "student-visitors" } as RouteLocationRaw,
   },
   {
     id: "requests" as const,
@@ -25,6 +29,7 @@ const cards = ref([
     color: "warning",
     value: "Room 101",
     class: "lg:col-span-2",
+    to: { name: "student-maintenance" } as RouteLocationRaw,
   },
   {
     id: "billing" as const,
@@ -33,6 +38,7 @@ const cards = ref([
     color: "error",
     value: "Room 101",
     class: "",
+    to: { name: "student-billing" } as RouteLocationRaw,
   },
 ]);
 
@@ -82,6 +88,18 @@ const roomDetails = computed(() => {
     },
   ];
 });
+
+function getLabel(title: string) {
+  if (title.includes("Room")) return "View Room";
+
+  if (title.includes("Visitors")) return "View All Visitors";
+
+  if (title.includes("Requests")) return "View All Requests";
+
+  if (title.includes("Billing")) return "View Payments";
+
+  return "View All";
+}
 </script>
 
 <template>
@@ -96,15 +114,27 @@ const roomDetails = computed(() => {
       }"
     >
       <template #header>
-        <div class="flex items-center gap-2">
-          <UIcon
-            :name="card.icon"
-            :class="`size-5 text-${card.color}`"
-          />
+        <div class="justify-between grid grid-cols-2">
+          <div class="flex items-center gap-2">
+            <UIcon
+              :name="card.icon"
+              :class="`size-5 text-${card.color}`"
+            />
 
-          <h4 class="font-semibold text-base">
-            {{ card.title }}
-          </h4>
+            <h4 class="font-semibold text-base">
+              {{ card.title }}
+            </h4>
+          </div>
+
+          <UButton
+            v-if="card.id !== 'room'"
+            :label="getLabel(card.title)"
+            :to="card.to"
+            variant="subtle"
+            size="sm"
+            color="neutral"
+            class="justify-self-end mt-2 cursor-pointer"
+          />
         </div>
 
         <USeparator
@@ -122,10 +152,7 @@ const roomDetails = computed(() => {
 
       <StudentVisitor v-else-if="card.id === 'visitors'" />
 
-      <StudentRequest
-        v-else-if="card.id === 'requests'"
-        :requests="[]"
-      />
+      <StudentRequest v-else-if="card.id === 'requests'" />
 
       <template
         v-if="card.id === 'room' && roomVal"
