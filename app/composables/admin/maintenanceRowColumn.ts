@@ -17,9 +17,13 @@ export function useMaintenanceRowColumn(
   UIcon: ComponentType,
 ) {
   const overlay = useOverlay();
+  const { user } = useUserSession();
   const maintenanceStore = useMaintenanceStore();
   const { isLoading, maintenanceStatusResponseState } = storeToRefs(maintenanceStore);
   const { updateStatusAndAddResponse, addMaintenanceResponse } = maintenanceStore;
+
+  const student = user.value?.role === "student";
+  const admin = user.value?.role === "admin";
 
   const openMaintenanceDetailModal = (maintenance: MaintenanceType) => {
     const modal = overlay.create(MaintenanceDetailModal);
@@ -57,6 +61,7 @@ export function useMaintenanceRowColumn(
 
   const getRowItems = (row: Row<MaintenanceType>) => {
     const maintenance = row.original;
+
     const actions: RowActionItem[] = [
       {
         type: "label",
@@ -67,17 +72,42 @@ export function useMaintenanceRowColumn(
         icon: "i-lucide-eye",
         onSelect: () => openMaintenanceDetailModal(maintenance),
       },
-      {
-        label: "Change Status",
-        icon: "i-lucide-refresh-cw",
-        onSelect: () => openStatusResponseModal(maintenance, "change-status"),
-      },
-      {
-        label: "Add Response",
-        icon: "i-lucide-message-circle-plus",
-        onSelect: () => openStatusResponseModal(maintenance, "add-response"),
-      },
     ];
+
+    if (admin) {
+      actions.push(
+        {
+          label: "Change Status",
+          icon: "i-lucide-refresh-cw",
+          onSelect: () => openStatusResponseModal(maintenance, "change-status"),
+        },
+        {
+          label: "Add Response",
+          icon: "i-lucide-message-circle-plus",
+          onSelect: () => openStatusResponseModal(maintenance, "add-response"),
+        },
+      );
+    }
+
+    if (student) {
+      actions.push(
+        {
+          label: "Edit Maintenance",
+          icon: "i-lucide-notebook-pen",
+          onSelect: () => openStatusResponseModal(maintenance, "change-status"),
+        },
+      );
+    }
+
+    if (student && maintenance.responses.length > 0) {
+      actions.push(
+        {
+          label: "Follow Up Response",
+          icon: "i-lucide-message-circle-plus",
+          onSelect: () => openStatusResponseModal(maintenance, "add-response"),
+        },
+      );
+    }
 
     return actions;
   };

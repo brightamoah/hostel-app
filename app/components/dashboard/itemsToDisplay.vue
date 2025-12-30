@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 type ItemsToDisplay = {
   itemsToDisplay: {
-    label: Capitalize<any>;
+    label: Capitalize<string>;
     type: "checkbox";
     checked: any;
     onUpdateChecked: (checked: boolean) => void;

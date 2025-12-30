@@ -106,6 +106,40 @@ export function useTableFilters<T extends { id: number }>(
     }));
   });
 
+  /**
+   * Programmatically sets which columns are visible.
+   * @param visibleColumnIds Array of column IDs that should be VISIBLE. All others will be hidden.
+   */
+  const setVisibleColumns = (visibleColumnIds: string[]) => {
+    const tableApi = safeTableApi();
+    if (!tableApi) return;
+
+    const allColumns = tableApi.getAllColumns();
+
+    allColumns.forEach((column) => {
+      if (column.getCanHide()) {
+        const shouldBeVisible = visibleColumnIds.includes(column.id);
+        if (column.getIsVisible() !== shouldBeVisible) {
+          column.toggleVisibility(shouldBeVisible);
+        }
+      }
+    });
+  };
+
+  /**
+   * Alternative: Hide specific columns by ID
+   */
+  const hideColumns = (columnIdsToHide: string[]) => {
+    const tableApi = safeTableApi();
+    if (!tableApi) return;
+
+    tableApi.getAllColumns().forEach((column) => {
+      if (columnIdsToHide.includes(column.id) && column.getCanHide()) {
+        column.toggleVisibility(false);
+      }
+    });
+  };
+
   watch(() => [data.value?.[dataKey]?.length, totalItems.value], () => {
     nextTick(() => {
       const tableApi = safeTableApi();
@@ -125,6 +159,8 @@ export function useTableFilters<T extends { id: number }>(
     selectedIds,
     itemsToDisplay,
     itemsPerPage,
+    setVisibleColumns,
+    hideColumns,
     updatePage,
     safeTableApi,
   };
