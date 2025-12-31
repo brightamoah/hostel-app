@@ -39,9 +39,6 @@ export function useMaintenanceRowColumn(
   const student = user.value?.role === "student";
   const admin = user.value?.role === "admin";
 
-  const student = user.value?.role === "student";
-  const admin = user.value?.role === "admin";
-
   const openMaintenanceDetailModal = (maintenance: MaintenanceType) => {
     const modal = overlay.create(MaintenanceDetailModal);
 
