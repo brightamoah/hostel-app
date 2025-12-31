@@ -41,9 +41,9 @@ const roomOptions = computed(() => {
 });
 
 const hostelOptions = computed(() => {
-  const hostel = [rooms.value.hostel];
+  const hostel = rooms.value?.hostel ? [rooms.value.hostel] : [];
 
-  return hostel[0]
+  return hostel.length > 0
     ? hostel.map(h => ({
         label: capitalize(h.name),
         value: h.id,

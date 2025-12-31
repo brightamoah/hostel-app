@@ -11,16 +11,25 @@ export function handleError(
   context: string,
   event?: H3Event,
 ): never {
-  const runtimeConfig = useRuntimeConfig();
+  // const runtimeConfig = useRuntimeConfig();
   const err = error as StructuredError;
 
-  console.error(`[${context} Error] (Path: ${event?.path || "N/A"})`, {
+  // console.error(`[${context} Error] (Path: ${event?.path || "N/A"})`, {
+  //   name: err.name,
+  //   message: err.message,
+  //   code: (error as any)?.code, // For Drizzle/Postgres codes
+  //   statusCode: err.statusCode, // For H3 Errors
+  //   stack: runtimeConfig.nodeEnv === "development" ? err.stack : undefined,
+  // });
+
+  const errorDetails = JSON.stringify({
     name: err.name,
     message: err.message,
-    code: (error as any)?.code, // For Drizzle/Postgres codes
-    statusCode: err.statusCode, // For H3 Errors
-    stack: runtimeConfig.nodeEnv === "development" ? err.stack : undefined,
-  });
+    code: (error as any)?.code,
+    statusCode: err.statusCode,
+  }, null, 2);
+
+  console.error(`[${context} Error] Path: ${event?.path}\nDetails: ${errorDetails}`);
 
   switch ((error as any)?.code) {
     case "23505": // unique_violation

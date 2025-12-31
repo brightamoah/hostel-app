@@ -9,6 +9,8 @@ const MaintenanceDetailModal = defineAsyncComponent(() => import("~/components/m
 
 const MaintenanceStatusResponseModal = defineAsyncComponent(() => import("~/components/maintenance/statusChange.vue"));
 
+const MaintenanceEditModal = defineAsyncComponent(() => import("~/components/maintenance/edit.vue"));
+
 export function useMaintenanceRowColumn(
   UButton: ComponentType,
   UBadge: ComponentType,
@@ -19,8 +21,20 @@ export function useMaintenanceRowColumn(
   const overlay = useOverlay();
   const { user } = useUserSession();
   const maintenanceStore = useMaintenanceStore();
-  const { isLoading, maintenanceStatusResponseState } = storeToRefs(maintenanceStore);
-  const { updateStatusAndAddResponse, addMaintenanceResponse } = maintenanceStore;
+  const {
+    isLoading,
+    maintenanceStatusResponseState,
+    editMaintenanceState,
+    editingId,
+  } = storeToRefs(maintenanceStore);
+  const {
+    updateStatusAndAddResponse,
+    addMaintenanceResponse,
+    initEditSession,
+    editMaintenance,
+    handleFormError,
+    clearState,
+  } = maintenanceStore;
 
   const student = user.value?.role === "student";
   const admin = user.value?.role === "admin";
@@ -55,6 +69,25 @@ export function useMaintenanceRowColumn(
           responseText: maintenanceStatusResponseState.value.responseText,
         });
         close();
+      },
+    });
+  };
+
+  const openMaintenanceEditModal = (maintenance: MaintenanceType) => {
+    initEditSession(maintenance);
+
+    const modal = overlay.create(MaintenanceEditModal);
+    const close = modal.close;
+
+    modal.open({
+      isLoading,
+      editMaintenanceState: editMaintenanceState.value,
+      handleFormError,
+      clearState,
+      editMaintenance: async () => {
+        await editMaintenance();
+
+        if (!editingId.value) close();
       },
     });
   };
@@ -94,7 +127,7 @@ export function useMaintenanceRowColumn(
         {
           label: "Edit Maintenance",
           icon: "i-lucide-notebook-pen",
-          onSelect: () => openStatusResponseModal(maintenance, "change-status"),
+          onSelect: () => openMaintenanceEditModal(maintenance),
         },
       );
     }

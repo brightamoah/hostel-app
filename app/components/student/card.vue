@@ -89,16 +89,15 @@ const roomDetails = computed(() => {
   ];
 });
 
-function getLabel(title: string) {
-  if (title.includes("Room")) return "View Room";
+function getLabel(id: string) {
+  const labels: Record<string, string> = {
+    room: "View Room",
+    visitors: "View All Visitors",
+    requests: "View All Requests",
+    billing: "View Payments",
+  };
 
-  if (title.includes("Visitors")) return "View All Visitors";
-
-  if (title.includes("Requests")) return "View All Requests";
-
-  if (title.includes("Billing")) return "View Payments";
-
-  return "View All";
+  return labels[id] ?? "View All";
 }
 </script>
 
@@ -128,7 +127,7 @@ function getLabel(title: string) {
 
           <UButton
             v-if="card.id !== 'room'"
-            :label="getLabel(card.title)"
+            :label="getLabel(card.id)"
             :to="card.to"
             variant="subtle"
             size="sm"

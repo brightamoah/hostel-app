@@ -215,7 +215,7 @@ export async function maintenanceQueries() {
   const updateMaintenance = async (
     requestId: number,
     studentId: number,
-    data: Partial<MaintenanceCreate>,
+    data: MaintenanceEdit["data"],
   ) => {
     const [updateRequest] = await db
       .update(maintenanceRequest)
@@ -233,6 +233,17 @@ export async function maintenanceQueries() {
     return updateRequest;
   };
 
+  const getMaintenanceByIdForStudent = async (id: number, studentId: number) => {
+    const maintenanceRecord = await db.query.maintenanceRequest.findFirst({
+      ...maintenanceWithRelations,
+      where: and(
+        eq(maintenanceRequest.id, id),
+        eq(maintenanceRequest.studentId, studentId),
+      ),
+    });
+    return maintenanceRecord;
+  };
+
   return {
     getAllMaintenanceRequests,
     getMaintenanceById,
@@ -243,6 +254,7 @@ export async function maintenanceQueries() {
     getStudentMaintenanceRequests,
     createMaintenance,
     updateMaintenance,
+    getMaintenanceByIdForStudent,
   };
 }
 
