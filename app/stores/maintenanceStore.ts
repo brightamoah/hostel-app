@@ -1,3 +1,5 @@
+import type { FormErrorEvent } from "@nuxt/ui";
+
 import { acceptHMRUpdate, defineStore } from "pinia";
 
 export const useMaintenanceStore = defineStore("maintenanceStore", () => {
@@ -180,6 +182,119 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
     }
   };
 
+  const editingId = ref<number | null>(null);
+  const originalEditState = ref<MaintenanceEdit["data"] | null>(null);
+
+  const editMaintenanceState = ref<MaintenanceEdit["data"]>({
+    issueType: undefined,
+    description: "",
+    priority: undefined,
+    hostelId: undefined,
+    studentId: undefined,
+    roomId: undefined,
+  });
+
+  const isEditFormValid = computed(() => {
+    const { issueType, description, priority, hostelId, studentId, roomId } = editMaintenanceState.value;
+
+    return (
+      (issueType?.trim() ?? "") !== ""
+      && description?.trim() !== ""
+      && (priority?.trim() ?? "") !== ""
+      && hostelId !== undefined
+      && studentId !== undefined
+      && roomId !== undefined
+    );
+  });
+
+  const hasNoChanges = computed(() => {
+    if (!originalEditState.value) return false;
+
+    return isDeepEqual(editMaintenanceState.value, originalEditState.value);
+  });
+
+  const initEditSession = (maintenance: MaintenanceType) => {
+    editingId.value = maintenance.id;
+
+    const mappedState: MaintenanceEdit["data"] = {
+      issueType: maintenance.issueType,
+      description: maintenance.description,
+      priority: maintenance.priority,
+      hostelId: maintenance.hostelId,
+      studentId: maintenance.studentId,
+      roomId: maintenance.roomId,
+    };
+
+    originalEditState.value = structuredClone(mappedState);
+    editMaintenanceState.value = structuredClone(mappedState);
+  };
+
+  const editMaintenance = async () => {
+    if (!isEditFormValid.value || !editingId.value) return;
+
+    if (hasNoChanges.value) {
+      toast.add({
+        title: "No Changes Detected",
+        description: "Please make changes to the form before submitting.",
+        color: "warning",
+        icon: "i-lucide-triangle-alert",
+      });
+      return;
+    }
+
+    const changes: Partial<MaintenanceEdit["data"]> = {};
+    const current = editMaintenanceState.value;
+    const original = originalEditState.value!;
+
+    for (const key in current) {
+      const k = key as keyof MaintenanceEdit["data"];
+      if (!isDeepEqual(current[k], original[k])) {
+        // @ts-expect-error - Typescript gets strict about partial assignments, but this is safe
+        changes[k] = current[k];
+      }
+    }
+
+    const payload = {
+      maintenanceId: editingId.value,
+      studentId: current.studentId!,
+      data: changes,
+    } satisfies MaintenanceEdit;
+
+    isLoading.value = true;
+
+    try {
+      const response = await $fetch(`/api/maintenance/student/${payload.maintenanceId}`, {
+        method: "PATCH",
+        body: payload,
+      });
+
+      await refreshNuxtData(maintenanceDataKey.value);
+      await refreshNuxtData(dashboardKey.value);
+
+      toast.add({
+        title: "Maintenance Edited Successfully",
+        description: response.message,
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+
+      clearState();
+    }
+    catch (error) {
+      const message = (error as any)?.data?.message;
+      toast.add({
+        title: "Failed to Edit Maintenance",
+        description: message,
+        color: "error",
+        icon: "i-lucide-circle-alert",
+        duration: 8000,
+      });
+    }
+    finally {
+      isLoading.value = false;
+    }
+  };
+
   function clearState() {
     maintenanceStatusResponseState.value = {
       responseText: "",
@@ -194,6 +309,27 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
       studentId: undefined,
       roomId: undefined,
     };
+
+    editingId.value = null;
+    originalEditState.value = null;
+    editMaintenanceState.value = {
+      issueType: undefined,
+      description: "",
+      priority: undefined,
+      hostelId: undefined,
+      studentId: undefined,
+      roomId: undefined,
+    };
+  };
+
+  const handleFormError = (event: FormErrorEvent) => {
+    const messages = event.errors.map(e => e.message).join(", ");
+    toast.add({
+      title: "Form Validation Error",
+      description: messages,
+      color: "error",
+      icon: "i-lucide-circle-alert",
+    });
   };
 
   return {
@@ -204,10 +340,15 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
     maintenanceStatusResponseState,
     createMaintenanceState,
     isCreateModalOpen,
+    editMaintenanceState,
+    editingId,
     updateStatusAndAddResponse,
     addMaintenanceResponse,
     clearState,
     createMaintenance,
+    initEditSession,
+    editMaintenance,
+    handleFormError,
   };
 });
 

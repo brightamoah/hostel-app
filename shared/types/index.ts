@@ -304,6 +304,12 @@ export type VisitorCreate = typeof visitor.$inferInsert;
 export type InsertEditVisitor = Omit<EditVisitor["data"], "visitDate"> & { visitDate?: string };
 
 export type MaintenanceCreate = typeof maintenanceRequest.$inferInsert;
+
+export type MaintenanceEdit = {
+  maintenanceId: number;
+  studentId: number;
+  data: Partial<MaintenanceCreate>;
+};
 export type MaintenanceType = Maintenance;
 export type MaintenanceDataResponse = {
   maintenanceRequests: MaintenanceType[];

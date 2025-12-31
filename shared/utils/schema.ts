@@ -392,6 +392,14 @@ const createMaintenanceSchema = z.object({
 
 export type CreateMaintenanceSchema = z.output<typeof createMaintenanceSchema>;
 
+const editMaintenanceSchema = z.object({
+  maintenanceId: z.number().int().positive().min(1, "Invalid Maintenance ID"),
+  studentId: z.number("Student ID is required").int().positive().min(1, "Invalid Student ID"),
+  data: createMaintenanceSchema.partial().omit({ studentId: true }),
+});
+
+export type EditMaintenanceSchema = z.output<typeof editMaintenanceSchema>;
+
 const complaintStatusSchema = z.union([
   z.enum([
     "pending",
@@ -525,6 +533,7 @@ export {
   createMaintenanceSchema,
   deleteItemSchema,
   editAnnouncementSchema,
+  editMaintenanceSchema,
   editRoomSchema,
   editVisitorSchema,
   emailSchema,
