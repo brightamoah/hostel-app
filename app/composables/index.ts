@@ -8,6 +8,7 @@ export { useMaintenanceRowColumn } from "./admin/maintenanceRowColumn";
 export { useRoomRowColumn } from "./admin/roomRowColumn";
 export { useUserRowColumn } from "./admin/userRowColumn";
 export { useVisitorRowColumn } from "./admin/visitorRowColumn";
+export { useFetchStudentComplaintData } from "./student/fetchComplaintData";
 export { useFetchStudentDashboardData } from "./student/fetchDashboardData";
 export { useFetchMaintenance } from "./student/fetchMaintenance";
 export { useFetchStudentRoomData } from "./student/fetchRoomData";

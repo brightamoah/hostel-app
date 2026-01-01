@@ -168,6 +168,35 @@ export async function complaintQueries() {
     });
   };
 
+  const getStudentComplaints = async (studentId: number) => {
+    const complaints = await db
+      .query
+      .complaint
+      .findMany({
+        ...complaintWithRelations,
+        where: eq(complaint.studentId, studentId),
+        orderBy: desc(complaint.createdAt),
+      });
+
+    const [count] = await db
+      .select({
+        totalComplaints: countDistinct(complaint.id),
+        pending: countDistinct(sql`CASE WHEN ${complaint.status} = 'pending' THEN ${complaint.id} END`),
+        inProgress: countDistinct(sql`CASE WHEN ${complaint.status} = 'in-progress' THEN ${complaint.id} END`),
+        resolved: countDistinct(sql`CASE WHEN ${complaint.status} = 'resolved' THEN ${complaint.id} END`),
+      })
+      .from(complaint)
+      .where(eq(complaint.studentId, studentId));
+
+    return {
+      complaints,
+      totalComplaints: count?.totalComplaints,
+      totalPending: count?.pending,
+      totalInProgress: count?.inProgress,
+      totalResolved: count?.resolved,
+    };
+  };
+
   return {
     getAllComplaints,
     getComplaintById,
@@ -175,6 +204,7 @@ export async function complaintQueries() {
     updateStatusAndAddResponse,
     addComplaintResponse,
     getComplaintByIdNoScope,
+    getStudentComplaints,
   };
 }
 
