@@ -1,28 +1,28 @@
-<script lang="ts" setup>
+<script setup lang="ts">
+const complaintStore = useComplaintStore();
+
 const {
+  createComplaintState,
+  isLoading,
+} = storeToRefs(complaintStore);
+
+const {
+  handleFormError,
+} = complaintStore;
+
+const {
+  status,
+  roomsInHostel,
   student,
 } = useFetchStudentDashboardData();
 
-const maintenanceStore = useMaintenanceStore();
-const {
-  createMaintenanceState,
-  isCreateModalOpen,
-  isLoading,
-} = storeToRefs(maintenanceStore);
-
-const {
-  createMaintenance,
-  handleFormError,
-} = maintenanceStore;
-
-const createMaintenanceFormRef = useTemplateRef("createMaintenanceFormRef");
+const createComplaintFormRef = useTemplateRef("createComplaintFormRef");
 </script>
 
 <template>
   <UModal
-    v-model:open="isCreateModalOpen"
-    title="Create Maintenance Request"
-    description="Fill out the form below to create a new maintenance request."
+    title="Create New Complaint"
+    description="Fill out the form below to create a new complaint."
     :dismissible="false"
     :ui="{
       footer: 'justify-end',
@@ -32,8 +32,8 @@ const createMaintenanceFormRef = useTemplateRef("createMaintenanceFormRef");
     }"
   >
     <UButton
-      label="New Maintenance"
-      icon="i-lucide-plus"
+      label="New Complaint"
+      icon="i-lucide-message-square-plus"
       variant="solid"
       color="primary"
       size="lg"
@@ -41,12 +41,13 @@ const createMaintenanceFormRef = useTemplateRef("createMaintenanceFormRef");
     />
 
     <template #body>
-      <MaintenanceForm
-        ref="createMaintenanceFormRef"
-        v-model:state="createMaintenanceState"
-        :schema="createMaintenanceSchema"
+      <ComplaintForm
+        ref="createComplaintFormRef"
+        :state="createComplaintState"
+        :schema="createComplaintSchema"
+        :status
+        :rooms-in-hostel
         :student
-        @submit="createMaintenance"
         @error="handleFormError"
       />
     </template>
@@ -67,7 +68,7 @@ const createMaintenanceFormRef = useTemplateRef("createMaintenanceFormRef");
           icon="i-lucide-send"
           class="cursor-pointer"
           :loading="isLoading"
-          @click="createMaintenanceFormRef?.maintenanceForm?.submit()"
+          @click="createComplaintFormRef?.complaintForm?.submit()"
         />
       </div>
     </template>

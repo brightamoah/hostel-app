@@ -17,8 +17,8 @@ const {
   priorityFilterOptions: FilterOption[];
   typeFilter: string;
   typeFilterOptions: FilterOption[];
-  studentFilter: string;
-  studentFilterOptions: FilterOption[];
+  studentFilter?: string;
+  studentFilterOptions?: FilterOption[];
 }>();
 
 const emit = defineEmits<{
@@ -28,6 +28,8 @@ const emit = defineEmits<{
   (e: "update:typeFilter", value: string): void;
   (e: "update:studentFilter", value: string): void;
 }>();
+
+const { user } = useUserSession();
 
 const globalFilterModel = computed({
   get: () => modelValue,
@@ -106,6 +108,7 @@ const studentFilterModel = computed({
       />
 
       <USelectMenu
+        v-if="studentFilterOptions && user?.role === 'admin'"
         v-model="studentFilterModel"
         arrow
         placeholder="Filter by Student"

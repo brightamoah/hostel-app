@@ -15,6 +15,7 @@ export function useFetchStudentDashboardData() {
       balance: 0,
       totalVisitors: 0,
       pendingMaintenance: 0,
+      rooms: [],
     }),
     getCachedData: (key, nuxtApp, ctx) => {
       if (ctx.cause === "refresh:manual" || ctx.cause === "refresh:hook") return undefined;
@@ -22,6 +23,8 @@ export function useFetchStudentDashboardData() {
     },
   });
   const student = computed<DashboardStudent["student"]>(() => data.value.student ?? {});
+
+  const roomsInHostel = computed<RoomInHostel[]>(() => data.value.rooms ?? []);
 
   const {
     canResend,
@@ -41,6 +44,7 @@ export function useFetchStudentDashboardData() {
     coolDownTime,
     isLoading,
     canResend,
+    roomsInHostel,
     refresh,
     handleRefresh,
   };

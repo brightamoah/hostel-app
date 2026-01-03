@@ -14,22 +14,37 @@ export function handleError(
   // const runtimeConfig = useRuntimeConfig();
   const err = error as StructuredError;
 
-  // console.error(`[${context} Error] (Path: ${event?.path || "N/A"})`, {
-  //   name: err.name,
-  //   message: err.message,
-  //   code: (error as any)?.code, // For Drizzle/Postgres codes
-  //   statusCode: err.statusCode, // For H3 Errors
-  //   stack: runtimeConfig.nodeEnv === "development" ? err.stack : undefined,
-  // });
+  // Get Cloudflare-specific context
+  const cloudflareContext = event?.context.cloudflare || {};
+  const requestId = cloudflareContext.cf?.requestId || "unknown";
+  const cfRay = cloudflareContext.cf?.cfRay || "unknown";
 
-  const errorDetails = JSON.stringify({
-    name: err.name,
-    message: err.message,
-    code: (error as any)?.code,
-    statusCode: err.statusCode,
-  }, null, 2);
+  // Structured log for Cloudflare observability
+  const logData = {
+    type: "APPLICATION_ERROR",
+    level: "ERROR",
+    timestamp: new Date().toISOString(),
+    requestId,
+    cfRay,
+    context,
+    path: event?.path || "N/A",
+    method: event?.method || "N/A",
+    error: {
+      name: err.name,
+      message: err.message,
+      code: (error as any)?.code,
+      statusCode: err.statusCode,
+      // Include stack trace in production for Cloudflare logs
+      stack: err.stack ? err.stack.split("\n").slice(0, 5).join(" | ") : undefined,
+    },
+    // Include user agent for debugging
+    userAgent: event?.node.req.headers["user-agent"] || "unknown",
+  };
 
-  console.error(`[${context} Error] Path: ${event?.path}\nDetails: ${errorDetails}`);
+  console.error(JSON.stringify(logData));
+
+  console.error(`[${context} Error] ${err.name}: ${err.message}`);
+  console.error(`Path: ${event?.path}, Status: ${err.statusCode || 500}`);
 
   switch ((error as any)?.code) {
     case "23505": // unique_violation

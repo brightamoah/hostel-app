@@ -11,7 +11,7 @@ import type { Maintenance } from "~~/server/db/queries/maintenance";
 import type { Room as RoomType } from "~~/server/db/queries/room";
 import type { StudentDashboard } from "~~/server/db/queries/user";
 import type { Visitor } from "~~/server/db/queries/visitor";
-import type { admin, allocation, announcement, complaintActionTakenEnum, complaintStatusEnum, hostel, loginAttempts, maintenanceRequest, maintenanceStatusEnum, room, student, user, visitor, visitorLogs } from "~~/server/db/schema";
+import type { admin, allocation, announcement, complaint, complaintActionTakenEnum, complaintStatusEnum, hostel, loginAttempts, maintenanceRequest, maintenanceStatusEnum, room, student, user, visitor, visitorLogs } from "~~/server/db/schema";
 import type { InferSelectModel } from "drizzle-orm";
 import type { randomUUID } from "node:crypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
@@ -261,6 +261,7 @@ export type DashboardStudent = {
   balance: StudentDashboard["outstandingBalance"];
   totalVisitors: StudentDashboard["totalVisitors"];
   pendingMaintenance: StudentDashboard["pendingMaintenanceCount"];
+  rooms: RoomInHostel[];
 };
 
 export type Roommate = DashboardStudent["student"]["allocation"]["room"]["allocations"][number]["student"];
@@ -331,6 +332,8 @@ export type DataType<T> = Ref<T, T>;
 
 export type Complaint = ComplaintType;
 
+export type ComplaintInsert = typeof complaint.$inferInsert;
+
 export type ComplaintDataResponse = {
   complaints: Complaint[];
   totalComplaints: number;
@@ -385,3 +388,5 @@ export type UserWithRelations = BaseUser & {
   student?: StudentWithDetails | null;
   admin?: AdminWithDetails | null;
 };
+
+export type RoomInHostel = Pick<BaseRoom, "id" | "roomNumber" | "floor">;

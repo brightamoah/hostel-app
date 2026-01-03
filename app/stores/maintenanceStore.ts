@@ -124,9 +124,9 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
 
   const isCreateModalOpen = ref(false);
   const createMaintenanceState = ref<Partial<CreateMaintenanceSchema>>({
-    issueType: "",
+    issueType: undefined,
     description: "",
-    priority: "",
+    priority: undefined,
     hostelId: undefined,
     studentId: undefined,
     roomId: undefined,

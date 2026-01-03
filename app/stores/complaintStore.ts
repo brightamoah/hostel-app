@@ -1,3 +1,5 @@
+import type { FormErrorEvent } from "@nuxt/ui";
+
 import { acceptHMRUpdate, defineStore } from "pinia";
 
 export const useComplaintStore = defineStore("complaintStore", () => {
@@ -114,12 +116,42 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     }
   };
 
+  const isCreateModalOpen = ref(false);
+
+  const createComplaintState = ref<Partial<ComplaintInsert>>({
+    type: undefined,
+    description: "",
+    priority: undefined,
+    hostelId: undefined,
+    studentId: undefined,
+    roomId: undefined,
+  });
+
   function clearState() {
     complaintStatusResponseState.value = {
       responseText: "",
       status: "",
     };
+
+    createComplaintState.value = {
+      type: undefined,
+      description: "",
+      priority: undefined,
+      hostelId: undefined,
+      studentId: undefined,
+      roomId: undefined,
+    };
   }
+
+  const handleFormError = (event: FormErrorEvent) => {
+    const messages = event.errors.map(e => e.message).join(", ");
+    toast.add({
+      title: "Form Validation Error",
+      description: messages,
+      color: "error",
+      icon: "i-lucide-circle-alert",
+    });
+  };
 
   return {
     isLoading,
@@ -127,9 +159,12 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     complaintStatusResponseState,
     isUpdateFormValid,
     isAddResponseFormValid,
+    isCreateModalOpen,
+    createComplaintState,
     updateStatusAndAddResponse,
     addComplaintResponse,
     clearState,
+    handleFormError,
   };
 });
 

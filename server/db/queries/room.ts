@@ -262,6 +262,21 @@ export async function roomQueries() {
     });
   };
 
+  const getRoomsInHostel = async (hostelId: number) => {
+    const rooms = await db
+      .query
+      .room
+      .findMany({
+        columns: {
+          id: true,
+          roomNumber: true,
+          floor: true,
+        },
+        where: eq(room.hostelId, hostelId),
+      });
+    return rooms;
+  };
+
   return {
     getAllRooms,
     getRoomById,
@@ -280,6 +295,7 @@ export async function roomQueries() {
     getAllHostelsScoped,
     getRoomStatusCount,
     cancelAllocation,
+    getRoomsInHostel,
   };
 }
 

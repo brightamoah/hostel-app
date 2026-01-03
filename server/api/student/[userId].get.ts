@@ -1,4 +1,6 @@
-import { userQueries } from "~~/server/db/queries";
+import type { RoomInHostel } from "~~/shared/types";
+
+import { roomQueries, userQueries } from "~~/server/db/queries";
 
 export default defineEventHandler(async (event) => {
   await requireUserSession(event, {
@@ -7,6 +9,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const { getStudentForDashboardByUserId } = await userQueries();
+    const { getRoomsInHostel } = await roomQueries();
 
     const userId = Number(getRouterParam(event, "userId"));
 
@@ -26,6 +29,14 @@ export default defineEventHandler(async (event) => {
       });
     }
 
+    const hostelId = student.studentRecord.allocation?.room?.hostelId;
+
+    let rooms: RoomInHostel[] = [];
+
+    if (hostelId) {
+      rooms = await getRoomsInHostel(hostelId);
+    }
+
     return {
       student: student.studentRecord,
       totalBilled: student.totalBilled,
@@ -33,6 +44,7 @@ export default defineEventHandler(async (event) => {
       balance: student.outstandingBalance,
       totalVisitors: student.totalVisitors,
       pendingMaintenance: student.pendingMaintenanceCount,
+      rooms,
     };
   }
   catch (error) {
