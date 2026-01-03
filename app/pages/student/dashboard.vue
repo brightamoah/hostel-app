@@ -18,6 +18,7 @@ const {
   isLoading: refreshIsLoading,
   canResend,
   coolDownTime,
+  roomsInHostel,
   handleRefresh,
 } = useFetchStudentDashboardData();
 
@@ -35,6 +36,8 @@ provide(dashboardKey, {
   room,
   visitors,
 });
+
+provide(roomsInHostelKey, roomsInHostel);
 
 const cards = computed<StatsCard[]>(() => [
   {

@@ -5,3 +5,5 @@ type DashboardContext = {
 };
 
 export const dashboardKey = Symbol("dashboard") as InjectionKey<DashboardContext>;
+
+export const roomsInHostelKey = Symbol("roomsInHostel") as InjectionKey<ComputedRef<RoomInHostel[]>>;

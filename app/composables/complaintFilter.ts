@@ -86,24 +86,32 @@ export function useComplaintFilter(
     },
   ]);
 
-  const { users } = useFetchUserData();
+  const { user } = useUserSession();
 
   const studentFilter = ref("");
-  const studentFilterOptions = computed<FilterOption[]>(() => {
-    const students = users.value.filter(user => user.role === "student");
+  const studentFilterOptions = ref<FilterOption[]>([]);
 
-    const filter = students.map(student => ({
-      label: student.name,
-      value: student.name,
-    }));
-    return [
-      {
-        label: "All Students",
-        value: "all",
-      },
-      ...filter,
-    ];
-  });
+  if (user.value?.role === "admin") {
+    const { users } = useFetchUserData();
+
+    const studentFilterOptionsGetter = computed<FilterOption[]>(() => {
+      const students = users.value.filter(user => user.role === "student");
+
+      const filter = students.map(student => ({
+        label: student.name,
+        value: student.name,
+      }));
+      return [
+        {
+          label: "All Students",
+          value: "all",
+        },
+        ...filter,
+      ];
+    });
+
+    studentFilterOptions.value = studentFilterOptionsGetter.value;
+  }
 
   const {
     safeTableApi,

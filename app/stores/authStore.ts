@@ -145,7 +145,10 @@ export const useAuthStore = defineStore("authStore", () => {
         icon: "i-lucide-check-circle",
       });
 
-      const role = user.value!.role;
+      let role = user.value?.role;
+
+      if (!role) role = "student";
+
       const dashboard = { name: role === "admin" ? "admin-dashboard" : "student-dashboard" } as RouteLocationRaw;
       const redirectPath = route.query.redirect as string | undefined;
 

@@ -8,6 +8,13 @@ const linkSchema = z.object({
 
 export type LinkSchema = z.output<typeof linkSchema>;
 
+export function createIdSchema(name: string) {
+  return z.number(`${name} ID is required`)
+    .int()
+    .positive()
+    .min(1, `Invalid ${name} ID`);
+}
+
 const passwordSchema = z
   .string({ error: "Password is required" })
   .min(8, "Must be at least 8 characters")
@@ -164,7 +171,7 @@ const roomFeatureSchema = z.union([
 
 export const addRoomSchema = z.object({
   roomNumber: roomNumberSchema,
-  hostelId: z.number("Hostel ID is required").int().positive().min(1, "Invalid Maintenance ID"),
+  hostelId: createIdSchema("Hostel"),
   floor: z.number("Floor is required").min(1, "Floor cannot be negative"),
   capacity: z.number("Capacity is required").min(1, "Capacity must be at least 1").max(4, "Capacity cannot exceed 4"),
   roomType: roomTypeSchema,
@@ -177,7 +184,7 @@ export const addRoomSchema = z.object({
 const editRoomData = addRoomSchema.partial().omit({ roomType: true, status: true });
 
 const editRoomSchema = z.object({
-  roomId: z.number().min(1, "Invalid room ID"),
+  roomId: createIdSchema("Room"),
   data: editRoomData.extend({
     status: z.enum(["vacant", "fully occupied", "partially occupied", "under maintenance", "reserved"], "Status is required").optional(),
     roomType: z.enum(["single", "double", "triple", "quad"], "Room Type is required").optional(),
@@ -231,14 +238,14 @@ const promoteDemoteSchema = z.object({
 export type PromoteDemoteSchema = z.output<typeof promoteDemoteSchema>;
 
 const approveDenySchema = z.object({
-  visitorId: z.number().int().positive().min(1, "Invalid Visitor ID"),
+  visitorId: createIdSchema("Visitor"),
   status: z.enum(["approved", "denied"], "Status must be either 'approved' or 'denied'"),
 });
 
 export type ApproveDenySchema = z.output<typeof approveDenySchema>;
 
 const logActionSchema = z.object({
-  visitorId: z.number().int().positive().min(1, "Invalid Visitor ID"),
+  visitorId: createIdSchema("Visitor"),
   action: z.enum(["check_in", "check_out"], "Action must be either 'check_in' or 'check_out'"),
 });
 export type LogActionSchema = z.output<typeof logActionSchema>;
@@ -309,13 +316,13 @@ const registerVisitorSchema = z.object({
   visitDate: dateOfVisitSchema,
   relationship: relationshipSchema,
   purpose: purposeOfVisitSchema,
-  hostelId: z.number("Hostel ID is required").int().positive().min(1, "Invalid Hostel ID"),
-  studentId: z.number("Student ID is required").int().positive().min(1, "Invalid Student ID"),
+  hostelId: createIdSchema("Hostel"),
+  studentId: createIdSchema("Student"),
   status: visitorStatusSchema,
 });
 
 const editVisitorSchema = z.object({
-  visitorId: z.number().int().positive().min(1, "Invalid Visitor ID"),
+  visitorId: createIdSchema("Visitor"),
   data: registerVisitorSchema.omit({ hostelId: true, studentId: true, status: true }).partial(),
 });
 
@@ -344,7 +351,7 @@ const responseText = z
   .max(1000, "Response Text cannot exceed 1000 characters");
 
 const maintenanceStatusResponseSchema = z.object({
-  maintenanceId: z.number().int().positive().min(1, "Invalid Maintenance ID"),
+  maintenanceId: createIdSchema("Maintenance"),
   status: maintenanceStatusSchema,
   responseText,
 });
@@ -368,7 +375,7 @@ const maintenanceIssueTypeSchema = z.union([
   z.literal(""),
 ]).refine(val => val !== "", "Issue Type is required");
 
-const maintenancePrioritySchema = z.union([
+const prioritySchema = z.union([
   z.enum([
     "low",
     "medium",
@@ -379,26 +386,51 @@ const maintenancePrioritySchema = z.union([
 ]).refine(val => val !== "", "Priority is required");
 
 const createMaintenanceSchema = z.object({
-  hostelId: z.number("Hostel ID is required").int().positive().min(1, "Invalid Hostel ID"),
-  roomId: z.number("Room ID is required").int().positive().min(1, "Invalid Room ID"),
-  studentId: z.number("Student ID is required").int().positive().min(1, "Invalid Student ID"),
+  hostelId: createIdSchema("Hostel"),
+  roomId: createIdSchema("Room"),
+  studentId: createIdSchema("Student"),
   description: z.string()
     .nonempty("Description is required")
     .min(10, "Description must be at least 10 characters long")
     .max(200, "Description cannot exceed 200 characters"),
   issueType: maintenanceIssueTypeSchema,
-  priority: maintenancePrioritySchema,
+  priority: prioritySchema,
 });
 
 export type CreateMaintenanceSchema = z.output<typeof createMaintenanceSchema>;
 
 const editMaintenanceSchema = z.object({
-  maintenanceId: z.number().int().positive().min(1, "Invalid Maintenance ID"),
-  studentId: z.number("Student ID is required").int().positive().min(1, "Invalid Student ID"),
+  maintenanceId: createIdSchema("Maintenance"),
+  studentId: createIdSchema("Student"),
   data: createMaintenanceSchema.partial().omit({ studentId: true }),
 });
 
 export type EditMaintenanceSchema = z.output<typeof editMaintenanceSchema>;
+
+const complaintTypeSchema
+  = z.enum([
+    "noise",
+    "amenities",
+    "billing issue",
+    "room condition",
+    "staff behavior",
+    "security",
+    "other",
+  ], "Complaint Type is required");
+
+const createComplaintSchema = z.object({
+  hostelId: createIdSchema("Hostel"),
+  roomId: createIdSchema("Room").optional(),
+  studentId: createIdSchema("Student"),
+  description: z.string()
+    .nonempty("Description is required")
+    .min(10, "Description must be at least 10 characters long")
+    .max(200, "Description cannot exceed 200 characters"),
+  priority: prioritySchema,
+  type: complaintTypeSchema,
+});
+
+export type CreateComplaintSchema = z.output<typeof createComplaintSchema>;
 
 const complaintStatusSchema = z.union([
   z.enum([
@@ -413,7 +445,7 @@ const complaintStatusSchema = z.union([
 ]).refine(val => val !== "", "Status is required");
 
 const complaintStatusResponseSchema = z.object({
-  complaintId: z.number().int().positive().min(1, "Invalid Complaint ID"),
+  complaintId: createIdSchema("Complaint"),
   status: complaintStatusSchema,
   responseText,
 });
@@ -452,9 +484,9 @@ export const createAnnouncementSchema = z.object({
     .max(5000, "Content cannot exceed 5000 characters"),
   priority: announcementPrioritySchema,
   targetAudience: targetAudienceSchema,
-  targetHostelId: z.number().optional(),
-  targetRoomId: z.number().optional(),
-  targetUserId: z.number().optional(),
+  targetHostelId: createIdSchema("Target Hostel").optional(),
+  targetRoomId: createIdSchema("Target Room").optional(),
+  targetUserId: createIdSchema("Target User").optional(),
 }).superRefine((data, ctx) => {
   if (data.targetAudience === "hostel" && !data.targetHostelId) {
     ctx.addIssue({
@@ -492,7 +524,7 @@ export type ReadStatusSchema = z.output<typeof readStatusSchema>;
 const editAnnouncementData = createAnnouncementSchema.partial().omit({ priority: true, targetAudience: true });
 
 const editAnnouncementSchema = z.object({
-  announcementId: z.number().min(1, "Invalid Announcement ID"),
+  announcementId: createIdSchema("Announcement"),
   data: editAnnouncementData.extend({
     priority: z.enum([
       "low",
@@ -516,8 +548,8 @@ const editAnnouncementSchema = z.object({
 export type EditAnnouncementSchema = z.output<typeof editAnnouncementSchema>;
 
 const bookRoomSchema = z.object({
-  roomId: z.number().int().positive().min(1, "Invalid Room ID"),
-  userId: z.number().int().positive().min(1, "Invalid Student ID"),
+  roomId: createIdSchema("Room"),
+  userId: createIdSchema("User"),
   endDate: z.date().optional(),
 });
 
@@ -530,6 +562,7 @@ export {
   bookRoomSchema,
   complaintStatusResponseSchema,
   confirmPasswordSchema,
+  createComplaintSchema,
   createMaintenanceSchema,
   deleteItemSchema,
   editAnnouncementSchema,

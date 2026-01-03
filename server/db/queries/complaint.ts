@@ -1,4 +1,4 @@
-import type { Admin, ComplaintActionTaken, ComplaintStatus } from "~~/shared/types";
+import type { Admin, ComplaintActionTaken, ComplaintInsert, ComplaintStatus } from "~~/shared/types";
 
 import { useDB } from "~~/server/utils/db";
 import { and, countDistinct, desc, eq, sql } from "drizzle-orm";
@@ -197,6 +197,18 @@ export async function complaintQueries() {
     };
   };
 
+  const createComplaint = async (data: ComplaintInsert) => {
+    const [newComplaint] = await db
+      .insert(complaint)
+      .values({
+        ...data,
+        status: "pending",
+      },
+      )
+      .returning();
+    return newComplaint;
+  };
+
   return {
     getAllComplaints,
     getComplaintById,
@@ -205,6 +217,7 @@ export async function complaintQueries() {
     addComplaintResponse,
     getComplaintByIdNoScope,
     getStudentComplaints,
+    createComplaint,
   };
 }
 
