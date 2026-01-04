@@ -85,8 +85,9 @@ defineExpose({
           :items="complaintTypes"
           placeholder="Select issue type"
           value-key="value"
-          class="w-full"
+          class="w-full cursor-pointer"
           size="xl"
+          clear
         />
       </UFormField>
 
@@ -140,6 +141,21 @@ defineExpose({
         />
       </UFormField>
     </div>
+
+    <UFormField
+      required
+      label="Description"
+      name="description"
+      class="gap-5 mb-2 px-4 w-full"
+    >
+      <UTextarea
+        v-model="state.description"
+        placeholder="Describe the issue in detail"
+        class="w-full"
+        size="xl"
+        :rows="4"
+      />
+    </UFormField>
   </UForm>
 </template>
 

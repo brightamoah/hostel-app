@@ -162,7 +162,18 @@ const pagination = ref({
             th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
             td: 'border-b border-default',
           }"
-        />
+        >
+          <template #empty>
+            <UEmpty
+              variant="naked"
+              icon="i-lucide-message-square-warning"
+              title="No Complaints Available"
+              description="There is currently no data to display in this table."
+              size="xl"
+              class="flex flex-1 justify-center items-center w-full"
+            />
+          </template>
+        </UTable>
 
         <DashboardPagination
           v-if="tableRef && tableRef?.tableApi"

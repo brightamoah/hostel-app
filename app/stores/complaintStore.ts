@@ -1,4 +1,4 @@
-import type { FormErrorEvent } from "@nuxt/ui";
+import type { FormErrorEvent, FormSubmitEvent } from "@nuxt/ui";
 
 import { acceptHMRUpdate, defineStore } from "pinia";
 
@@ -127,6 +127,35 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     roomId: undefined,
   });
 
+  const isCreateFormValid = computed(() => {
+    return (
+      createComplaintState.value.type?.trim() !== ""
+      && createComplaintState.value.type !== undefined
+      && createComplaintState.value.description?.trim() !== ""
+      && createComplaintState.value.priority?.trim() !== ""
+      && createComplaintState.value.priority !== undefined
+      && createComplaintState.value.hostelId !== undefined
+      && createComplaintState.value.studentId !== undefined
+      && createComplaintState.value.roomId !== undefined
+    );
+  });
+
+  const createComplaint = async (payload: FormSubmitEvent<CreateComplaintSchema>): Promise<void> => {
+    if (!isCreateFormValid.value) return;
+
+    isLoading.value = true;
+
+    try {
+      console.log(payload.data);
+    }
+    catch (error) {
+      console.error(error);
+    }
+    finally {
+      isLoading.value = false;
+    }
+  };
+
   function clearState() {
     complaintStatusResponseState.value = {
       responseText: "",
@@ -165,6 +194,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     addComplaintResponse,
     clearState,
     handleFormError,
+    createComplaint,
   };
 });
 

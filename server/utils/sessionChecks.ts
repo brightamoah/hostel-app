@@ -24,3 +24,24 @@ export async function adminSessionCheck(event: H3Event): Promise<{
     userId: session.user.id,
   };
 }
+
+export async function studentSessionCheck(event: H3Event): Promise<{
+  isActiveStudent: true;
+  userId: number;
+}> {
+  const session = await requireUserSession(event);
+
+  if (
+    session.user.role !== "student"
+  ) {
+    throw createError({
+      statusCode: 403,
+      message: "Forbidden: This endpoint is only accessible to students.",
+    });
+  }
+
+  return {
+    isActiveStudent: true,
+    userId: session.user.id,
+  };
+}
