@@ -8,6 +8,7 @@ const {
 
 const {
   handleFormError,
+  createComplaint,
 } = complaintStore;
 
 const {
@@ -48,6 +49,7 @@ const createComplaintFormRef = useTemplateRef("createComplaintFormRef");
         :status
         :rooms-in-hostel
         :student
+        @submit="createComplaint"
         @error="handleFormError"
       />
     </template>

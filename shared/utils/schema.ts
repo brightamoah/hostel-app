@@ -381,7 +381,7 @@ const prioritySchema = z.union([
     "medium",
     "high",
     "emergency",
-  ]),
+  ], "Priority is required"),
   z.literal(""),
 ]).refine(val => val !== "", "Priority is required");
 
