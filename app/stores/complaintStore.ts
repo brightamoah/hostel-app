@@ -9,7 +9,22 @@ export const useComplaintStore = defineStore("complaintStore", () => {
 
   const isLoading = ref<boolean>(false);
   const isModalOpen = ref<boolean>(false);
-  const complaintDataKey = computed(() => `complaintData:${user.value?.adminData?.accessLevel}`);
+  const complaintDataKey = computed(() => {
+    if (user.value?.role === "admin") {
+      const accessLevel = user.value?.adminData?.accessLevel;
+      if (!accessLevel) {
+        console.warn("Admin user missing accessLevel");
+        return `complaintData:admin-default`;
+      }
+      return `complaintData:${accessLevel}`;
+    }
+    const userId = user.value?.id;
+    if (!userId) {
+      console.warn("User missing id");
+      return `complaintData:user-default`;
+    }
+    return `complaintData:${userId}`;
+  });
 
   const complaintStatusResponseState = ref<ComplaintStatusForm>({
     responseText: "",
@@ -136,7 +151,6 @@ export const useComplaintStore = defineStore("complaintStore", () => {
       && createComplaintState.value.priority !== undefined
       && createComplaintState.value.hostelId !== undefined
       && createComplaintState.value.studentId !== undefined
-      && createComplaintState.value.roomId !== undefined
     );
   });
 
@@ -146,10 +160,32 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     isLoading.value = true;
 
     try {
-      console.log(payload.data);
+      const response = await $fetch("/api/complaint/student/createComplaint", {
+        method: "POST",
+        body: payload.data,
+      });
+
+      await refreshNuxtData(complaintDataKey.value);
+
+      toast.add({
+        title: "Success",
+        description: response.message,
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+
+      isCreateModalOpen.value = false;
+      clearState();
     }
     catch (error) {
-      console.error(error);
+      const message = (error as any)?.data?.message;
+      toast.add({
+        title: "Failed to Create Complaint",
+        description: message,
+        color: "error",
+        icon: "i-lucide-circle-alert",
+        duration: 8000,
+      });
     }
     finally {
       isLoading.value = false;

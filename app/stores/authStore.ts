@@ -7,6 +7,8 @@ export const useAuthStore = defineStore("authStore", () => {
   const toast = useToast();
   const route = useRoute();
 
+  const { csrf } = useCsrf();
+
   const { exists, studentData } = useStudentData();
 
   const isLoading = ref<boolean>(false);
@@ -17,7 +19,12 @@ export const useAuthStore = defineStore("authStore", () => {
 
   const refreshSessionWithFreshData = async () => {
     try {
-      await $fetch("/api/auth/refreshSession", { method: "POST" });
+      await $fetch("/api/auth/refreshSession", {
+        method: "POST",
+        headers: {
+          "csrf-token": csrf,
+        },
+      });
       await refreshSession();
     }
     catch (error) {
@@ -65,6 +72,9 @@ export const useAuthStore = defineStore("authStore", () => {
           name: payload.data.name,
           email: payload.data.email,
           password: payload.data.password,
+        },
+        headers: {
+          "csrf-token": csrf,
         },
       });
       toast.add({
@@ -124,13 +134,22 @@ export const useAuthStore = defineStore("authStore", () => {
     isLoading.value = true;
     errorMessage.value = null;
     try {
-      const { message } = await $fetch("/api/auth/login", { method: "POST", body: { email, password, rememberMe } });
+      const { message } = await $fetch("/api/auth/login", {
+        method: "POST",
+        body: { email, password, rememberMe },
+        headers: {
+          "csrf-token": csrf,
+        },
+      });
 
       await refreshSession();
 
       if (user.value!.role === "student") {
         const studentDetails = await $fetch("/api/auth/checkStudentDetails", {
           method: "GET",
+          headers: {
+            "csrf-token": csrf,
+          },
         });
         if (!studentDetails.exists) {
           await navigateTo({ name: "auth-onboarding" });

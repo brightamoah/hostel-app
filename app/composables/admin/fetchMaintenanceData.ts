@@ -1,7 +1,7 @@
 export function useFetchMaintenanceData() {
   const { user } = useUserSession();
 
-  const { data, status, refresh } = useFetch<MaintenanceDataResponse>("/api/maintenance/getMaintenanceData", {
+  const { data, status, refresh } = useCsrfFetch<MaintenanceDataResponse>("/api/maintenance/getMaintenanceData", {
     method: "get",
     key: computed(() => `maintenanceData:${user.value?.adminData?.accessLevel}`),
     lazy: true,

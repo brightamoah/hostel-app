@@ -45,7 +45,7 @@ const detailItems = computed(() => [
   },
   {
     label: "Room Number",
-    value: complaint.room.roomNumber,
+    value: complaint?.room?.roomNumber ?? "N/A",
     icon: "i-lucide-door-open",
   },
   {

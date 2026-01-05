@@ -1,7 +1,7 @@
 export function useFetchComplaintData() {
   const { user } = useUserSession();
 
-  const { data, status, refresh } = useFetch<ComplaintDataResponse>("/api/complaint/getComplaintData", {
+  const { data, status, refresh } = useCsrfFetch<ComplaintDataResponse>("/api/complaint/getComplaintData", {
     method: "get",
     key: computed(() => `complaintData:${user.value?.adminData?.accessLevel}`),
     lazy: true,

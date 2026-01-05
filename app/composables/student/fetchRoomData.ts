@@ -3,7 +3,7 @@ import type { SelectMenuItem } from "@nuxt/ui";
 export function useFetchStudentRoomData() {
   const { user } = useUserSession();
 
-  const { data, status, refresh } = useFetch<StudentRoomData>("/api/room/student/rooms", {
+  const { data, status, refresh } = useCsrfFetch<StudentRoomData>("/api/room/student/rooms", {
     method: "GET",
     key: computed(() => `roomData:${user.value?.role}`),
     lazy: true,
