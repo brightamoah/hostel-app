@@ -9,9 +9,22 @@ export const useComplaintStore = defineStore("complaintStore", () => {
 
   const isLoading = ref<boolean>(false);
   const isModalOpen = ref<boolean>(false);
-  const complaintDataKey = computed(() => user.value?.role === "admin"
-    ? `complaintData:${user.value?.adminData?.accessLevel}`
-    : `complaintData:${user.value?.id}`);
+  const complaintDataKey = computed(() => {
+    if (user.value?.role === "admin") {
+      const accessLevel = user.value?.adminData?.accessLevel;
+      if (!accessLevel) {
+        console.warn("Admin user missing accessLevel");
+        return `complaintData:admin-default`;
+      }
+      return `complaintData:${accessLevel}`;
+    }
+    const userId = user.value?.id;
+    if (!userId) {
+      console.warn("User missing id");
+      return `complaintData:user-default`;
+    }
+    return `complaintData:${userId}`;
+  });
 
   const complaintStatusResponseState = ref<ComplaintStatusForm>({
     responseText: "",

@@ -116,5 +116,10 @@ export default defineNuxtConfig({
         },
       },
     },
+    headers: {
+      contentSecurityPolicy: {
+        "img-src": ["'self'", "data:", "https://res.cloudinary.com"],
+      },
+    },
   },
 });
