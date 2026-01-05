@@ -4,7 +4,7 @@ export function useAnnouncementData() {
   const announcementKey = computed(() => `announcement-data-${user.value?.id}`,
   );
 
-  const { data, status, refresh } = useFetch<AnnouncementResponse>("/api/announcement/getAnnouncementData", {
+  const { data, status, refresh } = useCsrfFetch<AnnouncementResponse>("/api/announcement/getAnnouncementData", {
     key: announcementKey,
     lazy: true,
     default: () => ({

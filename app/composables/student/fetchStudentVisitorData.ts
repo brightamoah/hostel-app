@@ -1,7 +1,7 @@
 export function useFetchStudentVisitorData() {
   const { user } = useUserSession();
 
-  const { data, status, refresh, error } = useFetch<VisitorDataResponse>("/api/student/getVisitors", {
+  const { data, status, refresh, error } = useCsrfFetch<VisitorDataResponse>("/api/student/getVisitors", {
     method: "get",
     key: computed(() => `visitorData:${user.value?.id}`),
     lazy: true,

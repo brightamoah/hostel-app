@@ -28,7 +28,7 @@ export const complaintActionTakenEnum = pgEnum("complaint_action_taken", ["assig
 export const complaint = pgTable("complaint", t => ({
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
   studentId: t.integer().notNull().references(() => student.id, { onDelete: "cascade" }),
-  roomId: t.integer().notNull().references(() => room.id, { onDelete: "cascade" }),
+  roomId: t.integer().references(() => room.id, { onDelete: "cascade" }),
   hostelId: t.integer().notNull().references(() => hostel.id, { onDelete: "cascade" }),
   description: t.text().notNull(),
   type: complaintTypeEnum().notNull(),

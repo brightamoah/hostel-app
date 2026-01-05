@@ -4,6 +4,7 @@ const complaintStore = useComplaintStore();
 const {
   createComplaintState,
   isLoading,
+  isCreateModalOpen,
 } = storeToRefs(complaintStore);
 
 const {
@@ -22,6 +23,7 @@ const createComplaintFormRef = useTemplateRef("createComplaintFormRef");
 
 <template>
   <UModal
+    v-model:open="isCreateModalOpen"
     title="Create New Complaint"
     description="Fill out the form below to create a new complaint."
     :dismissible="false"
