@@ -19,9 +19,7 @@ export const useAuthStore = defineStore("authStore", () => {
 
   const refreshSessionWithFreshData = async () => {
     try {
-      await $apiFetch("/api/auth/refreshSession", {
-        method: "POST",
-      });
+      await $apiFetch("/api/auth/refreshSession", { method: "POST" });
       await refreshSession();
     }
     catch (error) {
@@ -69,9 +67,6 @@ export const useAuthStore = defineStore("authStore", () => {
           name: payload.data.name,
           email: payload.data.email,
           password: payload.data.password,
-        },
-        headers: {
-          "csrf-token": csrf,
         },
       });
       toast.add({
@@ -131,19 +126,13 @@ export const useAuthStore = defineStore("authStore", () => {
     isLoading.value = true;
     errorMessage.value = null;
     try {
-      const { message } = await $apiFetch("/api/auth/login", {
-        method: "POST",
-        body: { email, password, rememberMe },
-      });
+      const { message } = await $apiFetch("/api/auth/login", { method: "POST", body: { email, password, rememberMe } });
 
       await refreshSession();
 
       if (user.value!.role === "student") {
         const studentDetails = await $apiFetch("/api/auth/checkStudentDetails", {
           method: "GET",
-          headers: {
-            "csrf-token": csrf,
-          },
         });
         if (!studentDetails.exists) {
           await navigateTo({ name: "auth-onboarding" });
