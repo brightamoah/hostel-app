@@ -7,7 +7,7 @@ export const useAuthStore = defineStore("authStore", () => {
   const toast = useToast();
   const route = useRoute();
 
-  const { csrf } = useCsrf();
+  const { $apiFetch } = useNuxtApp();
 
   const { exists, studentData } = useStudentData();
 
@@ -19,11 +19,8 @@ export const useAuthStore = defineStore("authStore", () => {
 
   const refreshSessionWithFreshData = async () => {
     try {
-      await $fetch("/api/auth/refreshSession", {
+      await $apiFetch("/api/auth/refreshSession", {
         method: "POST",
-        headers: {
-          "csrf-token": csrf,
-        },
       });
       await refreshSession();
     }
@@ -66,7 +63,7 @@ export const useAuthStore = defineStore("authStore", () => {
   const signup = async (payload: FormSubmitEvent<SignupSchema>) => {
     isLoading.value = true;
     try {
-      const response = await $fetch("/api/auth/signup", {
+      const response = await $apiFetch("/api/auth/signup", {
         method: "POST",
         body: {
           name: payload.data.name,
@@ -134,18 +131,15 @@ export const useAuthStore = defineStore("authStore", () => {
     isLoading.value = true;
     errorMessage.value = null;
     try {
-      const { message } = await $fetch("/api/auth/login", {
+      const { message } = await $apiFetch("/api/auth/login", {
         method: "POST",
         body: { email, password, rememberMe },
-        headers: {
-          "csrf-token": csrf,
-        },
       });
 
       await refreshSession();
 
       if (user.value!.role === "student") {
-        const studentDetails = await $fetch("/api/auth/checkStudentDetails", {
+        const studentDetails = await $apiFetch("/api/auth/checkStudentDetails", {
           method: "GET",
           headers: {
             "csrf-token": csrf,

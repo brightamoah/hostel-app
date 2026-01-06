@@ -4,6 +4,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 
 export const useMaintenanceStore = defineStore("maintenanceStore", () => {
   const { user } = useUserSession();
+  const { $apiFetch } = useNuxtApp();
 
   const toast = useToast();
 
@@ -54,7 +55,7 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch("/api/maintenance/updateStatus", {
+      const response = await $apiFetch("/api/maintenance/updateStatus", {
         method: "POST",
         body: payload,
       });
@@ -92,7 +93,7 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch("/api/maintenance/addResponse", {
+      const response = await $apiFetch("/api/maintenance/addResponse", {
         method: "POST",
         body: payload,
       });
@@ -149,7 +150,7 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch("/api/maintenance/student/createRequest", {
+      const response = await $apiFetch("/api/maintenance/student/createRequest", {
         method: "POST",
         body: createMaintenanceState.value,
       });
@@ -263,7 +264,7 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch(`/api/maintenance/student/${payload.maintenanceId}`, {
+      const response = await $apiFetch(`/api/maintenance/student/${payload.maintenanceId}`, {
         method: "PATCH",
         body: payload,
       });

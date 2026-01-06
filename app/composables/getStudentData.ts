@@ -1,5 +1,5 @@
 export function useStudentData() {
-  const { data, error, refresh, status } = useFetch("/api/auth/checkStudentDetails", {
+  const { data, error, refresh, status } = useCsrfFetch("/api/auth/checkStudentDetails", {
     method: "GET",
     key: "student-data",
   });

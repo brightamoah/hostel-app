@@ -10,6 +10,8 @@ export const useAltAuth = defineStore("altAuth", () => {
 
   const canResend = computed(() => coolDownTime.value === 0 && !isLoading.value);
 
+  const { $apiFetch } = useNuxtApp();
+
   function startCoolDown(seconds: number) {
     coolDownTime.value = seconds;
     const timer = setInterval(() => {
@@ -51,7 +53,7 @@ export const useAltAuth = defineStore("altAuth", () => {
 
     isLoading.value = true;
     try {
-      const response = await $fetch("/api/auth/forgotPassword", {
+      const response = await $apiFetch("/api/auth/forgotPassword", {
         method: "POST",
         body: { email: payload.data.email },
       });
@@ -94,7 +96,7 @@ export const useAltAuth = defineStore("altAuth", () => {
 
     isLoading.value = true;
     try {
-      const response = await $fetch("/api/auth/resendVerificationEmail", {
+      const response = await $apiFetch("/api/auth/resendVerificationEmail", {
         method: "POST",
         body: { email: payload.data.email },
       });
@@ -136,7 +138,7 @@ export const useAltAuth = defineStore("altAuth", () => {
   async function resetPassword(payload: FormSubmitEvent<ResetPasswordSchema>, token: string, id: IDSchema) {
     isLoading.value = true;
     try {
-      const response = await $fetch("/api/auth/resetPassword", {
+      const response = await $apiFetch("/api/auth/resetPassword", {
         method: "POST",
         body: {
           token,

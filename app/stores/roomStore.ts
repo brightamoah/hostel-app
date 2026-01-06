@@ -5,7 +5,12 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 export const useRoomStore = defineStore("roomStore", () => {
   const toast = useToast();
   const { user } = useUserSession();
-  const roomDataKey = computed(() => user.value?.role === "admin" ? `roomData:${user.value?.adminData?.accessLevel}` : `roomData:${user.value?.role}`);
+  const { $apiFetch } = useNuxtApp();
+
+  const roomDataKey = computed(() => user.value?.role === "admin"
+    ? `roomData:${user.value?.adminData?.accessLevel}`
+    : `roomData:${user.value?.role}`,
+  );
 
   const isModalOpen = ref<boolean>(false);
 
@@ -65,7 +70,7 @@ export const useRoomStore = defineStore("roomStore", () => {
 
     isLoading.value = true;
     try {
-      const response = await $fetch("/api/room/addNewRoom", {
+      const response = await $apiFetch("/api/room/addNewRoom", {
         method: "POST",
         body: payload.data,
       });
@@ -119,7 +124,7 @@ export const useRoomStore = defineStore("roomStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch("/api/room/deleteRoom", {
+      const response = await $apiFetch("/api/room/deleteRoom", {
         method: "DELETE",
         body: payload,
       });
@@ -153,7 +158,7 @@ export const useRoomStore = defineStore("roomStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch("/api/room/student/book", {
+      const response = await $apiFetch("/api/room/student/book", {
         method: "POST",
         body: payload,
       });

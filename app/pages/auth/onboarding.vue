@@ -8,6 +8,8 @@ definePageMeta({
   layout: "onboard",
 });
 
+const { $apiFetch } = useNuxtApp();
+
 const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
 const toast = useToast();
@@ -100,7 +102,7 @@ async function submitForm(payload: FormSubmitEvent<typeof state.value>) {
   };
 
   try {
-    const response = await $fetch("/api/auth/onboarding", {
+    const response = await $apiFetch("/api/auth/onboarding", {
       method: "POST",
       body: payload.data,
     });

@@ -8,6 +8,8 @@ export const useUserStore = defineStore("userStore", () => {
   const isLoading = ref<boolean>(false);
   const { user } = useUserSession();
 
+  const { $apiFetch } = useNuxtApp();
+
   const userDataKey = computed(() => `userData:${user.value?.adminData?.accessLevel}`);
 
   const adminState = ref<AddAdminSchema>({
@@ -37,7 +39,7 @@ export const useUserStore = defineStore("userStore", () => {
 
     isLoading.value = true;
     try {
-      const response = await $fetch("/api/user/addNewAdmin", {
+      const response = await $apiFetch("/api/user/addNewAdmin", {
         method: "POST",
         body: payload.data,
       });
@@ -78,7 +80,7 @@ export const useUserStore = defineStore("userStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch("/api/user/deleteUser", {
+      const response = await $apiFetch("/api/user/deleteUser", {
         method: "DELETE",
         body: payload,
       });
@@ -112,7 +114,7 @@ export const useUserStore = defineStore("userStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch("/api/user/promoteDemote", {
+      const response = await $apiFetch("/api/user/promoteDemote", {
         method: "PATCH",
         body: payload,
       });

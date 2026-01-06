@@ -16,6 +16,8 @@ const defaultState: CreateAnnouncementSchema = {
 export const useAnnouncementStore = defineStore("announcementStore", () => {
   const toast = useToast();
 
+  const { $apiFetch } = useNuxtApp();
+
   const open = ref(false);
   const isLoading = ref(false);
   const isFetchingDraft = ref(false);
@@ -138,7 +140,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
     isFetchingDraft.value = true;
 
     try {
-      const draft = await $fetch<CreateAnnouncementSchema>("/api/announcement/draft", {
+      const draft = await $apiFetch<CreateAnnouncementSchema>("/api/announcement/draft", {
         method: "GET",
       });
 
@@ -156,7 +158,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
 
   const saveDraft = useDebounceFn(async (newState: Partial<CreateAnnouncementSchema>) => {
     try {
-      await $fetch("/api/announcement/draft", {
+      await $apiFetch("/api/announcement/draft", {
         method: "POST",
         body: newState,
       });
@@ -176,7 +178,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch("/api/announcement/create", {
+      const response = await $apiFetch("/api/announcement/create", {
         method: "POST",
         body: payload.data,
       });
@@ -244,7 +246,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch(`/api/announcement/edit/${payload.announcementId}`, {
+      const response = await $apiFetch(`/api/announcement/edit/${payload.announcementId}`, {
         method: "PATCH",
         body: payload,
       });
@@ -283,7 +285,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
 
   async function resetAnnouncementState() {
     announcementState.value = { ...defaultState };
-    await $fetch("/api/announcement/draft", {
+    await $apiFetch("/api/announcement/draft", {
       method: "DELETE",
     });
   }
