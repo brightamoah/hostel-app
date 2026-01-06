@@ -70,6 +70,9 @@ export const useAuthStore = defineStore("authStore", () => {
           email: payload.data.email,
           password: payload.data.password,
         },
+        headers: {
+          "csrf-token": csrf,
+        },
       });
       toast.add({
         title: "Signup Successful",
@@ -138,6 +141,9 @@ export const useAuthStore = defineStore("authStore", () => {
       if (user.value!.role === "student") {
         const studentDetails = await $apiFetch("/api/auth/checkStudentDetails", {
           method: "GET",
+          headers: {
+            "csrf-token": csrf,
+          },
         });
         if (!studentDetails.exists) {
           await navigateTo({ name: "auth-onboarding" });
