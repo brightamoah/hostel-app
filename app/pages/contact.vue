@@ -4,6 +4,7 @@ import type { FormSubmitEvent } from "#ui/types";
 import * as z from "zod";
 
 const { profile } = useAppConfig();
+const { $apiFetch } = useNuxtApp();
 const toast = useToast();
 
 // const isResendEnabled = useRuntimeConfig().public.resend;
@@ -39,7 +40,7 @@ type Schema = z.output<typeof schema>;
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true;
   try {
-    await $fetch("/api/emails/send", {
+    await $apiFetch("/api/emails/send", {
       method: "POST",
       body: event.data,
     });

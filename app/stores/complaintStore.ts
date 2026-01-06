@@ -4,6 +4,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 
 export const useComplaintStore = defineStore("complaintStore", () => {
   const { user } = useUserSession();
+  const { $apiFetch } = useNuxtApp();
 
   const toast = useToast();
 
@@ -63,7 +64,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch("/api/complaint/updateStatus", {
+      const response = await $apiFetch("/api/complaint/updateStatus", {
         method: "POST",
         body: payload,
       });
@@ -101,7 +102,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch("/api/complaint/addResponse", {
+      const response = await $apiFetch("/api/complaint/addResponse", {
         method: "POST",
         body: payload,
       });
@@ -160,7 +161,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch("/api/complaint/student/createComplaint", {
+      const response = await $apiFetch("/api/complaint/student/createComplaint", {
         method: "POST",
         body: payload.data,
       });

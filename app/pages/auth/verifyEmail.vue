@@ -4,6 +4,7 @@ definePageMeta({
   middleware: ["auth-redirect"],
 });
 
+const { $apiFetch } = useNuxtApp();
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
@@ -27,7 +28,7 @@ onMounted(async () => {
   }
 
   try {
-    const response = await $fetch("/api/auth/verifyEmail", {
+    const response = await $apiFetch("/api/auth/verifyEmail", {
       method: "POST",
       body: { token, id },
     });

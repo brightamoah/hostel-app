@@ -6,6 +6,8 @@ import { capitalize } from "vue";
 
 export const useVisitorStore = defineStore("visitorStore", () => {
   const { user } = useUserSession();
+  const { $apiFetch } = useNuxtApp();
+
   const toast = useToast();
   const isLoading = ref<boolean>(false);
   const deleteModalOpen = ref<boolean>(false);
@@ -24,7 +26,7 @@ export const useVisitorStore = defineStore("visitorStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch("/api/visitor/approveDeny", {
+      const response = await $apiFetch("/api/visitor/approveDeny", {
         method: "PATCH",
         body: payload,
       });
@@ -60,7 +62,7 @@ export const useVisitorStore = defineStore("visitorStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch("/api/visitor/checkInCheckout", {
+      const response = await $apiFetch("/api/visitor/checkInCheckout", {
         method: "POST",
         body: payload,
       });
@@ -96,7 +98,7 @@ export const useVisitorStore = defineStore("visitorStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch("/api/visitor/deleteVisitorAdmin", {
+      const response = await $apiFetch("/api/visitor/deleteVisitorAdmin", {
         method: "DELETE",
         body: payload,
       });
@@ -140,7 +142,7 @@ export const useVisitorStore = defineStore("visitorStore", () => {
 
     isLoading.value = true;
     try {
-      const response = await $fetch("/api/visitor/register", {
+      const response = await $apiFetch("/api/visitor/register", {
         method: "POST",
         body: payload.data,
       });
@@ -262,7 +264,7 @@ export const useVisitorStore = defineStore("visitorStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $fetch(`/api/visitor/${payload.visitorId}`, {
+      const response = await $apiFetch(`/api/visitor/${payload.visitorId}`, {
         method: "PATCH",
         body: payload,
       });

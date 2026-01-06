@@ -5,6 +5,8 @@ const { roomData, roomId, closeModal } = defineProps<{
   closeModal: () => void;
 }>();
 
+const { $apiFetch } = useNuxtApp();
+
 const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
 const roomStore = useRoomStore();
@@ -119,7 +121,7 @@ async function submitUpdate() {
   isLoading.value = true;
 
   try {
-    const response = await $fetch(`/api/room/${roomId}`, {
+    const response = await $apiFetch(`/api/room/${roomId}`, {
       method: "PATCH",
       body: payload,
     });
