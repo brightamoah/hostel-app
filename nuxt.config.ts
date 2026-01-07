@@ -118,8 +118,11 @@ export default defineNuxtConfig({
     },
     headers: {
       contentSecurityPolicy: {
-        "img-src": ["'self'", "data:", "https://res.cloudinary.com"],
+        "img-src": ["'self'", "data:", "https:"],
       },
+      crossOriginEmbedderPolicy: false,
+      crossOriginResourcePolicy: false,
+      crossOriginOpenerPolicy: false,
     },
   },
 });
