@@ -8,7 +8,7 @@ const { isNotificationsSlideoverOpen } = useDashboard();
 const { userInitials } = useUseUserItems();
 const { user } = useUserSession();
 
-// const { data: notifications } = await useCsrfFetch<Notification[]>("");
+// const { data: notifications } = await useFetch<Notification[]>("");
 const notifications = ref<Notification[]>([
   {
     id: randomUUID(),
