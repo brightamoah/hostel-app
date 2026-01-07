@@ -6,7 +6,7 @@ export function useFetchMaintenance() {
     status,
     error,
     refresh,
-  } = useCsrfFetch<MaintenanceDataResponse>("/api/maintenance/student/getMaintenanceData", {
+  } = useFetch<MaintenanceDataResponse>("/api/maintenance/student/getMaintenanceData", {
     method: "GET",
     key: computed(() => `maintenanceData:${user.value?.id}`),
     lazy: true,

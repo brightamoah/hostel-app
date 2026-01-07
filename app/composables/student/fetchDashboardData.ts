@@ -3,7 +3,7 @@ export function useFetchStudentDashboardData() {
 
   const userId = computed(() => user.value?.id);
 
-  const { data, status, refresh } = useCsrfFetch<DashboardStudent>(`/api/student/${userId.value}`, {
+  const { data, status, refresh } = useFetch<DashboardStudent>(`/api/student/${userId.value}`, {
     method: "GET",
     key: computed(() => `dashboardData:${user.value?.id}`),
     lazy: true,
