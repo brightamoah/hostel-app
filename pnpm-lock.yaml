@@ -42,9 +42,9 @@ importers:
       nuxt-auth-utils:
         specifier: ^0.5.26
         version: 0.5.26(magicast@0.5.1)
-      nuxt-security:
-        specifier: 2.5.0
-        version: 2.5.0(magicast@0.5.1)(rollup@4.54.0)
+      nuxt-csurf:
+        specifier: 1.6.5
+        version: 1.6.5(magicast@0.5.1)
       nuxt-tiptap-editor:
         specifier: ^3.2.0
         version: 3.2.0(@floating-ui/dom@1.7.4)(@tiptap/core@3.14.0(@tiptap/pm@3.14.0))(@tiptap/extension-code-block@3.14.0(@tiptap/core@3.14.0(@tiptap/pm@3.14.0))(@tiptap/pm@3.14.0))(highlight.js@11.11.1)(vue@3.5.26(typescript@5.9.3))
@@ -3694,10 +3694,6 @@ packages:
     resolution: {integrity: sha512-Sg0xJUNDU1sJNGdfGWhVHX0kkZ+HWcvmVymJbj6NSgZZmW/8S9Y2HQ5euytnIgakgxN6papOAWiwDo1ctFDcoQ==}
     hasBin: true
 
-  basic-auth@2.0.1:
-    resolution: {integrity: sha512-NF+epuEdnUYVlGuhaxbbq+dvJttwLnGY+YixlXlME5KpQ5W3CnXA5cVTneY3SPbPDRkcjMbifrwmFYcClgOZeg==}
-    engines: {node: '>= 0.8'}
-
   bindings@1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
 
@@ -5674,10 +5670,6 @@ packages:
     peerDependencies:
       nodemailer: ^7.0.6
 
-  nuxt-security@2.5.0:
-    resolution: {integrity: sha512-mfoSXcY1V6DHJwXGVLY99G7W2XnkdGnJ5FgmGe8I2ZkWOb1DVr3rbwl8OgIb1C64CDWTBhwer8eXxgCLCGGLUg==}
-    engines: {node: '>=20.0.0'}
-
   nuxt-tiptap-editor@3.2.0:
     resolution: {integrity: sha512-pSrcJj5BXdZ/k165R3iD4A8480iKC+SMRxXRm49Zb4CpG1xc6seaQmHtPAjOxXX0wIZOww/FTrsFX+wdiSv+EQ==}
 
@@ -6861,9 +6853,6 @@ packages:
       '@vueuse/core':
         optional: true
 
-  unplugin-remove@1.0.3:
-    resolution: {integrity: sha512-BZMt9v8Y/Z27cY7YQv+DpcW928znjP1cqplBXOirbANiFQtM2YCdiyNAJhHCvjppT0lScNn1aDrQnXqnRp32pQ==}
-
   unplugin-utils@0.2.5:
     resolution: {integrity: sha512-gwXJnPRewT4rT7sBi/IvxKTjsms7jX7QIDLOClApuZwR49SXbrB1z2NLUZ+vDHyqCj/n58OzRRqaW+B8OZi8vg==}
     engines: {node: '>=18.12.0'}
@@ -6893,10 +6882,6 @@ packages:
     peerDependenciesMeta:
       vue-router:
         optional: true
-
-  unplugin@1.16.1:
-    resolution: {integrity: sha512-4/u/j4FrCKdi17jaxuJA0jClGxB1AvU2hw/IuayPc4ay1XGaJs/rbb4v5WKwAjNifjmXK9PIFyuPiaK8azyR9w==}
-    engines: {node: '>=14.0.0'}
 
   unplugin@2.3.11:
     resolution: {integrity: sha512-5uKD0nqiYVzlmCRs01Fhs2BdkEgBS3SAVP6ndrBsuK42iC2+JHyxM05Rm9G8+5mkmRtzMZGY8Ct5+mliZxU/Ww==}
@@ -11377,10 +11362,6 @@ snapshots:
 
   baseline-browser-mapping@2.9.11: {}
 
-  basic-auth@2.0.1:
-    dependencies:
-      safe-buffer: 5.1.2
-
   bindings@1.5.0:
     dependencies:
       file-uri-to-path: 1.0.0
@@ -11634,7 +11615,8 @@ snapshots:
 
   cssesc@3.0.0: {}
 
-  cssfilter@0.0.10: {}
+  cssfilter@0.0.10:
+    optional: true
 
   cssnano-preset-default@7.0.10(postcss@8.5.6):
     dependencies:
@@ -13694,20 +13676,6 @@ snapshots:
       - aws-crt
       - magicast
 
-  nuxt-security@2.5.0(magicast@0.5.1)(rollup@4.54.0):
-    dependencies:
-      '@nuxt/kit': 4.2.2(magicast@0.5.1)
-      basic-auth: 2.0.1
-      defu: 6.1.4
-      nuxt-csurf: 1.6.5(magicast@0.5.1)
-      pathe: 2.0.3
-      unplugin-remove: 1.0.3(rollup@4.54.0)
-      xss: 1.0.15
-    transitivePeerDependencies:
-      - magicast
-      - rollup
-      - supports-color
-
   nuxt-tiptap-editor@3.2.0(@floating-ui/dom@1.7.4)(@tiptap/core@3.14.0(@tiptap/pm@3.14.0))(@tiptap/extension-code-block@3.14.0(@tiptap/core@3.14.0(@tiptap/pm@3.14.0))(@tiptap/pm@3.14.0))(highlight.js@11.11.1)(vue@3.5.26(typescript@5.9.3)):
     dependencies:
       '@tiptap/extension-code-block-lowlight': 3.14.0(@tiptap/core@3.14.0(@tiptap/pm@3.14.0))(@tiptap/extension-code-block@3.14.0(@tiptap/core@3.14.0(@tiptap/pm@3.14.0))(@tiptap/pm@3.14.0))(@tiptap/pm@3.14.0)(highlight.js@11.11.1)(lowlight@3.3.0)
@@ -15139,19 +15107,6 @@ snapshots:
       '@nuxt/kit': 4.2.2(magicast@0.5.1)
       '@vueuse/core': 14.1.0(vue@3.5.26(typescript@5.9.3))
 
-  unplugin-remove@1.0.3(rollup@4.54.0):
-    dependencies:
-      '@babel/core': 7.28.5
-      '@babel/generator': 7.28.5
-      '@babel/parser': 7.28.5
-      '@babel/traverse': 7.28.5
-      '@rollup/pluginutils': 5.3.0(rollup@4.54.0)
-      magic-string: 0.30.21
-      unplugin: 1.16.1
-    transitivePeerDependencies:
-      - rollup
-      - supports-color
-
   unplugin-utils@0.2.5:
     dependencies:
       pathe: 2.0.3
@@ -15203,11 +15158,6 @@ snapshots:
       vue-router: 4.6.4(vue@3.5.26(typescript@5.9.3))
     transitivePeerDependencies:
       - vue
-
-  unplugin@1.16.1:
-    dependencies:
-      acorn: 8.15.0
-      webpack-virtual-modules: 0.6.2
 
   unplugin@2.3.11:
     dependencies:
@@ -15511,6 +15461,7 @@ snapshots:
     dependencies:
       commander: 2.20.3
       cssfilter: 0.0.10
+    optional: true
 
   xtend@4.0.2: {}
 
