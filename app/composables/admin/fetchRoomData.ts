@@ -3,7 +3,7 @@ import type { SelectMenuItem } from "@nuxt/ui";
 export function useFetchRoomData() {
   const { user } = useUserSession();
 
-  const { data, status, refresh } = useCsrfFetch<RoomDataResponse>("/api/room/getRoomData", {
+  const { data, status, refresh, error } = useFetch<RoomDataResponse>("/api/room/getRoomData", {
     method: "get",
     key: computed(() => `roomData:${user.value?.adminData?.accessLevel}`),
     lazy: true,
@@ -53,6 +53,7 @@ export function useFetchRoomData() {
     canResend,
     hostels,
     hostelItem,
+    error,
     refresh,
     handleRefresh,
   };

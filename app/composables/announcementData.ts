@@ -6,7 +6,7 @@ export function useAnnouncementData() {
 
   const { $apiFetch } = useNuxtApp();
 
-  const { data, status, refresh } = useCsrfFetch<AnnouncementResponse>("/api/announcement/getAnnouncementData", {
+  const { data, status, refresh } = useFetch<AnnouncementResponse>("/api/announcement/getAnnouncementData", {
     key: announcementKey,
     lazy: true,
     default: () => ({

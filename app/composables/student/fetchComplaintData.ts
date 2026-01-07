@@ -1,7 +1,7 @@
 export function useFetchStudentComplaintData() {
   const { user } = useUserSession();
 
-  const { data, status, refresh, error } = useCsrfFetch<ComplaintDataResponse>("/api/complaint/student/getComplaints", {
+  const { data, status, refresh, error } = useFetch<ComplaintDataResponse>("/api/complaint/student/getComplaints", {
     method: "get",
     key: computed(() => `complaintData:${user.value?.id}`),
     lazy: true,

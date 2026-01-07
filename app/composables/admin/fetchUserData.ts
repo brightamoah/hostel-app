@@ -1,7 +1,7 @@
 export function useFetchUserData() {
   const { user } = useUserSession();
 
-  const { data, status, refresh } = useCsrfFetch<UserDataResponse>("/api/user/getUserData", {
+  const { data, status, refresh } = useFetch<UserDataResponse>("/api/user/getUserData", {
     method: "get",
     key: computed(() => `userData:${user.value?.adminData?.accessLevel}`),
     lazy: true,
