@@ -432,6 +432,14 @@ const createComplaintSchema = z.object({
 
 export type CreateComplaintSchema = z.output<typeof createComplaintSchema>;
 
+const editComplaintSchema = z.object({
+  complaintId: createIdSchema("Complaint"),
+  studentId: createIdSchema("Student"),
+  data: createComplaintSchema.partial(),
+});
+
+export type EditComplaintSchema = z.output<typeof editComplaintSchema>;
+
 const complaintStatusSchema = z.union([
   z.enum([
     "pending",
@@ -566,6 +574,7 @@ export {
   createMaintenanceSchema,
   deleteItemSchema,
   editAnnouncementSchema,
+  editComplaintSchema,
   editMaintenanceSchema,
   editRoomSchema,
   editVisitorSchema,

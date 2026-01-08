@@ -9,6 +9,8 @@ const ComplaintDetailModal = defineAsyncComponent(() => import("~/components/com
 
 const ComplaintStatusResponseModal = defineAsyncComponent(() => import("~/components/complaint/statusResponse.vue"));
 
+const EditComplaintModal = defineAsyncComponent(() => import("~/components/complaint/edit.vue"));
+
 export function useComplaintRowColumn(
   UButton: ComponentType,
   UBadge: ComponentType,
@@ -17,13 +19,22 @@ export function useComplaintRowColumn(
   UIcon: ComponentType,
 ) {
   const overlay = useOverlay();
+  const { user } = useUserSession();
 
   const complaintStore = useComplaintStore();
 
   const {
     complaintStatusResponseState,
     isLoading,
+    editComplaintState,
   } = storeToRefs(complaintStore);
+
+  const {
+    initEditSession,
+    editComplaint,
+    handleFormError,
+    clearState,
+  } = complaintStore;
 
   const openComplaintDetailModal = (complaint: Complaint) => {
     const modal = overlay.create(ComplaintDetailModal);
@@ -59,6 +70,19 @@ export function useComplaintRowColumn(
     });
   };
 
+  const openEditComplaintModal = (complaint: Complaint) => {
+    initEditSession(complaint);
+    const modal = overlay.create(EditComplaintModal);
+
+    modal.open({
+      editComplaintState: editComplaintState.value,
+      isLoading,
+      editComplaint,
+      handleFormError,
+      clearState,
+    });
+  };
+
   const getRowItems = (row: Row<Complaint>) => {
     const complaint = row.original;
 
@@ -72,17 +96,49 @@ export function useComplaintRowColumn(
         icon: "i-lucide-eye",
         onSelect: () => openComplaintDetailModal(complaint),
       },
-      {
-        label: "Update Status",
-        icon: "i-lucide-notebook-pen",
-        onSelect: () => openStatusResponseModal(complaint, "change-status"),
-      },
-      {
-        label: "Add Response",
-        icon: "i-lucide-message-circle-plus",
-        onSelect: () => openStatusResponseModal(complaint, "add-response"),
-      },
     ];
+
+    if (user.value?.role === "admin") {
+      actions.push(
+        {
+          label: "Update Status",
+          icon: "i-lucide-notebook-pen",
+          onSelect: () => openStatusResponseModal(complaint, "change-status"),
+        },
+        {
+          label: "Add Response",
+          icon: "i-lucide-message-circle-plus",
+          onSelect: () => openStatusResponseModal(complaint, "add-response"),
+        },
+      );
+    }
+
+    if (user.value?.role === "student") {
+      actions.push(
+
+        {
+          label: "Follow Up",
+          icon: "i-lucide-message-circle-plus",
+          onSelect: () => openStatusResponseModal(complaint, "add-response"),
+        },
+      );
+    }
+
+    if (user.value?.role === "student" && complaint.status === "pending") {
+      actions.push(
+        {
+          label: "Edit Complaint",
+          icon: "i-lucide-notebook-pen",
+          onSelect: () => openEditComplaintModal(complaint),
+        },
+        {
+          label: "Delete Complaint",
+          icon: "i-lucide-trash-2",
+          color: "error",
+          onSelect: () => {},
+        },
+      );
+    }
 
     return actions;
   };

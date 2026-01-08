@@ -51,6 +51,11 @@ const hostelOptions = computed(() => {
     : [];
 });
 
+const roomModel = computed({
+  get: () => state.value.roomId ?? undefined,
+  set: val => state.value.roomId = val,
+});
+
 watchEffect(() => {
   if (roomsOptions.value.length === 1 && !state.value.roomId) state.value.roomId = roomsOptions.value[0]?.value;
 
@@ -97,7 +102,7 @@ defineExpose({
         class="w-full"
       >
         <USelectMenu
-          v-model="state.roomId"
+          v-model="roomModel"
           :items="roomsOptions"
           :loading="status === 'pending'"
           placeholder="Select room (if applicable)"

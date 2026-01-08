@@ -333,6 +333,11 @@ export type DataType<T> = Ref<T, T>;
 export type Complaint = ComplaintType;
 
 export type ComplaintInsert = typeof complaint.$inferInsert;
+export type EditComplaint = {
+  complaintId: number;
+  studentId: number;
+  data: Partial<ComplaintInsert>;
+};
 
 export type ComplaintDataResponse = {
   complaints: Complaint[];
