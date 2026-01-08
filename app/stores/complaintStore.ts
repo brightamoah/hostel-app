@@ -2,6 +2,15 @@ import type { FormErrorEvent, FormSubmitEvent } from "@nuxt/ui";
 
 import { acceptHMRUpdate, defineStore } from "pinia";
 
+const baseComplaint: Partial<ComplaintInsert> = {
+  type: undefined,
+  description: "",
+  priority: undefined,
+  hostelId: undefined,
+  studentId: undefined,
+  roomId: undefined,
+};
+
 export const useComplaintStore = defineStore("complaintStore", () => {
   const { user } = useUserSession();
   const { $apiFetch } = useNuxtApp();
@@ -134,16 +143,9 @@ export const useComplaintStore = defineStore("complaintStore", () => {
 
   const isCreateModalOpen = ref(false);
 
-  const createComplaintState = ref<Partial<ComplaintInsert>>({
-    type: undefined,
-    description: "",
-    priority: undefined,
-    hostelId: undefined,
-    studentId: undefined,
-    roomId: undefined,
-  });
+  const createComplaintState = ref<Partial<ComplaintInsert>>(baseComplaint);
 
-  const isCreateFormValid = computed(() => {
+  const isFormValid = computed(() => {
     return (
       createComplaintState.value.type?.trim() !== ""
       && createComplaintState.value.type !== undefined
@@ -156,7 +158,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
   });
 
   const createComplaint = async (payload: FormSubmitEvent<CreateComplaintSchema>): Promise<void> => {
-    if (!isCreateFormValid.value) return;
+    if (!isFormValid.value) return;
 
     isLoading.value = true;
 
@@ -193,6 +195,73 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     }
   };
 
+  const editingId = ref<number | null>(null);
+  const originalEditState = ref<Partial<ComplaintInsert> | null>(null);
+
+  const editComplaintState = ref<Partial<ComplaintInsert>>(baseComplaint);
+
+  const hasNoChanges = computed(() => {
+    if (!originalEditState.value) return false;
+
+    return isDeepEqual(editComplaintState.value, originalEditState.value);
+  });
+
+  const initEditSession = (complaint: Complaint) => {
+    editingId.value = complaint.id;
+
+    const mappedState: Partial<ComplaintInsert> = {
+      type: complaint.type,
+      description: complaint.description,
+      priority: complaint.priority,
+      hostelId: complaint.hostelId,
+      studentId: complaint.studentId,
+      roomId: complaint.roomId,
+    };
+
+    originalEditState.value = structuredClone(mappedState);
+    editComplaintState.value = structuredClone(mappedState);
+  };
+
+  const getPayloadForEdit = (): EditComplaint | null => {
+    const changes: Partial<ComplaintInsert> = {};
+    const current = editComplaintState.value;
+    const original = originalEditState.value!;
+
+    for (const key in current) {
+      const k = key as keyof ComplaintInsert;
+      if (!isDeepEqual(current[k], original[k])) {
+        // @ts-expect-error - Typescript gets strict about partial assignments, but this is safe
+        changes[k] = current[k];
+      }
+    }
+
+    if (!editingId.value) return null;
+
+    const payload = {
+      complaintId: editingId.value,
+      studentId: current.studentId!,
+      data: changes,
+    } satisfies EditComplaint;
+
+    return payload;
+  };
+
+  const editComplaint = async (): Promise<void> => {
+    if (!isFormValid.value || !editingId.value) return;
+
+    if (hasNoChanges.value) {
+      toast.add({
+        title: "No Changes Detected",
+        description: "Please make changes to the form before submitting.",
+        color: "warning",
+        icon: "i-lucide-triangle-alert",
+      });
+    }
+    const payload = getPayloadForEdit();
+
+    console.log(payload);
+  };
+
   function clearState() {
     complaintStatusResponseState.value = {
       responseText: "",
@@ -227,11 +296,16 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     isAddResponseFormValid,
     isCreateModalOpen,
     createComplaintState,
+    isFormValid,
+    editComplaintState,
+    editingId,
     updateStatusAndAddResponse,
     addComplaintResponse,
     clearState,
     handleFormError,
     createComplaint,
+    initEditSession,
+    editComplaint,
   };
 });
 
