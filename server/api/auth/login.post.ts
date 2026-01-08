@@ -5,7 +5,7 @@ import { handleError } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async (event) => {
   try {
-    const rawIp = getRequestIP(event, { xForwardedFor: true }) || event.node?.req?.socket?.remoteAddress;
+    const rawIp = getIP(event);
     const ip = normalizeIp(rawIp);
 
     if (!ip || ip === "undefined") {
