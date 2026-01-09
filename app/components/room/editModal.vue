@@ -131,7 +131,7 @@ async function submitUpdate() {
       title: response.message,
       description: "The room details have been updated successfully.",
       color: "success",
-      icon: "i-lucide-check-circle",
+      icon: "i-lucide-circle-check-big",
     });
     closeModal?.();
   }

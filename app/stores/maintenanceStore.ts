@@ -64,7 +64,7 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
         title: "Maintenance Status Updated Successfully",
         description: response.message,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       await refreshNuxtData(maintenanceDataKey.value);
@@ -102,7 +102,7 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
         title: "Maintenance Response Added Successfully",
         description: response.message,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       await refreshNuxtData(maintenanceDataKey.value);
@@ -162,7 +162,7 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
         title: "Success",
         description: response.message,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       isCreateModalOpen.value = false;
@@ -276,7 +276,7 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
         title: "Maintenance Edited Successfully",
         description: response.message,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       clearState();

@@ -209,6 +209,34 @@ export async function complaintQueries() {
     return newComplaint;
   };
 
+  const updateComplaint = async (
+    complaintId: number,
+    studentId: number,
+    data: Partial<ComplaintInsert>,
+  ) => {
+    const [updatedComplaint] = await db
+      .update(complaint)
+      .set({ ...data })
+      .where(
+        and(
+          eq(complaint.id, complaintId),
+          eq(complaint.studentId, studentId),
+          eq(complaint.status, "pending"),
+        ),
+      )
+      .returning();
+    return updatedComplaint;
+  };
+
+  const getComplaintForStudentById = async (complaintId: number, studentId: number) => {
+    return await db.query.complaint.findFirst({
+      where: and(
+        eq(complaint.id, complaintId),
+        eq(complaint.studentId, studentId),
+      ),
+    });
+  };
+
   return {
     getAllComplaints,
     getComplaintById,
@@ -218,6 +246,8 @@ export async function complaintQueries() {
     getComplaintByIdNoScope,
     getStudentComplaints,
     createComplaint,
+    updateComplaint,
+    getComplaintForStudentById,
   };
 }
 

@@ -235,7 +235,6 @@ export async function maintenanceQueries() {
 
   const getMaintenanceByIdForStudent = async (id: number, studentId: number) => {
     const maintenanceRecord = await db.query.maintenanceRequest.findFirst({
-      ...maintenanceWithRelations,
       where: and(
         eq(maintenanceRequest.id, id),
         eq(maintenanceRequest.studentId, studentId),

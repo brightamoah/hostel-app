@@ -189,7 +189,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
         title: "Announcement Published Successfully",
         description: response.message,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       await resetAnnouncementState();
@@ -257,7 +257,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
         title: "Update Successful",
         description: response.message,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       originalEditState.value = null;

@@ -260,7 +260,7 @@ const isVisitDateInFuture = computed(() => {
         >
           <UButton
             label="Approve"
-            icon="i-lucide-check-circle"
+            icon="i-lucide-circle-check-big"
             variant="subtle"
             color="success"
             :size="isMobile ? 'md' : 'lg'"

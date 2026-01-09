@@ -19,6 +19,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
 
   const isLoading = ref<boolean>(false);
   const isModalOpen = ref<boolean>(false);
+
   const complaintDataKey = computed(() => {
     if (user.value?.role === "admin") {
       const accessLevel = user.value?.adminData?.accessLevel;
@@ -82,7 +83,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
         title: "Complaint Status Updated Successfully",
         description: response.message,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       await refreshNuxtData(complaintDataKey.value);
@@ -120,7 +121,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
         title: "Complaint Response Added Successfully",
         description: response.message,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       await refreshNuxtData(complaintDataKey.value);
@@ -174,7 +175,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
         title: "Success",
         description: response.message,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       isCreateModalOpen.value = false;
@@ -215,27 +216,51 @@ export const useComplaintStore = defineStore("complaintStore", () => {
       priority: complaint.priority,
       hostelId: complaint.hostelId,
       studentId: complaint.studentId,
-      roomId: complaint.roomId,
+      roomId: complaint.roomId ?? undefined,
     };
 
     originalEditState.value = structuredClone(mappedState);
     editComplaintState.value = structuredClone(mappedState);
   };
 
-  const getPayloadForEdit = (): EditComplaint | null => {
+  const isEditFormValid = computed(() => {
+    return (
+      editComplaintState.value.type?.trim() !== ""
+      && editComplaintState.value.type !== undefined
+      && editComplaintState.value.description?.trim() !== ""
+      && editComplaintState.value.priority?.trim() !== ""
+      && editComplaintState.value.priority !== undefined
+      && editComplaintState.value.hostelId !== undefined
+      && editComplaintState.value.studentId !== undefined
+    );
+  });
+
+  const getPayloadForEdit = (): EditComplaint => {
     const changes: Partial<ComplaintInsert> = {};
     const current = editComplaintState.value;
     const original = originalEditState.value!;
 
     for (const key in current) {
       const k = key as keyof ComplaintInsert;
-      if (!isDeepEqual(current[k], original[k])) {
+      if (isDeepEqual(current[k], original[k])) continue;
+
+      if (current[k] === undefined) {
+        // @ts-expect-error -- need is needed to clear DB field
+        changes[k] = null;
+      }
+      else {
         // @ts-expect-error - Typescript gets strict about partial assignments, but this is safe
         changes[k] = current[k];
-      }
+      };
     }
 
-    if (!editingId.value) return null;
+    if (!editingId.value) {
+      return {
+        complaintId: -1,
+        studentId: -1,
+        data: {},
+      };
+    }
 
     const payload = {
       complaintId: editingId.value,
@@ -247,7 +272,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
   };
 
   const editComplaint = async (): Promise<void> => {
-    if (!isFormValid.value || !editingId.value) return;
+    if (!isEditFormValid.value || !editingId.value) return;
 
     if (hasNoChanges.value) {
       toast.add({
@@ -256,10 +281,42 @@ export const useComplaintStore = defineStore("complaintStore", () => {
         color: "warning",
         icon: "i-lucide-triangle-alert",
       });
+      return;
     }
     const payload = getPayloadForEdit();
 
-    console.log(payload);
+    isLoading.value = true;
+
+    try {
+      const response = await $apiFetch(`/api/complaint/student/${payload.complaintId}`, {
+        method: "PATCH",
+        body: payload,
+      });
+
+      await refreshNuxtData(complaintDataKey.value);
+
+      toast.add({
+        title: "Success",
+        description: response.message,
+        color: "success",
+        icon: "i-lucide-circle-check-big",
+      });
+
+      clearState();
+    }
+    catch (error) {
+      const message = (error as any)?.data?.message;
+      toast.add({
+        title: "Failed to Edit Complaint",
+        description: message,
+        color: "error",
+        icon: "i-lucide-circle-alert",
+        duration: 8000,
+      });
+    }
+    finally {
+      isLoading.value = false;
+    }
   };
 
   function clearState() {
@@ -268,18 +325,17 @@ export const useComplaintStore = defineStore("complaintStore", () => {
       status: "",
     };
 
-    createComplaintState.value = {
-      type: undefined,
-      description: "",
-      priority: undefined,
-      hostelId: undefined,
-      studentId: undefined,
-      roomId: undefined,
-    };
+    editingId.value = null;
+    originalEditState.value = null;
+
+    editComplaintState.value = baseComplaint;
+
+    createComplaintState.value = baseComplaint;
   }
 
   const handleFormError = (event: FormErrorEvent) => {
     const messages = event.errors.map(e => e.message).join(", ");
+
     toast.add({
       title: "Form Validation Error",
       description: messages,
@@ -296,7 +352,6 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     isAddResponseFormValid,
     isCreateModalOpen,
     createComplaintState,
-    isFormValid,
     editComplaintState,
     editingId,
     updateStatusAndAddResponse,

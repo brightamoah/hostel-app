@@ -27,6 +27,7 @@ export function useComplaintRowColumn(
     complaintStatusResponseState,
     isLoading,
     editComplaintState,
+    editingId,
   } = storeToRefs(complaintStore);
 
   const {
@@ -73,13 +74,18 @@ export function useComplaintRowColumn(
   const openEditComplaintModal = (complaint: Complaint) => {
     initEditSession(complaint);
     const modal = overlay.create(EditComplaintModal);
+    const close = modal.close;
 
     modal.open({
       editComplaintState: editComplaintState.value,
       isLoading,
-      editComplaint,
       handleFormError,
       clearState,
+      editComplaint: async () => {
+        await editComplaint();
+
+        if (!editingId.value) close();
+      },
     });
   };
 
@@ -135,7 +141,7 @@ export function useComplaintRowColumn(
           label: "Delete Complaint",
           icon: "i-lucide-trash-2",
           color: "error",
-          onSelect: () => {},
+          onSelect: () => { },
         },
       );
     }

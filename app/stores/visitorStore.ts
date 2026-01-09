@@ -36,7 +36,7 @@ export const useVisitorStore = defineStore("visitorStore", () => {
         title: `Visitor ${status} Successfully`,
         description: response.message,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
       await refreshNuxtData(visitorDataKey.value);
     }
@@ -72,7 +72,7 @@ export const useVisitorStore = defineStore("visitorStore", () => {
         title: `Visitor ${action} Successfully`,
         description: response.message,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
       await refreshNuxtData(visitorDataKey.value);
     }
@@ -107,7 +107,7 @@ export const useVisitorStore = defineStore("visitorStore", () => {
         title: response.message,
         description: "The visitor(s) has been deleted successfully.",
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
       await refreshNuxtData(visitorDataKey.value);
     }
@@ -154,7 +154,7 @@ export const useVisitorStore = defineStore("visitorStore", () => {
         title: response.message,
         description: "Your visitor has been registered successfully.",
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       isModalOpen.value = false;
@@ -276,7 +276,7 @@ export const useVisitorStore = defineStore("visitorStore", () => {
         title: "Visitor Updated Successfully",
         description: response.message,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       editingId.value = null;

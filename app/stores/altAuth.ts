@@ -151,7 +151,7 @@ export const useAltAuth = defineStore("altAuth", () => {
         title: "Password Reset Successful",
         description: response.message,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       errorMessage.value = null;

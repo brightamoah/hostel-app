@@ -113,7 +113,7 @@ async function submitForm(payload: FormSubmitEvent<typeof state.value>) {
       title: "Onboarding Successful",
       description: response.message || "Your profile has been completed. Welcome to the hostel app!",
       color: "success",
-      icon: "i-lucide-check-circle",
+      icon: "i-lucide-circle-check-big",
     });
     clearState();
     return router.push({ name: "student-dashboard" });

@@ -73,7 +73,7 @@ export const useAuthStore = defineStore("authStore", () => {
         title: "Signup Successful",
         description: response.message || "Please check your email for a verification link to complete registration.",
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       await navigateTo({ name: "auth-login" });
@@ -144,7 +144,7 @@ export const useAuthStore = defineStore("authStore", () => {
         title: "Login Successful",
         description: message || "Welcome back! Redirecting to your dashboard.",
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       let role = user.value?.role;

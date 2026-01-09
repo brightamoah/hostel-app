@@ -50,7 +50,7 @@ export const useUserStore = defineStore("userStore", () => {
         title: "Admin Added Successfully",
         description: response.message,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       addModalOpen.value = false;
@@ -89,7 +89,7 @@ export const useUserStore = defineStore("userStore", () => {
         title: response.message,
         description: "The user(s) has been deleted successfully.",
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
       await refreshNuxtData(userDataKey.value);
     }
@@ -123,7 +123,7 @@ export const useUserStore = defineStore("userStore", () => {
         title: "User Role Updated Successfully",
         description: response.message,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       await refreshNuxtData(userDataKey.value);
