@@ -1,16 +1,7 @@
 import { maintenanceQueries } from "~~/server/db/queries";
 
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event, {
-    message: "Unauthorized Access: Please log in to continue.",
-  });
-
-  if (user.role !== "student") {
-    throw createError({
-      statusCode: 403,
-      message: "Forbidden: This endpoint is only accessible to students.",
-    });
-  }
+  await studentSessionCheck(event);
 
   const idFromParam = Number(getRouterParam(event, "requestId"));
 

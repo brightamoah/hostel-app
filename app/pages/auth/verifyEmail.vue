@@ -36,7 +36,7 @@ onMounted(async () => {
       title: "Email Verified Successfully",
       description: response.message,
       color: "success",
-      icon: "i-lucide-check-circle",
+      icon: "i-lucide-circle-check-big",
     });
     return router.push({ name: "auth-login" });
   }

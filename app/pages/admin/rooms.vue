@@ -54,7 +54,7 @@ const cards = computed<StatsCard[]>(() => [
   {
     id: 3,
     title: "Available Rooms",
-    icon: "i-lucide-check-circle",
+    icon: "i-lucide-circle-check-big",
     color: "success",
     value: data.value?.totalAvailableRooms ?? 0,
     percentage: -3.4,

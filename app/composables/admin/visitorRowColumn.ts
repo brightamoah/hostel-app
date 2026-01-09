@@ -207,7 +207,7 @@ export function useVisitorRowColumn(
         },
         {
           label: "Approve Visitor",
-          icon: "i-lucide-check-circle",
+          icon: "i-lucide-circle-check-big",
           color: "success",
           disabled: isLoading.value,
           onSelect: () => openApproveDenyModal(visitor, "approved"),

@@ -420,7 +420,7 @@ const complaintTypeSchema
 
 const createComplaintSchema = z.object({
   hostelId: createIdSchema("Hostel"),
-  roomId: createIdSchema("Room").optional(),
+  roomId: createIdSchema("Room").optional().nullable(),
   studentId: createIdSchema("Student"),
   description: z.string()
     .nonempty("Description is required")

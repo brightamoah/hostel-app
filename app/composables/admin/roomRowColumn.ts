@@ -72,7 +72,7 @@ export function useRoomRowColumn(
           toast.add({
             title: "Copied to clipboard",
             color: "success",
-            icon: "i-lucide-check-circle",
+            icon: "i-lucide-circle-check-big",
             description: "Customer ID copied to clipboard",
           });
         },

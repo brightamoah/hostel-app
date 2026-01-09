@@ -81,7 +81,7 @@ export const useRoomStore = defineStore("roomStore", () => {
         title: response.message,
         description: "The room has been added successfully.",
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       isModalOpen.value = false;
@@ -133,7 +133,7 @@ export const useRoomStore = defineStore("roomStore", () => {
         title: response.message,
         description: "The room has been deleted successfully.",
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
       await refreshNuxtData(roomDataKey.value);
     }
@@ -167,7 +167,7 @@ export const useRoomStore = defineStore("roomStore", () => {
         title: response.message,
         description: `Room ${roomNumber} has been booked successfully.`,
         color: "success",
-        icon: "i-lucide-check-circle",
+        icon: "i-lucide-circle-check-big",
       });
 
       await refreshNuxtData();
