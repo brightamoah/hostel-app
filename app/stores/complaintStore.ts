@@ -146,17 +146,19 @@ export const useComplaintStore = defineStore("complaintStore", () => {
 
   const createComplaintState = ref<Partial<ComplaintInsert>>(baseComplaint);
 
-  const isCreateFormValid = computed(() => {
+  const validateComplaintForm = (state: Partial<ComplaintInsert>) => {
     return (
-      createComplaintState.value.type?.trim() !== ""
-      && createComplaintState.value.type !== undefined
-      && createComplaintState.value.description?.trim() !== ""
-      && createComplaintState.value.priority?.trim() !== ""
-      && createComplaintState.value.priority !== undefined
-      && createComplaintState.value.hostelId !== undefined
-      && createComplaintState.value.studentId !== undefined
+      state.type?.trim() !== ""
+      && state.type !== undefined
+      && state.description?.trim() !== ""
+      && state.priority?.trim() !== ""
+      && state.priority !== undefined
+      && state.hostelId !== undefined
+      && state.studentId !== undefined
     );
-  });
+  };
+
+  const isCreateFormValid = computed(() => validateComplaintForm(createComplaintState.value));
 
   const createComplaint = async (payload: FormSubmitEvent<CreateComplaintSchema>): Promise<void> => {
     if (!isCreateFormValid.value) return;
@@ -223,17 +225,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     editComplaintState.value = structuredClone(mappedState);
   };
 
-  const isEditFormValid = computed(() => {
-    return (
-      editComplaintState.value.type?.trim() !== ""
-      && editComplaintState.value.type !== undefined
-      && editComplaintState.value.description?.trim() !== ""
-      && editComplaintState.value.priority?.trim() !== ""
-      && editComplaintState.value.priority !== undefined
-      && editComplaintState.value.hostelId !== undefined
-      && editComplaintState.value.studentId !== undefined
-    );
-  });
+  const isEditFormValid = computed(() => validateComplaintForm(editComplaintState.value));
 
   const getPayloadForEdit = (): EditComplaint => {
     const changes: Partial<ComplaintInsert> = {};
@@ -254,13 +246,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
       };
     }
 
-    if (!editingId.value) {
-      return {
-        complaintId: -1,
-        studentId: -1,
-        data: {},
-      };
-    }
+    if (!editingId.value) throw new Error("Cannot build edit payload: editingId is null");
 
     const payload = {
       complaintId: editingId.value,
@@ -328,9 +314,9 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     editingId.value = null;
     originalEditState.value = null;
 
-    editComplaintState.value = baseComplaint;
+    editComplaintState.value = structuredClone(baseComplaint);
 
-    createComplaintState.value = baseComplaint;
+    createComplaintState.value = structuredClone(baseComplaint);
   }
 
   const handleFormError = (event: FormErrorEvent) => {

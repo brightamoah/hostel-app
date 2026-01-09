@@ -214,9 +214,28 @@ export async function complaintQueries() {
     studentId: number,
     data: Partial<ComplaintInsert>,
   ) => {
+    const allowedFields: (keyof ComplaintInsert)[] = [
+      "type",
+      "description",
+      "priority",
+      "roomId",
+    ];
+
+    const filteredData: Partial<ComplaintInsert> = {};
+    for (const field of allowedFields) {
+      if (field in data) {
+        // @ts-expect-error - Safe assignment of allowed fields
+        filteredData[field] = data[field];
+      }
+    }
+
+    if (Object.keys(filteredData).length === 0) return null;
+
+    filteredData.updatedAt = new Date();
+
     const [updatedComplaint] = await db
       .update(complaint)
-      .set({ ...data })
+      .set(filteredData)
       .where(
         and(
           eq(complaint.id, complaintId),

@@ -52,13 +52,13 @@ export default defineEventHandler(async (event) => {
       if (!existingComplaint) {
         throw createError({
           statusCode: 404,
-          message: "Complaint Not Found: Unable to find the specified complaint.",
+          message: "Complaint not found or you do not have permission to edit this complaint.",
         });
       }
 
       throw createError({
-        statusCode: 403,
-        message: "Forbidden: You do not have permission to update this complaint.",
+        statusCode: 409,
+        message: `Complaint cannot be updated in its current state: ${existingComplaint.status}`,
       });
     }
 

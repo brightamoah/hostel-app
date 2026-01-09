@@ -36,11 +36,6 @@ const formattedDate = computed(() => {
 
 const user = ref({
   name: loggedInUser.value?.name,
-  email: "HbOgM@example.com",
-  avatar: "https://github.com/benjamincanac.png",
-  role: "student",
-  plan: "pro",
-  status: "active",
 });
 
 const description = ref(
@@ -99,7 +94,7 @@ async function submitForm(payload: FormSubmitEvent<typeof state.value>) {
   if (!isFormValid.value) {
     isLoading.value = false;
     return;
-  };
+  }
 
   try {
     const response = await $apiFetch("/api/auth/onboarding", {
@@ -322,6 +317,4 @@ onMounted(() => {
   </UPageSection>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -435,7 +435,7 @@ export type CreateComplaintSchema = z.output<typeof createComplaintSchema>;
 const editComplaintSchema = z.object({
   complaintId: createIdSchema("Complaint"),
   studentId: createIdSchema("Student"),
-  data: createComplaintSchema.partial(),
+  data: createComplaintSchema.omit({ studentId: true, hostelId: true }).partial(),
 });
 
 export type EditComplaintSchema = z.output<typeof editComplaintSchema>;

@@ -38,7 +38,7 @@ onMounted(async () => {
       color: "success",
       icon: "i-lucide-circle-check-big",
     });
-    return router.push({ name: "auth-login" });
+    await router.push({ name: "auth-login" });
   }
   catch (error: any) {
     const message = error?.data?.message || "Verification failed. The link may be expired or invalid.";
