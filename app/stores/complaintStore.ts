@@ -321,7 +321,6 @@ export const useComplaintStore = defineStore("complaintStore", () => {
 
   const handleFormError = (event: FormErrorEvent) => {
     const messages = event.errors.map(e => e.message).join(", ");
-
     toast.add({
       title: "Form Validation Error",
       description: messages,
