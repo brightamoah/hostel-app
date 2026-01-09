@@ -12,7 +12,7 @@ export default defineNuxtConfig({
     "@formkit/auto-animate",
     "nuxt-tiptap-editor",
     "@nuxthub/core",
-    "nuxt-security",
+    "nuxt-csurf",
   ],
 
   $development: {
@@ -32,15 +32,6 @@ export default defineNuxtConfig({
       auth: {
         user: env.NUXT_NODEMAILER_AUTH_USER,
         pass: env.NUXT_NODEMAILER_AUTH_PASS,
-      },
-    },
-
-    security: {
-      csrf: true,
-      rateLimiter: {
-        driver: {
-          name: "lruCache",
-        },
       },
     },
   },
@@ -106,23 +97,4 @@ export default defineNuxtConfig({
     },
   },
 
-  security: {
-    csrf: true,
-    rateLimiter: {
-      driver: {
-        name: "cloudflare-kv-binding",
-        options: {
-          binding: "KV",
-        },
-      },
-    },
-    headers: {
-      contentSecurityPolicy: {
-        "img-src": ["'self'", "data:", "https:"],
-      },
-      crossOriginEmbedderPolicy: false,
-      crossOriginResourcePolicy: false,
-      crossOriginOpenerPolicy: false,
-    },
-  },
 });

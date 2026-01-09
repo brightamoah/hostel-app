@@ -146,7 +146,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
 
   const createComplaintState = ref<Partial<ComplaintInsert>>(baseComplaint);
 
-  const isCreateFormValid = computed(() => {
+  const isFormValid = computed(() => {
     return (
       createComplaintState.value.type?.trim() !== ""
       && createComplaintState.value.type !== undefined
@@ -159,7 +159,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
   });
 
   const createComplaint = async (payload: FormSubmitEvent<CreateComplaintSchema>): Promise<void> => {
-    if (!isCreateFormValid.value) return;
+    if (!isFormValid.value) return;
 
     isLoading.value = true;
 
