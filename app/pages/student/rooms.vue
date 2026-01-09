@@ -124,7 +124,7 @@ const pagination = ref({
               variant="naked"
               icon="i-lucide-door-open"
               title="No Rooms Available"
-              description="There is currently no rooms to display in this table."
+              description="There are currently no rooms to display in this table."
               size="xl"
               class="flex flex-1 justify-center items-center w-full"
             />

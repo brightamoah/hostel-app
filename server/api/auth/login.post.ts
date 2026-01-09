@@ -36,13 +36,6 @@ export default defineEventHandler(async (event) => {
 
     const { email, password, rememberMe } = body.data;
 
-    if (!email || !password) {
-      throw createError({
-        statusCode: 400,
-        message: "Email and password required",
-      });
-    }
-
     const normalizedEmail = email.trim().toLowerCase();
 
     await checkUserLockedOutByIp(ip);
@@ -59,7 +52,6 @@ export default defineEventHandler(async (event) => {
 
     await checkUserLockOutByUserId(currentUser.id, ip);
 
-    // const isValid = await verifyPassword(currentUser.password, password);
     const isValid = await verifyHashedValue(currentUser.password, password);
 
     if (!isValid) {

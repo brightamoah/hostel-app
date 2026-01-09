@@ -97,6 +97,18 @@ const pagination = ref({
   pageIndex: 0,
   pageSize: 10,
 });
+
+const hasActiveFilters = computed(() =>
+  globalFilter.value
+  || statusFilter.value.length > 0
+  || typeFilter.value.length > 0
+  || priorityFilter.value.length > 0,
+);
+
+const description = computed(() => hasActiveFilters.value
+  ? "No maintenance requests match your current filters."
+  : "There is currently no data to display in this table.",
+);
 </script>
 
 <template>
@@ -168,8 +180,8 @@ const pagination = ref({
             <UEmpty
               variant="naked"
               icon="i-heroicons-wrench-screwdriver"
-              title="No Maintenance Available"
-              description="There is currently no data to display in this table."
+              :title="hasActiveFilters ? 'No Matching Requests' : 'No Maintenance Available'"
+              :description
               size="xl"
               class="flex flex-1 justify-center items-center w-full"
             />

@@ -162,7 +162,7 @@ const { columns, getRowItems } = useVisitorRowColumn(
               variant="naked"
               icon="i-lucide-users"
               title="No Visitors Available"
-              description="There is currently no visitors to display in this table."
+              description="There are currently no visitors to display in this table."
               size="xl"
               class="flex flex-1 justify-center items-center w-full"
             />
