@@ -111,7 +111,7 @@ const {
             placeholder="Type your response here..."
             class="w-full"
             autoresize
-            :rows="4"
+            :rows="6"
             :maxrows="10"
           />
         </UFormField>
@@ -129,7 +129,7 @@ const {
         />
 
         <UButton
-          color="success"
+          color="primary"
           variant="solid"
           class="cursor-pointer"
           icon="i-lucide-send"

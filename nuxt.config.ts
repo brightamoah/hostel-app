@@ -13,6 +13,8 @@ export default defineNuxtConfig({
     "nuxt-tiptap-editor",
     "@nuxthub/core",
     "nuxt-csurf",
+    "@nuxtjs/seo",
+    "nuxt-security",
   ],
 
   $development: {
@@ -33,6 +35,20 @@ export default defineNuxtConfig({
         user: env.NUXT_NODEMAILER_AUTH_USER,
         pass: env.NUXT_NODEMAILER_AUTH_PASS,
       },
+    },
+
+    security: {
+      csrf: true,
+      rateLimiter: {
+        driver: {
+          name: "lruCache",
+        },
+      },
+    },
+
+    site: {
+      url: env.NUXT_PUBLIC_SITE_URL,
+      name: env.NUXT_EMAIL_FROM_NAME,
     },
   },
 
@@ -97,4 +113,25 @@ export default defineNuxtConfig({
     },
   },
 
+  security: {
+    csrf: true,
+    rateLimiter: {
+      driver: {
+        name: "cloudflare-kv-binding",
+        options: {
+          binding: "KV",
+        },
+      },
+    },
+    headers: {
+      contentSecurityPolicy: {
+        "img-src": ["'self'", "data:", "https:"],
+      },
+    },
+  },
+
+  site: {
+    url: env.NUXT_PUBLIC_SITE_URL,
+    name: env.NUXT_EMAIL_FROM_NAME,
+  },
 });

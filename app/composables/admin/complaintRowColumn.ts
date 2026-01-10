@@ -11,6 +11,8 @@ const ComplaintStatusResponseModal = defineAsyncComponent(() => import("~/compon
 
 const EditComplaintModal = defineAsyncComponent(() => import("~/components/complaint/edit.vue"));
 
+const FollowUpModal = defineAsyncComponent(() => import("~/components/complaint/followUp.vue"));
+
 export function useComplaintRowColumn(
   UButton: ComponentType,
   UBadge: ComponentType,
@@ -28,6 +30,7 @@ export function useComplaintRowColumn(
     isLoading,
     editComplaintState,
     editingId,
+    followUpState,
   } = storeToRefs(complaintStore);
 
   const {
@@ -35,6 +38,7 @@ export function useComplaintRowColumn(
     editComplaint,
     handleFormError,
     clearState,
+    submitFollowUp,
   } = complaintStore;
 
   const openComplaintDetailModal = (complaint: Complaint) => {
@@ -89,6 +93,25 @@ export function useComplaintRowColumn(
     });
   };
 
+  const openFollowUpModal = (complaint: Complaint) => {
+    followUpState.value.complaintId = complaint.id;
+
+    const modal = overlay.create(FollowUpModal);
+    const close = modal.close;
+
+    modal.open({
+      followUpState: followUpState.value,
+      isLoading,
+      handleFormError,
+      clearState,
+      submitFollowUp: async () => {
+        const response = await submitFollowUp();
+
+        if (response) close();
+      },
+    });
+  };
+
   const getRowItems = (row: Row<Complaint>) => {
     const complaint = row.original;
 
@@ -125,7 +148,7 @@ export function useComplaintRowColumn(
         {
           label: "Follow Up",
           icon: "i-lucide-message-circle-plus",
-          onSelect: () => openStatusResponseModal(complaint, "add-response"),
+          onSelect: () => openFollowUpModal(complaint),
         },
       );
     }

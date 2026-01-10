@@ -33,11 +33,6 @@ useSeoMeta({
   titleTemplate: "%s - Kings Hostel Management",
   title: String(error.statusCode),
 });
-
-useServerSeoMeta({
-  ogSiteName: "Kings Hostel Management",
-  twitterCard: "summary_large_image",
-});
 </script>
 
 <template>
@@ -49,7 +44,7 @@ useServerSeoMeta({
       :height="2"
     />
 
-    <AppNavbar />
+    <!-- <AppNavbar /> -->
 
     <UError :error="error" />
 

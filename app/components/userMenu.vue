@@ -160,6 +160,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
     {
       label: "Log out",
       icon: "i-lucide-log-out",
+      color: "error",
       onSelect: () => {
         // e.preventDefault();
         authStore.signout();
@@ -173,8 +174,9 @@ const items = computed<DropdownMenuItem[][]>(() => [
   <UDropdownMenu
     :items="items"
     :content="{ align: 'center', collisionPadding: 12 }"
-    :ui="{ content: collapsed ? 'w-48' : 'w-(--reka-dropdown-menu-trigger-width)',
-           item: 'cursor-pointer rounded',
+    :ui="{
+      content: 'w-full max-w-xs md:max-w-sm',
+      item: 'cursor-pointer rounded',
     }"
   >
     <UButton

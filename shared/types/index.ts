@@ -353,6 +353,8 @@ export type ComplaintStatusForm = Omit<ComplaintStatusResponseSchema, "complaint
 export type ComplaintStatus = typeof complaintStatusEnum["enumValues"][number];
 export type ComplaintActionTaken = typeof complaintActionTakenEnum["enumValues"][number];
 
+export type ComplaintFollowUp = Partial<Omit<ComplaintStatusResponseSchema, "status">>;
+
 export type AnnouncementInsert = typeof announcement.$inferInsert;
 export type Announcement = AnnouncementType;
 export type AnnouncementResponse = {
