@@ -348,7 +348,7 @@ const responseText = z
   .trim()
   .nonempty("Response Text is required")
   .min(10, "Response is too short")
-  .max(1000, "Response Text cannot exceed 1000 characters");
+  .max(400, "Response Text cannot exceed 1000 characters");
 
 const maintenanceStatusResponseSchema = z.object({
   maintenanceId: createIdSchema("Maintenance"),

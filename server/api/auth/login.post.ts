@@ -90,11 +90,13 @@ export default defineEventHandler(async (event) => {
     );
 
     let isOnboarded = false;
+    let studentId: number | undefined;
 
     if (currentUser.role === "student") {
       const existingStudent = await getOnboardedStudent(currentUser.id);
 
       isOnboarded = !!existingStudent;
+      studentId = existingStudent?.id;
     }
 
     const now = new Date();
@@ -113,6 +115,7 @@ export default defineEventHandler(async (event) => {
         updatedAt: currentUser.updatedAt,
         lastLogin: currentUser.lastLogin,
         adminData,
+        studentId,
       } as User,
       loggedInAt: now,
       expiresAt,

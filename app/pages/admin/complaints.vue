@@ -99,6 +99,18 @@ const pagination = ref({
   pageIndex: 0,
   pageSize: 10,
 });
+
+const hasActiveFilters = computed(() =>
+  globalFilter.value
+  || statusFilter.value.length > 0
+  || typeFilter.value.length > 0
+  || priorityFilter.value.length > 0,
+);
+
+const description = computed(() => hasActiveFilters.value
+  ? "No complaints match your current filters."
+  : "There is currently no data to display in this table.",
+);
 </script>
 
 <template>
@@ -164,7 +176,18 @@ const pagination = ref({
             th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
             td: 'border-b border-default',
           }"
-        />
+        >
+          <template #empty>
+            <UEmpty
+              variant="naked"
+              icon="i-lucide-message-square-warning"
+              title="No Complaints Available"
+              :description
+              size="xl"
+              class="flex flex-1 justify-center items-center w-full"
+            />
+          </template>
+        </UTable>
 
         <DashboardPagination
           v-if="tableRef && tableRef?.tableApi"

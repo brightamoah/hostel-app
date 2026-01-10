@@ -305,6 +305,55 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     }
   };
 
+  const followUpState = ref<ComplaintFollowUp>({
+    complaintId: undefined,
+    responseText: "",
+  });
+
+  const isFollowUpFormValid = computed(() => (
+    followUpState.value.responseText?.trim() !== ""
+    && followUpState.value.complaintId !== undefined
+  ));
+
+  const submitFollowUp = async () => {
+    if (!isFollowUpFormValid.value) return;
+
+    isLoading.value = true;
+
+    try {
+      const response = await $apiFetch("/api/complaint/addResponse", {
+        method: "POST",
+        body: followUpState.value,
+      });
+
+      await refreshNuxtData(complaintDataKey.value);
+
+      toast.add({
+        title: "Complaint Response Added Successfully",
+        description: response.message,
+        color: "success",
+        icon: "i-lucide-circle-check-big",
+      });
+
+      clearState();
+
+      return true;
+    }
+    catch (error) {
+      const message = (error as any)?.data?.message;
+      toast.add({
+        title: "Failed to Submit Follow Up",
+        description: message,
+        color: "error",
+        icon: "i-lucide-circle-alert",
+        duration: 8000,
+      });
+    }
+    finally {
+      isLoading.value = false;
+    }
+  };
+
   function clearState() {
     complaintStatusResponseState.value = {
       responseText: "",
@@ -317,6 +366,11 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     editComplaintState.value = structuredClone(baseComplaint);
 
     createComplaintState.value = structuredClone(baseComplaint);
+
+    followUpState.value = {
+      complaintId: undefined,
+      responseText: "",
+    };
   }
 
   const handleFormError = (event: FormErrorEvent) => {
@@ -339,6 +393,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     createComplaintState,
     editComplaintState,
     editingId,
+    followUpState,
     updateStatusAndAddResponse,
     addComplaintResponse,
     clearState,
@@ -346,6 +401,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     createComplaint,
     initEditSession,
     editComplaint,
+    submitFollowUp,
   };
 });
 

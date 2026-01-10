@@ -1,4 +1,4 @@
-import { complaintQueries, userQueries } from "~~/server/db/queries";
+import { complaintQueries } from "~~/server/db/queries";
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event, {
@@ -22,7 +22,6 @@ export default defineEventHandler(async (event) => {
     const { responseText, complaintId } = body.data;
 
     const { addComplaintResponse, getComplaintByIdNoScope } = await complaintQueries();
-    const { getAdminByUserId, getStudentByUserId } = await userQueries();
 
     const complaint = await getComplaintByIdNoScope(complaintId);
 
@@ -33,9 +32,11 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const admin = await getAdminByUserId(user.id);
+    if (user.role === "admin") {
+      const admin = user.adminData;
 
-    if (admin) {
+      if (!admin) throw createError({ statusCode: 403, message: "Admin profile missing." });
+
       if (admin.accessLevel !== "super" && admin.hostelId !== complaint.hostelId) {
         throw createError({
           statusCode: 403,
@@ -43,10 +44,10 @@ export default defineEventHandler(async (event) => {
         });
       }
     }
-    else {
-      const student = await getStudentByUserId(user.id);
+    else if (user.role === "student") {
+      if (!user.studentId) throw createError({ statusCode: 403, message: "Student Id missing." });
 
-      if (!student || student.id !== complaint.studentId) {
+      if (user.studentId !== complaint.studentId) {
         throw createError({
           statusCode: 403,
           message: "You can only respond to your own complaints.",

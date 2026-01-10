@@ -180,10 +180,14 @@ export const useAuthStore = defineStore("authStore", () => {
   };
 
   const signout = async () => {
-    await clearUserSession();
-    clearStateAndErrors();
-    clearNuxtData();
-    return navigateTo({ name: "auth-login" });
+    await navigateTo({ name: "auth-logout" });
+
+    setTimeout(async () => {
+      await clearUserSession();
+      clearStateAndErrors();
+      clearNuxtData();
+      return navigateTo({ name: "auth-login" });
+    }, 1000);
   };
 
   return {
