@@ -85,7 +85,7 @@ const {
               placeholder="Type your response here..."
               class="w-full"
               autoresize
-              :rows="4"
+              :rows="6"
               :maxrows="10"
             />
           </UFormField>

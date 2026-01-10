@@ -45,9 +45,6 @@ importers:
       nuxt-auth-utils:
         specifier: ^0.5.26
         version: 0.5.26(magicast@0.5.1)
-      nuxt-csurf:
-        specifier: 1.6.5
-        version: 1.6.5(magicast@0.5.1)
       nuxt-security:
         specifier: 2.5.0
         version: 2.5.0(magicast@0.5.1)(rollup@4.54.0)
