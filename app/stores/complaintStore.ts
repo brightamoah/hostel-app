@@ -316,6 +316,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
 
   const initFollowUpSession = (complaint: Complaint) => {
     followUpState.value.complaintId = complaint.id;
+    followUpState.value.responseText = "";
   };
 
   const isFollowUpFormValid = computed(() => (
