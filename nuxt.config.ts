@@ -4,7 +4,9 @@ import { env } from "./app/lib/env";
 export default defineNuxtConfig({
   compatibilityDate: "latest",
   modules: [
+    "nuxt-security",
     "@nuxt/eslint",
+    "@nuxtjs/seo",
     "@nuxt/image",
     "@nuxt/ui",
     "@pinia/nuxt",
@@ -12,9 +14,6 @@ export default defineNuxtConfig({
     "@formkit/auto-animate",
     "nuxt-tiptap-editor",
     "@nuxthub/core",
-    "nuxt-csurf",
-    "@nuxtjs/seo",
-    "nuxt-security",
   ],
 
   $development: {
@@ -125,7 +124,7 @@ export default defineNuxtConfig({
     },
     headers: {
       contentSecurityPolicy: {
-        "img-src": ["'self'", "data:", "https:"],
+        "img-src": ["'self'", "data:", "https://res.cloudinary.com"],
       },
     },
   },

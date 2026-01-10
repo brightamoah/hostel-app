@@ -35,6 +35,7 @@ export function useComplaintRowColumn(
 
   const {
     initEditSession,
+    initFollowUpSession,
     editComplaint,
     handleFormError,
     clearState,
@@ -94,7 +95,7 @@ export function useComplaintRowColumn(
   };
 
   const openFollowUpModal = (complaint: Complaint) => {
-    followUpState.value.complaintId = complaint.id;
+    initFollowUpSession(complaint);
 
     const modal = overlay.create(FollowUpModal);
     const close = modal.close;

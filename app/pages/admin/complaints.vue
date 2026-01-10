@@ -104,7 +104,8 @@ const hasActiveFilters = computed(() =>
   globalFilter.value
   || statusFilter.value.length > 0
   || typeFilter.value.length > 0
-  || priorityFilter.value.length > 0,
+  || priorityFilter.value.length > 0
+  || studentFilter.value.length > 0,
 );
 
 const description = computed(() => hasActiveFilters.value

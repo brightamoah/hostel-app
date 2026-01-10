@@ -182,12 +182,17 @@ export const useAuthStore = defineStore("authStore", () => {
   const signout = async () => {
     await navigateTo({ name: "auth-logout" });
 
-    setTimeout(async () => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
       await clearUserSession();
       clearStateAndErrors();
       clearNuxtData();
-      return navigateTo({ name: "auth-login" });
-    }, 1000);
+      await navigateTo({ name: "auth-login" });
+    }
+    catch (error) {
+      console.error("Failed to complete signout:", error);
+      await navigateTo({ name: "auth-login" });
+    }
   };
 
   return {

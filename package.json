@@ -26,7 +26,6 @@
     "eslint-plugin-format": "^1.1.0",
     "nuxt": "^4.2.2",
     "nuxt-auth-utils": "^0.5.26",
-    "nuxt-csurf": "1.6.5",
     "nuxt-security": "2.5.0",
     "nuxt-tiptap-editor": "^3.2.0",
     "sanitize-html": "^2.17.0",

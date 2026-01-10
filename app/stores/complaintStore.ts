@@ -55,6 +55,13 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     );
   });
 
+  const postComplaintResponse = async (payload: { complaintId: number; responseText: string }) => {
+    return await $apiFetch("/api/complaint/addResponse", {
+      method: "POST",
+      body: payload,
+    });
+  };
+
   const updateStatusAndAddResponse = async (payload: ComplaintStatusResponseSchema) => {
     if (!isUpdateFormValid.value) return;
 
@@ -112,10 +119,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     isLoading.value = true;
 
     try {
-      const response = await $apiFetch("/api/complaint/addResponse", {
-        method: "POST",
-        body: payload,
-      });
+      const response = await postComplaintResponse(payload as { complaintId: number; responseText: string });
 
       toast.add({
         title: "Complaint Response Added Successfully",
@@ -310,20 +314,24 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     responseText: "",
   });
 
+  const initFollowUpSession = (complaint: Complaint) => {
+    followUpState.value.complaintId = complaint.id;
+  };
+
   const isFollowUpFormValid = computed(() => (
     followUpState.value.responseText?.trim() !== ""
     && followUpState.value.complaintId !== undefined
   ));
 
-  const submitFollowUp = async () => {
-    if (!isFollowUpFormValid.value) return;
+  const submitFollowUp = async (): Promise<boolean> => {
+    if (!isFollowUpFormValid.value) return false;
 
     isLoading.value = true;
 
     try {
-      const response = await $apiFetch("/api/complaint/addResponse", {
-        method: "POST",
-        body: followUpState.value,
+      const response = await postComplaintResponse({
+        complaintId: followUpState.value.complaintId!,
+        responseText: followUpState.value.responseText!,
       });
 
       await refreshNuxtData(complaintDataKey.value);
@@ -348,6 +356,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
         icon: "i-lucide-circle-alert",
         duration: 8000,
       });
+      return false;
     }
     finally {
       isLoading.value = false;
@@ -394,12 +403,14 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     editComplaintState,
     editingId,
     followUpState,
+    isFollowUpFormValid,
     updateStatusAndAddResponse,
     addComplaintResponse,
     clearState,
     handleFormError,
     createComplaint,
     initEditSession,
+    initFollowUpSession,
     editComplaint,
     submitFollowUp,
   };
