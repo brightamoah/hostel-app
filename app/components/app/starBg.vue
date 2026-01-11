@@ -5,22 +5,32 @@ type Star = {
   size: number;
 };
 
-const props = withDefaults(
-  defineProps<{
-    starCount?: number;
-    color?: string;
-    size?: { min: number; max: number };
-  }>(),
-  {
-    starCount: 300,
-    color: "var(--ui-primary)",
-    speed: "normal",
-    size: () => ({
-      min: 1,
-      max: 2,
-    }),
-  },
-);
+const {
+  starCount = 300,
+  color = "var(--ui-primary)",
+  size = { min: 1, max: 2 },
+} = defineProps<{
+  starCount?: number;
+  color?: string;
+  size?: { min: number; max: number };
+}>();
+
+// const props = withDefaults(
+//   defineProps<{
+//     starCount?: number;
+//     color?: string;
+//     size?: { min: number; max: number };
+//   }>(),
+//   {
+//     starCount: 300,
+//     color: "var(--ui-primary)",
+//     speed: "normal",
+//     size: () => ({
+//       min: 1,
+//       max: 2,
+//     }),
+//   },
+// );
 
 // Generate random star positions and sizes
 function generateStars(count: number): Star[] {
@@ -28,10 +38,10 @@ function generateStars(count: number): Star[] {
     x: Math.floor(Math.random() * 2000),
     y: Math.floor(Math.random() * 2000),
     size:
-         typeof props.size === "number"
-           ? props.size
-           : Math.random() * (props.size.max - props.size.min)
-             + props.size.min,
+         typeof size === "number"
+           ? size
+           : Math.random() * (size.max - size.min)
+             + size.min,
   }));
 }
 
@@ -47,11 +57,11 @@ const stars = useState<{ slow: Star[]; normal: Star[]; fast: Star[] }>(
   "stars",
   () => {
     return {
-      slow: generateStars(Math.floor(props.starCount * speedMap.slow.ratio)),
+      slow: generateStars(Math.floor(starCount * speedMap.slow.ratio)),
       normal: generateStars(
-        Math.floor(props.starCount * speedMap.normal.ratio),
+        Math.floor(starCount * speedMap.normal.ratio),
       ),
-      fast: generateStars(Math.floor(props.starCount * speedMap.fast.ratio)),
+      fast: generateStars(Math.floor(starCount * speedMap.fast.ratio)),
     };
   },
 );

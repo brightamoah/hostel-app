@@ -60,7 +60,7 @@ const features = ref([
   },
 ]);
 
-const appConfig = useAppConfig();
+// const appConfig = useAppConfig();
 </script>
 
 <template>
@@ -76,15 +76,15 @@ const appConfig = useAppConfig();
       }"
     >
       <template #top>
-        <div class="left-1/2 absolute dark:bg-primary blur-[300px] rounded-full size-60 sm:size-80 -translate-x-1/2 -translate-y-80 transform" />
+        <!-- <div class="left-1/2 absolute dark:bg-primary blur-[300px] rounded-full size-60 sm:size-80 -translate-x-1/2 -translate-y-80 transform" /> -->
 
-        <AppStarsEffect />
+        <!-- <AppStarsEffect /> -->
 
-        <AppStarBg
-          :star-count="1500"
+        <!-- <AppStarBg
+          :star-count="2000"
           :color="appConfig.ui.colors.primary"
           :size="{ min: 1, max: 6 }"
-        />
+        /> -->
       </template>
 
       <template #links>
@@ -139,7 +139,7 @@ const appConfig = useAppConfig();
         />
       </UPageGrid>
 
-      <AppStarsEffect />
+      <!-- <AppStarsEffect /> -->
     </UPageSection>
 
     <div class="linebreak" />
