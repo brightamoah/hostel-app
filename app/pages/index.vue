@@ -85,6 +85,38 @@ const features = ref([
           :color="appConfig.ui.colors.primary"
           :size="{ min: 1, max: 6 }"
         /> -->
+
+        <div class="beams-container">
+          <!-- <AppBeams
+          :beam-width="2"
+          :beam-height="15"
+          :beam-number="12"
+          light-color="#69AEA9"
+          :speed="2"
+          :noise-intensity="1.75"
+          :scale="0.2"
+          :rotation="0"
+        /> -->
+
+          <AppAntigravity
+            class="absolute inset-0 w-full h-full"
+            :count="200"
+            :magnet-radius="10"
+            :ring-radius="10"
+            :wave-speed="0.4"
+            :wave-amplitude="1"
+            :particle-size="2"
+            :lerp-speed="0.1"
+            color="#FF9FFC"
+            :auto-animate="false"
+            :particle-variance="1"
+            :rotation-speed="0"
+            :depth-factor="1"
+            :pulse-speed="3"
+            particle-shape="capsule"
+            :field-strength="10"
+          />
+        </div>
       </template>
 
       <template #links>
@@ -151,4 +183,12 @@ const features = ref([
   </UMain>
 </template>
 
-<style></style>
+<style scoped>
+.beams-container {
+  width: 100%;
+  height: 500px;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+}
+</style>
