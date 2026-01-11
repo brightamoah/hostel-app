@@ -15,7 +15,7 @@ await refreshSession();
       <slot />
     </UMain>
 
-    <AppStarsEffect />
+    <!-- <AppStarsEffect /> -->
 
     <AppFooter />
   </UContainer>
