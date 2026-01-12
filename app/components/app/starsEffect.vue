@@ -1,10 +1,10 @@
 <template>
   <div class="top-0 -z-1 absolute inset-x-0 opacity-75 size-full pointer-events-none stars">
-    <div class="bg-transparent rounded-full size-0.5" />
+    <div class="bg-transparent rounded-full size-1" />
 
-    <div class="bg-transparent rounded-full size-0.5" />
+    <div class="bg-transparent rounded-full size-1" />
 
-    <div class="bg-transparent rounded-full size-0.5" />
+    <div class="bg-transparent rounded-full size-1" />
   </div>
 </template>
 
@@ -32,11 +32,11 @@
   mask-size: cover;
   transform: translate(-50%);
 
-  --color: #000;
+  --color: var(--ui-primary);
 }
 
 .dark .stars {
-  --color: #fff;
+  --color: var(--ui-primary);
 }
 
 .stars > div {

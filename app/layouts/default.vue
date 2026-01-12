@@ -8,17 +8,18 @@ await refreshSession();
 </script>
 
 <template>
-  <UContainer>
+  <div>
+    <SvgsLine1 class="-z-10 absolute inset-0 opacity-15 w-full h-full" />
+
     <AppNavbar />
 
     <UMain>
       <slot />
     </UMain>
-
     <!-- <AppStarsEffect /> -->
 
     <AppFooter />
-  </UContainer>
+  </div>
 </template>
 
 <style></style>

@@ -30,7 +30,7 @@ onMounted(() => {
       }"
       title="Welcome back"
       icon="i-lucide-lock"
-      @submit="login!"
+      @submit="login($event)"
     >
       <template #description>
         Don't have an account?

@@ -67,18 +67,6 @@ const userMenuItems = computed<UserMenuItem[][]>(() => {
 
 <template>
   <div>
-    <div class="-z-10 absolute opacity-0 pointer-events-none">
-      <UIcon name="i-lucide-user" />
-
-      <UIcon name="i-lucide-settings" />
-
-      <UIcon name="i-lucide-monitor" />
-
-      <UIcon name="i-lucide-graduation-cap" />
-
-      <UIcon name="i-lucide-log-out" />
-    </div>
-
     <UDropdownMenu
       v-if="user && isLoggedIn"
       arrow
