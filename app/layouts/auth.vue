@@ -2,7 +2,9 @@
 </script>
 
 <template>
-  <div class="flex justify-center items-center px-4 h-screen">
+  <div class="relative flex flex-col justify-center items-center px-4 w-full h-dvh overflow-hidden">
+    <SvgsLine1 class="-z-10 absolute inset-0 opacity-10 w-full h-full pointer-events-none" />
+
     <div class="top-8 left-8 z-10 absolute">
       <AppSpotlightButton
         aria-label="scroll to top button"
@@ -22,7 +24,7 @@
     </div>
 
     <UPageCard
-      variant="subtle"
+      variant="outline"
       class="w-full max-w-sm"
     >
       <slot />

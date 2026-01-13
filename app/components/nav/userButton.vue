@@ -8,6 +8,8 @@ const { handleSignOut, isLoggedIn, user } = defineProps<{
   handleSignOut: () => Promise<false | void | RouteLocationRaw | NavigationFailure>;
 }>();
 
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
+
 const { userInitials, userBadgeColor, avatarBgColor } = useUseUserItems();
 
 const dashboardIcon = computed(() =>
@@ -119,19 +121,19 @@ const userMenuItems = computed<UserMenuItem[][]>(() => {
     >
       <UButton
         label="Login"
-        color="neutral"
-        :to="{ name: 'auth-login' } as UserMenuItem['to']"
+        color="primary"
+        :size="isMobile ? 'sm' : 'md'"
+        :to="{ name: 'auth-login' }"
         block
-        size="sm"
       />
 
       <UButton
         label="Signup"
         color="neutral"
         variant="subtle"
-        :to="{ name: 'auth-signup' } as UserMenuItem['to']"
+        :size="isMobile ? 'sm' : 'md'"
+        :to="{ name: 'auth-signup' }"
         block
-        size="sm"
       />
     </div>
 

@@ -55,7 +55,7 @@ const features = ref([
       :description
       :ui="{
         container: 'py-8 sm:py-12 lg:py-13',
-        title: 'font-newsreader text-3xl sm:text-5xl font-semibold',
+        title: 'font-newsreader text-3xl sm:text-6xl font-semibold',
         description: 'animate-fade-in-up animation-delay-600 mt-2.5',
         links: 'animate-fade-in-up animation-delay-1000 cursor-pointer',
         footer: 'mt-5',
@@ -74,8 +74,8 @@ const features = ref([
       </template>
 
       <UColorModeImage
-        light="https://res.cloudinary.com/eves-oasis/image/upload/v1757872068/hostel-no-bg_l8uurx.png"
-        dark="/images/hostel-dark.jpeg"
+        light="https://res.cloudinary.com/eves-oasis/image/upload/v1768248515/Screenshot_20260112_195210_Chrome_hxgqws.jpg"
+        dark="https://res.cloudinary.com/eves-oasis/image/upload/v1768248510/Screenshot_20260112_195234_Chrome_f7tcdb.jpg"
         class="-mt-10 w-full"
       />
     </UPageHero>
