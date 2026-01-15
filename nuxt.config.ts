@@ -72,6 +72,9 @@ export default defineNuxtConfig({
       tasks: true,
       openAPI: true,
     },
+    scheduledTasks: {
+      "0 0 * * *": ["clearExpiredCache"],
+    },
   },
 
   hub: {

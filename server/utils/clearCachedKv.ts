@@ -1,13 +1,13 @@
 export async function cleanupExpiredKV(prefix?: string) {
   const keys = await kv.keys(prefix);
 
+  const now = Date.now();
+
   for (const key of keys) {
-    const value = await kv.get<{ expiresAt?: number }>(key);
+    const entry = await kv.get<{ expires?: number }>(key);
 
-    if (!value?.expiresAt) continue;
+    if (!entry?.expires) continue;
 
-    if (Date.now() > value.expiresAt) {
-      await kv.del(key);
-    }
+    if (entry.expires <= now) await kv.del(key);
   }
 }

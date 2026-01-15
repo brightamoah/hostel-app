@@ -6,6 +6,11 @@
   "compatibility_flags": [
     "nodejs_compat_v2"
   ],
+  "triggers": {
+    "crons": [
+      "0 0 * * *"
+    ]
+  },
   "assets": {
     "directory": "./.output/public/",
     "binding": "ASSETS"
@@ -50,7 +55,12 @@
           "id": "fcde2b26d7fd4718ba6e68ec5d596f56"
         }
       ],
-      "vars": {}
+      "vars": {},
+      "triggers": {
+        "crons": [
+          "0 0 * * *"
+        ]
+      }
     }
   }
 }
