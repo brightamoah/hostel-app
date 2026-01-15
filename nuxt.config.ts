@@ -113,6 +113,15 @@ export default defineNuxtConfig({
     },
   },
 
+  routeRules: {
+    "/api/announcement/**": {
+
+      security: {
+        xssValidator: false,
+      },
+    },
+  },
+
   security: {
     csrf: true,
     rateLimiter: {

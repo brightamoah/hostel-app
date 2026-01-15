@@ -331,59 +331,6 @@ export async function userQueries() {
     return !!existingUser;
   };
 
-  // const getUsersScoped = async (adminId: number) => {
-  //   const adminRecord = await getAdminByUserId(adminId);
-  //   if (!adminRecord) throw createError({ statusCode: 404, message: "Admin not found" });
-
-  //   let query = db
-  //     .select(userDetails)
-  //     .from(user)
-  //     .leftJoin(student, eq(student.userId, user.id))
-  //     .leftJoin(admin, eq(admin.userId, user.id))
-  //     .leftJoin(allocation, eq(allocation.studentId, student.id))
-  //     .leftJoin(room, eq(room.id, allocation.roomId))
-  //     .leftJoin(hostel, or(eq(hostel.id, admin.hostelId), eq(hostel.id, room.hostelId)))
-  //     .$dynamic();
-
-  //   // Filter for non-super admins
-  //   if (adminRecord.accessLevel !== "super") {
-  //     if (!adminRecord.hostelId) {
-  //       throw createError({
-  //         statusCode: 403,
-  //         message: "Access denied: Your admin account is not assigned to a hostel.",
-  //       });
-  //     }
-
-  //     query = query.where(eq(hostel.id, adminRecord.hostelId));
-  //   }
-
-  //   const users = await query.orderBy(user.id);
-
-  //   // If user has both admin & student roles, nullify student
-  //   const normalized = users.map((u) => {
-  //     if (u.student.allocation && u.student.allocation.id === null) u.student.allocation = null;
-
-  //     if (u.role === "admin" && u.admin?.id) return { ...u, student: null };
-
-  //     return u;
-  //   });
-
-  //   // Compute counts dynamically
-  //   const totalUsers = normalized.length;
-  //   const totalAdmins = normalized.filter(u => u.role === "admin").length;
-  //   const totalStudents = normalized.filter(u => u.role === "student").length;
-  //   const activeStudents = normalized.filter(u => u.student?.residencyStatus === "active").length;
-
-  //   return {
-  //     users: normalized,
-  //     totalUsers,
-  //     totalStudents,
-  //     totalAdmins,
-  //     activeStudents,
-  //     adminRecord,
-  //   };
-  // };
-
   const deleteUsersByIds = async (ids: number[]) => {
     if (ids.length === 0) return [];
 
@@ -548,6 +495,14 @@ export async function userQueries() {
     return userRecord;
   };
 
+  const getStudentWithRelations = async (userId: number) => {
+    const studentRecord = await db.query.student.findFirst({
+      where: eq(student.userId, userId),
+      ...studentWithRelations,
+    });
+    return studentRecord;
+  };
+
   return {
     updateUserLastLogin,
     cleanupExpiredVerificationTokens,
@@ -570,6 +525,7 @@ export async function userQueries() {
     getStudentForDashboardByUserId,
     getUsers,
     getUser,
+    getStudentWithRelations,
   };
 }
 
