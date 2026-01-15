@@ -4,7 +4,7 @@ definePageMeta({
   layout: "admin-dashboard",
 });
 
-const title = ref("Announcements");
+const title = "Announcements";
 
 const tabItems = [{
   label: "All",

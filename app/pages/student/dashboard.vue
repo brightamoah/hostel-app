@@ -158,11 +158,11 @@ const cards = computed<StatsCard[]>(() => [
           </template>
         </DashboardStatsCard>
 
-        <StudentCard />
+        <LazyStudentCard />
 
-        <div class="p-2 md:p-4">
+        <!-- <div class="p-2 md:p-4">
           hello world
-        </div>
+        </div> -->
       </template>
     </UDashboardPanel>
   </div>

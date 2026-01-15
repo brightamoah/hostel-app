@@ -74,7 +74,7 @@ const features = ref([
       </template>
 
       <UColorModeImage
-        light="https://res.cloudinary.com/eves-oasis/image/upload/v1768248515/Screenshot_20260112_195210_Chrome_hxgqws.jpg"
+        light="https://res.cloudinary.com/eves-oasis/image/upload/v1768310662/Screenshot_20260113_131446_Chrome_uenak4.jpg"
         dark="https://res.cloudinary.com/eves-oasis/image/upload/v1768248510/Screenshot_20260112_195234_Chrome_f7tcdb.jpg"
         class="-mt-10 w-full"
       />

@@ -27,7 +27,7 @@
   --highlight-pink: #5c1a3a;
   --highlight-gray: #3a3a3a;
 
-  --ui-bg: var(--ui-color-neutral-950);
+  --ui-bg: var(--ui-color-neutral-900);
 }
 
 @theme static {
