@@ -7,6 +7,11 @@ const { announcement } = defineProps<{
 
 const emit = defineEmits<{ close: [boolean] }>();
 
+const { user } = useUserSession();
+
+const isAdmin = computed(() => user.value?.role === "admin");
+// const isStudent = computed(() => user.value?.role === "student");
+
 const overlay = useOverlay();
 const EditAnnouncementModal = defineAsyncComponent(() => import("./edit.vue"));
 
@@ -62,7 +67,10 @@ function openEditModal(announcementId: number) {
         </div>
       </template>
 
-      <template #right>
+      <template
+        v-if="isAdmin"
+        #right
+      >
         <UTooltip text="Edit Announcement">
           <UButton
             icon="i-lucide-notebook-pen"
@@ -119,69 +127,7 @@ function openEditModal(announcementId: number) {
       />
     </div>
 
-    <!-- <div class="px-4 sm:px-6 pb-4 shrink-0">
-      <UCard
-        variant="subtle"
-        class="mt-auto"
-        :ui="{ header: 'flex items-center gap-1.5 text-dimmed' }"
-      >
-        <template #header>
-          <UIcon
-            name="i-lucide-reply"
-            class="size-5"
-          />
-
-          <span class="text-sm truncate">
-            Reply to {{ announcement.postedByAdmin.user.name }} ({{ announcement.postedByAdmin.user.email }})
-          </span>
-        </template>
-
-        <form @submit.prevent="onSubmit">
-          <UTextarea
-            v-model="reply"
-            color="neutral"
-            variant="none"
-            required
-            autoresize
-            placeholder="Write your reply..."
-            :rows="4"
-            :disabled="loading"
-            class="w-full"
-            :ui="{ base: 'p-0 resize-none' }"
-          />
-
-          <div class="flex justify-between items-center">
-            <UTooltip text="Attach file">
-              <UButton
-                color="neutral"
-                variant="ghost"
-                icon="i-lucide-paperclip"
-                class="cursor-pointer"
-              />
-            </UTooltip>
-
-            <div class="flex justify-end items-center gap-2">
-              <UButton
-                color="neutral"
-                variant="ghost"
-                label="Save draft"
-              />
-
-              <UButton
-                type="submit"
-                color="neutral"
-                :loading="loading"
-                label="Send"
-                icon="i-lucide-send"
-                class="cursor-pointer"
-              />
-            </div>
-          </div>
-        </form>
-      </UCard>
-    </div> -->
-
-    <AnnouncementCreateNew />
+    <AnnouncementCreateNew v-if="isAdmin" />
   </UDashboardPanel>
 </template>
 

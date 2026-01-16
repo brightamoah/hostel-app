@@ -1,4 +1,5 @@
 import type { Admin, AnnouncementInsert } from "~~/shared/types";
+import type { sql } from "drizzle-orm";
 
 import { useDB } from "~~/server/utils/db";
 import { and, desc, eq, or } from "drizzle-orm";
@@ -33,6 +34,9 @@ const announcementWithRelations = {
   },
 } as const;
 
+type SQl = typeof sql;
+type AnnouncementColumns = typeof announcement._.columns;
+
 export async function announcementQueries() {
   const { db } = useDB();
 
@@ -44,40 +48,57 @@ export async function announcementQueries() {
     return newAnnouncement;
   };
 
-  const editAnnouncement = async (announcementId: number, admin: Admin, data: Partial<AnnouncementInsert>, resetReadStatus = false) => {
+  const editAnnouncement = async (
+    announcementId: number,
+    admin: Admin,
+    data: Partial<AnnouncementInsert>,
+    resetReadStatus = false,
+  ) => {
     const valuesToUpdate = {
       ...data,
       updatedAt: new Date(),
     };
 
-    if (resetReadStatus) valuesToUpdate.isRead = false;
-
-    if (admin.accessLevel === "super") {
-      const [updatedAnnouncement] = await db
-        .update(announcement)
-        .set(valuesToUpdate)
-        .where(eq(announcement.id, announcementId))
-        .returning();
-      return updatedAnnouncement;
-    }
+    const whereClause = admin.accessLevel === "super"
+      ? eq(announcement.id, announcementId)
+      : and(
+          eq(announcement.id, announcementId),
+          eq(announcement.postedBy, admin.id),
+        );
 
     const [updatedAnnouncement] = await db
       .update(announcement)
       .set(valuesToUpdate)
-      .where(and(
-        eq(announcement.id, announcementId),
-        eq(announcement.postedBy, admin.id),
-      ))
+      .where(whereClause)
       .returning();
+
+    if (updatedAnnouncement && resetReadStatus) {
+      await db
+        .delete(announcementReads)
+        .where(eq(announcementReads.announcementId, announcementId));
+    }
+
     return updatedAnnouncement;
   };
 
-  const getAllAnnouncementsForAdmin = async (admin: Admin) => {
+  const getAllAnnouncementsForAdmin = async (admin: Admin, userId: number) => {
+    const queryOptions = {
+      ...announcementWithRelations,
+      orderBy: desc(announcement.postedAt),
+      extras: (table: AnnouncementColumns, { sql }: { sql: SQl }) => ({
+        isRead: sql<boolean>`EXISTS (
+        SELECT 1 FROM ${announcementReads} ar
+        WHERE ar.announcement_id = ${table.id}
+        AND ar.user_id = ${userId}
+      )`.as("is_read"),
+      }),
+    };
+
     if (admin.accessLevel === "super") {
       return await db
         .query
         .announcement
-        .findMany(announcementWithRelations);
+        .findMany(queryOptions);
     }
 
     if (!admin.hostelId) return [];
@@ -86,30 +107,50 @@ export async function announcementQueries() {
       .query
       .announcement
       .findMany({
-        ...announcementWithRelations,
+        ...queryOptions,
         where: eq(announcement.postedBy, admin.id),
       });
   };
 
-  const getAnnouncementById = async (announcementId: number) => {
+  const getAnnouncementById = async (announcementId: number, userId: number) => {
     return await db
       .query
       .announcement
       .findFirst({
         ...announcementWithRelations,
         where: eq(announcement.id, announcementId),
+        extras: (table, { sql }) => ({
+          isRead: sql<boolean>`EXISTS (
+        SELECT 1 FROM ${announcementReads} ar
+        WHERE ar.announcement_id = ${table.id}
+        AND ar.user_id = ${userId}
+      )`.as("is_read"),
+        }),
       });
   };
 
-  const updateAnnouncementReadStatus = async (announcementId: number, isRead: boolean) => {
-    return await db
-      .update(announcement)
-      .set({
-        isRead,
-        updatedAt: new Date(),
-      })
-      .where(eq(announcement.id, announcementId))
-      .returning();
+  const updateAnnouncementReadStatus = async (
+    announcementId: number,
+    userId: number,
+    isRead: boolean,
+  ) => {
+    if (isRead) {
+      await db
+        .insert(announcementReads)
+        .values({
+          announcementId,
+          userId,
+        })
+        .onConflictDoNothing();
+    }
+    else {
+      await db
+        .delete(announcementReads)
+        .where(and(
+          eq(announcementReads.announcementId, announcementId),
+          eq(announcementReads.userId, userId),
+        ));
+    }
   };
 
   const getAllAnnouncementForStudent = async (
@@ -136,22 +177,19 @@ export async function announcementQueries() {
     }
 
     const result = await db.query.announcement.findMany({
-      with: {
-        ...announcementWithRelations.with,
-        reads: {
-          where: eq(announcementReads.userId, userId),
-          limit: 1,
-          columns: { readId: true },
-        },
-      },
+      ...announcementWithRelations,
       where: or(...audienceFilters),
       orderBy: desc(announcement.postedAt),
+      extras: (table, { sql }) => ({
+        isRead: sql<boolean>`EXISTS (
+        SELECT 1 FROM ${announcementReads} ar
+        WHERE ar.announcement_id = ${table.id}
+        AND ar.user_id = ${userId}
+      )`.as("is_read"),
+      }),
     });
 
-    return result.map(announcement => ({
-      ...announcement,
-      isRead: announcement.reads.length > 0,
-    }));
+    return result;
   };
 
   return {

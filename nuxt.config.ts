@@ -45,6 +45,14 @@ export default defineNuxtConfig({
       },
     },
 
+    routeRules: {
+      "/_nitro/**": {
+        security: {
+          csrf: false,
+        },
+      },
+    },
+
     site: {
       url: env.NUXT_PUBLIC_SITE_URL,
       name: env.NUXT_EMAIL_FROM_NAME,
@@ -71,6 +79,9 @@ export default defineNuxtConfig({
     experimental: {
       tasks: true,
       openAPI: true,
+    },
+    scheduledTasks: {
+      "0 0 * * *": ["clearExpiredCache"],
     },
   },
 
@@ -115,9 +126,13 @@ export default defineNuxtConfig({
 
   routeRules: {
     "/api/announcement/**": {
-
       security: {
         xssValidator: false,
+      },
+    },
+    "/_nitro/**": {
+      security: {
+        csrf: false,
       },
     },
   },

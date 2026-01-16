@@ -1,7 +1,7 @@
 import { announcementQueries } from "~~/server/db/queries";
 
 export default defineEventHandler(async (event) => {
-  await requireUserSession(event, {
+  const { user } = await requireUserSession(event, {
     message: "Unauthorized Access: Please log in to continue.",
   });
 
@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
     if (!id || Number.isNaN(id)) {
       throw createError({
         statusCode: 400,
-        message: "Missing or invalid announcement ID.",
+        message: "Invalid announcement ID.",
       });
     }
 
@@ -30,17 +30,11 @@ export default defineEventHandler(async (event) => {
 
     const { updateAnnouncementReadStatus } = await announcementQueries();
 
-    const [updatedAnnouncement] = await updateAnnouncementReadStatus(
+    await updateAnnouncementReadStatus(
       id,
+      user.id,
       action === "read",
     );
-
-    if (!updatedAnnouncement) {
-      throw createError({
-        statusCode: 404,
-        message: `Announcement with ID ${id} not found.`,
-      });
-    }
 
     return {
       success: true,

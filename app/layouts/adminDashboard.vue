@@ -14,66 +14,50 @@ const links = computed(() => [[
     label: "Dashboard",
     icon: "i-lucide-house",
     to: { name: "admin-dashboard" },
-    onSelect: () => {
-      open.value = false;
-    },
+    onSelect: () => open.value = false,
   },
   {
     label: "Rooms",
     icon: "i-lucide-building-2",
     to: { name: "admin-rooms" },
-    onSelect: () => {
-      open.value = false;
-    },
+    onSelect: () => open.value = false,
   },
   {
     label: "Users",
     icon: "i-lucide-user",
     to: { name: "admin-users" },
-    onSelect: () => {
-      open.value = false;
-    },
+    onSelect: () => open.value = false,
   },
   {
     label: "Visitors",
     icon: "i-lucide-users",
     to: { name: "admin-visitors" },
-    onSelect: () => {
-      open.value = false;
-    },
+    onSelect: () => open.value = false,
   },
   {
     label: "Maintenance",
     icon: "i-heroicons-wrench-screwdriver",
     to: { name: "admin-maintenance" },
-    onSelect: () => {
-      open.value = false;
-    },
+    onSelect: () => open.value = false,
   },
   {
     label: "Complaints",
     icon: "i-lucide-message-square-warning",
     to: { name: "admin-complaints" },
-    onSelect: () => {
-      open.value = false;
-    },
+    onSelect: () => open.value = false,
   },
   {
     label: "Announcements",
     icon: "i-lucide-megaphone",
     to: { name: "admin-announcements" },
     badge: unreadAnnouncementCount.value,
-    onSelect: () => {
-      open.value = false;
-    },
+    onSelect: () => open.value = false,
   },
   {
     label: "Analytics",
     icon: "i-lucide-chart-no-axes-combined",
     to: { name: "admin-analytics" },
-    onSelect: () => {
-      open.value = false;
-    },
+    onSelect: () => open.value = false,
   },
   // {
   //   label: "Settings",

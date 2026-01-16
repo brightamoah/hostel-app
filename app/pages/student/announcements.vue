@@ -13,21 +13,35 @@ const tabItems = [{
   value: "unread",
 }];
 
-const selectedTab = ref<string>("all");
+const {
+  status,
+  selectedTab,
+  filteredAnnouncements,
+  selectedAnnouncement,
+  refresh,
+} = useAnnouncementData();
 
-const filteredAnnouncements = computed(() => {
-  // Placeholder logic for filtering announcements
-  // Replace with actual data fetching and filtering logic
-  const allAnnouncements = [
-    { id: 1, title: "Announcement 1", read: false },
-    { id: 2, title: "Announcement 2", read: true },
-    { id: 3, title: "Announcement 3", read: false },
-  ];
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
-  if (selectedTab.value === "unread") {
-    return allAnnouncements.filter(announcement => !announcement.read);
-  }
-  return allAnnouncements;
+const isLoading = ref<boolean>(false);
+
+async function handleRefresh() {
+  isLoading.value = true;
+
+  await refresh().finally(() => {
+    isLoading.value = false;
+  });
+}
+
+const isAnnouncementPanelOpen = computed({
+  get: () => !!selectedAnnouncement.value,
+  set: (val: boolean) => {
+    if (!val) selectedAnnouncement.value = null;
+  },
+});
+
+watch(filteredAnnouncements, () => {
+  if (!filteredAnnouncements.value.find(announcement => announcement.id === selectedAnnouncement.value?.id)) selectedAnnouncement.value = null;
 });
 </script>
 
@@ -69,7 +83,69 @@ const filteredAnnouncements = computed(() => {
           </template>
         </UDashboardNavbar>
       </template>
+
+      <template #body>
+        <UEmpty
+          v-if="status === 'pending' || status === 'error' || filteredAnnouncements.length === 0"
+          class="flex flex-1 justify-center items-center"
+          variant="naked"
+          icon="i-lucide-megaphone"
+          title="No announcements"
+          description="You're all caught up. New announcements will appear here."
+          :size="isMobile ? 'md' : 'lg'"
+          :actions="[
+            {
+              icon: 'i-lucide-loader',
+              label: 'Refresh',
+              color: 'primary',
+              variant: 'subtle',
+              class: 'cursor-pointer',
+              loading: isLoading || status === 'pending',
+              onClick: handleRefresh,
+            },
+          ]"
+        />
+
+        <AnnouncementList
+          v-else
+          v-model="selectedAnnouncement"
+          :announcements="filteredAnnouncements"
+        />
+      </template>
     </UDashboardPanel>
+
+    <AnnouncementDetail
+      v-if="selectedAnnouncement"
+      :announcement="selectedAnnouncement"
+      @close="selectedAnnouncement = null"
+    />
+
+    <div
+      v-else
+      class="hidden lg:flex flex-1 justify-center items-center"
+    >
+      <UIcon
+        name="i-lucide-inbox"
+        class="size-32 text-dimmed"
+      />
+    </div>
+
+    <ClientOnly>
+      <USlideover
+        v-if="isMobile"
+        v-model:open="isAnnouncementPanelOpen"
+        title="Announcement Detail"
+        description="View the details of the selected announcement."
+      >
+        <template #content>
+          <AnnouncementDetail
+            v-if="selectedAnnouncement"
+            :announcement="selectedAnnouncement"
+            @close="selectedAnnouncement = null"
+          />
+        </template>
+      </USlideover>
+    </ClientOnly>
   </div>
 </template>
 
