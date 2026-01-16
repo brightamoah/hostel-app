@@ -192,6 +192,48 @@ export async function announcementQueries() {
     return result;
   };
 
+  const getAllAnnouncementForStudent = async (
+    userId: number,
+    hostelId: number | null | undefined,
+    roomId: number | null | undefined,
+  ) => {
+    const audienceFilters = [
+      eq(announcement.targetAudience, "all"),
+      eq(announcement.targetAudience, "students"),
+      and(eq(announcement.targetAudience, "user"), eq(announcement.targetUserId, userId)),
+    ];
+
+    if (hostelId) {
+      audienceFilters.push(
+        and(eq(announcement.targetAudience, "hostel"), eq(announcement.targetHostelId, hostelId)),
+      );
+    }
+
+    if (roomId) {
+      audienceFilters.push(
+        and(eq(announcement.targetAudience, "room"), eq(announcement.targetRoomId, roomId)),
+      );
+    }
+
+    const result = await db.query.announcement.findMany({
+      with: {
+        ...announcementWithRelations.with,
+        reads: {
+          where: eq(announcementReads.userId, userId),
+          limit: 1,
+          columns: { readId: true },
+        },
+      },
+      where: or(...audienceFilters),
+      orderBy: desc(announcement.postedAt),
+    });
+
+    return result.map(announcement => ({
+      ...announcement,
+      isRead: announcement.reads.length > 0,
+    }));
+  };
+
   return {
     createAnnouncement,
     getAllAnnouncementsForAdmin,
