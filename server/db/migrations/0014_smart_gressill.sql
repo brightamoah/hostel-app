@@ -1,0 +1,1 @@
+ALTER TABLE "announcement" DROP COLUMN "is_read";

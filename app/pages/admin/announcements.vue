@@ -90,7 +90,7 @@ watch(filteredAnnouncements, () => {
           v-if="status === 'pending' || status === 'error' || filteredAnnouncements.length === 0"
           class="flex flex-1 justify-center items-center"
           variant="naked"
-          icon="i-lucide-bell"
+          icon="i-lucide-megaphone"
           title="No announcements"
           description="You're all caught up. New announcements will appear here."
           :actions="[
@@ -99,6 +99,7 @@ watch(filteredAnnouncements, () => {
               label: 'Refresh',
               color: 'neutral',
               variant: 'subtle',
+              class: 'cursor-pointer',
               loading: isLoading || status === 'pending',
               onClick: handleRefresh,
             },

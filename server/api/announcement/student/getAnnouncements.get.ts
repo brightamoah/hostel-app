@@ -19,11 +19,15 @@ export default defineEventHandler(async (event) => {
     const hostelId = studentMakingRequest?.allocation?.room?.hostel?.id;
     const roomId = studentMakingRequest?.allocation?.room?.id;
 
-    return await getAllAnnouncementForStudent(
+    const announcements = await getAllAnnouncementForStudent(
       userId,
       hostelId,
       roomId,
     );
+
+    return {
+      announcements,
+    };
   }
   catch (error) {
     if (error && typeof error === "object" && "statusCode" in error) throw error;

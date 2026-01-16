@@ -5,65 +5,47 @@ const toast = useToast();
 
 const open = ref(false);
 
-// const {user} = useUserSession();
+const { refreshSession } = useAuthStore();
 
-const links = [[
+const { unreadAnnouncementCount } = useAnnouncementData();
+
+const links = computed(() => [[
   {
     label: "Dashboard",
     icon: "i-lucide-house",
     to: { name: "student-dashboard" },
-    onSelect: () => {
-      open.value = false;
-    },
+    onSelect: () => open.value = false,
   },
   {
     label: "Rooms",
     icon: "i-lucide-building-2",
     to: { name: "student-rooms" },
-    onSelect: () => {
-      open.value = false;
-    },
+    onSelect: () => open.value = false,
   },
-  // {
-  //   label: "Users",
-  //   icon: "i-lucide-user",
-  //   to: { name: "admin-users" },
-  //   onSelect: () => {
-  //     open.value = false;
-  //   },
-  // },
   {
     label: "Visitors",
     icon: "i-lucide-users",
     to: { name: "student-visitors" },
-    onSelect: () => {
-      open.value = false;
-    },
+    onSelect: () => open.value = false,
   },
   {
     label: "Maintenance",
     icon: "i-heroicons-wrench-screwdriver",
     to: { name: "student-maintenance" },
-    onSelect: () => {
-      open.value = false;
-    },
+    onSelect: () => open.value = false,
   },
   {
     label: "Complaints",
     icon: "i-lucide-message-square-warning",
     to: { name: "student-complaints" },
-    onSelect: () => {
-      open.value = false;
-    },
+    onSelect: () => open.value = false,
   },
   {
     label: "Announcements",
     icon: "i-lucide-megaphone",
     to: { name: "student-announcements" },
-    badge: "4",
-    onSelect: () => {
-      open.value = false;
-    },
+    badge: unreadAnnouncementCount.value,
+    onSelect: () => open.value = false,
   },
   // {
   //   label: "Settings",
@@ -98,12 +80,12 @@ const links = [[
   //     },
   //   }],
   // },
-]] satisfies NavigationMenuItem[][];
+]] satisfies NavigationMenuItem[][]);
 
 const groups = computed(() => [{
   id: "links",
   label: "Go to",
-  items: links.flat(),
+  items: links.value.flat(),
 }, {
   id: "code",
   label: "Code",
@@ -117,6 +99,8 @@ const groups = computed(() => [{
 }]);
 
 onMounted(async () => {
+  await refreshSession();
+
   const cookie = useCookie("cookie-consent");
   if (cookie.value === "accepted") return;
 

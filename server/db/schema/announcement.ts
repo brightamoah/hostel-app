@@ -31,7 +31,6 @@ export const announcement = pgTable("announcement", t => ({
   targetHostelId: t.integer().references(() => hostel.id, { onDelete: "cascade" }),
   targetRoomId: t.integer().references(() => room.id, { onDelete: "cascade" }),
   targetUserId: t.integer().references(() => user.id, { onDelete: "cascade" }),
-  isRead: t.boolean().default(false).notNull(),
   updatedAt: t.timestamp()
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())

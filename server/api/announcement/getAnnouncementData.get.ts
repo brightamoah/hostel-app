@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const announcements = await getAllAnnouncementsForAdmin(adminMakingRequest);
+    const announcements = await getAllAnnouncementsForAdmin(adminMakingRequest, userId);
 
     if (!announcements?.length) return [];
 
