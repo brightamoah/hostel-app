@@ -8,7 +8,7 @@ export function useAnnouncementTrigger(data: Ref<AnnouncementResponse | null>, u
   const selectedTab = useState<string>(`announcement-tab-${user.value?.id}`, () => "all");
   const selectedAnnouncement = useState<Announcement | null>(`announcement-selected-${user.value?.id}`, () => null);
 
-  const processingIds = new Set<number>();
+  const processingIds = useState<Set<number>>("announcementProcessingIds", () => new Set<number>());
 
   const announcements = computed<Announcement[]>(() => {
     // eslint-disable-next-line ts/no-unused-expressions
@@ -44,11 +44,11 @@ export function useAnnouncementTrigger(data: Ref<AnnouncementResponse | null>, u
 
     const shouldBeRead = actionToTake.action === "read";
 
-    if (announcement.isRead === shouldBeRead || processingIds.has(announcementId)) return;
+    if (announcement.isRead === shouldBeRead || processingIds.value.has(announcementId)) return;
 
     const previousState = announcement.isRead;
     announcement.isRead = shouldBeRead;
-    processingIds.add(announcementId);
+    processingIds.value.add(announcementId);
 
     updateTrigger.value++;
 
@@ -65,7 +65,7 @@ export function useAnnouncementTrigger(data: Ref<AnnouncementResponse | null>, u
       console.error(`Failed to mark announcement ${announcementId} as ${actionToTake.action}`, error);
     }
     finally {
-      processingIds.delete(announcementId);
+      processingIds.value.delete(announcementId);
     }
   };
 

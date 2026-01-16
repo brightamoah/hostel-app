@@ -8,7 +8,7 @@ export function useAnnouncementData() {
     ? "/api/announcement/getAnnouncementData"
     : "/api/announcement/student/getAnnouncements");
 
-  const { data, status, error, refresh } = useFetch<AnnouncementResponse>(url.value, {
+  const { data, status, error, refresh } = useFetch<AnnouncementResponse>(url, {
     key: announcementKey,
     lazy: true,
     default: () => ({
