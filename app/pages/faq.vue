@@ -4,7 +4,7 @@
 
 <template>
   <div>
-    <AppFaq class="-mt-[5rem]" />
+    <AppFaq class="md:-mt-20" />
   </div>
 </template>
 

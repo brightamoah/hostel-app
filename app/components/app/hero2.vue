@@ -47,9 +47,10 @@ const features = ref([
 </script>
 
 <template>
-  <div class="relative flex flex-col items-center space-y-4 bg-transparent mx-auto mt-2 w-full h-full overflow-hidden">
-    <!-- <SvgsLine1 class="-z-10 absolute inset-0 opacity-15 w-full h-full text-primary" /> -->
-
+  <div
+    id="home"
+    class="relative flex flex-col items-center space-y-4 bg-transparent mx-auto mt-2 w-full h-full overflow-hidden"
+  >
     <UPageHero
       title="Transform Your Hostel Management Experience"
       :description
@@ -80,10 +81,12 @@ const features = ref([
       />
     </UPageHero>
 
+    <div class="linebreak" />
+
     <UPageSection
+      id="features"
       title="Everything you need for efficient hostel administration"
       description="Our comprehensive hostel management system streamlines operations for both administrators and residents."
-      class="-mt-5 md:-mt-40"
       :ui="{
         title: 'font-newsreader animate-fade-in-up capitalize text-2xl md:text-3xl lg:text-4xl',
         description: 'animate-fade-in-up animation-delay-600 md:-mt-0.5',
@@ -91,8 +94,6 @@ const features = ref([
     >
       <template #headline>
         <div class="text-center animate-fade-in-up animation-delay-1600">
-          <div class="mb-6 linebreak" />
-
           <UBadge
             variant="subtle"
             class="justify-center items-center"
@@ -116,10 +117,11 @@ const features = ref([
 
     <div class="linebreak" />
 
-    <AppFaq
-      id="faq"
-      class="md:-mt-20"
-    />
+    <AppFaq id="faq" />
+
+    <div class="linebreak" />
+
+    <AppContactUs id="contact" />
   </div>
 </template>
 

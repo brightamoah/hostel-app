@@ -35,7 +35,7 @@ const faqItems = ref<AccordionItem[]>([
     title="Frequently Asked Questions"
     description="Browse through these FAQs to find answers to commonly asked questions about our hostel management system."
     :ui="{
-      title: 'font-newsreader animate-fade-in-up capitalize text-2xl md:text-3xl lg:text-4xl italics',
+      title: 'font-newsreader animate-fade-in-up capitalize italics',
       description: 'animate-fade-in-up animation-delay-600 -mt-0.5',
     }"
   >
