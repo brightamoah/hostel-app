@@ -9,7 +9,7 @@ await refreshSession();
 
 <template>
   <div>
-    <SvgsLine1 class="-z-10 absolute inset-0 opacity-15 w-full h-full" />
+    <SvgsLine1 class="-z-10 absolute inset-0 opacity-15 w-full h-full pointer-events-none" />
 
     <AppNavbar />
 

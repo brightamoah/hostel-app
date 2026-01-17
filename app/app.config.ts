@@ -7,15 +7,12 @@ export default defineAppConfig({
     icons: {
       loading: "i-lucide-loader",
     },
-    // modal: {
-    //   variants: {
-    //     fullscreen: {
-    //       false: {
-    //         content: "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-4xl max-h-[90vh] rounded-lg shadow-lg ring ring-default overflow-hidden",
-    //       },
-    //     },
-    //   },
-    // },
+    pageSection: {
+      slots: {
+        container: "py-8 sm:py-12 lg:py-14",
+        title: "text-2xl md:text-3xl lg:text-4xl font-newsreader",
+      },
+    },
   },
   profile: {
     name: "Kings Hostel Management",

@@ -47,7 +47,11 @@ const { y } = useWindowScroll();
     }"
   >
     <section class="flex items-center gap-2">
-      <NavMobileToggle />
+      <NavMobileToggle
+        :items
+        :is-logged-in
+        :user
+      />
 
       <NuxtLink
         :to="{ name: 'index' }"

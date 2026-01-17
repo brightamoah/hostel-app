@@ -15,7 +15,7 @@ import type { admin, allocation, announcement, complaint, complaintActionTakenEn
 import type { InferSelectModel } from "drizzle-orm";
 import type { randomUUID } from "node:crypto";
 import type { ComputedOptions, ConcreteComponent, MethodOptions, Ref, ShallowRef, ShallowUnwrapRef } from "vue";
-import type { RouteLocationRaw } from "vue-router";
+import type { RouteLocationRaw, RouteQueryAndHash } from "vue-router";
 
 import type { ComplaintStatusResponseSchema, MaintenanceStatusResponseSchema, RegisterVisitorSchema } from "../utils/schema";
 
@@ -96,7 +96,7 @@ export type AuthFormField = {
 
 export type NavItem = {
   label: string;
-  to: RouteLocationRaw;
+  to: RouteLocationRaw & RouteQueryAndHash;
   icon: string;
 };
 
