@@ -147,7 +147,9 @@
   },
   "tailwindCSS.classAttributes": [
     "class",
-    "ui"
+    "ui",
+    "active-class",
+    "inactive-class"
   ],
   "tailwindCSS.experimental.classRegex": [
     [

@@ -10,7 +10,7 @@ export default defineAppConfig({
     pageSection: {
       slots: {
         container: "py-8 sm:py-12 lg:py-14",
-        title: "text-2xl md:text-3xl lg:text-4xl font-newsreader",
+        title: "text-2xl md:text-3xl lg:text-4xl",
       },
     },
   },

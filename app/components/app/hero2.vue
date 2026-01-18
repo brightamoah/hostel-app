@@ -1,14 +1,4 @@
 <script setup lang="ts">
-const isMobile = inject("isMobile") as ComputedRef<boolean>;
-
-const description = computed(() => {
-  return isMobile.value
-    ? `Seamless Hostel Management for Everyone.
-Easily book rooms, manage tenants, and track payments all in one place.`
-    : `Seamless Hostel Management for Everyone.
-Easily book rooms, manage tenants, and track payments. Whether you're a resident or an admin, our system keeps everything organized and hassle-free!`;
-});
-
 const features = ref([
   {
     icon: "i-lucide-bed",
@@ -53,7 +43,6 @@ const features = ref([
   >
     <UPageHero
       title="Transform Your Hostel Management Experience"
-      :description
       :ui="{
         container: 'py-8 sm:py-12 lg:py-13',
         title: 'font-newsreader text-3xl sm:text-6xl font-semibold',
@@ -62,6 +51,16 @@ const features = ref([
         footer: 'mt-5',
       }"
     >
+      <template #description>
+        <span class="hidden md:inline">
+          Seamless Hostel Management for Everyone. Easily book rooms, manage tenants, and track payments. Whether you're a resident or an admin, our system keeps everything organized and hassle-free!
+        </span>
+
+        <span class="md:hidden inline">
+          Seamless Hostel Management for Everyone. Easily book rooms, manage tenants, and track payments all in one place.
+        </span>
+      </template>
+
       <template #links>
         <UButton
           label="Get Started"
@@ -98,7 +97,7 @@ const features = ref([
             variant="subtle"
             class="justify-center items-center"
           >
-            Hostel Management Features
+            Features
           </UBadge>
         </div>
       </template>
