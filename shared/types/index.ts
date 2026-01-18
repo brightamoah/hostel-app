@@ -98,6 +98,7 @@ export type NavItem = {
   label: string;
   to: RouteLocationRaw & RouteQueryAndHash;
   icon: string;
+  id: string;
 };
 
 export type Allocation = typeof allocation.$inferSelect;
