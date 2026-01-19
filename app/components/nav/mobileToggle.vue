@@ -20,7 +20,7 @@ const navItems = computed(() =>
       ...item,
       active: isActive,
       onSelect: async () => {
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise(resolve => setTimeout(resolve, 350));
         isMobileMenuOpen.value = false;
       },
     };
