@@ -31,7 +31,10 @@
   "indentRainbow.indentSetter": {},
   "indentRainbow.updateDelay": 10,
   "indentRainbow.colorOnWhiteSpaceOnly": false,
-  "indentRainbow.ignoreErrorLanguages": ["*", "markdown"],
+  "indentRainbow.ignoreErrorLanguages": [
+    "*",
+    "markdown"
+  ],
   // Disable the default formatter, use eslint instead
   "prettier.enable": false,
   "editor.formatOnSave": false,
@@ -157,5 +160,20 @@
       "(?:'|\"|`)([^']*)(?:'|\"|`)",
       "(['\"`])([^\"'`]*?)\\1"
     ]
-  ]
+  ],
+  "editor.semanticHighlighting.enabled": true,
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": [
+          // "entity.name.tag",
+          "entity.name.tag.custom",
+          "support.class.component"
+        ],
+        "settings": {
+          "foreground": "#4EC9B0"
+        }
+      }
+    ]
+  }
 }
