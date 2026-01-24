@@ -1,3 +1,5 @@
+import { kv } from "@nuxthub/kv";
+
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event, {
     message: "Unauthorized, please log in to access announcement drafts.",

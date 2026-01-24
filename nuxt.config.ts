@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     "nuxt-auth-utils",
     "@formkit/auto-animate",
     "nuxt-tiptap-editor",
+    "nitro-cloudflare-dev",
     "@nuxthub/core",
   ],
 
@@ -68,10 +69,24 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
 
   nitro: {
-    preset: "cloudflare_module",
+    preset: "cloudflare-module",
     cloudflare: {
       deployConfig: true,
       nodeCompat: true,
+      wrangler: {
+        kv_namespaces: [
+          {
+            binding: "KV",
+            id: env.NUXT_KV_NAMESPACE_ID || "placeholder-local-kv",
+            preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID || "placeholder-local-kv",
+          },
+          {
+            binding: "CACHE",
+            id: env.NUXT_KV_NAMESPACE_ID || "placeholder-local-cache",
+            preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID || "placeholder-local-cache",
+          },
+        ],
+      },
     },
     rollupConfig: {
       external: ["cloudflare:sockets"],

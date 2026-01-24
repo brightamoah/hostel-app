@@ -86,7 +86,7 @@ watch(filteredAnnouncements, () => {
       </template>
 
       <template #body>
-        <UEmpty
+        <LazyUEmpty
           v-if="status === 'pending' || status === 'error' || filteredAnnouncements.length === 0"
           class="flex flex-1 justify-center items-center"
           variant="naked"
@@ -112,11 +112,11 @@ watch(filteredAnnouncements, () => {
           :announcements="filteredAnnouncements"
         />
 
-        <AnnouncementCreateNew v-if="!selectedAnnouncement" />
+        <LazyAnnouncementCreateNew v-if="!selectedAnnouncement" />
       </template>
     </UDashboardPanel>
 
-    <AnnouncementDetail
+    <LazyAnnouncementDetail
       v-if="selectedAnnouncement"
       :announcement="selectedAnnouncement"
       @close="selectedAnnouncement = null"
@@ -140,7 +140,7 @@ watch(filteredAnnouncements, () => {
         description="View the details of the selected announcement."
       >
         <template #content>
-          <AnnouncementDetail
+          <LazyAnnouncementDetail
             v-if="selectedAnnouncement"
             :announcement="selectedAnnouncement"
             @close="selectedAnnouncement = null"
