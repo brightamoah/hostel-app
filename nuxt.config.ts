@@ -87,7 +87,7 @@ export default defineNuxtConfig({
 
   hub: {
     kv: true,
-    cache: false,
+    cache: true,
   },
 
   runtimeConfig: {
