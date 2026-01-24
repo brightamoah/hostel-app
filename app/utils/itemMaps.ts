@@ -89,3 +89,11 @@ export const roomStatusColorMap: Record<Room["status"], ColorType> = {
   "under maintenance": "warning",
   "reserved": "neutral",
 };
+
+export const billingStatusColorMap: Record<Billing["status"], ColorType> = {
+  "unpaid": "secondary",
+  "partially paid": "warning",
+  "fully paid": "success",
+  "overdue": "error",
+  "cancelled": "neutral",
+};

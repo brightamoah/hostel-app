@@ -1,6 +1,6 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 
-import { allocation, billing, room } from "../db/schema";
+import { allocation, billing, room, student } from "../db/schema";
 
 export async function bookRoom(
   studentId: number,
@@ -9,27 +9,43 @@ export async function bookRoom(
 ) {
   const { db } = useDB();
 
-  const allocationDate = new Date().toISOString();
-  const defaultEndDate = new Date();
+  const now = new Date();
+  const allocationDate = now.toISOString();
+  const defaultEndDate = new Date(now);
   defaultEndDate.setMonth(defaultEndDate.getMonth() + 8);
 
   const allocationEndDate = (endDate ? new Date(endDate) : defaultEndDate).toISOString();
 
-  const billDueDate = new Date();
+  const billDueDate = new Date(now);
   billDueDate.setMonth(billDueDate.getMonth() + 7);
   const billingDueDate = billDueDate.toISOString();
 
   return await db
     .transaction(async (tx) => {
-      const hasOverdueBills = await tx
-        .query
-        .billing
-        .findFirst({
+      const [hasOverdueBills, existingAllocation, studentRecord] = await Promise.all([
+        tx
+          .query
+          .billing
+          .findFirst({
+            columns: { id: true },
+            where: and(
+              eq(billing.studentId, studentId),
+              eq(billing.status, "overdue"),
+            ),
+          }),
+
+        tx.query.allocation.findFirst({
           where: and(
-            eq(billing.studentId, studentId),
-            eq(billing.status, "overdue"),
+            eq(allocation.studentId, studentId),
+            inArray(allocation.status, ["active", "pending"]),
           ),
-        });
+        }),
+
+        tx.query.student.findFirst({
+          columns: { gender: true },
+          where: eq(student.id, studentId),
+        }),
+      ]);
 
       if (hasOverdueBills) {
         throw createError({
@@ -38,17 +54,17 @@ export async function bookRoom(
         });
       }
 
-      const existingAllocation = await tx.query.allocation.findFirst({
-        where: and(
-          eq(allocation.studentId, studentId),
-          inArray(allocation.status, ["active", "pending"]),
-        ),
-      });
-
       if (existingAllocation) {
         throw createError({
           statusCode: 400,
           message: "You already has an active or pending room allocation.",
+        });
+      }
+
+      if (!studentRecord) {
+        throw createError({
+          statusCode: 404,
+          message: "Student record not found.",
         });
       }
 
@@ -62,6 +78,13 @@ export async function bookRoom(
         throw createError({
           statusCode: 404,
           message: "Room not found.",
+        });
+      }
+
+      if (targetRoom.allowedGender !== studentRecord.gender) {
+        throw createError({
+          statusCode: 400,
+          message: `You cannot book this room. It is reserved for ${targetRoom.allowedGender} students.`,
         });
       }
 
@@ -114,21 +137,14 @@ export async function bookRoom(
         } satisfies typeof billing.$inferInsert)
         .returning();
 
-      const newOccupancy = targetRoom.currentOccupancy + 1;
-
-      let newStatus: typeof room.$inferSelect.status = "partially occupied";
-
-      if (newOccupancy >= targetRoom.capacity) {
-        newStatus = "fully occupied";
-      }
-      else if (newOccupancy > 0 && newOccupancy < targetRoom.capacity) {
-        newStatus = "partially occupied";
-      }
-
       await tx.update(room)
         .set({
-          currentOccupancy: newOccupancy,
-          status: newStatus,
+          currentOccupancy: sql`${room.currentOccupancy} + 1`,
+          status: sql`
+          CASE
+            WHEN ${room.currentOccupancy} + 1 >= ${room.capacity} THEN 'fully occupied'::room_status
+            ELSE 'partially occupied'::room_status
+          END`,
         })
         .where(eq(room.id, roomId));
 

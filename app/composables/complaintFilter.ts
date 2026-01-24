@@ -86,32 +86,10 @@ export function useComplaintFilter(
     },
   ]);
 
-  const { user } = useUserSession();
-
-  const studentFilter = ref("");
-  const studentFilterOptions = ref<FilterOption[]>([]);
-
-  if (user.value?.role === "admin") {
-    const { users } = useFetchUserData();
-
-    const studentFilterOptionsGetter = computed<FilterOption[]>(() => {
-      const students = users.value.filter(user => user.role === "student");
-
-      const filter = students.map(student => ({
-        label: student.name,
-        value: student.name,
-      }));
-      return [
-        {
-          label: "All Students",
-          value: "all",
-        },
-        ...filter,
-      ];
-    });
-
-    studentFilterOptions.value = studentFilterOptionsGetter.value;
-  }
+  const {
+    studentFilter,
+    studentFilterOptions,
+  } = useGetSharedFilterOptions();
 
   const {
     safeTableApi,
@@ -146,7 +124,6 @@ export function useComplaintFilter(
     if (!priorityColumn) return;
 
     if (newPriority === "all") priorityColumn.setFilterValue(undefined);
-
     else priorityColumn.setFilterValue(newPriority);
 
     const statusColumn = tableApi.getColumn("status");

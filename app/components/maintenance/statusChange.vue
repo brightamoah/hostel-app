@@ -74,6 +74,7 @@ onMounted(() => clearState());
               label="Select New Status"
               placeholder="Choose status"
               class="w-full"
+              clear
             />
           </UFormField>
 

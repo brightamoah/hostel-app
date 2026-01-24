@@ -31,6 +31,7 @@ const roomCapacity = computed(() => roomData.capacity);
 const amountPerYear = computed(() => Number(roomData.amountPerYear));
 const currentOccupancy = computed(() => roomData.currentOccupancy);
 const floor = computed(() => roomData.floor);
+const roomAllowedGender = computed(() => roomData.allowedGender);
 
 const editRoomState = ref<RoomFormState>(
   {
@@ -43,6 +44,7 @@ const editRoomState = ref<RoomFormState>(
     amountPerYear: amountPerYear.value,
     currentOccupancy: currentOccupancy.value,
     floor: floor.value,
+    allowedGender: roomAllowedGender.value,
   },
 );
 
@@ -200,6 +202,7 @@ async function submitUpdate() {
               :items="hostelItem"
               :loading="isHostelsLoading"
               :size="isMobile ? 'lg' : 'xl'"
+              clear
             />
           </UFormField>
         </div>
@@ -228,11 +231,12 @@ async function submitUpdate() {
             class="w-full"
           >
             <USelectMenu
-              v-model="editRoomState.roomType"
+              v-model="editRoomState.roomType as AddRoomSchema['roomType']"
               :items="roomTypeItems"
               placeholder="Select room type"
               class="w-full cursor-pointer"
               :size="isMobile ? 'lg' : 'xl'"
+              clear
             />
           </UFormField>
         </div>
@@ -303,11 +307,12 @@ async function submitUpdate() {
             class="w-full"
           >
             <USelectMenu
-              v-model="editRoomState.status"
+              v-model="editRoomState.status as AddRoomSchema['status']"
               :items="roomStatusItems"
               placeholder="Select room status"
               class="w-full cursor-pointer"
               :size="isMobile ? 'lg' : 'xl'"
+              clear
             />
           </UFormField>
         </div>

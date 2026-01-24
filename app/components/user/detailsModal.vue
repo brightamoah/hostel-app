@@ -53,6 +53,7 @@ const assignedHostel = ref<string | null>(null);
           class="w-2/3 cursor-pointer"
           size="lg"
           placeholder="Select Hostel To Assign"
+          clear
         />
 
         <UButton

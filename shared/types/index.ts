@@ -6,6 +6,7 @@ import type { Table } from "@tanstack/vue-table";
 import type { useEditor } from "@tiptap/vue-3";
 import type { User } from "#auth-utils";
 import type { AnnouncementType } from "~~/server/db/queries/announcement";
+import type { BillingType } from "~~/server/db/queries/billing";
 import type { ComplaintType } from "~~/server/db/queries/complaint";
 import type { Maintenance } from "~~/server/db/queries/maintenance";
 import type { Room as RoomType } from "~~/server/db/queries/room";
@@ -398,3 +399,13 @@ export type UserWithRelations = BaseUser & {
 };
 
 export type RoomInHostel = Pick<BaseRoom, "id" | "roomNumber" | "floor">;
+
+export type Billing = BillingType;
+export type BillingResponse = {
+  billings: Billing[];
+  totalBillings: number;
+  totalPaid: number;
+  totalUnpaid: number;
+  totalPending: number;
+  totalOverdue: number;
+};

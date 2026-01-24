@@ -141,10 +141,7 @@ export default defineNuxtConfig({
     csrf: true,
     rateLimiter: {
       driver: {
-        name: "cloudflare-kv-binding",
-        options: {
-          binding: "KV",
-        },
+        name: "lruCache",
       },
     },
     headers: {

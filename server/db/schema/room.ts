@@ -4,7 +4,7 @@ import { check, pgEnum, pgTable, unique } from "drizzle-orm/pg-core";
 import { billing } from "./billing";
 import { complaint } from "./complaint";
 import { maintenanceRequest } from "./maintenance";
-import { admin, student } from "./user";
+import { admin, genderEnum, student } from "./user";
 
 export const roomTypeEnum = pgEnum("room_type", [
   "single",
@@ -55,6 +55,7 @@ export const room = pgTable("room", t => ({
   features: t.text().array().default(sql`ARRAY[]::text[]`),
   amountPerYear: t.numeric({ precision: 10, scale: 2, mode: "number" }).notNull(),
   status: roomStatusEnum().default("vacant").notNull(),
+  allowedGender: genderEnum().default("male").notNull(),
 }), table => [
   // unique("unique_room").on(table.roomNumber, table.building, table.hostelId),
   unique("unique_room_number").on(table.roomNumber, table.hostelId),

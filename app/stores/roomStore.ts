@@ -23,6 +23,11 @@ export const useRoomStore = defineStore("roomStore", () => {
     "quad",
   ]);
 
+  const allowedGender = ref<AddRoomSchema["allowedGender"][]>([
+    "male",
+    "female",
+  ]);
+
   const roomStatus = ref<AddRoomSchema["status"][]>([
     "vacant",
     "fully occupied",
@@ -41,6 +46,7 @@ export const useRoomStore = defineStore("roomStore", () => {
     roomNumber: "",
     roomType: "",
     status: "",
+    allowedGender: "",
   });
 
   const getRoomCapacity = computed(() => {
@@ -60,6 +66,15 @@ export const useRoomStore = defineStore("roomStore", () => {
 
     addRoomState.value.capacity = capacity;
   }, { immediate: true });
+
+  watch(() => addRoomState.value.floor, (newFloor) => {
+    if (newFloor && newFloor % 2 === 1) {
+      addRoomState.value.allowedGender = "male";
+    }
+    else {
+      addRoomState.value.allowedGender = "female";
+    }
+  }, { immediate: true, flush: "post" });
 
   const isFormValid = computed(() => {
     return addRoomSchema.safeParse(addRoomState.value).success;
@@ -191,6 +206,7 @@ export const useRoomStore = defineStore("roomStore", () => {
     addRoomState,
     roomType,
     roomStatus,
+    allowedGender,
     getRoomCapacity,
     isFormValid,
     isLoading,

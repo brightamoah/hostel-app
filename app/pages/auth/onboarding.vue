@@ -44,8 +44,8 @@ const description = ref(
 
 const genderItems = ref(["male", "female"]);
 
-const state = ref<PersonalDetailsSchema>({
-  gender: "",
+const state = ref<Partial<PersonalDetailsSchema>>({
+  gender: undefined,
   dateOfBirth: null,
   phoneNumber: "",
   address: "",
@@ -63,19 +63,19 @@ watch(dateVal, (newVal) => {
 
 const isFormValid = computed(() => {
   return (
-    state.value.gender.trim() !== ""
+    state.value.gender?.trim() !== ""
     && state.value.dateOfBirth !== null
-    && state.value.phoneNumber.trim() !== ""
-    && state.value.address.trim() !== ""
-    && state.value.emergencyContactName.trim() !== ""
-    && state.value.emergencyContactPhoneNumber.trim() !== ""
-    && state.value.emergencyContactEmail.trim() !== ""
+    && state.value.phoneNumber?.trim() !== ""
+    && state.value.address?.trim() !== ""
+    && state.value.emergencyContactName?.trim() !== ""
+    && state.value.emergencyContactPhoneNumber?.trim() !== ""
+    && state.value.emergencyContactEmail?.trim() !== ""
   );
 });
 
 function clearState() {
   state.value = {
-    gender: "",
+    gender: undefined,
     dateOfBirth: null,
     phoneNumber: "",
     address: "",
@@ -174,6 +174,7 @@ onMounted(() => {
               class="w-full cursor-pointer"
               placeholder="Select your gender"
               :size="isMobile ? 'lg' : 'xl'"
+              clear
             />
           </UFormField>
 

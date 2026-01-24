@@ -26,12 +26,13 @@ export default defineEventHandler(async (event) => {
       roomNumber,
       roomType,
       status,
+      allowedGender,
     } = body.data;
 
-    if (roomType === "" || status === "") {
+    if (roomType === "" || status === "" || allowedGender === "") {
       throw createError({
         statusCode: 400,
-        message: "Room type and status must be provided",
+        message: "Room type, status, and allowed gender must be provided",
       });
     }
 
@@ -54,6 +55,7 @@ export default defineEventHandler(async (event) => {
       roomNumber,
       roomType,
       status,
+      allowedGender,
     });
 
     if (!newRoom) {

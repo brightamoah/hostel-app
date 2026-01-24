@@ -131,6 +131,7 @@ watch(
               placeholder="Select Admin Access Level"
               class="w-full cursor-pointer"
               :size="isMobile ? 'lg' : 'xl'"
+              clear
             />
           </UFormField>
         </div>
@@ -180,6 +181,7 @@ watch(
             :loading="isHostelsLoading"
             :size="isMobile ? 'lg' : 'xl'"
             value-key="value"
+            clear
           />
         </UFormField>
       </UForm>
