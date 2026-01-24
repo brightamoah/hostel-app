@@ -1,6 +1,6 @@
 # Hostel Management App
 
-A Nuxt 4 application for managing hostel operations, built with TypeScript, Drizzle ORM, and Nuxt UI.
+A Nuxt 4 application for managing hostel operations, built with TypeScript, Drizzle ORM, Neon PostgreSQL, and Nuxt UI.
 
 ## Setup
 
@@ -130,7 +130,7 @@ This project uses a modern, type-safe, full-stack architecture:
 
 ## Developed By
 
-**Bright Kweku Amoah**
+**Bright K. Amoah**
 [GitHub](https://github.com/brightamoah)
 
 ---
