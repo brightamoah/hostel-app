@@ -47,6 +47,12 @@ const links = computed(() => [[
     onSelect: () => open.value = false,
   },
   {
+    label: "Billings",
+    icon: "i-lucide-credit-card",
+    to: { name: "admin-billings" },
+    onSelect: () => open.value = false,
+  },
+  {
     label: "Announcements",
     icon: "i-lucide-megaphone",
     to: { name: "admin-announcements" },

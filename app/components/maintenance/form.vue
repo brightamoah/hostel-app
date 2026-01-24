@@ -90,6 +90,7 @@ defineExpose({
           value-key="value"
           class="w-full cursor-pointer"
           size="xl"
+          clear
         />
       </UFormField>
 
@@ -106,6 +107,7 @@ defineExpose({
           class="w-full cursor-pointer"
           size="xl"
           value-key="value"
+          clear
         />
       </UFormField>
     </div>
@@ -124,6 +126,7 @@ defineExpose({
           class="w-full cursor-pointer"
           size="xl"
           value-key="value"
+          clear
         />
       </UFormField>
 
@@ -140,6 +143,7 @@ defineExpose({
           class="w-full cursor-pointer"
           size="xl"
           value-key="value"
+          clear
         />
       </UFormField>
     </div>

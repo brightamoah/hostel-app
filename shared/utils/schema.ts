@@ -178,16 +178,18 @@ export const addRoomSchema = z.object({
   features: roomFeatureSchema,
   amountPerYear: z.number("Amount per Year is required").min(1, "Amount per Year cannot be negative"),
   status: roomStatusSchema,
+  allowedGender: genderSchema,
   currentOccupancy: z.number("Current Occupancy is required").min(0, "Current Occupancy cannot be negative").max(4, "Current Occupancy cannot exceed 4"),
 });
 
-const editRoomData = addRoomSchema.partial().omit({ roomType: true, status: true });
+const editRoomData = addRoomSchema.partial().omit({ roomType: true, status: true, allowedGender: true });
 
 const editRoomSchema = z.object({
   roomId: createIdSchema("Room"),
   data: editRoomData.extend({
     status: z.enum(["vacant", "fully occupied", "partially occupied", "under maintenance", "reserved"], "Status is required").optional(),
     roomType: z.enum(["single", "double", "triple", "quad"], "Room Type is required").optional(),
+    allowedGender: z.enum(["male", "female"], "Allowed Gender is required").optional(),
   }),
 });
 
@@ -529,7 +531,7 @@ const readStatusSchema = z.object({
 
 export type ReadStatusSchema = z.output<typeof readStatusSchema>;
 
-const editAnnouncementData = createAnnouncementSchema.partial().omit({ priority: true, targetAudience: true });
+const editAnnouncementData = z.object(createAnnouncementSchema.shape).omit({ priority: true, targetAudience: true }).partial();
 
 const editAnnouncementSchema = z.object({
   announcementId: createIdSchema("Announcement"),
@@ -563,10 +565,19 @@ const bookRoomSchema = z.object({
 
 export type BookRoomSchema = z.output<typeof bookRoomSchema>;
 
+const billingStatusSchema = z.enum([
+  "unpaid",
+  "fully paid",
+  "partially paid",
+  "overdue",
+  "cancelled",
+], "Billing status is required");
+
 export {
   addAdminSchema,
   approveDenySchema,
   baseSignupSchema,
+  billingStatusSchema,
   bookRoomSchema,
   complaintStatusResponseSchema,
   confirmPasswordSchema,

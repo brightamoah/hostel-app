@@ -115,6 +115,7 @@ const studentFilterModel = computed({
         class="w-full sm:min-w-40 text-center cursor-pointer"
         size="xl"
         value-key="value"
+        clear
         :items="studentFilterOptions"
         :ui="{
           trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',

@@ -1,7 +1,7 @@
 import type { Admin } from "~~/shared/types";
 
 import { useDB } from "~~/server/utils/db";
-import { and, asc, countDistinct, eq, gt, inArray, or, sql } from "drizzle-orm";
+import { and, asc, countDistinct, eq, gt, inArray, sql } from "drizzle-orm";
 
 import { allocation, hostel, room } from "../schema";
 
@@ -63,15 +63,15 @@ export async function roomQueries() {
     return rooms;
   };
 
-  const getAvailableRooms = async () => {
+  const getAvailableRooms = async (gender: "male" | "female") => {
     const rooms = await db
       .query
       .room
       .findMany({
         ...roomWithRelations,
-        where: or(
-          eq(room.status, "vacant"),
-          eq(room.status, "partially occupied"),
+        where: and(
+          inArray(room.status, ["vacant", "partially occupied"]),
+          eq(room.allowedGender, gender),
         ),
       });
     return rooms;

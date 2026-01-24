@@ -119,6 +119,7 @@ function onPromoteSubmit(event: FormSubmitEvent<Omit<PromoteDemoteSchema, "userI
               value-key="value"
               placeholder="Select Admin Access Level"
               class="w-full cursor-pointer"
+              clear
             />
           </UFormField>
 
@@ -138,6 +139,7 @@ function onPromoteSubmit(event: FormSubmitEvent<Omit<PromoteDemoteSchema, "userI
               value-key="value"
               :items="hostelItem"
               :size="isMobile ? 'lg' : 'xl'"
+              clear
             />
           </UFormField>
         </div>

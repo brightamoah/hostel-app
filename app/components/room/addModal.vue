@@ -7,6 +7,7 @@ const {
   isFormValid,
   isLoading,
   isModalOpen,
+  allowedGender,
 } = storeToRefs(roomStore);
 
 const addRoomFormRef = useTemplateRef("addRoomFormRef");
@@ -107,6 +108,7 @@ watch(
               :items="hostelItem"
               :loading="isHostelsLoading"
               :size="isMobile ? 'lg' : 'xl'"
+              clear
             />
           </UFormField>
         </div>
@@ -114,17 +116,17 @@ watch(
         <div class="flex md:flex-row flex-col justify-between gap-5 mb-4 px-4">
           <UFormField
             required
-            label="Floor"
-            name="floor"
+            label="Status"
+            name="status"
             class="w-full"
           >
-            <UInputNumber
-              v-model="addRoomState.floor"
-              placeholder="Enter floor number"
-              class="w-full"
-              :min="1"
-              :max="10"
+            <USelectMenu
+              v-model="addRoomState.status as AddRoomSchema['status']"
+              :items="roomStatus"
+              placeholder="Select room status"
+              class="w-full cursor-pointer"
               :size="isMobile ? 'lg' : 'xl'"
+              clear
             />
           </UFormField>
 
@@ -135,11 +137,12 @@ watch(
             class="w-full"
           >
             <USelectMenu
-              v-model="addRoomState.roomType"
+              v-model="addRoomState.roomType as AddRoomSchema['roomType'] "
               :items="roomType"
               placeholder="Select room type"
               class="w-full cursor-pointer"
               :size="isMobile ? 'lg' : 'xl'"
+              clear
             />
           </UFormField>
         </div>
@@ -189,6 +192,22 @@ watch(
         <div class="flex md:flex-row flex-col justify-between gap-5 mb-4 px-4">
           <UFormField
             required
+            label="Floor"
+            name="floor"
+            class="w-full"
+          >
+            <UInputNumber
+              v-model="addRoomState.floor"
+              placeholder="Enter floor number"
+              class="w-full"
+              :min="1"
+              :max="10"
+              :size="isMobile ? 'lg' : 'xl'"
+            />
+          </UFormField>
+
+          <UFormField
+            required
             label="Current Occupancy"
             name="currentOccupancy"
             class="w-full"
@@ -202,28 +221,30 @@ watch(
               :size="isMobile ? 'lg' : 'xl'"
             />
           </UFormField>
-
-          <UFormField
-            required
-            label="Status"
-            name="status"
-            class="w-full"
-          >
-            <USelectMenu
-              v-model="addRoomState.status"
-              :items="roomStatus"
-              placeholder="Select room status"
-              class="w-full cursor-pointer"
-              :size="isMobile ? 'lg' : 'xl'"
-            />
-          </UFormField>
         </div>
+
+        <UFormField
+          required
+          label="Allowed Gender"
+          name="allowedGender"
+          class="w-full px-4 mb-4"
+        >
+          <USelectMenu
+            v-model="addRoomState.allowedGender as AddRoomSchema['allowedGender']"
+            :items="allowedGender"
+            placeholder="Select allowed gender"
+            class="w-full cursor-pointer"
+            disabled
+            :size="isMobile ? 'lg' : 'xl'"
+            clear
+          />
+        </UFormField>
 
         <UFormField
           required
           label="Features"
           name="features"
-          class="w-full"
+          class="w-full px-4"
         >
           <UTextarea
             v-model="addRoomState.features"

@@ -80,6 +80,7 @@ defineExpose({
           :items="audience"
           :size="isMobile ? 'lg' : 'xl'"
           value-key="value"
+          clear
           placeholder="Select Target Audience"
           class="w-full cursor-pointer"
         />
@@ -96,6 +97,7 @@ defineExpose({
           :items="priority"
           :size="isMobile ? 'lg' : 'xl'"
           value-key="value"
+          clear
           placeholder="Select Priority Level"
           class="w-full cursor-pointer"
         />
@@ -116,6 +118,7 @@ defineExpose({
         :size="isMobile ? 'lg' : 'xl'"
         placeholder="Search for a user..."
         searchable
+        clear
         value-key="value"
         class="w-full"
       />
@@ -135,6 +138,7 @@ defineExpose({
         :size="isMobile ? 'lg' : 'xl'"
         placeholder="Search for a hostel..."
         searchable
+        clear
         value-key="value"
         class="w-full"
       />
@@ -154,6 +158,7 @@ defineExpose({
         :size="isMobile ? 'lg' : 'xl'"
         placeholder="Search for a room..."
         searchable
+        clear
         value-key="value"
         class="w-full"
       />

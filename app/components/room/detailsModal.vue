@@ -90,6 +90,12 @@ const { featureIcons, statusColorMap } = useRoomColorIcon(roomValue);
                   label="Floor"
                   :value="roomValue.floor"
                 />
+
+                <DashboardDetailItem
+                  label="Allowed Gender"
+                  :value="roomValue.allowedGender"
+                  class="capitalize"
+                />
               </div>
             </template>
           </UCard>

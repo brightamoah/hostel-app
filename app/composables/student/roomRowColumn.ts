@@ -12,7 +12,10 @@ export function useStudentRoomRowColumn(
 ) {
   const { user } = useUserSession();
 
+  const { student } = useFetchStudentDashboardData();
+
   const overlay = useOverlay();
+  const toast = useToast();
   const roomStore = useRoomStore();
   const { isLoading } = storeToRefs(roomStore);
   const { bookRoom } = roomStore;
@@ -39,6 +42,18 @@ export function useStudentRoomRowColumn(
       onConfirm: async () => {
         const userId = user.value?.role === "student" ? user.value.id : undefined;
         if (!userId) return;
+
+        if (student.value.allocation.id) {
+          toast.add({
+            title: "Failed to Book Room",
+            description: "You already have an active room allocation. Please contact administration for changes.",
+            color: "error",
+            icon: "i-lucide-circle-alert",
+            duration: 8000,
+          });
+          close();
+          return;
+        }
 
         await bookRoom({ roomId: room.id, userId }, room.roomNumber);
         close();

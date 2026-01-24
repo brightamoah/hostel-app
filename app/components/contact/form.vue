@@ -132,6 +132,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         size="xl"
         :items="subjectItems"
         class="w-full cursor-pointer"
+        clear
       />
     </UFormField>
 
