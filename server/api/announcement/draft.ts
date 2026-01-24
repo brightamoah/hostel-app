@@ -1,4 +1,5 @@
 import { kv } from "@nuxthub/kv";
+import z from "zod";
 
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event, {
@@ -22,7 +23,7 @@ export default defineEventHandler(async (event) => {
       ]),
     );
 
-    const result = createAnnouncementSchema.partial().safeParse(cleanBody);
+    const result = z.object(createAnnouncementSchema.shape).partial().safeParse(cleanBody);
 
     if (!result.success) {
       throw createError({

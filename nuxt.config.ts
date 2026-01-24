@@ -37,6 +37,11 @@ export default defineNuxtConfig({
       },
     },
 
+    hub: {
+      kv: false,
+      cache: false,
+    },
+
     security: {
       csrf: true,
       rateLimiter: {
@@ -67,43 +72,6 @@ export default defineNuxtConfig({
   },
 
   css: ["~/assets/css/main.css"],
-
-  nitro: {
-    preset: "cloudflare-module",
-    cloudflare: {
-      deployConfig: true,
-      nodeCompat: true,
-      wrangler: {
-        kv_namespaces: [
-          {
-            binding: "KV",
-            id: env.NUXT_KV_NAMESPACE_ID || "placeholder-local-kv",
-            preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID || "placeholder-local-kv",
-          },
-          {
-            binding: "CACHE",
-            id: env.NUXT_KV_NAMESPACE_ID || "placeholder-local-cache",
-            preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID || "placeholder-local-cache",
-          },
-        ],
-      },
-    },
-    rollupConfig: {
-      external: ["cloudflare:sockets"],
-    },
-    experimental: {
-      tasks: true,
-      openAPI: true,
-    },
-    scheduledTasks: {
-      "0 0 * * *": ["clearExpiredCache"],
-    },
-  },
-
-  hub: {
-    kv: true,
-    cache: true,
-  },
 
   runtimeConfig: {
     public: {
@@ -169,5 +137,44 @@ export default defineNuxtConfig({
   site: {
     url: env.NUXT_PUBLIC_SITE_URL,
     name: env.NUXT_EMAIL_FROM_NAME,
+  },
+
+  $production: {
+    nitro: {
+      preset: "cloudflare_module",
+      cloudflare: {
+        deployConfig: true,
+        nodeCompat: true,
+        wrangler: {
+          kv_namespaces: [
+            {
+              binding: "KV",
+              id: env.NUXT_KV_NAMESPACE_ID || "placeholder-local-kv",
+              preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID || "placeholder-local-kv",
+            },
+            {
+              binding: "CACHE",
+              id: env.NUXT_KV_NAMESPACE_ID || "placeholder-local-cache",
+              preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID || "placeholder-local-cache",
+            },
+          ],
+        },
+      },
+      rollupConfig: {
+        external: ["cloudflare:sockets"],
+      },
+      experimental: {
+        tasks: true,
+        openAPI: true,
+      },
+      scheduledTasks: {
+        "0 0 * * *": ["clearExpiredCache"],
+      },
+    },
+
+    hub: {
+      kv: true,
+      cache: true,
+    },
   },
 });
