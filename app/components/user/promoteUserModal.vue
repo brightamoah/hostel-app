@@ -66,6 +66,7 @@ function onPromoteSubmit(event: FormSubmitEvent<Omit<PromoteDemoteSchema, "userI
       content: 'w-[70%] max-w-3xl  rounded-lg shadow-lg ring ring-default overflow-hidden',
       title: 'font-newsreader text-xl font-semibold',
       close: 'cursor-pointer',
+      overlay: 'backdrop-blur-sm',
     }"
   >
     <template #body>

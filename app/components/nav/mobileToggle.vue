@@ -34,7 +34,7 @@ watch(() => route.path, () => {
 
 <template>
   <ClientOnly>
-    <USlideover
+    <LazyUSlideover
       v-if="isMobile"
       v-model:open="isMobileMenuOpen"
       description="Hostel Management Made Easy"
@@ -70,7 +70,7 @@ watch(() => route.path, () => {
       </template>
 
       <template #body>
-        <UNavigationMenu
+        <LazyUNavigationMenu
           :items="navItems"
           orientation="vertical"
           :ui="{
@@ -82,7 +82,7 @@ watch(() => route.path, () => {
       </template>
 
       <template #footer>
-        <UserMenu v-if="isLoggedIn && user" />
+        <LazyUserMenu v-if="isLoggedIn && user" />
 
         <div
           v-else
@@ -108,6 +108,6 @@ watch(() => route.path, () => {
           />
         </div>
       </template>
-    </USlideover>
+    </LazyUSlideover>
   </ClientOnly>
 </template>

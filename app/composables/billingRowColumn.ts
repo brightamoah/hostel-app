@@ -5,6 +5,8 @@ import { useDateFormat } from "@vueuse/core";
 
 import type { RowActionItem } from "~/types/rowAction";
 
+const BillingDetails = defineAsyncComponent(() => import("~/components/billing/details.vue"));
+
 export function useBillingRowColumn(
   UAvatar: ComponentType,
   UButton: ComponentType,
@@ -12,6 +14,15 @@ export function useBillingRowColumn(
   UDropdownMenu: ComponentType,
 ) {
   const { user } = useUserSession();
+  const overlay = useOverlay();
+
+  const openBillingDetails = (billing: Billing) => {
+    const modal = overlay.create(BillingDetails);
+
+    modal.open({
+      billing,
+    });
+  };
 
   const getRowItems = (row: Row<Billing>) => {
     const billing = row.original;
@@ -24,7 +35,7 @@ export function useBillingRowColumn(
       {
         label: "View Details",
         icon: "i-lucide-eye",
-        onSelect: () => console.log(billing),
+        onSelect: () => openBillingDetails(billing),
       },
     ];
 
@@ -43,7 +54,8 @@ export function useBillingRowColumn(
       );
     }
 
-    if (user.value?.role === "student" && ["unpaid", "partially paid"].some(status => billing.status.toLowerCase().includes(status))) {
+    if (user.value?.role === "student" && ["unpaid", "partially paid"]
+      .some(status => billing.status.toLowerCase().includes(status))) {
       actions.push(
         {
           label: "Make Payment",
@@ -62,7 +74,7 @@ export function useBillingRowColumn(
       {
         id: "invoiceNumber",
         accessorFn: row => row.invoiceNumber,
-        header: createSortableHeader("Invoice Number", UButton),
+        header: createSortableHeader("Invoice No.", UButton),
         cell: ({ row }) => h("p", { class: "capitalize text-default" }, row.original.invoiceNumber),
       },
     ];
@@ -116,13 +128,13 @@ export function useBillingRowColumn(
         id: "dateIssued",
         accessorFn: row => useDateFormat(row.dateIssued, "ddd DD-MM-YYYY").value,
         header: createSortableHeader("Date Issued", UButton),
-        cell: ({ row }) => h("span", { class: "text-default" }, useDateFormat(row.original.dateIssued, "ddd DD-MM-YYYY").value),
+        cell: ({ row }) => h("span", { class: "text-default" }, useDateFormat(new Date(row.original.dateIssued), "ddd DD-MM-YYYY").value),
       },
       {
         id: "dueDate",
         accessorFn: row => useDateFormat(row.dueDate, "ddd DD-MM-YYYY").value,
         header: createSortableHeader("Due Date", UButton),
-        cell: ({ row }) => h("span", { class: "text-default" }, useDateFormat(row.original.dueDate, "ddd DD-MM-YYYY").value),
+        cell: ({ row }) => h("span", { class: "text-default" }, useDateFormat(new Date(row.original.dueDate), "ddd DD-MM-YYYY").value),
       },
       {
         accessorKey: "status",

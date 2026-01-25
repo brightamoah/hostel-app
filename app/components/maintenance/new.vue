@@ -29,6 +29,7 @@ const createMaintenanceFormRef = useTemplateRef("createMaintenanceFormRef");
       content: 'max-w-3xl  rounded-lg shadow-lg ring ring-default overflow-hidden',
       title: 'font-newsreader text-xl font-semibold',
       close: 'cursor-pointer',
+      overlay: 'backdrop-blur-sm',
     }"
   >
     <UButton

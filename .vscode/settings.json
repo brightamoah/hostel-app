@@ -168,7 +168,8 @@
         "scope": [
           // "entity.name.tag",
           "entity.name.tag.custom",
-          "support.class.component"
+          "support.class.component",
+          "entity.name.type.class"
         ],
         "settings": {
           "foreground": "#4EC9B0"

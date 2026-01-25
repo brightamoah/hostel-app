@@ -18,6 +18,8 @@ const EnvSchema = z.object({
   NUXT_EMAIL_FROM_NAME: z.string(),
   NUXT_EMAIL_FROM_EMAIL: z.email(),
   NUXT_PUBLIC_SITE_URL: z.url(),
+  NUXT_KV_NAMESPACE_ID: z.string().optional(),
+  NUXT_KV_PREVIEW_NAMESPACE_ID: z.string().optional(),
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;

@@ -12,6 +12,7 @@ const { roommates } = context;
     description="List of your current roommates"
     :ui="{
       close: 'cursor-pointer',
+      overlay: 'backdrop-blur-sm',
     }"
   >
     <UButton

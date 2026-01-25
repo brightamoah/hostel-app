@@ -71,6 +71,7 @@ function handleFormError(event: any) {
       content: 'max-w-5xl  rounded-lg shadow-lg ring ring-default overflow-hidden',
       title: 'font-newsreader text-base md:text-xl font-semibold',
       close: 'cursor-pointer',
+      overlay: 'backdrop-blur-sm',
     }"
   >
     <template #body>

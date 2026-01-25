@@ -107,7 +107,7 @@ const studentFilterModel = computed({
         }"
       />
 
-      <USelectMenu
+      <LazyUSelectMenu
         v-if="studentFilterOptions && user?.role === 'admin'"
         v-model="studentFilterModel"
         arrow

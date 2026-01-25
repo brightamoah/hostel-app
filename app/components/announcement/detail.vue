@@ -127,7 +127,7 @@ function openEditModal(announcementId: number) {
       />
     </div>
 
-    <AnnouncementCreateNew v-if="isAdmin" />
+    <LazyAnnouncementCreateNew v-if="isAdmin" />
   </UDashboardPanel>
 </template>
 

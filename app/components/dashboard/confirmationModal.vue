@@ -70,6 +70,7 @@ defineExpose({
     :ui="{
       footer: 'justify-end',
       body: 'text-lg',
+      overlay: 'backdrop-blur-sm',
     }"
   >
     <template v-if="renderTriggerProp">

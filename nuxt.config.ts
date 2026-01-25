@@ -25,6 +25,10 @@ export default defineNuxtConfig({
       },
     },
 
+    nitro: {
+      preset: "nitro-dev",
+    },
+
     nodemailer: {
       from: env.NUXT_NODEMAILER_FROM,
       host: env.NUXT_NODEMAILER_HOST,
@@ -34,6 +38,11 @@ export default defineNuxtConfig({
         user: env.NUXT_NODEMAILER_AUTH_USER,
         pass: env.NUXT_NODEMAILER_AUTH_PASS,
       },
+    },
+
+    hub: {
+      kv: true,
+      cache: true,
     },
 
     security: {
@@ -66,29 +75,6 @@ export default defineNuxtConfig({
   },
 
   css: ["~/assets/css/main.css"],
-
-  nitro: {
-    preset: "cloudflare_module",
-    cloudflare: {
-      deployConfig: true,
-      nodeCompat: true,
-    },
-    rollupConfig: {
-      external: ["cloudflare:sockets"],
-    },
-    experimental: {
-      tasks: true,
-      openAPI: true,
-    },
-    scheduledTasks: {
-      "0 0 * * *": ["clearExpiredCache"],
-    },
-  },
-
-  hub: {
-    kv: true,
-    cache: true,
-  },
 
   runtimeConfig: {
     public: {
@@ -154,5 +140,44 @@ export default defineNuxtConfig({
   site: {
     url: env.NUXT_PUBLIC_SITE_URL,
     name: env.NUXT_EMAIL_FROM_NAME,
+  },
+
+  $production: {
+    nitro: {
+      preset: "cloudflare_module",
+      cloudflare: {
+        deployConfig: true,
+        nodeCompat: true,
+        wrangler: {
+          kv_namespaces: [
+            {
+              binding: "KV",
+              id: env.NUXT_KV_NAMESPACE_ID,
+              preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID,
+            },
+            {
+              binding: "CACHE",
+              id: env.NUXT_KV_NAMESPACE_ID,
+              preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID,
+            },
+          ],
+        },
+      },
+      rollupConfig: {
+        external: ["cloudflare:sockets"],
+      },
+      experimental: {
+        tasks: true,
+        openAPI: true,
+      },
+      scheduledTasks: {
+        "0 0 * * *": ["clearExpiredCache"],
+      },
+    },
+
+    hub: {
+      kv: true,
+      cache: true,
+    },
   },
 });
