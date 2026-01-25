@@ -3,7 +3,11 @@
 </script>
 
 <template>
-  <UModal>
+  <UModal
+    :ui="{
+      overlay: 'backdrop-blur-sm',
+    }"
+  >
     <UButton
       label="Create Invoice"
       icon="lucide-ticket-plus"

@@ -54,6 +54,7 @@ const submitLabel = computed(() => isMobile.value ? "Publish" : "Publish Announc
       content: 'max-w-5xl  rounded-lg shadow-lg ring ring-default overflow-hidden',
       title: 'font-newsreader text-xl font-semibold',
       close: 'cursor-pointer',
+      overlay: 'backdrop-blur-sm',
     }"
   >
     <div

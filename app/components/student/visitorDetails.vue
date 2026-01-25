@@ -158,6 +158,7 @@ const visitHistory = computed(() => {
       title: 'font-newsreader text-xl font-semibold',
       description: 'text-base text-muted',
       close: 'cursor-pointer',
+      overlay: 'backdrop-blur-sm',
     }"
   >
     <template #body>

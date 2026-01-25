@@ -13,7 +13,6 @@ export default defineNuxtConfig({
     "nuxt-auth-utils",
     "@formkit/auto-animate",
     "nuxt-tiptap-editor",
-    "nitro-cloudflare-dev",
     "@nuxthub/core",
   ],
 
@@ -24,6 +23,10 @@ export default defineNuxtConfig({
       public: {
         siteUrl: "http://localhost:3000",
       },
+    },
+
+    nitro: {
+      preset: "nitro-dev",
     },
 
     nodemailer: {
@@ -38,8 +41,8 @@ export default defineNuxtConfig({
     },
 
     hub: {
-      kv: false,
-      cache: false,
+      kv: true,
+      cache: true,
     },
 
     security: {
@@ -149,13 +152,13 @@ export default defineNuxtConfig({
           kv_namespaces: [
             {
               binding: "KV",
-              id: env.NUXT_KV_NAMESPACE_ID || "placeholder-local-kv",
-              preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID || "placeholder-local-kv",
+              id: env.NUXT_KV_NAMESPACE_ID,
+              preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID,
             },
             {
               binding: "CACHE",
-              id: env.NUXT_KV_NAMESPACE_ID || "placeholder-local-cache",
-              preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID || "placeholder-local-cache",
+              id: env.NUXT_KV_NAMESPACE_ID,
+              preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID,
             },
           ],
         },
