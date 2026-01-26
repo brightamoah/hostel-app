@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     message: "Unauthorized, please log in to access announcement drafts.",
   });
 
-  await kv.clear();
+  // await kv.clear();
 
   const KEY = `announcement-draft-${user.id}`;
 
