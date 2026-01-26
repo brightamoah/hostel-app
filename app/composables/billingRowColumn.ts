@@ -112,6 +112,13 @@ export function useBillingRowColumn(
           },
           filterFn: "includesString",
         },
+        {
+          id: "hostel.name",
+          accessorFn: row => row.hostel?.name || "N/A",
+          header: createSortableHeader("Hostel", UButton),
+          cell: ({ row }) => h("p", { class: "text-default" }, row.original.hostel?.name || "N/A"),
+          filterFn: "includesString",
+        },
       );
     }
 

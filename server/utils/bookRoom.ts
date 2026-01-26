@@ -17,8 +17,13 @@ export async function bookRoom(
   const allocationEndDate = (endDate ? new Date(endDate) : defaultEndDate).toISOString();
 
   const billDueDate = new Date(now);
-  billDueDate.setMonth(billDueDate.getMonth() + 7);
+  billDueDate.setMonth(billDueDate.getMonth() + 1);
   const billingDueDate = billDueDate.toISOString();
+
+  const academicPeriod = getAcademicPeriod(
+    new Date(allocationDate),
+    new Date(allocationEndDate),
+  );
 
   return await db
     .transaction(async (tx) => {
@@ -115,6 +120,7 @@ export async function bookRoom(
           studentId,
           roomId,
           allocationDate,
+          academicPeriod,
           status: "pending",
           endDate: allocationEndDate,
         } satisfies typeof allocation.$inferInsert)

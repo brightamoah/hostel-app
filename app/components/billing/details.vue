@@ -8,6 +8,8 @@ const emit = defineEmits<{
   email: [billing: Billing];
 }>();
 
+const isMobile = inject("isMobile") as ComputedRef<boolean>;
+
 const detailCards = [
   [
     {
@@ -125,11 +127,29 @@ const balanceDue = computed(() => total.value - Number(billing.paidAmount));
         :payments="billing.payments"
         class="mt-6"
       />
+
+      <div class="mt-4 rounded-lg p-4 border border-muted">
+        <h6 class="font-bold flex items-center gap-2 mb-2 text-sm">
+          <UIcon
+            name="i-lucide-file-text"
+            class="text-primary size-4"
+          /> Terms & Conditions
+        </h6>
+
+        <ul class="text-xs text-muted space-y-1 pl-6 list-decimal">
+          <li>Payment is due within 30 days of invoice date.</li>
+
+          <li>Late payments will incur a 5% penalty fee.</li>
+
+          <li>No refunds will be issued after the academic term begins.</li>
+        </ul>
+      </div>
     </template>
 
     <template #footer="{ close }">
-      <div class="flex justify-end gap-3">
+      <div class="flex gap-2.5">
         <UButton
+          v-if="!isMobile"
           label="Close"
           color="error"
           variant="outline"
@@ -143,6 +163,7 @@ const balanceDue = computed(() => total.value - Number(billing.paidAmount));
           color="neutral"
           variant="outline"
           class="cursor-pointer"
+          :size="isMobile ? 'sm' : 'md'"
           icon="i-lucide-download"
           @click="emit('download', billing)"
         />
@@ -152,6 +173,7 @@ const balanceDue = computed(() => total.value - Number(billing.paidAmount));
           color="primary"
           variant="solid"
           class="cursor-pointer"
+          :size="isMobile ? 'sm' : 'md'"
           icon="i-lucide-send"
           @click="emit('email', billing)"
         />

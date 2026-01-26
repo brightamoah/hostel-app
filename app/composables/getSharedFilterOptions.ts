@@ -3,14 +3,15 @@ export function useGetSharedFilterOptions() {
 
   const studentFilter = ref("");
   const studentFilterOptions = ref<FilterOption[]>([]);
+  const studentOptions = ref<FilterOption[]>([]);
   const isStudentLoading = ref(false);
 
   if (user.value?.role === "admin") {
     const { users, status } = useFetchUserData();
 
-    const studentFilterOptionsGetter = computed<FilterOption[]>(() => {
-      const students = users.value.filter(user => user.role === "student");
+    const students = users.value.filter(user => user.role === "student");
 
+    const studentFilterOptionsGetter = computed<FilterOption[]>(() => {
       const filter = students.map(student => ({
         label: student.name,
         value: student.name,
@@ -24,9 +25,16 @@ export function useGetSharedFilterOptions() {
       ];
     });
 
+    const getStudentId = computed(() => students.map(student => ({
+      label: student.name,
+      value: Number(student.student?.id),
+    })));
+
     isStudentLoading.value = status.value === "pending";
 
     studentFilterOptions.value = studentFilterOptionsGetter.value;
+
+    studentOptions.value = getStudentId.value;
   }
 
   const hostelFilter = ref("");
@@ -57,5 +65,6 @@ export function useGetSharedFilterOptions() {
     hostelFilterOptions,
     isStudentLoading,
     isHostelLoading,
+    studentOptions,
   };
 }

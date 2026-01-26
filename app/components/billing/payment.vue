@@ -104,6 +104,7 @@ const columns = ref<TableColumn<PaymentRow>[]>([
             icon="i-lucide-wallet"
             title="No Payments Available"
             description="No payments found"
+            class="p-2 sm:p-2 lg:p-2"
           />
         </template>
       </UTable>

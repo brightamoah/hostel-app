@@ -1,0 +1,2 @@
+CREATE TYPE "public"."allocation_period" AS ENUM('first semester', 'second semester', 'entire year', 'vacation period');--> statement-breakpoint
+ALTER TABLE "allocation" ADD COLUMN "allocation_period" "allocation_period" DEFAULT 'first semester' NOT NULL;

@@ -277,6 +277,49 @@ export async function roomQueries() {
     return rooms;
   };
 
+  const getAllcoationByStudentId = async (studentId: number) => {
+    const allocations = await db
+      .query
+      .allocation
+      .findFirst({
+        where: and(
+          eq(allocation.studentId, studentId),
+          eq(allocation.status, "active"),
+        ),
+        with: {
+          room: {
+            columns: {
+              id: true,
+              roomNumber: true,
+              hostelId: true,
+            },
+            with: {
+              hostel: {
+                columns: {
+                  name: true,
+                },
+              },
+            },
+          },
+          student: {
+            columns: {
+              id: true,
+              residencyStatus: true,
+            },
+            with: {
+              user: {
+                columns: {
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+          },
+        },
+      });
+    return allocations;
+  };
+
   return {
     getAllRooms,
     getRoomById,
@@ -296,6 +339,7 @@ export async function roomQueries() {
     getRoomStatusCount,
     cancelAllocation,
     getRoomsInHostel,
+    getAllcoationByStudentId,
   };
 }
 
