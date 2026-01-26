@@ -27,6 +27,13 @@ export const hostelStatusEnum = pgEnum("hostel_status", [
   "under renovation",
 ]);
 
+export const academicPeriodEnum = pgEnum("academic_period", [
+  "first semester",
+  "second semester",
+  "entire year",
+  "vacation period",
+]);
+
 export const allocationStatusEnum = pgEnum("allocation_status", ["active", "expired", "pending", "cancelled"]);
 
 export const hostel = pgTable("hostel", t => ({
@@ -68,6 +75,7 @@ export const allocation = pgTable("allocation", t => ({
   studentId: t.integer().notNull().references(() => student.id, { onDelete: "cascade" }),
   roomId: t.integer().notNull().references(() => room.id, { onDelete: "cascade" }),
   allocationDate: t.date().notNull(),
+  academicPeriod: academicPeriodEnum().default("first semester").notNull(),
   endDate: t.date(),
   status: allocationStatusEnum().default("pending").notNull(),
 }), table => [

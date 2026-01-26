@@ -124,7 +124,13 @@ const description = computed(() => hasActiveFilters.value
         <DashboardStatsCard
           v-else
           :cards
-        />
+        >
+          <template #value="{ card }">
+            <h3 class="font-medium text-xl">
+              {{ card.value }}
+            </h3>
+          </template>
+        </DashboardStatsCard>
 
         <BillingSearchFilter
           v-model="globalFilter"

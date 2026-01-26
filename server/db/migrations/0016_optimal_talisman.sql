@@ -1,0 +1,2 @@
+CREATE TYPE "public"."billing_type" AS ENUM('hostel fee', 'security deposit', 'utility fee', 'maintenance fee', 'late payment penalty', 'other');--> statement-breakpoint
+ALTER TABLE "billing" ADD COLUMN "type" "billing_type" DEFAULT 'hostel fee' NOT NULL;

@@ -271,7 +271,7 @@ const visitorStatusSchema = z.enum(
   },
 ).optional().default("pending");
 
-const dateOfVisitSchema = z.preprocess((val) => {
+const dateSchema = z.preprocess((val) => {
   if (typeof val === "string") {
     try {
       return parseDate(val);
@@ -304,18 +304,20 @@ const dateOfVisitSchema = z.preprocess((val) => {
     && "month" in val
     && "day" in val
   );
-}, "Date of Visit is required").refine((date) => {
+}, "Invalid date format"));
+
+const dateNoPastSchema = dateSchema.refine((date) => {
   if (!date) return false;
 
   const now = today(getLocalTimeZone());
   return date.compare(now) >= 0;
-}, "Date of Visit cannot be in the past"));
+}, "Date cannot be in the past");
 
 const registerVisitorSchema = z.object({
   name: nameSchema,
   email: emailSchema,
   phoneNumber: phoneNumberSchema,
-  visitDate: dateOfVisitSchema,
+  visitDate: dateNoPastSchema,
   relationship: relationshipSchema,
   purpose: purposeOfVisitSchema,
   hostelId: createIdSchema("Hostel"),
@@ -573,6 +575,42 @@ const billingStatusSchema = z.enum([
   "cancelled",
 ], "Billing status is required");
 
+const billingTypeSchema = z.enum([
+  "hostel fee",
+  "security deposit",
+  "utility fee",
+  "maintenance fee",
+  "late payment penalty",
+  "other",
+], "Billing type is required");
+
+const academicPeriodSchema = z.enum([
+  "first semester",
+  "second semester",
+  "entire year",
+  "vacation period",
+], "Academic period is required");
+
+const paymentTermsSchema = z.enum([
+  "Net 15 Days",
+  "Net 30 Days",
+  "Net 45 Days",
+  "Immediate Payment",
+], "Payment Terms is required");
+
+const createBillingSchema = z.object({
+  studentId: createIdSchema("Student"),
+  amount: z.number("Amount is required").min(1, "Amount must be at least 1"),
+  dueDate: dateNoPastSchema,
+  description: z.string(),
+  type: billingTypeSchema,
+  academicPeriod: academicPeriodSchema,
+  paymentTerms: paymentTermsSchema.optional(),
+  sendNotification: z.boolean().default(false),
+});
+
+export type CreateBillingSchema = z.output<typeof createBillingSchema>;
+
 export {
   addAdminSchema,
   approveDenySchema,
@@ -581,6 +619,7 @@ export {
   bookRoomSchema,
   complaintStatusResponseSchema,
   confirmPasswordSchema,
+  createBillingSchema,
   createComplaintSchema,
   createMaintenanceSchema,
   deleteItemSchema,

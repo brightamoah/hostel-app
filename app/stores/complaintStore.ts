@@ -37,21 +37,21 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     return `complaintData:${userId}`;
   });
 
-  const complaintStatusResponseState = ref<ComplaintStatusForm>({
+  const complaintStatusResponseState = ref<Partial<ComplaintStatusForm>>({
     responseText: "",
-    status: "",
+    status: undefined,
   });
 
   const isUpdateFormValid = computed(() => {
     return (
-      complaintStatusResponseState.value.status.trim() !== ""
-      && complaintStatusResponseState.value.responseText.trim() !== ""
+      complaintStatusResponseState.value.status?.trim() !== ""
+      && (complaintStatusResponseState.value.responseText ?? "").trim() !== ""
     );
   });
 
   const isAddResponseFormValid = computed(() => {
     return (
-      complaintStatusResponseState.value.responseText.trim() !== ""
+      (complaintStatusResponseState.value.responseText ?? "").trim() !== ""
     );
   });
 
@@ -66,17 +66,6 @@ export const useComplaintStore = defineStore("complaintStore", () => {
     if (!isUpdateFormValid.value) return;
 
     if (!payload.complaintId && !payload.status && !payload.responseText) return;
-
-    if (payload.status === "") {
-      toast.add({
-        title: "Failed to Update Complaint Status",
-        description: "Status cannot be empty.",
-        color: "error",
-        icon: "i-lucide-circle-alert",
-        duration: 8000,
-      });
-      return;
-    }
 
     isLoading.value = true;
 
@@ -367,7 +356,7 @@ export const useComplaintStore = defineStore("complaintStore", () => {
   function clearState() {
     complaintStatusResponseState.value = {
       responseText: "",
-      status: "",
+      status: undefined,
     };
 
     editingId.value = null;

@@ -12,6 +12,15 @@ export const billingStatus = pgEnum("billing_status", [
   "cancelled",
 ]);
 
+export const billingType = pgEnum("billing_type", [
+  "hostel fee",
+  "security deposit",
+  "utility fee",
+  "maintenance fee",
+  "late payment penalty",
+  "other",
+]);
+
 export const paymentMethod = pgEnum("payment_method", [
   "card",
   "mobile money",
@@ -26,12 +35,21 @@ export const paymentStatus = pgEnum("payment_status", [
   "refunded",
 ]);
 
+const academicPeriodEnum = pgEnum("academic_period", [
+  "first semester",
+  "second semester",
+  "entire year",
+  "vacation period",
+]);
+
 export const billing = pgTable("billing", t => ({
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
   studentId: t.integer().notNull().references(() => student.id, { onDelete: "cascade" }),
   allocationId: t.integer().notNull().references(() => allocation.id, { onDelete: "set null" }),
   hostelId: t.integer().notNull().references(() => hostel.id, { onDelete: "set null" }),
   amount: t.numeric({ precision: 10, scale: 2 }).notNull(),
+  type: billingType().default("hostel fee").notNull(),
+  academicPeriod: academicPeriodEnum().default("first semester").notNull(),
   description: t.text().notNull(),
   dateIssued: t.timestamp().defaultNow().notNull(),
   dueDate: t.date().notNull(),

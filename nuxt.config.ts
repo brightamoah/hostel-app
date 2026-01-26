@@ -55,6 +55,11 @@ export default defineNuxtConfig({
     },
 
     routeRules: {
+      "/_nitro/tasks/**": {
+        security: {
+          csrf: false,
+        },
+      },
       "/_nitro/**": {
         security: {
           csrf: false,
@@ -75,6 +80,39 @@ export default defineNuxtConfig({
   },
 
   css: ["~/assets/css/main.css"],
+
+  nitro: {
+    preset: "cloudflare_module",
+    cloudflare: {
+      deployConfig: true,
+      nodeCompat: true,
+      wrangler: {
+        kv_namespaces: [
+          {
+            binding: "KV",
+            id: env.NUXT_KV_NAMESPACE_ID,
+            preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID,
+          },
+          {
+            binding: "CACHE",
+            id: env.NUXT_KV_NAMESPACE_ID,
+            preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID,
+          },
+        ],
+      },
+    },
+    rollupConfig: {
+      external: ["cloudflare:sockets"],
+    },
+    experimental: {
+      tasks: true,
+      openAPI: true,
+    },
+    scheduledTasks: {
+      "0 0 * * *": ["clearExpiredCache"],
+      "0 1 * * *": ["checkOverdueBillings"],
+    },
+  },
 
   runtimeConfig: {
     public: {
@@ -111,6 +149,11 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    "/_nitro/tasks/**": {
+      security: {
+        csrf: false,
+      },
+    },
     "/api/announcement/**": {
       security: {
         xssValidator: false,
@@ -172,6 +215,7 @@ export default defineNuxtConfig({
       },
       scheduledTasks: {
         "0 0 * * *": ["clearExpiredCache"],
+        "*/5 * * * *": ["checkOverdueBillings"],
       },
     },
 

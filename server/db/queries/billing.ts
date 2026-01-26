@@ -1,3 +1,5 @@
+import type { BillingInsert } from "~~/shared/types";
+
 import { and, eq, ne, sql } from "drizzle-orm";
 
 import { billing } from "../schema";
@@ -112,10 +114,19 @@ export async function billingQueries() {
     };
   };
 
+  const createBilling = async (data: BillingInsert) => {
+    const result = await db
+      .insert(billing)
+      .values(data)
+      .returning();
+    return result[0];
+  };
+
   return {
     getBillingById,
     getScopedBillingsAdmin,
     getBillingStatusCount,
+    createBilling,
   };
 }
 
