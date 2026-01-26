@@ -76,6 +76,39 @@ export default defineNuxtConfig({
 
   css: ["~/assets/css/main.css"],
 
+  nitro: {
+    preset: "cloudflare_module",
+    cloudflare: {
+      deployConfig: true,
+      nodeCompat: true,
+      wrangler: {
+        kv_namespaces: [
+          {
+            binding: "KV",
+            id: env.NUXT_KV_NAMESPACE_ID,
+            preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID,
+          },
+          {
+            binding: "CACHE",
+            id: env.NUXT_KV_NAMESPACE_ID,
+            preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID,
+          },
+        ],
+      },
+    },
+    rollupConfig: {
+      external: ["cloudflare:sockets"],
+    },
+    experimental: {
+      tasks: true,
+      openAPI: true,
+    },
+    scheduledTasks: {
+      "0 0 * * *": ["clearExpiredCache"],
+      "*/5 * * * *": ["checkOverdueBillings"],
+    },
+  },
+
   runtimeConfig: {
     public: {
       siteUrl: env.NUXT_PUBLIC_SITE_URL,

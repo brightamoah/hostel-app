@@ -20,7 +20,7 @@ export default defineTask({
           updatedAt: new Date(),
         })
         .where(and(
-          sql`${billing.dueDate} < CURRENT_DATE`,
+          sql`DATE(${billing.dueDate}) < CURRENT_DATE`,
           inArray(billing.status, ["unpaid", "partially paid"]),
         ))
         .returning({ id: billing.id }); ;
