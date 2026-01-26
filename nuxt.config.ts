@@ -55,6 +55,11 @@ export default defineNuxtConfig({
     },
 
     routeRules: {
+      "/_nitro/tasks/**": {
+        security: {
+          csrf: false,
+        },
+      },
       "/_nitro/**": {
         security: {
           csrf: false,
@@ -144,6 +149,11 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    "/_nitro/tasks/**": {
+      security: {
+        csrf: false,
+      },
+    },
     "/api/announcement/**": {
       security: {
         xssValidator: false,
