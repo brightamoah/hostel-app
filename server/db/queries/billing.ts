@@ -115,11 +115,16 @@ export async function billingQueries() {
   };
 
   const createBilling = async (data: BillingInsert) => {
-    const result = await db
+    const [result] = await db
       .insert(billing)
       .values(data)
       .returning();
-    return result[0];
+    return result;
+  };
+
+  const createManyBillings = async (data: BillingInsert[]) => {
+    if (data.length === 0) return [];
+    return await db.insert(billing).values(data).returning();
   };
 
   return {
@@ -127,6 +132,7 @@ export async function billingQueries() {
     getScopedBillingsAdmin,
     getBillingStatusCount,
     createBilling,
+    createManyBillings,
   };
 }
 

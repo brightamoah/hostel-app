@@ -1,6 +1,6 @@
 export function useFetchBillingDataAdmin() {
   const { user } = useUserSession();
-  const billingKey = computed(() => `bilingData: ${user.value?.adminData?.accessLevel}`);
+  const billingKey = computed(() => `billingData:${user.value?.adminData?.accessLevel}`);
 
   const { data, status, error, refresh } = useFetch<BillingResponse>("/api/billing/getBillings", {
     method: "GET",

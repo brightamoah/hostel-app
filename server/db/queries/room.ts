@@ -320,6 +320,51 @@ export async function roomQueries() {
     return allocations;
   };
 
+  const getAllActiveAllocations = async (hostelId?: number) => {
+    const allocations = await db
+      .query
+      .allocation
+      .findMany({
+        where:
+          eq(allocation.status, "active"),
+        with: {
+          student: {
+            columns: {
+              id: true,
+              residencyStatus: true,
+            },
+            with: {
+              user: {
+                columns: {
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+          },
+          room: {
+            columns: {
+              id: true,
+              roomNumber: true,
+              hostelId: true,
+            },
+            with: {
+              hostel: {
+                columns: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+    if (hostelId) {
+      return allocations.filter(allocation => allocation.room.hostelId === hostelId);
+    }
+    return allocations;
+  };
+
   return {
     getAllRooms,
     getRoomById,
@@ -340,6 +385,7 @@ export async function roomQueries() {
     cancelAllocation,
     getRoomsInHostel,
     getAllcoationByStudentId,
+    getAllActiveAllocations,
   };
 }
 

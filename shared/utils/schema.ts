@@ -599,14 +599,23 @@ const paymentTermsSchema = z.enum([
 ], "Payment Terms is required");
 
 const createBillingSchema = z.object({
-  studentId: createIdSchema("Student"),
-  amount: z.number("Amount is required").min(1, "Amount must be at least 1"),
+  target: z.enum(["single", "all"], "Target is required").default("single"),
+  studentId: createIdSchema("Student").optional(),
+  amount: z.number("Amount is required").min(1, "Amount must be greater than 0"),
   dueDate: dateNoPastSchema,
-  description: z.string(),
+  description: z.string().nonempty("Description is required").min(5).max(255),
   type: billingTypeSchema,
   academicPeriod: academicPeriodSchema,
   paymentTerms: paymentTermsSchema.optional(),
   sendNotification: z.boolean().default(false),
+}).superRefine((data, ctx) => {
+  if (data.target === "single" && !data.studentId) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Student ID is required when target is 'single'",
+      path: ["studentId"],
+    });
+  }
 });
 
 export type CreateBillingSchema = z.output<typeof createBillingSchema>;

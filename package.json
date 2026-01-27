@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "hostel-app",
   "type": "module",
   "private": true,
   "packageManager": "pnpm@10.24.0",

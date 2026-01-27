@@ -18,22 +18,11 @@ export const useBillingStore = defineStore("billingStore", () => {
 
   const { user } = useUserSession();
 
-  const billingKey = computed(() => {
-    if (user.value?.role === "admin") {
-      const accessLevel = user.value?.adminData?.accessLevel;
-      if (!accessLevel) {
-        console.warn("Admin user missing accessLevel");
-        return `billingData:admin-default`;
-      }
-      return `billingData:${accessLevel}`;
-    }
-    const userId = user.value?.id;
-    if (!userId) {
-      console.warn("User missing id");
-      return `billingData:user-default`;
-    }
-    return `billingData:${userId}`;
-  });
+  const isModalOpen = ref(false);
+
+  const billingKey = computed(() => user.value?.role === "admin"
+    ? `billingData:${user.value?.adminData?.accessLevel}`
+    : `billingData:${user.value?.id}`);
 
   const createBillingState = ref<Partial<CreateBillingSchema>>(baseBilling);
   const isLoading = ref(false);
@@ -80,6 +69,7 @@ export const useBillingStore = defineStore("billingStore", () => {
         duration: 5000,
       });
 
+      isModalOpen.value = false;
       clearBillingState();
     }
     catch (error) {
@@ -104,6 +94,7 @@ export const useBillingStore = defineStore("billingStore", () => {
   return {
     createBillingState,
     isLoading,
+    isModalOpen,
     createBilling,
     clearBillingState,
   };

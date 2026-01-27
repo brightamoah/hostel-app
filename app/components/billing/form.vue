@@ -45,6 +45,15 @@ const paymentTerms = computed(() => {
   return terms;
 });
 
+const targetOptions = computed(() => {
+  const targets = createBillingSchema.shape.target.unwrap().options.map(target => ({
+    label: capitalize(target),
+    value: target,
+  }));
+
+  return targets;
+});
+
 const { studentOptions } = useGetSharedFilterOptions();
 
 const form = useTemplateRef("form");
@@ -63,6 +72,24 @@ defineExpose({
   >
     <div class="flex md:flex-row flex-col justify-between gap-5 mb-4 px-4">
       <UFormField
+        required
+        label="Target"
+        name="target"
+        class="w-full"
+      >
+        <USelectMenu
+          v-model="billingState.target"
+          :items="targetOptions"
+          placeholder="Select target"
+          value-key="value"
+          class="w-full cursor-pointer"
+          size="xl"
+          clear
+        />
+      </UFormField>
+
+      <UFormField
+        v-if="billingState.target === 'single'"
         required
         label="Student"
         name="studentId"

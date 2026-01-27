@@ -10,8 +10,6 @@ export default defineTask({
   async run() {
     const { db } = useDB();
 
-    console.log("Running task: Checking for overdue billings...");
-
     try {
       const result = await db
         .update(billing)

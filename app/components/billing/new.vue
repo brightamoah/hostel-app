@@ -4,10 +4,10 @@ const billingStore = useBillingStore();
 const {
   createBillingState,
   isLoading,
+  isModalOpen,
 } = storeToRefs(billingStore);
 
 const billingForm = useTemplateRef("billingForm");
-const isModalOpen = ref(false);
 
 watch(isModalOpen, (open) => {
   if (!open) billingStore.clearBillingState();

@@ -3,129 +3,172 @@ import { billingQueries, roomQueries } from "~~/server/db/queries";
 
 export default defineEventHandler(async (event) => {
   const { adminData } = await adminSessionCheck(event);
-
   const runtimeConfig = useRuntimeConfig(event);
 
   try {
-    const body = await readValidatedBody(event, body => createBillingSchema.omit({ paymentTerms: true }).safeParse(body));
+    const body = await readValidatedBody(event, body => createBillingSchema.safeParse(body));
 
     if (!body.success) {
       throw createError({
         statusCode: 400,
-        message: `${body.error.issues
-          .map(i => i.message)
-          .join(", ")}`,
+        message: body.error.issues.map(i => i.message).join(", "),
       });
     }
 
-    const { studentId, amount, academicPeriod, description, dueDate, type, sendNotification } = body.data;
-
-    const { createBilling } = await billingQueries();
-    const { getAllcoationByStudentId } = await roomQueries();
-
-    const now = today(getLocalTimeZone());
-
-    if (dueDate.compare(now) < 0) {
-      throw createError({
-        statusCode: 400,
-        message: "Due date cannot be in the past.",
-      });
-    }
-
-    const studentAllocation = await getAllcoationByStudentId(studentId);
-
-    if (!studentAllocation) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: "No active allocation found for this student.",
-        data: { reason: "Student must have an active room allocation to be billed." },
-      });
-    }
-
-    const studentHostelId = studentAllocation.room.hostelId;
-
-    if (adminData.accessLevel !== "super") {
-      if (!adminData.hostelId) {
-        throw createError({ statusCode: 403, statusMessage: "Admin not assigned to any hostel" });
-      }
-
-      if (studentHostelId !== adminData.hostelId) {
-        throw createError({
-          statusCode: 403,
-          statusMessage: "Unauthorized",
-          data: { message: "You can only create bills for students in your assigned hostel." },
-        });
-      }
-    }
-
-    const newBilling = await createBilling({
+    const {
       studentId,
-      allocationId: studentAllocation.id,
-      hostelId: studentHostelId,
-      amount: amount.toString(),
+      amount,
       academicPeriod,
       description,
-      status: "unpaid",
-      dueDate: dueDate.toString(),
+      dueDate,
       type,
-    });
+      sendNotification,
+      target,
+    } = body.data;
 
-    if (sendNotification) {
-      const studentEmail = studentAllocation.student.user.email;
-      const studentName = studentAllocation.student.user.name;
+    const { createBilling, createManyBillings } = await billingQueries();
+    const { getAllcoationByStudentId, getAllActiveAllocations } = await roomQueries();
 
+    // 1. Date Validation
+    const now = today(getLocalTimeZone());
+    if (dueDate.compare(now) < 0) {
+      throw createError({ statusCode: 400, message: "Due date cannot be in the past." });
+    }
+
+    // Helper to send the notification (defined inside to access runtimeConfig/composables)
+    const sendNotificationEmail = async (studentName: string, studentEmail: string, hostelName: string) => {
       try {
+        const emailContent = {
+          subject: "New Billing Created - Kings Hostel Management",
+          html: `
+            <h1>Hello ${studentName},</h1>
+            <p>A new invoice has been generated for your stay at ${hostelName}.</p>
+            <ul>
+              <li><strong>Amount:</strong> GHS ${amount}</li>
+              <li><strong>Purpose:</strong> ${type}</li>
+              <li><strong>Due Date:</strong> ${dueDate.toString()}</li>
+            </ul>
+            <p>Please login to your dashboard to view details and make payment.</p>
+          `,
+          text: `Hello ${studentName},\nA new invoice has been generated for your stay at ${hostelName}.\nAmount: ${amount}\nPurpose: ${type}\nDue Date: ${dueDate.toString()}\nPlease login to your dashboard to view details and make payment.`,
+        };
+
         if (import.meta.dev) {
           const { sendMail } = useNodeMailer();
-
-          await sendMail({
-            to: studentEmail,
-            subject: "New Billing Created - Kings Hostel Management",
-            html: `
-          <h1>Hello ${studentName},</h1>
-          <p>A new invoice has been generated for your stay at ${studentAllocation.room.hostel.name}.</p>
-          <ul>
-            <li><strong>Amount:</strong> ${amount}</li>
-            <li><strong>Purpose:</strong> ${type}</li>
-            <li><strong>Due Date:</strong> ${dueDate.toString()}</li>
-          </ul>
-          <p>Please login to your dashboard to view details and make payment.</p>
-        `,
-          });
+          await sendMail({ to: studentEmail, ...emailContent });
         }
         else {
           const mailer = await useWorkerMailer();
-
           await mailer.send({
             from: { name: runtimeConfig.emailFromName, email: runtimeConfig.emailFromEmail },
             to: { name: studentName, email: studentEmail },
-            subject: "New Billing Created - Kings Hostel Management",
-            html: `<h1>Hello ${studentName},</h1>
-          <p>A new invoice has been generated for your stay at ${studentAllocation.room.hostel.name}.</p>
-          <ul>
-            <li><strong>Amount:</strong> ${amount}</li>
-            <li><strong>Purpose:</strong> ${type}</li>
-            <li><strong>Due Date:</strong> ${dueDate.toString()}</li>
-          </ul>
-          <p>Please login to your dashboard to view details and make payment.</p>`,
-            text: `Hello ${studentName},\nA new invoice has been generated for your stay at ${studentAllocation.room.hostel.name}.\nAmount: ${amount}\nPurpose: ${type}\nDue Date: ${dueDate.toString()}\nPlease login to your dashboard to view details and make payment.`,
+            ...emailContent,
           });
         }
       }
-      catch (emailError) {
-        console.error("Failed to send verification email:", emailError);
+      catch (e) {
+        console.error(`Failed to send billing email to ${studentEmail}:`, e);
       }
+    };
+
+    // --- CASE A: BILL ALL ACTIVE STUDENTS ---
+    if (target === "all") {
+      const targetHostelId = adminData.accessLevel === "super" ? undefined : (adminData.hostelId as number);
+      const activeAllocations = await getAllActiveAllocations(targetHostelId);
+
+      if (!activeAllocations.length) {
+        return { success: true, message: "No active students found to bill." };
+      }
+
+      const billingsToInsert = activeAllocations.map(alloc => ({
+        studentId: alloc.studentId,
+        allocationId: alloc.id,
+        hostelId: alloc.room.hostelId,
+        amount: amount.toString(),
+        description,
+        dueDate: dueDate.toString(),
+        status: "unpaid" as const,
+        type,
+        academicPeriod,
+        paidAmount: "0.00",
+        dateIssued: new Date(),
+      }));
+
+      const newBillings = await createManyBillings(billingsToInsert);
+
+      // 2. Optimization: Offload emails to background process
+      if (sendNotification) {
+        event.waitUntil((async () => {
+          // Send emails in small chunks or all at once depending on provider limits
+          // Using Promise.all with map for efficiency
+          await Promise.allSettled(
+            activeAllocations.map(alloc =>
+              sendNotificationEmail(alloc.student.user.name, alloc.student.user.email, alloc.room.hostel.name),
+            ),
+          );
+        })());
+      }
+
+      return {
+        success: true,
+        message: `Successfully created billings for ${newBillings.length} students. Notifications are being sent in the background.`,
+        count: newBillings.length,
+      };
     }
 
-    return {
-      success: true,
-      message: "Billing created successfully.",
-      data: newBilling,
-    };
+    // --- CASE B: SINGLE STUDENT BILLING ---
+    else {
+      if (!studentId) {
+        throw createError({ statusCode: 400, message: "Student ID is required for single billing." });
+      }
+
+      const studentAllocation = await getAllcoationByStudentId(studentId);
+      if (!studentAllocation) {
+        throw createError({
+          statusCode: 404,
+          statusMessage: "No active allocation found for this student.",
+        });
+      }
+
+      // Authorization check
+      if (adminData.accessLevel !== "super" && studentAllocation.room.hostelId !== adminData.hostelId) {
+        throw createError({ statusCode: 403, statusMessage: "Unauthorized to bill students in other hostels." });
+      }
+
+      const newBilling = await createBilling({
+        studentId,
+        allocationId: studentAllocation.id,
+        hostelId: studentAllocation.room.hostelId,
+        amount: amount.toString(),
+        academicPeriod,
+        description,
+        status: "unpaid",
+        dueDate: dueDate.toString(),
+        type,
+        paidAmount: "0.00",
+        dateIssued: new Date(),
+      });
+
+      // 3. Background single email too for faster response time
+      if (sendNotification) {
+        event.waitUntil(
+          sendNotificationEmail(
+            studentAllocation.student.user.name,
+            studentAllocation.student.user.email,
+            studentAllocation.room.hostel.name,
+          ),
+        );
+      }
+
+      return {
+        success: true,
+        message: "Billing created successfully. Notification is being sent.",
+        data: newBilling,
+      };
+    }
   }
   catch (error) {
     if (error && typeof error === "object" && "statusCode" in error) throw error;
-
     handleError(error, "Create Billing", event);
   }
 });
