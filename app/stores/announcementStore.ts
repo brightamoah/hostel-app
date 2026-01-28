@@ -3,11 +3,11 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import { useDebounceFn } from "@vueuse/core";
 import { acceptHMRUpdate, defineStore } from "pinia";
 
-const defaultState: CreateAnnouncementSchema = {
+const defaultState: Partial<CreateAnnouncementSchema> = {
   title: "",
   content: "",
-  priority: "",
-  targetAudience: "",
+  priority: undefined,
+  targetAudience: undefined,
   targetHostelId: undefined,
   targetRoomId: undefined,
   targetUserId: undefined,
@@ -42,7 +42,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
     "emergency",
   ]);
 
-  const announcementState = ref<CreateAnnouncementSchema>({ ...defaultState });
+  const announcementState = ref<Partial<CreateAnnouncementSchema>>({ ...defaultState });
 
   const editingId = ref<number | null>(null);
 
@@ -80,7 +80,7 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
   const isFormValid = computed(() => {
     const { title, content, priority, targetAudience, targetUserId, targetHostelId, targetRoomId } = announcementState.value;
 
-    const hasBasicFields = title.trim() !== "" && content.trim() !== "" && priority.trim() !== "" && targetAudience.trim() !== "";
+    const hasBasicFields = (title?.trim() ?? "") !== "" && (content?.trim() ?? "") !== "" && (priority?.trim() ?? "") !== "" && (targetAudience?.trim() ?? "") !== "";
 
     const hasValidTarget = (() => {
       switch (targetAudience) {

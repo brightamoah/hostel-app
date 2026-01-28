@@ -18,21 +18,21 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
 
   const dashboardKey = computed(() => `dashboardData:${user.value?.id}`);
 
-  const maintenanceStatusResponseState = ref<StatusResponseForm>({
+  const maintenanceStatusResponseState = ref<Partial<StatusResponseForm>>({
     responseText: "",
-    status: "",
+    status: undefined,
   });
 
   const isUpdateFormValid = computed(() => {
     return (
-      maintenanceStatusResponseState.value.status.trim() !== ""
-      && maintenanceStatusResponseState.value.responseText.trim() !== ""
+      maintenanceStatusResponseState.value.status?.trim() !== ""
+      && maintenanceStatusResponseState.value.responseText?.trim() !== ""
     );
   });
 
   const isAddResponseFormValid = computed(() => {
     return (
-      maintenanceStatusResponseState.value.responseText.trim() !== ""
+      maintenanceStatusResponseState.value.responseText?.trim() !== ""
     );
   });
 
@@ -40,17 +40,6 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
     if (!isUpdateFormValid.value) return;
 
     if (!payload.maintenanceId && !payload.status && !payload.responseText) return;
-
-    if (payload.status === "") {
-      toast.add({
-        title: "Failed to Update Maintenance Status",
-        description: "Status cannot be empty.",
-        color: "error",
-        icon: "i-lucide-circle-alert",
-        duration: 8000,
-      });
-      return;
-    }
 
     isLoading.value = true;
 
@@ -299,13 +288,13 @@ export const useMaintenanceStore = defineStore("maintenanceStore", () => {
   function clearState() {
     maintenanceStatusResponseState.value = {
       responseText: "",
-      status: "",
+      status: undefined,
     };
 
     createMaintenanceState.value = {
-      issueType: "",
+      issueType: undefined,
       description: "",
-      priority: "",
+      priority: undefined,
       hostelId: undefined,
       studentId: undefined,
       roomId: undefined,
