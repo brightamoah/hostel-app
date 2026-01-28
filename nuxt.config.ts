@@ -103,6 +103,11 @@ export default defineNuxtConfig({
     },
     rollupConfig: {
       external: ["cloudflare:sockets"],
+      output: {
+        manualChunks: (id) => {
+          if (id.includes("jspdf") || id.includes("jspdf-autotable")) return "pdf-lib";
+        },
+      },
     },
     experimental: {
       tasks: true,
@@ -208,6 +213,11 @@ export default defineNuxtConfig({
       },
       rollupConfig: {
         external: ["cloudflare:sockets"],
+        output: {
+          manualChunks: (id) => {
+            if (id.includes("jspdf") || id.includes("jspdf-autotable")) return "pdf-lib";
+          },
+        },
       },
       experimental: {
         tasks: true,
@@ -223,5 +233,11 @@ export default defineNuxtConfig({
       kv: true,
       cache: true,
     },
+  },
+
+  alias: {
+    "node:process": "unenv/runtime/npm/process",
+    "node:buffer": "unenv/runtime/npm/buffer",
+    "node:stream": "unenv/runtime/npm/stream",
   },
 });

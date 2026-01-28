@@ -67,15 +67,15 @@
   "pnpm": {
     "overrides": {
       "@tiptap/*": "3.16.0"
-    },
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "@tailwindcss/oxide",
-      "esbuild",
-      "sharp",
-      "unrs-resolver",
-      "vue-demi",
-      "workerd"
-    ]
-  }
+    }
+  },
+  "onlyBuiltDependencies": [
+    "@parcel/watcher",
+    "@tailwindcss/oxide",
+    "esbuild",
+    "sharp",
+    "unrs-resolver",
+    "vue-demi",
+    "workerd"
+  ]
 }
