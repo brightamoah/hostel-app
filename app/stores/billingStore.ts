@@ -91,12 +91,53 @@ export const useBillingStore = defineStore("billingStore", () => {
     createBillingState.value = { ...baseBilling };
   }
 
+  const isSending = ref(false);
+
+  const emailInvoice = async (billingId: number, email: string) => {
+    if (!billingId || !email) return;
+
+    isSending.value = true;
+
+    try {
+      await $apiFetch("/api/billing/emailInvoice", {
+        method: "POST",
+        body: {
+          billingId,
+          email,
+        } as EmailInvoiceSchema,
+      });
+
+      toast.add({
+        title: "Invoice Email Sent",
+        description: `The invoice has been sent to ${email} successfully.`,
+        color: "success",
+        icon: "i-lucide-check-circle",
+        duration: 5000,
+      });
+    }
+    catch (error) {
+      const message = (error as any)?.data?.message;
+      toast.add({
+        title: "Failed to Send Invoice Email",
+        description: message,
+        color: "error",
+        icon: "i-lucide-circle-alert",
+        duration: 8000,
+      });
+    }
+    finally {
+      isSending.value = false;
+    }
+  };
+
   return {
     createBillingState,
     isLoading,
     isModalOpen,
+    isSending,
     createBilling,
     clearBillingState,
+    emailInvoice,
   };
 });
 

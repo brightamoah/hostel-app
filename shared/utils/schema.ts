@@ -620,6 +620,12 @@ const createBillingSchema = z.object({
 
 export type CreateBillingSchema = z.output<typeof createBillingSchema>;
 
+const emailInvoiceSchema = z.object({
+  billingId: createIdSchema("Billing"),
+  email: emailSchema,
+});
+export type EmailInvoiceSchema = z.output<typeof emailInvoiceSchema>;
+
 export {
   addAdminSchema,
   approveDenySchema,
@@ -637,6 +643,7 @@ export {
   editMaintenanceSchema,
   editRoomSchema,
   editVisitorSchema,
+  emailInvoiceSchema,
   emailSchema,
   emailVerificationSchema,
   linkSchema,
