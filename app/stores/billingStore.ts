@@ -18,22 +18,11 @@ export const useBillingStore = defineStore("billingStore", () => {
 
   const { user } = useUserSession();
 
-  const billingKey = computed(() => {
-    if (user.value?.role === "admin") {
-      const accessLevel = user.value?.adminData?.accessLevel;
-      if (!accessLevel) {
-        console.warn("Admin user missing accessLevel");
-        return `billingData:admin-default`;
-      }
-      return `billingData:${accessLevel}`;
-    }
-    const userId = user.value?.id;
-    if (!userId) {
-      console.warn("User missing id");
-      return `billingData:user-default`;
-    }
-    return `billingData:${userId}`;
-  });
+  const isModalOpen = ref(false);
+
+  const billingKey = computed(() => user.value?.role === "admin"
+    ? `billingData:${user.value?.adminData?.accessLevel}`
+    : `billingData:${user.value?.id}`);
 
   const createBillingState = ref<Partial<CreateBillingSchema>>(baseBilling);
   const isLoading = ref(false);
@@ -80,6 +69,7 @@ export const useBillingStore = defineStore("billingStore", () => {
         duration: 5000,
       });
 
+      isModalOpen.value = false;
       clearBillingState();
     }
     catch (error) {
@@ -101,11 +91,53 @@ export const useBillingStore = defineStore("billingStore", () => {
     createBillingState.value = { ...baseBilling };
   }
 
+  const isSending = ref(false);
+
+  const emailInvoice = async (billingId: number, email: string) => {
+    if (!billingId || !email) return;
+
+    isSending.value = true;
+
+    try {
+      await $apiFetch("/api/billing/emailInvoice", {
+        method: "POST",
+        body: {
+          billingId,
+          email,
+        } as EmailInvoiceSchema,
+      });
+
+      toast.add({
+        title: "Invoice Email Sent",
+        description: `The invoice has been sent to ${email} successfully.`,
+        color: "success",
+        icon: "i-lucide-check-circle",
+        duration: 5000,
+      });
+    }
+    catch (error) {
+      const message = (error as any)?.data?.message;
+      toast.add({
+        title: "Failed to Send Invoice Email",
+        description: message,
+        color: "error",
+        icon: "i-lucide-circle-alert",
+        duration: 8000,
+      });
+    }
+    finally {
+      isSending.value = false;
+    }
+  };
+
   return {
     createBillingState,
     isLoading,
+    isModalOpen,
+    isSending,
     createBilling,
     clearBillingState,
+    emailInvoice,
   };
 });
 

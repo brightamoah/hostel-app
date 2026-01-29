@@ -3,10 +3,14 @@ const { billing } = defineProps<{
   billing: Billing;
 }>();
 
-const emit = defineEmits<{
-  download: [billing: Billing];
-  email: [billing: Billing];
-}>();
+const { $apiFetch } = useNuxtApp();
+const toast = useToast();
+
+const isGenerating = ref(false);
+
+const billingStore = useBillingStore();
+const { isSending } = storeToRefs(billingStore);
+const { emailInvoice } = billingStore;
 
 const isMobile = inject("isMobile") as ComputedRef<boolean>;
 
@@ -61,6 +65,48 @@ const subtotal = computed(() => Number(billing.amount));
 const lateFee = computed(() => Number(billing.lateFee || 0));
 const total = computed(() => subtotal.value + lateFee.value);
 const balanceDue = computed(() => total.value - Number(billing.paidAmount));
+
+async function handleDownload() {
+  if (isGenerating.value) return;
+
+  isGenerating.value = true;
+  try {
+    const response = await $apiFetch(`/api/billing/download/${billing.id}`, {
+      responseType: "blob",
+    });
+
+    const url = window.URL.createObjectURL(response as unknown as Blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `invoice-${billing.invoiceNumber}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    toast.add({
+      title: "Success",
+      description: "Invoice downloaded successfully",
+      color: "success",
+      icon: "i-lucide-check-circle",
+    });
+  }
+  catch (error) {
+    console.error("Download error:", error);
+    const errorMessage = error instanceof Error && "data" in error
+      ? (error.data as any)?.message
+      : "Failed to download invoice. Please try again.";
+    toast.add({
+      title: "Download Failed",
+      description: errorMessage || "Failed to download invoice. Please try again.",
+      color: "error",
+      icon: "i-lucide-x-circle",
+    });
+  }
+  finally {
+    isGenerating.value = false;
+  }
+}
 </script>
 
 <template>
@@ -165,7 +211,8 @@ const balanceDue = computed(() => total.value - Number(billing.paidAmount));
           class="cursor-pointer"
           :size="isMobile ? 'sm' : 'md'"
           icon="i-lucide-download"
-          @click="emit('download', billing)"
+          :loading="isGenerating"
+          @click="handleDownload"
         />
 
         <UButton
@@ -175,7 +222,8 @@ const balanceDue = computed(() => total.value - Number(billing.paidAmount));
           class="cursor-pointer"
           :size="isMobile ? 'sm' : 'md'"
           icon="i-lucide-send"
-          @click="emit('email', billing)"
+          :loading="isSending"
+          @click="emailInvoice(billing.id, billing.student.user.email)"
         />
       </div>
     </template>
