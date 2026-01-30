@@ -93,23 +93,44 @@ export const useBillingStore = defineStore("billingStore", () => {
 
   const isSending = ref(false);
 
-  const emailInvoice = async (billingId: number, email: string) => {
-    if (!billingId || !email) return;
+  const emailInvoice = async (billing: Billing) => {
+    if (!billing.id || !billing.student?.user?.email) return;
 
     isSending.value = true;
 
     try {
-      await $apiFetch("/api/billing/emailInvoice", {
+      const pdfBlob = await generateInvoicePDF(billing);
+
+      const amount = Number(billing.amount);
+      const lateFee = Number(billing.lateFee || 0);
+      const amountPaid = Number(billing.paidAmount || 0);
+      const amountTotal = Number(amount + lateFee);
+      const amountDue = Number(amountTotal - amountPaid);
+      const dateIssued = billing.dateIssued;
+      const dateDue = billing.dueDate;
+
+      const formData = new FormData();
+
+      formData.append("file", pdfBlob, `Invoice-${billing.invoiceNumber}.pdf`);
+      formData.append("studentEmail", billing.student.user.email);
+      formData.append("studentName", billing.student.user.name);
+      formData.append("invoiceNumber", billing.invoiceNumber);
+      formData.append("studentUserId", String(billing.student.userId));
+      formData.append("amountTotal", amountTotal.toString());
+      formData.append("amountPaid", amountPaid.toString());
+      formData.append("amountDue", amountDue.toString());
+      formData.append("dateIssued", dateIssued ? new Date(dateIssued).toISOString() : "");
+      formData.append("dateDue", dateDue ? new Date(dateDue).toISOString() : "");
+      formData.append("amount", amount.toString());
+
+      const response = await $apiFetch("/api/billing/emailInvoice", {
         method: "POST",
-        body: {
-          billingId,
-          email,
-        } as EmailInvoiceSchema,
+        body: formData,
       });
 
       toast.add({
         title: "Invoice Email Sent",
-        description: `The invoice has been sent to ${email} successfully.`,
+        description: response.message,
         color: "success",
         icon: "i-lucide-check-circle",
         duration: 5000,

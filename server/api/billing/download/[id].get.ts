@@ -1,7 +1,9 @@
 import { billingQueries } from "~~/server/db/queries/billing";
 
 export default defineEventHandler(async (event) => {
-  await adminSessionCheck(event);
+  await requireUserSession(event, {
+    message: "Unauthorized Access: Please log in to continue.",
+  });
 
   const billingId = Number(getRouterParam(event, "id"));
 
@@ -26,7 +28,7 @@ export default defineEventHandler(async (event) => {
     const pdfBuffer = await generateInvoicePDF(billing);
 
     setHeader(event, "Content-Type", "application/pdf");
-    setHeader(event, "Content-Disposition", `attachment; filename="invoice-${billing.invoiceNumber}.pdf"`);
+    setHeader(event, "Content-Disposition", `attachment; filename="invoice-${billing.invoiceNumber || `INV-${String(billing.id).padStart(6, "0")}`}.pdf"`);
     setHeader(event, "Content-Length", pdfBuffer.length);
 
     return pdfBuffer;
