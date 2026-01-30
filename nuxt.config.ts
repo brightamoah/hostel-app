@@ -85,7 +85,7 @@ export default defineNuxtConfig({
     preset: "cloudflare_module",
     cloudflare: {
       deployConfig: true,
-      nodeCompat: false,
+      nodeCompat: true,
       wrangler: {
         kv_namespaces: [
           {
