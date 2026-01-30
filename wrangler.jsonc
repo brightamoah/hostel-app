@@ -3,9 +3,7 @@
   "name": "kings-hostel-management",
   "main": "./.output/server/index.mjs",
   "compatibility_date": "2025-12-13",
-  "compatibility_flags": [
-    "nodejs_compat_v2"
-  ],
+  "compatibility_flags": [],
   "triggers": {
     "crons": [
       "0 0 * * *",
