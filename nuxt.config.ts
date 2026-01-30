@@ -85,7 +85,7 @@ export default defineNuxtConfig({
     preset: "cloudflare_module",
     cloudflare: {
       deployConfig: true,
-      nodeCompat: true,
+      nodeCompat: false,
       wrangler: {
         kv_namespaces: [
           {
@@ -100,6 +100,9 @@ export default defineNuxtConfig({
           },
         ],
       },
+    },
+    externals: {
+      external: ["jspdf", "jspdf-autotable", "node:process", "node:buffer", "node:events"],
     },
     rollupConfig: {
       external: ["cloudflare:sockets"],
