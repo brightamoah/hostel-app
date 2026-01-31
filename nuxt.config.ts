@@ -215,7 +215,7 @@ export default defineNuxtConfig({
       },
       scheduledTasks: {
         "0 0 * * *": ["clearExpiredCache"],
-        "*/5 * * * *": ["checkOverdueBillings"],
+        "0 1 * * *": ["checkOverdueBillings"],
       },
     },
 

@@ -1,26 +1,37 @@
-import { jsPDF as JsPDF } from "jspdf";
+import { useDateFormat } from "@vueuse/core";
+// app/utils/pdfGenerator.client.ts
+import { jsPDF as JSPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-import { Buffer } from "node:buffer";
 
-import { formatDate, formatMoney } from "./formatters";
-
-// --- Configuration ---
 const PRIMARY_COLOR = "#214d49";
 const TEXT_COLOR = "#333333";
 const GRAY_COLOR = "#666666";
 const BG_COLOR = "#f8f9fa";
 const BORDER_COLOR = "#dee2e6";
 
-// Map billing statuses to HEX codes (replicating your UI colors)
 const STATUS_COLORS: Record<string, string> = {
-  "fully paid": "#16a34a", // Success Green
-  "partially paid": "#d97706", // Warning Amber
-  "unpaid": "#333333", // Default Dark Gray
-  "overdue": "#dc2626", // Dark Red
-  "cancelled": "#6b7280", // Neutral Gray
+  "fully paid": "#16a34a",
+  "partially paid": "#d97706",
+  "unpaid": "#333333",
+  "overdue": "#dc2626",
+  "cancelled": "#6b7280",
 };
 
-function getDaysDiff(start: Date | string, end: Date | string) {
+// --- Helpers ---
+function formatMoney(amount: number | string) {
+  return new Intl.NumberFormat("en-GH", {
+    style: "currency",
+    currency: "GHS",
+    currencyDisplay: "code",
+  }).format(Number(amount));
+}
+
+function formatDate(date: Date | string | null) {
+  if (!date) return "N/A";
+  return useDateFormat(date, "dddd, MMMM D, YYYY").value;
+}
+
+function getDaysDifference(start: Date | string, end: Date | string) {
   const date1 = new Date(start);
   const date2 = new Date(end);
   const diffTime = Math.abs(date2.getTime() - date1.getTime());
@@ -28,11 +39,11 @@ function getDaysDiff(start: Date | string, end: Date | string) {
   return diffDays > 0 ? diffDays : 30; // Default to 30 if invalid
 }
 
-export function generateInvoicePDF(billing: Billing): Promise<Buffer> {
+export function generateInvoicePDF(billing: Billing): Promise<Blob> {
   return new Promise((resolve) => {
-    const doc = new JsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const doc = new JSPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
-    const PAGE_WIDTH = doc.internal.pageSize.width; // 210mm
+    const PAGE_WIDTH = doc.internal.pageSize.width;
     const MARGIN = 15;
     let y = 20;
 
@@ -56,12 +67,11 @@ export function generateInvoicePDF(billing: Billing): Promise<Buffer> {
     doc.setLineWidth(0.5);
     doc.line(MARGIN, y, PAGE_WIDTH - MARGIN, y);
 
-    // --- 2. Invoice Meta Data ---
+    // --- 2. Meta Data ---
     y += 10;
     const col2X = PAGE_WIDTH / 2 + 10;
-    const labelOffset = 18; // Reduced from previous to tighten gap
+    const labelOffset = 18;
 
-    // Left Column
     doc.setFontSize(10);
     doc.setTextColor(TEXT_COLOR);
     doc.setFont("helvetica", "bold");
@@ -75,16 +85,16 @@ export function generateInvoicePDF(billing: Billing): Promise<Buffer> {
     doc.text("Date Issued:", MARGIN, y);
     doc.setFont("helvetica", "normal");
     doc.text(formatDate(billing.dateIssued), MARGIN + 25, y);
+
     y += 6;
     doc.setFont("helvetica", "bold");
     doc.text("Due Date:", MARGIN, y);
     doc.setFont("helvetica", "normal");
     doc.text(formatDate(billing.dueDate), MARGIN + 25, y);
 
-    // Right Column (Reset Y)
-    y -= 12;
+    y -= 12; // Reset for Right Col
 
-    // Status
+    // Status Logic
     doc.setFont("helvetica", "bold");
     doc.setTextColor(TEXT_COLOR);
     doc.text("Status:", col2X, y);
@@ -94,7 +104,6 @@ export function generateInvoicePDF(billing: Billing): Promise<Buffer> {
     doc.setTextColor(statusHex);
     doc.text(billing.status?.toUpperCase() || "UNPAID", col2X + labelOffset, y);
 
-    // Period
     y += 6;
     doc.setTextColor(TEXT_COLOR);
     doc.setFont("helvetica", "bold");
@@ -102,49 +111,48 @@ export function generateInvoicePDF(billing: Billing): Promise<Buffer> {
     doc.setFont("helvetica", "normal");
     doc.text(billing.academicPeriod || "N/A", col2X + labelOffset, y);
 
-    // Purpose
     y += 6;
     doc.setFont("helvetica", "bold");
     doc.text("Purpose:", col2X, y);
     doc.setFont("helvetica", "normal");
     doc.text(billing.type || "Hostel Fee", col2X + labelOffset, y);
 
-    // --- 3. "Billed To" Box ---
+    // --- 3. Billed To ---
     y += 12;
-    const boxHeight = 42; // Increased height for better spacing
+    const boxHeight = 42;
     doc.setFillColor(BG_COLOR);
     doc.setDrawColor(PRIMARY_COLOR);
     doc.rect(MARGIN, y, PAGE_WIDTH - (MARGIN * 2), boxHeight, "F");
     doc.setFillColor(PRIMARY_COLOR);
     doc.rect(MARGIN, y, 1.5, boxHeight, "F");
 
-    let boxY = y + 10; // More top padding
-    const boxX = MARGIN + 8; // More left padding
+    let boxY = y + 10;
+    const boxX = MARGIN + 8;
 
     doc.setFont("helvetica", "bold");
     doc.setTextColor(PRIMARY_COLOR);
     doc.text("Billed To:", boxX, boxY);
 
-    boxY += 8; // Increased spacing
+    boxY += 8;
     doc.setTextColor(TEXT_COLOR);
     doc.setFontSize(11);
     doc.text(billing.student?.user?.name?.toUpperCase() || "Unknown Student", boxX, boxY);
 
-    boxY += 6; // Increased spacing
+    boxY += 6;
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(GRAY_COLOR);
     doc.text(`Student ID: ${billing.student?.id || "N/A"}`, boxX, boxY);
 
-    boxY += 5; // Increased spacing
+    boxY += 5;
     doc.text(`Email: ${billing.student?.user?.email}`, boxX, boxY);
 
-    boxY += 5; // Increased spacing
+    boxY += 5;
     doc.text(`Phone: ${billing.student?.phoneNumber || "N/A"}`, boxX, boxY);
 
-    y += boxHeight + 8; // Move cursor past box
+    y += boxHeight + 8;
 
-    // --- 4. Items Table ---
+    // --- 4. Table ---
     const subtotal = Number(billing.amount);
     const lateFee = Number(billing.lateFee || 0);
     const total = subtotal + lateFee;
@@ -167,10 +175,10 @@ export function generateInvoicePDF(billing: Billing): Promise<Buffer> {
       margin: { left: MARGIN, right: MARGIN },
     });
 
-    // @ts-expect-error jsPDF autoTable plugin extends doc with lastAutoTable property
+    // @ts-expect-error: lastAutoTable is added by jspdf-autotable at runtime, not typed in jsPDF
     y = doc.lastAutoTable.finalY + 8;
 
-    // --- 5. Totals Section ---
+    // --- 5. Totals ---
     const rightColLabelX = 140;
     const rightColValueX = 195;
 
@@ -197,11 +205,10 @@ export function generateInvoicePDF(billing: Billing): Promise<Buffer> {
     y += 2;
     addRow("Total:", formatMoney(total), true, TEXT_COLOR, true);
     addRow("Amount Paid:", formatMoney(paid), true, STATUS_COLORS["fully paid"]);
-    addRow("Balance Due:", formatMoney(balance), true, STATUS_COLORS.unpaid);
+    addRow("Balance Due:", formatMoney(balance), true, STATUS_COLORS.overdue);
 
-    // --- 6. Payment Info Box ---
+    // --- 6. Payment Info ---
     y += 8;
-
     doc.setFillColor(BG_COLOR);
     doc.setDrawColor(BORDER_COLOR);
     doc.rect(MARGIN, y, PAGE_WIDTH - (MARGIN * 2), 28, "FD");
@@ -249,7 +256,7 @@ export function generateInvoicePDF(billing: Billing): Promise<Buffer> {
     y += 2;
 
     const historyData = billing.payments && billing.payments.length > 0
-      ? billing.payments.map((p: any) => [
+      ? billing.payments.map((p: Billing["payments"][0]) => [
           formatDate(p.paymentDate),
           p.paymentMethod.replace("_", " ").toUpperCase(),
           formatMoney(p.amount),
@@ -298,7 +305,7 @@ export function generateInvoicePDF(billing: Billing): Promise<Buffer> {
     doc.setFontSize(8);
 
     // CALCULATE DAYS
-    const dueInDays = getDaysDiff(billing.dateIssued, billing.dueDate);
+    const dueInDays = getDaysDifference(billing.dateIssued, billing.dueDate);
 
     const terms = [
       `1. Payment is due within ${dueInDays} days of invoice date.`,
@@ -311,6 +318,7 @@ export function generateInvoicePDF(billing: Billing): Promise<Buffer> {
       doc.text(term, MARGIN + 5, y += 4.5);
     });
 
-    resolve(Buffer.from(doc.output("arraybuffer")));
+    // --- 8. Output ---
+    resolve(doc.output("blob"));
   });
 }

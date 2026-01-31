@@ -3,7 +3,6 @@ const { billing } = defineProps<{
   billing: Billing;
 }>();
 
-const { $apiFetch } = useNuxtApp();
 const toast = useToast();
 
 const isGenerating = ref(false);
@@ -71,11 +70,9 @@ async function handleDownload() {
 
   isGenerating.value = true;
   try {
-    const response = await $apiFetch(`/api/billing/download/${billing.id}`, {
-      responseType: "blob",
-    });
+    const pdfBlob = await generateInvoicePDF(billing);
 
-    const url = window.URL.createObjectURL(response as unknown as Blob);
+    const url = window.URL.createObjectURL(pdfBlob);
     const link = document.createElement("a");
     link.href = url;
     link.download = `invoice-${billing.invoiceNumber}.pdf`;
@@ -223,7 +220,7 @@ async function handleDownload() {
           :size="isMobile ? 'sm' : 'md'"
           icon="i-lucide-send"
           :loading="isSending"
-          @click="emailInvoice(billing.id, billing.student.user.email)"
+          @click="emailInvoice(billing)"
         />
       </div>
     </template>

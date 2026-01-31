@@ -1,6 +1,3 @@
-import type { Buffer } from "node:buffer";
-
-import { billingQueries } from "~~/server/db/queries";
 import { formatDate, formatMoney } from "~~/server/utils/formatters";
 import { getInvoiceEmailTemplate } from "~~/server/utils/invoiceEmailTemplate";
 import { emailInvoiceSchema } from "~~/shared/utils/schema";
@@ -10,29 +7,58 @@ export default defineEventHandler(async (event) => {
     message: "Unauthorized Access: Please log in to continue.",
   });
   try {
-    const body = await readValidatedBody(event, body => emailInvoiceSchema.safeParse(body));
-    if (!body.success) {
+    const body = await readMultipartFormData(event);
+    if (!body) {
       throw createError({
         statusCode: 400,
-        message: body.error.issues.map(i => i.message).join(", "),
+        message: "No file uploaded",
       });
     }
 
-    const { billingId, email } = body.data;
+    const getField = (name: string) => body.find(p => p.name === name)?.data.toString();
 
-    const { getBillingById } = await billingQueries();
+    const filePart = body.find(p => p.name === "file");
 
-    const billing = await getBillingById(billingId);
+    if (!filePart) throw createError({ statusCode: 400, message: "PDF missing" });
 
-    if (!billing) {
+    const rawData = {
+      studentEmail: getField("studentEmail"),
+      studentName: getField("studentName"),
+      invoiceNumber: getField("invoiceNumber"),
+      studentUserId: getField("studentUserId") ? Number(getField("studentUserId")) : undefined,
+      amountTotal: getField("amountTotal") ? Number(getField("amountTotal")) : undefined,
+      amountPaid: getField("amountPaid") ? Number(getField("amountPaid")) : undefined,
+      amountDue: getField("amountDue") ? Number(getField("amountDue")) : undefined,
+      dateIssued: getField("dateIssued"),
+      dateDue: getField("dateDue"),
+      amount: getField("amount") ? Number(getField("amount")) : undefined,
+    };
+
+    const validatedData = emailInvoiceSchema.safeParse(rawData);
+
+    if (!validatedData.success) {
       throw createError({
-        statusCode: 404,
-        message: "Billing record not found",
+        statusCode: 400,
+        message: `Invalid request data: ${validatedData.error.issues
+          .map(i => i.message)
+          .join(", ")}`,
       });
     }
+
+    const {
+      studentEmail,
+      studentName,
+      invoiceNumber,
+      studentUserId,
+      amountTotal,
+      amountPaid,
+      dateIssued,
+      dateDue,
+      amountDue,
+    } = validatedData.data;
 
     const isAdmin = user.role === "admin";
-    const isOwner = user.role === "student" && billing.student.userId === user.id;
+    const isOwner = user.role === "student" && Number(studentUserId) === user.id;
 
     if (!isAdmin && !isOwner) {
       throw createError({
@@ -41,41 +67,16 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    let pdfBuffer: Buffer;
-    try {
-      pdfBuffer = await generateInvoicePDF(billing);
-    }
-    catch (error) {
-      console.error("PDF Generation failed:", error);
-      throw createError({ statusCode: 500, message: "Failed to generate invoice PDF" });
-    }
-
     const runtimeConfig = useRuntimeConfig();
-
-    const invoiceNumber = billing.invoiceNumber || `INV-${String(billing.id).padStart(6, "0")}`;
-    const studentEmail = billing.student?.user?.email;
-    const studentName = billing.student?.user?.name || "Student";
-
-    if (!studentEmail || studentEmail !== email) {
-      throw createError({ statusCode: 400, message: "Student email address is missing or does not match" });
-    }
-
-    const amountTotal = formatMoney(Number(billing.amount));
-    const amountPaid = formatMoney(Number(billing.paidAmount || 0));
-    const amountDue = formatMoney(Number(billing.amount) - Number(billing.paidAmount || 0));
-    const dateIssued = formatDate(billing.dateIssued);
-    const dateDue = formatDate(billing.dueDate);
 
     const { htmlTemplate, textTemplate } = getInvoiceEmailTemplate(
       studentName,
       invoiceNumber,
-      formatMoney(billing.amount),
-      formatDate(billing.dueDate),
-      dateIssued,
-      dateDue,
-      amountTotal,
-      amountPaid,
-      amountDue,
+      formatDate(dateIssued),
+      formatDate(dateDue),
+      formatMoney(amountTotal),
+      formatMoney(amountPaid),
+      formatMoney(amountDue),
     );
 
     const emailSubject = `Invoice #${invoiceNumber} from Kings Hostel`;
@@ -84,16 +85,11 @@ export default defineEventHandler(async (event) => {
       if (import.meta.dev) {
         const { sendMail } = useNodeMailer();
         await sendMail({
-          to: email,
+          to: studentEmail,
           subject: emailSubject,
           html: htmlTemplate,
           text: textTemplate,
-          attachments: [
-            {
-              filename: `invoice-${invoiceNumber}.pdf`,
-              content: pdfBuffer,
-            },
-          ],
+          attachments: [{ filename: filePart.filename, content: filePart.data }],
         });
       }
       else {
@@ -101,14 +97,14 @@ export default defineEventHandler(async (event) => {
 
         await mailer.send({
           from: { name: runtimeConfig.emailFromName, email: runtimeConfig.emailFromEmail },
-          to: { name: studentName, email },
+          to: { name: studentName, email: studentEmail },
           subject: emailSubject,
           html: htmlTemplate,
           text: textTemplate,
           attachments: [
             {
               filename: `invoice-${invoiceNumber}.pdf`,
-              content: pdfBuffer.toString("base64"),
+              content: filePart.data.toString("base64"),
               mimeType: "application/pdf",
             },
           ],
@@ -119,7 +115,10 @@ export default defineEventHandler(async (event) => {
       console.error("Failed to send email:", emailError);
     }
 
-    return { success: true };
+    return {
+      success: true,
+      message: `Invoice email sent to ${studentEmail} successfully.`,
+    };
   }
   catch (error) {
     if (error && typeof error === "object" && "statusCode" in error) throw error;

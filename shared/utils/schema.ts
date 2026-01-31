@@ -612,8 +612,16 @@ const createBillingSchema = z.object({
 export type CreateBillingSchema = z.output<typeof createBillingSchema>;
 
 const emailInvoiceSchema = z.object({
-  billingId: createIdSchema("Billing"),
-  email: emailSchema,
+  studentEmail: emailSchema,
+  studentName: nameSchema,
+  invoiceNumber: z.string().nonempty("Invoice Number is required"),
+  studentUserId: createIdSchema("Student User"),
+  amountTotal: z.number("Amount Total is required").min(0, "Amount Total cannot be negative"),
+  amountPaid: z.number("Amount Paid is required").min(0, "Amount Paid cannot be negative"),
+  amountDue: z.number("Amount Due is required").min(0, "Amount Due cannot be negative"),
+  dateIssued: z.string().nonempty("Date Issued is required"),
+  dateDue: z.string().nonempty("Date Due is required"),
+  amount: z.number("Amount is required").min(0, "Amount cannot be negative"),
 });
 export type EmailInvoiceSchema = z.output<typeof emailInvoiceSchema>;
 
