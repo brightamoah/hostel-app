@@ -16,6 +16,9 @@
     "directory": "./.output/public/",
     "binding": "ASSETS"
   },
+  "limits": {
+    "cpu_ms": 500000
+  },
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1,
