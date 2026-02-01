@@ -136,8 +136,6 @@ const description = computed(() => hasActiveFilters.value
           :status-filter-options
         >
           <template #actions>
-            <BillingNew />
-
             <DashboardRefreshButton
               :can-resend
               :cool-down-time
