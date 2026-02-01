@@ -1,22 +1,25 @@
 <script setup lang="ts">
-import { eachDayOfInterval } from "date-fns";
-
 const { range } = defineProps<{
   range: RangeType;
 }>();
 
 const model = defineModel<Period>({ required: true });
 
-const days = computed(() => eachDayOfInterval(range));
+const dayCount = computed(() => {
+  if (!range.start || !range.end) return 0;
+  const diffTime = Math.abs(range.end.getTime() - range.start.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays + 1; // +1 to include both start and end date
+});
 
 const periods = computed<Period[]>(() => {
-  if (days.value.length <= 8) {
+  if (dayCount.value <= 8) {
     return [
       "daily",
     ];
   }
 
-  if (days.value.length <= 31) {
+  if (dayCount.value <= 31) {
     return [
       "daily",
       "weekly",

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { sub } from "date-fns";
+import { getLocalTimeZone, today } from "@internationalized/date";
 
 definePageMeta({
   middleware: ["requires-auth", "admin"],
@@ -8,10 +8,12 @@ definePageMeta({
 
 const title = ref("Admin Dashboard");
 
+const now = today(getLocalTimeZone());
 const range = shallowRef<RangeType>({
-  start: sub(new Date(), { days: 14 }),
-  end: new Date(),
+  start: now.subtract({ days: 14 }).toDate(getLocalTimeZone()),
+  end: now.toDate(getLocalTimeZone()),
 });
+
 const period = ref<Period>("daily");
 </script>
 

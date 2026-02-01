@@ -85,7 +85,7 @@ export default defineNuxtConfig({
     preset: "cloudflare_module",
     cloudflare: {
       deployConfig: true,
-      nodeCompat: true,
+      nodeCompat: false,
       wrangler: {
         kv_namespaces: [
           {
@@ -102,7 +102,17 @@ export default defineNuxtConfig({
       },
     },
     rollupConfig: {
-      external: ["cloudflare:sockets"],
+      external: [
+        "cloudflare:sockets",
+        "node:assert",
+        "node:buffer",
+        "node:crypto",
+        "node:stream",
+        "node:util",
+        "node:url",
+        "jspdf",
+        "jspdf-autotable",
+      ],
     },
     experimental: {
       tasks: true,
@@ -111,6 +121,19 @@ export default defineNuxtConfig({
     scheduledTasks: {
       "0 0 * * *": ["clearExpiredCache"],
       "0 1 * * *": ["checkOverdueBillings"],
+    },
+    externals: {
+      external: [
+        "cloudflare:sockets",
+        "node:assert",
+        "node:buffer",
+        "node:crypto",
+        "node:stream",
+        "node:util",
+        "node:url",
+        "jspdf",
+        "jspdf-autotable",
+      ],
     },
   },
 
@@ -185,43 +208,10 @@ export default defineNuxtConfig({
     name: env.NUXT_EMAIL_FROM_NAME,
   },
 
-  $production: {
-    nitro: {
-      preset: "cloudflare_module",
-      cloudflare: {
-        deployConfig: true,
-        nodeCompat: true,
-        wrangler: {
-          kv_namespaces: [
-            {
-              binding: "KV",
-              id: env.NUXT_KV_NAMESPACE_ID,
-              preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID,
-            },
-            {
-              binding: "CACHE",
-              id: env.NUXT_KV_NAMESPACE_ID,
-              preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID,
-            },
-          ],
-        },
-      },
-      rollupConfig: {
-        external: ["cloudflare:sockets"],
-      },
-      experimental: {
-        tasks: true,
-        openAPI: true,
-      },
-      scheduledTasks: {
-        "0 0 * * *": ["clearExpiredCache"],
-        "0 1 * * *": ["checkOverdueBillings"],
-      },
-    },
-
-    hub: {
-      kv: true,
-      cache: true,
-    },
+  sitemap: {
+    zeroRuntime: true,
+  },
+  ogImage: {
+    enabled: false,
   },
 });

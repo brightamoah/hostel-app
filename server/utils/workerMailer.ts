@@ -1,6 +1,6 @@
-import { WorkerMailer } from "worker-mailer";
-
 export async function useWorkerMailer() {
+  const { WorkerMailer } = await import("worker-mailer");
+
   const runtimeConfig = useRuntimeConfig();
 
   const mailer = await WorkerMailer.connect({
