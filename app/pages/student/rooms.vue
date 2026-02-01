@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { getPaginationRowModel } from "@tanstack/table-core";
 
+import { useStudentRoomRowColumn } from "~/composables/student/roomRowColumn";
+
 definePageMeta({
   middleware: ["requires-auth"],
   layout: "student-dashboard",

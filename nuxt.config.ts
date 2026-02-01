@@ -85,7 +85,7 @@ export default defineNuxtConfig({
     preset: "cloudflare_module",
     cloudflare: {
       deployConfig: true,
-      nodeCompat: false,
+      nodeCompat: true,
       wrangler: {
         kv_namespaces: [
           {
@@ -104,14 +104,6 @@ export default defineNuxtConfig({
     rollupConfig: {
       external: [
         "cloudflare:sockets",
-        "node:assert",
-        "node:buffer",
-        "node:crypto",
-        "node:stream",
-        "node:util",
-        "node:url",
-        "jspdf",
-        "jspdf-autotable",
       ],
     },
     experimental: {
@@ -121,19 +113,6 @@ export default defineNuxtConfig({
     scheduledTasks: {
       "0 0 * * *": ["clearExpiredCache"],
       "0 1 * * *": ["checkOverdueBillings"],
-    },
-    externals: {
-      external: [
-        "cloudflare:sockets",
-        "node:assert",
-        "node:buffer",
-        "node:crypto",
-        "node:stream",
-        "node:util",
-        "node:url",
-        "jspdf",
-        "jspdf-autotable",
-      ],
     },
   },
 
