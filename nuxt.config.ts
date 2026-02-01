@@ -120,12 +120,6 @@ export default defineNuxtConfig({
       "0 0 * * *": ["clearExpiredCache"],
       "0 1 * * *": ["checkOverdueBillings"],
     },
-    externals: {
-      inline: ["@nuxthub/kv"],
-    },
-    alias: {
-      "@nuxthub/kv": "@nuxthub/core/dist/runtime/kv/server",
-    },
   },
 
   runtimeConfig: {
