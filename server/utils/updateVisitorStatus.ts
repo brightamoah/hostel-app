@@ -1,4 +1,6 @@
-import { isBefore, parseISO, startOfDay } from "date-fns";
+import type { CalendarDate } from "@internationalized/date";
+
+import { getLocalTimeZone, parseAbsolute, parseDate, toCalendarDate, today } from "@internationalized/date";
 import { eq } from "drizzle-orm";
 
 import { visitorQueries } from "../db/queries";
@@ -24,12 +26,20 @@ export async function updateVisitorStatus(visitorId: number, status: "approved" 
     });
   }
 
-  const today = startOfDay(new Date());
-  const visitDate = typeof visitorToUpdate.visitDate === "string"
-    ? startOfDay(parseISO(visitorToUpdate.visitDate))
-    : startOfDay(new Date(visitorToUpdate.visitDate));
+  const timezone = getLocalTimeZone();
+  const currentDay = today(timezone);
 
-  if (isBefore(visitDate, today)) {
+  let visitDate: CalendarDate;
+
+  try {
+    const visitDateStr = typeof visitorToUpdate.visitDate === "string" ? visitorToUpdate.visitDate : "";
+    visitDate = parseDate(visitDateStr.split("T")[0] || "");
+  }
+  catch {
+    visitDate = toCalendarDate(parseAbsolute(new Date(String(visitorToUpdate.visitDate)).toISOString(), timezone));
+  }
+
+  if (visitDate.compare(currentDay) < 0) {
     throw createError({
       statusCode: 400,
       message: `This visit cannot be modified as the visit date has already passed.`,

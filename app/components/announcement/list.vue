@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { format, isToday } from "date-fns";
+import { DateFormatter, getLocalTimeZone, parseAbsolute, toCalendarDate, today } from "@internationalized/date";
 
 const { announcements } = defineProps<{
   announcements: Announcement[];
@@ -35,6 +35,18 @@ defineShortcuts({
     else if (index > 0) selectedAnnouncement.value = announcements[index - 1];
   },
 });
+
+function formatAnnouncementDate(dateStr: string | Date) {
+  const date = new Date(dateStr);
+  const tz = getLocalTimeZone();
+  const zdt = parseAbsolute(date.toISOString(), tz);
+  const current = today(tz);
+
+  if (toCalendarDate(zdt).compare(current) === 0) {
+    return new DateFormatter("en-GH", { hour: "2-digit", minute: "2-digit", hour12: false }).format(date);
+  }
+  return new DateFormatter("en-GH", { day: "2-digit", month: "short" }).format(date);
+}
 </script>
 
 <template>
@@ -74,10 +86,7 @@ defineShortcuts({
             />
           </div>
 
-          <span>{{ isToday(new Date(announcement.postedAt))
-            ? format(new Date(announcement.postedAt), 'HH:mm')
-            : format(new Date(announcement.postedAt), 'dd MMM') }}
-          </span>
+          <span>{{ formatAnnouncementDate(announcement.postedAt) }}</span>
         </div>
 
         <p
