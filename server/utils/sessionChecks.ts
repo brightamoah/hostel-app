@@ -28,11 +28,14 @@ export async function adminSessionCheck(event: H3Event): Promise<{
 export async function studentSessionCheck(event: H3Event): Promise<{
   isActiveStudent: true;
   userId: number;
+  studentId: number;
 }> {
   const session = await requireUserSession(event);
+  const studentId = session.user?.studentId;
 
   if (
     session.user.role !== "student"
+    || typeof studentId !== "number"
   ) {
     throw createError({
       statusCode: 403,
@@ -43,5 +46,6 @@ export async function studentSessionCheck(event: H3Event): Promise<{
   return {
     isActiveStudent: true,
     userId: session.user.id,
+    studentId,
   };
 }

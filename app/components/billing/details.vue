@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 const { billing } = defineProps<{
   billing: Billing;
+  isAdmin: boolean | ComputedRef<boolean>;
 }>();
 
 const toast = useToast();
@@ -213,6 +214,7 @@ async function handleDownload() {
         />
 
         <UButton
+          v-if="isAdmin"
           label="Email Invoice"
           color="primary"
           variant="solid"

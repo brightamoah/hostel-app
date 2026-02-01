@@ -113,7 +113,7 @@ const description = computed(() => hasActiveFilters.value
 
 <template>
   <div class="flex flex-1">
-    <UDashboardPanel id="rooms">
+    <UDashboardPanel id="billings-management">
       <template #header>
         <DashboardNav :title />
       </template>
