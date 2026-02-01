@@ -104,12 +104,6 @@ export default defineNuxtConfig({
     rollupConfig: {
       external: [
         "cloudflare:sockets",
-        "node:assert",
-        "node:buffer",
-        "node:crypto",
-        "node:stream",
-        "jspdf",
-        "jspdf-autotable",
       ],
     },
     experimental: {
