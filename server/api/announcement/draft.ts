@@ -1,3 +1,4 @@
+import { kv } from "@nuxthub/kv";
 import z from "zod";
 
 export default defineEventHandler(async (event) => {
