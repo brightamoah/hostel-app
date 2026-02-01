@@ -114,6 +114,49 @@ export async function billingQueries() {
     };
   };
 
+  const getStudentScopedBillings = async (studentId: number) => {
+    return await db
+      .query
+      .billing
+      .findMany({
+        where: eq(billing.studentId, studentId),
+        extras: {
+          invoiceNumber: sql<string>`'INV-' || lpad(${billing.id}::text, 6, '0')`.as("invoice_number"),
+        },
+        ...billingWithRelations,
+      });
+  };
+
+  const getStudentBillingStatusCount = async (studentId: number) => {
+    const [result] = await db
+      .select({
+        totalBillings: sql<number>`coalesce(sum(${billing.amount}), 0)`,
+        totalPaid: sql<number>`coalesce(sum(${billing.paidAmount}), 0)`,
+        totalUnpaid: sql<number>`coalesce(sum(${billing.amount} - ${billing.paidAmount}), 0)`,
+        totalOverdue: sql<number>`coalesce(sum(
+        CASE WHEN ${billing.dueDate} < NOW() AND ${billing.status} != 'fully paid' 
+        THEN ${billing.amount} - ${billing.paidAmount} 
+        ELSE 0 END
+      ), 0)`,
+        totalPending: sql<number>`coalesce(sum(
+        CASE WHEN ${billing.dueDate} >= NOW() AND ${billing.status} != 'fully paid' 
+        THEN ${billing.amount} - ${billing.paidAmount} 
+        ELSE 0 END
+      ), 0)`,
+
+      })
+      .from(billing)
+      .where(eq(billing.studentId, studentId));
+
+    return {
+      totalBillings: Number(result?.totalBillings),
+      totalPaid: Number(result?.totalPaid || 0),
+      totalUnpaid: Number(result?.totalUnpaid || 0),
+      totalPending: Number(result?.totalPending || 0),
+      totalOverdue: Number(result?.totalOverdue || 0),
+    };
+  };
+
   const createBilling = async (data: BillingInsert) => {
     const result = await db
       .insert(billing)
@@ -127,6 +170,8 @@ export async function billingQueries() {
     getScopedBillingsAdmin,
     getBillingStatusCount,
     createBilling,
+    getStudentScopedBillings,
+    getStudentBillingStatusCount,
   };
 }
 

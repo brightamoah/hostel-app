@@ -16,10 +16,13 @@ export function useBillingRowColumn(
   const { user } = useUserSession();
   const overlay = useOverlay();
 
+  const isAdmin = computed(() => user.value?.role === "admin");
+
   const openBillingDetails = (billing: Billing) => {
     const modal = overlay.create(BillingDetails);
 
     modal.open({
+      isAdmin,
       billing,
     });
   };
