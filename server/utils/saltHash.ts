@@ -1,10 +1,9 @@
-import { getRandomValues, subtle } from "uncrypto";
+import { scrypt as nobleScrypt } from "@noble/hashes/scrypt.js";
+import { Buffer } from "node:buffer";
+import { randomBytes, scrypt, timingSafeEqual } from "node:crypto";
+import { getRandomValues } from "uncrypto";
 
-import { bytesToHex, fromHexToBytes, timingSafeEqual } from "./nodeUtils";
-
-const KEY_LENGTH = 32;
-const ITERATIONS = 100000;
-const DIGEST = "SHA-256";
+const keyLength = 64;
 
 /**
  * Hashes the provided value using scrypt with a randomly generated salt.
@@ -17,74 +16,145 @@ const DIGEST = "SHA-256";
  * @throws Will throw an error if the scrypt operation fails.
  */
 async function hash(valueToHash: string): Promise<string> {
-  const saltBytes = new Uint8Array(16);
-  getRandomValues(saltBytes);
-  const salt = bytesToHex(saltBytes);
+  return new Promise((resolve, reject) => {
+    const salt = randomBytes(16).toString("hex");
 
-  const derivedKey = await deriveKey(valueToHash, salt);
-  const derivedKeyHex = bytesToHex(new Uint8Array(derivedKey));
-
-  return `${salt}.${derivedKeyHex}`;
+    scrypt(
+      valueToHash,
+      salt,
+      keyLength,
+      (err, derivedKey) => {
+        if (err) return reject(err);
+        resolve(`${salt}.${derivedKey.toString("hex")}`);
+      },
+    );
+  });
 }
 
 /**
- * Verifies a raw value against a stored hash using timing-safe comparison.
- * @param storedHash - The stored hash in "salt.hashKey" format (hex-encoded)
- * @param rawValue - The raw value to verify against the stored hash
- * @returns A promise that resolves to true if the values match, false otherwise
- * @throws May throw if the hash derivation process fails
+ * Verifies a raw value against a stored hashed value using scrypt and timing-safe comparison.
+ *
+ * @param storedHash - The stored hash string in the format "salt.hashKey".
+ * @param rawValue - The raw value to verify against the stored hash.
+ * @returns A promise that resolves to true if the raw value matches the stored hash, false otherwise.
+ * @throws Will reject with an error if the scrypt operation fails.
  */
 async function verifyHashedValue(storedHash: string, rawValue: string): Promise<boolean> {
-  const [salt, hashKey] = storedHash.split(".");
+  return new Promise((resolve, reject) => {
+    const [salt, hashKey] = storedHash.split(".");
 
-  if (!salt || !hashKey) return false;
+    if (!salt || !hashKey) return resolve(false);
 
-  const hashKeyBuffer = fromHexToBytes(hashKey);
+    const hashKeyBuffer = Buffer.from(hashKey, "hex");
 
-  const derivedKey = await deriveKey(rawValue, salt);
-  const derivedKeyBuffer = new Uint8Array(derivedKey);
+    scrypt(
+      rawValue,
+      salt,
+      keyLength,
+      (err, derivedKey) => {
+        if (err) return reject(err);
 
-  if (derivedKeyBuffer.length !== hashKeyBuffer.length) return false;
+        if (derivedKey.length !== hashKeyBuffer.length) return resolve(false);
 
-  return timingSafeEqual(hashKeyBuffer, derivedKeyBuffer);
+        resolve(timingSafeEqual(hashKeyBuffer, derivedKey));
+      },
+    );
+  });
 }
 
-/**
- * Derives a cryptographic key from a password and salt using the PBKDF2 algorithm.
- *
- * @param password - The plaintext password to derive the key from.
- * @param salt - The salt value (as a hexadecimal string) to use in the key derivation.
- * @returns A Promise that resolves to the derived key as an ArrayBuffer.
- *
- * @remarks
- * - Uses the Web Crypto API's `subtle` interface for key derivation.
- * - The number of iterations, hash algorithm, and key length are determined by the constants `ITERATIONS`, `DIGEST`, and `KEY_LENGTH`.
- * - The `fromHexToBytes` utility function is used to convert the salt from a hex string to a byte array.
- */
-async function deriveKey(password: string, salt: string) {
-  const encoder = new TextEncoder();
-  const passwordBytes = encoder.encode(password);
-  const saltBytes = fromHexToBytes(salt);
+const SCRYPT_PARAMS = {
+  N: 16384,
+  r: 8,
+  p: 1,
+  dkLen: 64,
+};
 
-  const keyMaterial = await subtle.importKey(
-    "raw",
-    passwordBytes,
-    { name: "PBKDF2" },
-    false,
-    ["deriveBits"],
-  );
+const SALT_LENGTH = 32;
 
-  const derivedBits = await subtle.deriveBits(
-    {
-      name: "PBKDF2",
-      salt: saltBytes,
-      iterations: ITERATIONS,
-      hash: DIGEST,
-    },
-    keyMaterial,
-    KEY_LENGTH * 8,
-  );
-  return derivedBits;
+function getSalt(): Uint8Array {
+  const salt = new Uint8Array(SALT_LENGTH);
+  getRandomValues(salt);
+  return salt;
 }
 
-export { hash, verifyHashedValue };
+function toBase64(data: Uint8Array): string {
+  if (typeof Buffer !== "undefined") {
+    return Buffer.from(data).toString("base64");
+  }
+  let binary = "";
+  for (const byte of data) binary += String.fromCharCode(byte);
+  return btoa(binary);
+}
+
+function fromBase64(value: string): Uint8Array {
+  if (typeof Buffer !== "undefined") {
+    return new Uint8Array(Buffer.from(value, "base64"));
+  }
+  const binary = atob(value);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+function newTimingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) {
+    const ai = a[i] ?? 0;
+    const bi = b[i] ?? 0;
+    diff |= ai ^ bi;
+  }
+  return diff === 0;
+}
+
+function parseScryptPhcString(value: string) {
+  const parts = value.split("$");
+  const [, algorithm, paramStr = "", saltPart = "", hashPart = ""] = parts;
+  if (parts.length !== 5 || algorithm !== "scrypt") {
+    throw new Error("Invalid scrypt hash format");
+  }
+
+  const params = paramStr.split(",").reduce<Record<string, number>>((acc, entry) => {
+    const [k, v] = entry.split("=");
+    if (!k || v === undefined) return acc;
+    acc[k] = Number(v);
+    return acc;
+  }, {});
+
+  return {
+    params,
+    salt: fromBase64(saltPart),
+    hash: fromBase64(hashPart),
+  };
+}
+
+async function hashPasswordWorker(plain: string): Promise<string> {
+  const salt = getSalt();
+  const encoded = typeof plain === "string" ? new TextEncoder().encode(plain) : new Uint8Array();
+  const derived = nobleScrypt(encoded, salt, SCRYPT_PARAMS);
+  return `$scrypt$n=${SCRYPT_PARAMS.N},r=${SCRYPT_PARAMS.r},p=${SCRYPT_PARAMS.p}$${toBase64(salt)}$${toBase64(derived)}`;
+}
+
+async function verifyPasswordWorker(hashedPassword: string, plain: string): Promise<boolean> {
+  try {
+    const { params, salt, hash } = parseScryptPhcString(hashedPassword);
+    const encoded = typeof plain === "string" ? new TextEncoder().encode(plain) : new Uint8Array();
+    const derived = nobleScrypt(encoded, salt, {
+      N: Number(params.n) || SCRYPT_PARAMS.N,
+      r: Number(params.r) || SCRYPT_PARAMS.r,
+      p: Number(params.p) || SCRYPT_PARAMS.p,
+      dkLen: hash.length || SCRYPT_PARAMS.dkLen,
+    });
+    return newTimingSafeEqual(hash, derived);
+  }
+  catch {
+    return false;
+  }
+}
+
+export {
+  hash,
+  hashPasswordWorker,
+  verifyHashedValue,
+  verifyPasswordWorker,
+};

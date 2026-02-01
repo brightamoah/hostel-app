@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // const passwordHash = await hashPassword(password);
-    const passwordHash = await hash(password);
+    const passwordHash = await hashPasswordWorker(password);
 
     const verificationToken = randomUUID();
 
