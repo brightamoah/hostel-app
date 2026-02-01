@@ -121,15 +121,10 @@ export default defineNuxtConfig({
       "0 1 * * *": ["checkOverdueBillings"],
     },
     externals: {
-      external: [
-        "cloudflare:sockets",
-        "node:assert",
-        "node:buffer",
-        "node:crypto",
-        "node:stream",
-        "jspdf",
-        "jspdf-autotable",
-      ],
+      inline: ["@nuxthub/kv"],
+    },
+    alias: {
+      "@nuxthub/kv": "@nuxthub/core/dist/runtime/kv/server",
     },
   },
 
