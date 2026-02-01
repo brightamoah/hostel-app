@@ -27,8 +27,8 @@ importers:
         specifier: ^4.4.0
         version: 4.4.0(@tiptap/extensions@3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0))(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(change-case@5.4.4)(db0@0.3.4(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20260131.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)))(embla-carousel@8.6.0)(ioredis@5.9.2)(magicast@0.5.1)(tailwindcss@4.1.18)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))(vue-router@4.6.4(vue@3.5.27(typescript@5.9.3)))(vue@3.5.27(typescript@5.9.3))(yjs@13.6.29)(zod@4.3.6)
       '@nuxthub/core':
-        specifier: 0.10.5
-        version: 0.10.5(db0@0.3.4(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20260131.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)))(ioredis@5.9.2)(magicast@0.5.1)(synckit@0.11.12)(typescript@5.9.3)
+        specifier: https://pkg.pr.new/@nuxthub/core@feb8e2e
+        version: https://pkg.pr.new/@nuxthub/core@feb8e2e(db0@0.3.4(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20260131.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)))(ioredis@5.9.2)(magicast@0.5.1)(synckit@0.11.12)(typescript@5.9.3)
       '@nuxtjs/seo':
         specifier: 3.3.0
         version: 3.3.0(@unhead/vue@2.1.2(vue@3.5.27(typescript@5.9.3)))(db0@0.3.4(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20260131.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)))(ioredis@5.9.2)(magicast@0.5.1)(rollup@4.57.1)(unhead@2.1.2)(unstorage@1.17.4(db0@0.3.4(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20260131.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)))(ioredis@5.9.2))(vite@7.3.1(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))(vue@3.5.27(typescript@5.9.3))(zod@4.3.6)
@@ -1560,8 +1560,9 @@ packages:
       rolldown:
         optional: true
 
-  '@nuxthub/core@0.10.5':
-    resolution: {integrity: sha512-I733Mdv2P6FKizo4049bSMfkW4zNchcQmd5iUSnXNaJdQSUze66Qmzv4SgiXtSu7zWC0wiXzHsPYnH25+QNUDA==}
+  '@nuxthub/core@https://pkg.pr.new/@nuxthub/core@feb8e2e':
+    resolution: {tarball: https://pkg.pr.new/@nuxthub/core@feb8e2e}
+    version: 0.10.5
     hasBin: true
 
   '@nuxtjs/color-mode@3.5.2':
@@ -8992,7 +8993,7 @@ snapshots:
       - vue-tsc
       - yaml
 
-  '@nuxthub/core@0.10.5(db0@0.3.4(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20260131.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)))(ioredis@5.9.2)(magicast@0.5.1)(synckit@0.11.12)(typescript@5.9.3)':
+  '@nuxthub/core@https://pkg.pr.new/@nuxthub/core@feb8e2e(db0@0.3.4(drizzle-orm@0.44.7(@cloudflare/workers-types@4.20260131.0)(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)))(ioredis@5.9.2)(magicast@0.5.1)(synckit@0.11.12)(typescript@5.9.3)':
     dependencies:
       '@cloudflare/workers-types': 4.20260131.0
       '@nuxt/kit': 4.3.0(magicast@0.5.1)
