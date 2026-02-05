@@ -413,3 +413,15 @@ export type BillingResponse = {
   totalPending: number;
   totalOverdue: number;
 };
+
+export type PaystackStatus
+  = "abandoned"
+    | "failed"
+    | "ongoing"
+    | "pending"
+    | "processing"
+    | "queued"
+    | "reversed"
+    | "success"
+    | "failed"
+    | "abandoned";

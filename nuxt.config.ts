@@ -119,6 +119,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       siteUrl: env.NUXT_PUBLIC_SITE_URL,
+      paystackPublicKey: env.NUXT_PAYSTACK_PUBLIC_KEY,
+      paystackBaseUrl: env.NUXT_PAYSTACK_BASE_URL,
     },
     session: {
       password: env.NUXT_SESSION_PASSWORD,
@@ -136,6 +138,7 @@ export default defineNuxtConfig({
     emailFromName: env.NUXT_EMAIL_FROM_NAME,
     emailFromEmail: env.NUXT_EMAIL_FROM_EMAIL,
     nodeEnv: env.NODE_ENV,
+    paystackSecretKey: env.NUXT_PAYSTACK_SECRET_KEY,
   },
 
   experimental: {
@@ -178,6 +181,26 @@ export default defineNuxtConfig({
     headers: {
       contentSecurityPolicy: {
         "img-src": ["'self'", "data:", "https://res.cloudinary.com"],
+        "script-src": [
+          "'self'",
+          "'unsafe-inline'",
+          "https://js.paystack.co",
+          "https://*.paystack.com",
+          "https://*.paystack.co",
+        ],
+        "frame-src": [
+          "'self'",
+          "https://checkout.paystack.com",
+          "https://*.paystack.com",
+          "https://*.paystack.co",
+        ],
+        "connect-src": [
+          "'self'",
+          "https://api.paystack.co",
+          "https://*.paystack.co",
+          "https://*.paystack.com",
+          "https://*.browser-intake-datadoghq.com",
+        ],
       },
     },
   },
