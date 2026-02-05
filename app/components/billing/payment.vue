@@ -11,7 +11,7 @@ type PaymentRow = Billing["payments"][number];
 
 const paymentDetails = [
   { label: "Bank Name", value: "Ghana Commercial Bank", icon: "i-lucide-landmark", border: true },
-  { label: "Account Name", value: "Kings Hostel Management", icon: "i-lucide-user", border: true },
+  { label: "Account Name", value: "Kings Hostel Mgt", icon: "i-lucide-user", border: true },
   { label: "Account No", value: "1234567890", icon: "i-lucide-hash", border: true },
   { label: "Mobile Money", value: "+233 54 968 4848", icon: "i-lucide-smartphone", border: false },
 ];
@@ -42,13 +42,13 @@ const columns = ref<TableColumn<PaymentRow>[]>([
 </script>
 
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+  <div class="gap-6 grid grid-cols-1 md:grid-cols-12">
     <UCard
-      class="h-full ring-1 ring-muted md:col-span-6"
+      class="md:col-span-6 ring-1 ring-muted h-full"
       :ui="{ header: 'bg-primary/10 py-3' }"
     >
       <template #header>
-        <h6 class="font-bold text-primary flex items-center gap-2">
+        <h6 class="flex items-center gap-2 font-bold text-primary">
           <UIcon
             name="i-lucide-credit-card"
             class="size-4"
@@ -64,10 +64,10 @@ const columns = ref<TableColumn<PaymentRow>[]>([
           class="flex justify-between pb-2"
           :class="{ 'border-b border-muted': item.border }"
         >
-          <span class="text-muted flex items-center gap-2">
+          <span class="flex items-center gap-2 text-muted">
             <UIcon
               :name="item.icon"
-              class="text-primary size-4"
+              class="size-4 text-primary"
             />
             {{ item.label }}:
           </span>
@@ -78,11 +78,11 @@ const columns = ref<TableColumn<PaymentRow>[]>([
     </UCard>
 
     <UCard
-      class="h-full ring-1 ring-muted md:col-span-6"
+      class="md:col-span-6 ring-1 ring-muted h-full"
       :ui="{ header: 'bg-primary/10 py-3', body: 'p-0 sm:p-0 py-2' }"
     >
       <template #header>
-        <h6 class="font-bold text-primary flex items-center gap-2">
+        <h6 class="flex items-center gap-2 font-bold text-primary">
           <UIcon
             name="i-lucide-history"
             class="size-4"

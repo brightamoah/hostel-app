@@ -97,3 +97,14 @@ export const billingStatusColorMap: Record<Billing["status"], ColorType> = {
   "overdue": "error",
   "cancelled": "neutral",
 };
+
+export const paymentStatusColorMap: Record<PaystackStatus, ColorType> = {
+  pending: "warning",
+  success: "success",
+  failed: "error",
+  abandoned: "neutral",
+  ongoing: "info",
+  processing: "info",
+  queued: "info",
+  reversed: "error",
+};

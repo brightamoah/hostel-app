@@ -12,11 +12,14 @@ const baseBilling: Partial<CreateBillingSchema> = {
   sendNotification: false,
 };
 
+// const ConfirmationModal = defineAsyncComponent(() => import("~/components/billing/confirmation.vue"));
+
 export const useBillingStore = defineStore("billingStore", () => {
   const toast = useToast();
-  const { $apiFetch } = useNuxtApp();
 
+  const { $apiFetch } = useNuxtApp();
   const { user } = useUserSession();
+  // const route = useRoute();
 
   const isModalOpen = ref(false);
 
@@ -151,14 +154,76 @@ export const useBillingStore = defineStore("billingStore", () => {
     }
   };
 
+  const isPaymentModalOpen = ref(false);
+
+  const paymentState = ref<Partial<PaymentSchema>>({
+    amount: undefined,
+    email: "",
+    totalAmount: undefined,
+    phoneNumber: "",
+    billingId: undefined,
+  });
+
+  async function initiatePayment(payload: PaymentSchema) {
+    if (isLoading.value) return;
+
+    const { amount, email, phoneNumber, billingId, totalAmount } = payload;
+
+    isLoading.value = true;
+
+    try {
+      const response = await $apiFetch("/api/billing/initializePayment", {
+        method: "POST",
+        body: {
+          amount,
+          email,
+          phoneNumber,
+          billingId,
+          totalAmount,
+        },
+      });
+
+      if (!response.success) {
+        throw new Error(response.message || "Failed to initialize payment");
+      }
+
+      window.location.href = response?.data?.authorizationUrl || "";
+    }
+    catch (error) {
+      const message = (error as any)?.data?.message;
+      toast.add({
+        title: "Payment Initialization Failed",
+        description: message || (error as Error).message,
+        color: "error",
+        icon: "i-lucide-circle-alert",
+        duration: 8000,
+      });
+    }
+    finally {
+      isLoading.value = false;
+    }
+  }
+
+  function clearPaymentState() {
+    paymentState.value = {
+      amount: undefined,
+      email: "",
+      totalAmount: undefined,
+    };
+  }
+
   return {
     createBillingState,
     isLoading,
     isModalOpen,
     isSending,
+    paymentState,
+    isPaymentModalOpen,
     createBilling,
     clearBillingState,
     emailInvoice,
+    clearPaymentState,
+    initiatePayment,
   };
 });
 

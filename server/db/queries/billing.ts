@@ -2,7 +2,9 @@ import type { BillingInsert } from "~~/shared/types";
 
 import { and, eq, ne, sql } from "drizzle-orm";
 
-import { billing } from "../schema";
+import type { paymentMethod } from "../schema";
+
+import { billing, payment } from "../schema";
 
 const billingWithRelations = {
   with: {
@@ -23,6 +25,8 @@ const billingWithRelations = {
   },
 
 } as const;
+
+type PaymentMethodType = typeof paymentMethod.enumValues[number];
 
 export async function billingQueries() {
   const { db } = useDB();
@@ -158,12 +162,115 @@ export async function billingQueries() {
   };
 
   const createBilling = async (data: BillingInsert) => {
-    const result = await db
+    const [result] = await db
       .insert(billing)
       .values(data)
       .returning();
-    return result[0];
+    return result;
   };
+
+  const checkExistingPayment = async (reference: string) => {
+    const result = await db
+      .query
+      .payment
+      .findFirst({
+        where: eq(payment.transactionReference, reference),
+      });
+    return result;
+  };
+
+  const createPaymentIntent = async (
+    billingId: number,
+    studentId: number,
+    amount: number,
+    reference: string,
+  ) => {
+    await db.insert(payment).values({
+      billingId,
+      studentId,
+      amount: amount.toString(),
+      transactionReference: reference,
+      paymentMethod: "card",
+      status: "pending",
+      paymentDate: new Date(),
+    });
+  };
+
+  const markPaymentAsFailed = async (reference: string) => {
+    await db
+      .update(payment)
+      .set({ status: "failed" })
+      .where(eq(payment.transactionReference, reference));
+  };
+
+  const processSuccessfulPayment = async (
+    billingId: number,
+    reference: string,
+    paymentMethod: PaymentMethodType,
+    verifiedAmount: number,
+    newPaidTotal: number,
+    newStatus: typeof billing.status.enumValues[number],
+  ) => {
+    await db.transaction(async (tx) => {
+      await tx
+        .update(payment)
+        .set({
+          amount: verifiedAmount.toString(),
+          status: "completed",
+          paymentDate: new Date(),
+          paymentMethod,
+        })
+        .where(eq(payment.transactionReference, reference));
+
+      await tx.update(billing)
+        .set({
+          paidAmount: newPaidTotal.toString(),
+          status: newStatus,
+          updatedAt: new Date(),
+        })
+        .where(eq(billing.id, billingId));
+    });
+  };
+
+  // async function verifyPayment(
+  //   billingId: number,
+  //   reference: string,
+  //   paymentMethod: PaymentMethodType,
+  //   verifiedAmount: number,
+  //   newPaidTotal: number,
+  //   newStatus: typeof billing.status.enumValues[number],
+  // ) {
+  //   const { db } = useDB();
+
+  //   await db.transaction(async (tx) => {
+  //     const [currentBilling] = await tx
+  //       .select()
+  //       .from(billing)
+  //       .where(eq(billing.id, billingId))
+  //       .limit(1);
+
+  //     if (!currentBilling) throw new Error("Billing record not found.");
+
+  //     await tx.insert(payment).values({
+  //       billingId,
+  //       studentId: currentBilling.studentId,
+  //       amount: verifiedAmount.toString(),
+  //       transactionReference: reference,
+  //       paymentMethod,
+  //       status: "completed",
+  //       paymentDate: new Date(),
+  //     });
+
+  //     await tx
+  //       .update(billing)
+  //       .set({
+  //         paidAmount: newPaidTotal.toString(),
+  //         status: newStatus,
+  //         updatedAt: new Date(),
+  //       })
+  //       .where(eq(billing.id, billingId));
+  //   });
+  // }
 
   return {
     getBillingById,
@@ -172,6 +279,11 @@ export async function billingQueries() {
     createBilling,
     getStudentScopedBillings,
     getStudentBillingStatusCount,
+    checkExistingPayment,
+    createPaymentIntent,
+    markPaymentAsFailed,
+    processSuccessfulPayment,
+    // verifyPayment,
   };
 }
 

@@ -6,6 +6,7 @@ import { useDateFormat } from "@vueuse/core";
 import type { RowActionItem } from "~/types/rowAction";
 
 const BillingDetails = defineAsyncComponent(() => import("~/components/billing/details.vue"));
+const PaymentModal = defineAsyncComponent(() => import("~/components/billing/pay.vue"));
 
 export function useBillingRowColumn(
   UAvatar: ComponentType,
@@ -16,6 +17,9 @@ export function useBillingRowColumn(
   const { user } = useUserSession();
   const overlay = useOverlay();
 
+  const billingStore = useBillingStore();
+  const { isPaymentModalOpen } = storeToRefs(billingStore);
+
   const isAdmin = computed(() => user.value?.role === "admin");
 
   const openBillingDetails = (billing: Billing) => {
@@ -23,6 +27,16 @@ export function useBillingRowColumn(
 
     modal.open({
       isAdmin,
+      billing,
+    });
+  };
+
+  const openPaymentModal = (billing: Billing) => {
+    isPaymentModalOpen.value = true;
+
+    const modal = overlay.create(PaymentModal);
+
+    modal.open({
       billing,
     });
   };
@@ -64,7 +78,7 @@ export function useBillingRowColumn(
           label: "Make Payment",
           icon: "lucide-credit-card",
           color: "primary",
-          onSelect: () => { },
+          onSelect: () => openPaymentModal(billing),
         },
       );
     }
@@ -102,14 +116,14 @@ export function useBillingRowColumn(
                 src: student.user.image,
                 text: generateInitials(student.user.name),
                 alt: student.user.name,
-                class: "w-8 h-8 rounded-full object-cover",
+                class: "w-8 h-8 rounded-full object-cover shrink-0",
                 size: "lg",
                 style: `background-color: ${generateUserColor(student.userId)}`,
                 ui: { fallback: "text-white" },
               }),
-              h("div", undefined, [
-                h("p", { class: "font-medium text-highlighted" }, student.user.name),
-                h("p", { class: "" }, `${student.user.email}`),
+              h("div", { class: "min-w-0" }, [
+                h("p", { class: "font-medium text-highlighted truncate" }, student.user.name),
+                h("p", { class: "truncate text-muted max-w-[140px]" }, `${student.user.email}`),
               ]),
             ]);
           },
@@ -135,6 +149,13 @@ export function useBillingRowColumn(
         },
       },
       {
+        id: "paidAmount",
+        header: createSortableHeader("Paid", UButton),
+        cell: ({ row }) => {
+          return h("p", { class: "font-medium" }, `${formatCurrency(Number(row.original.paidAmount))}`);
+        },
+      },
+      {
         id: "dateIssued",
         accessorFn: row => useDateFormat(row.dateIssued, "ddd DD-MM-YYYY").value,
         header: createSortableHeader("Date Issued", UButton),
@@ -156,13 +177,6 @@ export function useBillingRowColumn(
             variant: "subtle",
             class: "capitalize",
           });
-        },
-      },
-      {
-        id: "paidAmount",
-        header: createSortableHeader("Paid", UButton),
-        cell: ({ row }) => {
-          return h("p", { class: "font-medium" }, `${formatCurrency(Number(row.original.paidAmount))}`);
         },
       },
       {

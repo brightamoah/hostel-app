@@ -625,6 +625,44 @@ const emailInvoiceSchema = z.object({
 });
 export type EmailInvoiceSchema = z.output<typeof emailInvoiceSchema>;
 
+const paymentSchema = z.object({
+  billingId: createIdSchema("Billing"),
+  amount: z.number("Amount is required").min(1, "Amount must be at least 1"),
+  totalAmount: z.number("Total Amount is required").positive(),
+  email: emailSchema,
+  phoneNumber: phoneNumberSchema,
+}).superRefine((data, ctx) => {
+  const { amount, totalAmount } = data;
+
+  if (amount > totalAmount) {
+    ctx.addIssue({
+      code: "custom",
+      message: `Amount cannot exceed the total amount (GH₵${totalAmount})`,
+      path: ["amount"],
+    });
+    return;
+  }
+
+  const balance = totalAmount - amount;
+
+  if (balance > 0 && balance < 1) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Remaining balance cannot be less than 1. Please pay the full amount or reduce the payment.",
+      path: ["amount"],
+    });
+  }
+});
+
+export type PaymentSchema = z.output<typeof paymentSchema>;
+
+const verifyPaymentSchema = z.object({
+  billingId: createIdSchema("Billing"),
+  reference: z.string().nonempty("Payment reference is required"),
+});
+
+export type VerifyPaymentSchema = z.output<typeof verifyPaymentSchema>;
+
 export {
   addAdminSchema,
   approveDenySchema,
@@ -652,6 +690,7 @@ export {
   nameSchema,
   passwordResetSchema,
   passwordSchema,
+  paymentSchema,
   personalDetailsSchema,
   promoteDemoteSchema,
   readStatusSchema,
@@ -662,4 +701,5 @@ export {
   roomFeatureSchema,
   signupSchema,
   verifyEmailSchema,
+  verifyPaymentSchema,
 };

@@ -13,6 +13,8 @@ const roleRoutes = useRoleBasedRoute();
     >
       {{ roleRoutes?.profile.name }}
     </ULink>
+
+    <BillingConfirmation />
   </div>
 </template>
 
