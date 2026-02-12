@@ -1,4 +1,6 @@
 export async function cleanupExpiredKV(prefix?: string) {
+  const kv = useStorage("kv");
+
   const keys = await kv.keys(prefix);
 
   const now = Date.now();
