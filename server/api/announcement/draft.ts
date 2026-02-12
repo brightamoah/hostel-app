@@ -1,10 +1,11 @@
-import { kv } from "~~/server/types/kv.d";
 import z from "zod";
 
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event, {
     message: "Unauthorized, please log in to access announcement drafts.",
   });
+
+  const kv = useStorage("storage");
 
   await kv.clear();
 

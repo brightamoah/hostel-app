@@ -40,10 +40,10 @@ export default defineNuxtConfig({
       },
     },
 
-    hub: {
-      kv: true,
-      cache: true,
-    },
+    // hub: {
+    //   kv: true,
+    //   cache: true,
+    // },
 
     security: {
       csrf: true,
@@ -89,7 +89,7 @@ export default defineNuxtConfig({
       wrangler: {
         kv_namespaces: [
           {
-            binding: "KV",
+            binding: "STORAGE",
             id: env.NUXT_KV_NAMESPACE_ID,
             preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID,
           },
@@ -113,6 +113,20 @@ export default defineNuxtConfig({
     scheduledTasks: {
       "0 0 * * *": ["clearExpiredCache"],
       "0 1 * * *": ["checkOverdueBillings"],
+    },
+    devStorage: {
+      kv: {
+        driver: "fs-lite",
+        base: "./.data/kv",
+      },
+    },
+    storage: {
+      kv: {
+        driver: "cloudflare-kv-binding",
+        options: {
+          binding: "STORAGE",
+        },
+      },
     },
   },
 
