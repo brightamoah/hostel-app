@@ -40,10 +40,10 @@ export default defineNuxtConfig({
       },
     },
 
-    // hub: {
-    //   kv: true,
-    //   cache: true,
-    // },
+    hub: {
+      kv: true,
+      cache: true,
+    },
 
     security: {
       csrf: true,
@@ -201,12 +201,14 @@ export default defineNuxtConfig({
           "https://js.paystack.co",
           "https://*.paystack.com",
           "https://*.paystack.co",
+          "https://api.iconify.design/",
         ],
         "frame-src": [
           "'self'",
           "https://checkout.paystack.com",
           "https://*.paystack.com",
           "https://*.paystack.co",
+          "https://api.iconify.design/",
         ],
         "connect-src": [
           "'self'",
@@ -214,6 +216,7 @@ export default defineNuxtConfig({
           "https://*.paystack.co",
           "https://*.paystack.com",
           "https://*.browser-intake-datadoghq.com",
+          "https://api.iconify.design/",
         ],
       },
     },
