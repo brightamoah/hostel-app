@@ -114,10 +114,18 @@ export default defineNuxtConfig({
       "0 0 * * *": ["clearExpiredCache"],
       "0 1 * * *": ["checkOverdueBillings"],
     },
-    storage: {
+    devStorage: {
       kv: {
         driver: "fs-lite",
         base: "./.data/kv",
+      },
+    },
+    storage: {
+      kv: {
+        driver: "cloudflare-kv-binding",
+        options: {
+          binding: "KV",
+        },
       },
     },
   },
@@ -223,17 +231,4 @@ export default defineNuxtConfig({
     enabled: false,
   },
 
-  $production: {
-    nitro: {
-      preset: "cloudflare_module",
-      storage: {
-        kv: {
-          driver: "cloudflare-kv-binding",
-          options: {
-            binding: "KV",
-          },
-        },
-      },
-    },
-  },
 });
