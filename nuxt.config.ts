@@ -114,20 +114,6 @@ export default defineNuxtConfig({
       "0 0 * * *": ["clearExpiredCache"],
       "0 1 * * *": ["checkOverdueBillings"],
     },
-    devStorage: {
-      kv: {
-        driver: "fs-lite",
-        base: "./.data/kv",
-      },
-    },
-    storage: {
-      kv: {
-        driver: "cloudflare-kv-binding",
-        options: {
-          binding: "KV",
-        },
-      },
-    },
   },
 
   runtimeConfig: {
