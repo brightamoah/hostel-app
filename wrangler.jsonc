@@ -33,7 +33,7 @@
   },
   "kv_namespaces": [
     {
-      "binding": "STORAGE",
+      "binding": "KV",
       "id": "62f75e869d5145199c7530bca0767b8a",
       "preview_id": "fcde2b26d7fd4718ba6e68ec5d596f56"
     },
@@ -48,7 +48,7 @@
     "preview": {
       "kv_namespaces": [
         {
-          "binding": "STORAGE",
+          "binding": "KV",
           "id": "fcde2b26d7fd4718ba6e68ec5d596f56"
         },
         {
