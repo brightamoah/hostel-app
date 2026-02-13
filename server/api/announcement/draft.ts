@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
 
   const kv = useStorage("storage");
 
-  await kv.clear();
+  // await kv.clear();
 
   const KEY = `announcement-draft-${user.id}`;
 
