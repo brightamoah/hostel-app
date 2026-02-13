@@ -1,4 +1,7 @@
 {
+  "compilerOptions": {
+    "types": ["@cloudflare/workers-types"]
+  },
   "references": [
     {
       "path": "./.nuxt/tsconfig.app.json"

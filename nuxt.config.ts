@@ -83,7 +83,7 @@ export default defineNuxtConfig({
       wrangler: {
         kv_namespaces: [
           {
-            binding: "STORAGE",
+            binding: "KV",
             id: env.NUXT_KV_NAMESPACE_ID,
             preview_id: env.NUXT_KV_PREVIEW_NAMESPACE_ID,
           },
@@ -118,7 +118,7 @@ export default defineNuxtConfig({
       kv: {
         driver: "cloudflare-kv-binding",
         options: {
-          binding: "STORAGE",
+          binding: "KV",
         },
       },
     },
