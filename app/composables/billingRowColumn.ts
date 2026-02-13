@@ -71,7 +71,7 @@ export function useBillingRowColumn(
       );
     }
 
-    if (user.value?.role === "student" && ["unpaid", "partially paid"]
+    if (user.value?.role === "student" && ["unpaid", "partially paid", "overdue"]
       .some(status => billing.status.toLowerCase().includes(status))) {
       actions.push(
         {
@@ -155,6 +155,23 @@ export function useBillingRowColumn(
           return h("p", { class: "font-medium" }, `${formatCurrency(Number(row.original.paidAmount))}`);
         },
       },
+    );
+
+    if (user.value?.role === "student") {
+      cols.push(
+        {
+          id: "balanceDue",
+          header: createSortableHeader("Balance Due", UButton),
+          cell: ({ row }) => {
+            const balanceDue = Number(row.original.amount) - Number(row.original.paidAmount);
+            return h("p", { class: "font-medium" }, `${formatCurrency(balanceDue)}`);
+          },
+        },
+      );
+    }
+
+    cols.push(
+
       {
         id: "dateIssued",
         accessorFn: row => useDateFormat(row.dateIssued, "ddd DD-MM-YYYY").value,
