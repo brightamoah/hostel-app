@@ -13,7 +13,6 @@ export default defineNuxtConfig({
     "nuxt-auth-utils",
     "@formkit/auto-animate",
     "nuxt-tiptap-editor",
-    "@nuxthub/core",
   ],
 
   $development: {
@@ -39,11 +38,6 @@ export default defineNuxtConfig({
         pass: env.NUXT_NODEMAILER_AUTH_PASS,
       },
     },
-
-    // hub: {
-    //   kv: true,
-    //   cache: true,
-    // },
 
     security: {
       csrf: true,
@@ -233,5 +227,4 @@ export default defineNuxtConfig({
   ogImage: {
     enabled: false,
   },
-
 });
