@@ -7,8 +7,6 @@ export default defineEventHandler(async (event) => {
 
   const kv = useStorage("kv");
 
-  await kv.clear();
-
   const KEY = `announcement-draft-${user.id}`;
 
   if (event.method === "GET") {
