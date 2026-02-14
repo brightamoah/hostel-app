@@ -176,5 +176,6 @@
         }
       }
     ]
-  }
+  },
+  "SQL-Formatter-VSCode.dialect": "postgresql"
 }
