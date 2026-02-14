@@ -129,6 +129,8 @@ export default defineNuxtConfig({
       siteUrl: env.NUXT_PUBLIC_SITE_URL,
       paystackPublicKey: env.NUXT_PAYSTACK_PUBLIC_KEY,
       paystackBaseUrl: env.NUXT_PAYSTACK_BASE_URL,
+      paystackPublicKey: env.NUXT_PAYSTACK_PUBLIC_KEY,
+      paystackBaseUrl: env.NUXT_PAYSTACK_BASE_URL,
     },
     session: {
       password: env.NUXT_SESSION_PASSWORD,
@@ -146,6 +148,7 @@ export default defineNuxtConfig({
     emailFromName: env.NUXT_EMAIL_FROM_NAME,
     emailFromEmail: env.NUXT_EMAIL_FROM_EMAIL,
     nodeEnv: env.NODE_ENV,
+    paystackSecretKey: env.NUXT_PAYSTACK_SECRET_KEY,
     paystackSecretKey: env.NUXT_PAYSTACK_SECRET_KEY,
   },
 
