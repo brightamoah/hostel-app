@@ -47,7 +47,7 @@ BEGIN
   WITH updated AS (
     UPDATE billing
     SET 
-      late_fee = (CAST(late_fee AS NUMERIC) + (CAST(amount AS NUMERIC) * 0.05))::TEXT,
+      late_fee = (CAST(late_fee AS NUMERIC) + (CAST(amount AS NUMERIC) * 0.05))::NUMERIC,
       updated_at = NOW()
     WHERE 
       status = 'overdue'
@@ -117,7 +117,7 @@ BEGIN
       -- Update billing
       UPDATE billing
       SET 
-        paid_amount = new_paid_amount::TEXT,
+        paid_amount = new_paid_amount::NUMERIC,
         status = new_status,
         updated_at = NOW()
       WHERE id = NEW.billing_id;

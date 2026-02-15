@@ -80,8 +80,8 @@ export default defineEventHandler(async (event) => {
       reference,
       paymentMethod,
       verifiedAmount,
-      newPaidTotal,
-      newStatus,
+      // newPaidTotal,
+      // newStatus,
     );
 
     return {

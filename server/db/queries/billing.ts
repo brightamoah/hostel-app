@@ -208,28 +208,17 @@ export async function billingQueries() {
     reference: string,
     paymentMethod: PaymentMethodType,
     verifiedAmount: number,
-    newPaidTotal: number,
-    newStatus: typeof billing.status.enumValues[number],
+    // newPaidTotal?: number,
+    // newStatus: typeof billing.status.enumValues[number],
   ) => {
-    await db.transaction(async (tx) => {
-      await tx
-        .update(payment)
-        .set({
-          amount: verifiedAmount.toString(),
-          status: "completed",
-          paymentDate: new Date(),
-          paymentMethod,
-        })
-        .where(eq(payment.transactionReference, reference));
-
-      await tx.update(billing)
-        .set({
-          paidAmount: newPaidTotal.toString(),
-          status: newStatus,
-          updatedAt: new Date(),
-        })
-        .where(eq(billing.id, billingId));
-    });
+    await db.update(payment)
+      .set({
+        amount: sql`${verifiedAmount}::numeric`,
+        status: "completed",
+        paymentDate: new Date(),
+        paymentMethod,
+      })
+      .where(eq(payment.transactionReference, reference));
   };
 
   // async function verifyPayment(
