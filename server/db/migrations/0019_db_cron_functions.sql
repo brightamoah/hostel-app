@@ -53,7 +53,7 @@ BEGIN
       status = 'overdue'
       AND (
         -- Calculate weeks overdue vs times late fee already applied
-        FLOOR(EXTRACT(EPOCH FROM (CURRENT_DATE - DATE(due_date))) / (7 * 24 * 60 * 60)) >
+        FLOOR((CURRENT_DATE - DATE(due_date))::NUMERIC / 7) >
         CASE 
           WHEN CAST(amount AS NUMERIC) > 0 
           THEN FLOOR(CAST(late_fee AS NUMERIC) / (CAST(amount AS NUMERIC) * 0.05))

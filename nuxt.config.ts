@@ -106,9 +106,9 @@ export default defineNuxtConfig({
     },
     scheduledTasks: {
       "0 0 * * *": ["clearExpiredCache"],
-      "0 1 * * *": ["checkOverdueBillings"],
-      "0 2 * * *": ["cancelUnpaidAllocations"],
-      "0 3 * * 0": ["applyOverdueLateFee"],
+      "10 0 * * *": ["checkOverdueBillings"],
+      "20 0 * * *": ["cancelUnpaidAllocations"],
+      "0 1 * * 0": ["applyOverdueLateFee"],
     },
     devStorage: {
       kv: {
