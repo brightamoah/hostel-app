@@ -127,6 +127,7 @@ async function handleDownload() {
         :date-issued="new Date(billing.dateIssued)"
         :due-date="billing.dueDate"
         :hostel-address="billing.hostel.address"
+        :status="billing.status"
       />
 
       <USeparator
@@ -172,15 +173,15 @@ async function handleDownload() {
         class="mt-6"
       />
 
-      <div class="mt-4 rounded-lg p-4 border border-muted">
-        <h6 class="font-bold flex items-center gap-2 mb-2 text-sm">
+      <div class="mt-4 p-4 border border-muted rounded-lg">
+        <h6 class="flex items-center gap-2 mb-2 font-bold text-sm">
           <UIcon
             name="i-lucide-file-text"
-            class="text-primary size-4"
+            class="size-4 text-primary"
           /> Terms & Conditions
         </h6>
 
-        <ul class="text-xs text-muted space-y-1 pl-6 list-decimal">
+        <ul class="space-y-1 pl-6 text-muted text-xs list-decimal">
           <li>Payment is due within 30 days of invoice date.</li>
 
           <li>Late payments will incur a 5% penalty fee.</li>

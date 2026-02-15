@@ -38,6 +38,7 @@ $$;
 
 -- =====================================================
 -- 2. FUNCTION: Apply 5% weekly late fee to overdue billings
+--    ONLY for active/pending allocations
 -- =====================================================
 CREATE OR REPLACE FUNCTION apply_weekly_late_fees () RETURNS TABLE (updated_count INTEGER, total_late_fees NUMERIC) LANGUAGE plpgsql AS $$
 DECLARE
@@ -45,22 +46,25 @@ DECLARE
   t_fees NUMERIC;
 BEGIN
   WITH updated AS (
-    UPDATE billing
+    UPDATE billing b
     SET 
-      late_fee = (CAST(late_fee AS NUMERIC) + (CAST(amount AS NUMERIC) * 0.05))::NUMERIC,
+      late_fee = CAST(b.late_fee AS NUMERIC) + (CAST(b.amount AS NUMERIC) * 0.05)::NUMERIC,
       updated_at = NOW()
+    FROM allocation a
     WHERE 
-      status = 'overdue'
+        b.allocation_id = a.id
+        AND b.status = 'overdue'
+        AND a.status IN ('active', 'pending')
       AND (
         -- Calculate weeks overdue vs times late fee already applied
-        FLOOR((CURRENT_DATE - DATE(due_date))::NUMERIC / 7) >
+        FLOOR((CURRENT_DATE - DATE(b.due_date))::NUMERIC / 7) >
         CASE 
-          WHEN CAST(amount AS NUMERIC) > 0 
-          THEN FLOOR(CAST(late_fee AS NUMERIC) / (CAST(amount AS NUMERIC) * 0.05))
+          WHEN CAST(b.amount AS NUMERIC) > 0 
+          THEN FLOOR(CAST(b.late_fee AS NUMERIC) / (CAST(b.amount AS NUMERIC) * 0.05))
           ELSE 0 
         END
       )
-    RETURNING late_fee
+    RETURNING b.late_fee
   )
   SELECT COUNT(*)::INTEGER, COALESCE(SUM(CAST(late_fee AS NUMERIC)), 0)
   INTO u_count, t_fees
@@ -78,11 +82,15 @@ DECLARE
   count INTEGER;
 BEGIN
   WITH updated AS (
-    UPDATE billing
+    UPDATE billing b
     SET status = 'overdue', updated_at = NOW()
-    WHERE DATE(due_date) < CURRENT_DATE
-      AND status IN ('unpaid', 'partially paid')
-    RETURNING id
+    FROM allocation a
+    WHERE 
+        b.allocation_id = a.id
+        AND DATE(b.due_date) < CURRENT_DATE
+        AND b.status IN ('unpaid', 'partially paid')
+        AND a.status IN ('active', 'pending')
+    RETURNING b.id
   )
   SELECT COUNT(*)::INTEGER INTO count FROM updated;
   
@@ -97,37 +105,45 @@ $$;
 CREATE OR REPLACE FUNCTION handle_payment_completion () RETURNS TRIGGER LANGUAGE plpgsql AS $$
 DECLARE
   billing_record RECORD;
+  allocation_record RECORD;
   new_paid_amount NUMERIC;
   new_status billing_status;
 BEGIN
   -- Only process when payment status changes to 'completed'
   IF NEW.status = 'completed' AND (OLD IS NULL OR OLD.status != 'completed') THEN
+    -- Get billing record
     SELECT * INTO billing_record FROM billing WHERE id = NEW.billing_id;
     
     IF FOUND THEN
-      new_paid_amount := CAST(billing_record.paid_amount AS NUMERIC) + CAST(NEW.amount AS NUMERIC);
+      -- Get allocation record to check status
+      SELECT * INTO allocation_record FROM allocation WHERE id = billing_record.allocation_id;
       
-      -- Determine billing status
-      IF new_paid_amount >= CAST(billing_record.amount AS NUMERIC) + CAST(billing_record.late_fee AS NUMERIC) THEN
-        new_status := 'fully paid';
-      ELSE
-        new_status := 'partially paid';
-      END IF;
-      
-      -- Update billing
-      UPDATE billing
-      SET 
-        paid_amount = new_paid_amount::NUMERIC,
-        status = new_status,
-        updated_at = NOW()
-      WHERE id = NEW.billing_id;
-      
-      -- Activate allocation if 60% threshold met within booking period
-      IF new_paid_amount >= CAST(billing_record.amount AS NUMERIC) * 0.6 THEN
-        UPDATE allocation
-        SET status = 'active'
-        WHERE id = billing_record.allocation_id
-          AND status = 'pending';
+      -- Only update if allocation is not cancelled
+      IF FOUND AND allocation_record.status != 'cancelled' THEN
+        new_paid_amount := CAST(billing_record.paid_amount AS NUMERIC) + CAST(NEW.amount AS NUMERIC);
+        
+        -- Determine billing status
+        IF new_paid_amount >= CAST(billing_record.amount AS NUMERIC) + CAST(billing_record.late_fee AS NUMERIC) THEN
+          new_status := 'fully paid';
+        ELSE
+          new_status := 'partially paid';
+        END IF;
+        
+        -- Update billing
+        UPDATE billing
+        SET 
+          paid_amount = new_paid_amount,
+          status = new_status,
+          updated_at = NOW()
+        WHERE id = NEW.billing_id;
+        
+        -- Activate allocation if 60% threshold met and status is pending
+        IF new_paid_amount >= CAST(billing_record.amount AS NUMERIC) * 0.6 
+           AND allocation_record.status = 'pending' THEN
+          UPDATE allocation
+          SET status = 'active'
+          WHERE id = billing_record.allocation_id;
+        END IF;
       END IF;
     END IF;
   END IF;

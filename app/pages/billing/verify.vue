@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { RouteLocationRaw } from "vue-router";
+
 import { useDateFormat } from "@vueuse/core";
 
 definePageMeta({
@@ -162,8 +164,12 @@ onMounted(async () => {
   }
 });
 
+const billingRoute = computed<RouteLocationRaw>(() => user.value?.role === "admin"
+  ? { name: "admin-billings" }
+  : { name: "student-billing" });
+
 function goToBilling() {
-  router.push("/student/billing");
+  router.push(billingRoute.value);
 }
 </script>
 
