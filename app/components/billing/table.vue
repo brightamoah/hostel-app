@@ -11,10 +11,10 @@ defineProps<{
 </script>
 
 <template>
-  <div class="ring-1 ring-muted rounded-lg overflow-hidden">
+  <div class="rounded-lg ring-1 ring-muted overflow-hidden">
     <div class="overflow-x-auto">
-      <table class="w-full text-sm text-left min-w-125 sm:min-w-full">
-        <thead class="bg-primary text-white uppercase font-bold">
+      <table class="w-full min-w-125 sm:min-w-full text-sm text-left">
+        <thead class="bg-primary font-bold text-white uppercase">
           <tr>
             <th class="px-3 sm:px-6 py-3 w-16">
               #
@@ -40,22 +40,22 @@ defineProps<{
               {{ description }}
             </td>
 
-            <td class="px-3 sm:px-6 py-4 text-right font-medium whitespace-nowrap">
+            <td class="px-3 sm:px-6 py-4 font-medium text-right whitespace-nowrap">
               {{ formatCurrency(amount) }}
             </td>
           </tr>
         </tbody>
 
-        <tfoot class="bg-muted border-t border-accented">
+        <tfoot class="bg-muted border-accented border-t">
           <tr>
             <td
               colspan="2"
-              class="px-3 sm:px-6 py-2 text-right text-muted font-semibold"
+              class="px-3 sm:px-6 py-2 font-semibold text-muted text-right"
             >
               Subtotal:
             </td>
 
-            <td class="px-3 sm:px-6 py-2 text-right font-medium whitespace-nowrap">
+            <td class="px-3 sm:px-6 py-2 font-medium text-right whitespace-nowrap">
               {{ formatCurrency(subtotal) }}
             </td>
           </tr>
@@ -63,25 +63,25 @@ defineProps<{
           <tr>
             <td
               colspan="2"
-              class="px-3 sm:px-6 py-2 text-right text-muted font-semibold"
+              class="px-3 sm:px-6 py-2 font-semibold text-muted text-right"
             >
               Late Payment Fee (5% per month):
             </td>
 
-            <td class="px-3 sm:px-6 py-2 text-right font-medium whitespace-nowrap">
+            <td class="px-3 sm:px-6 py-2 font-medium text-right whitespace-nowrap">
               {{ formatCurrency(lateFee) }}
             </td>
           </tr>
 
-          <tr class="border-t border-accented">
+          <tr class="border-accented border-t">
             <td
               colspan="2"
-              class="px-3 sm:px-6 py-3 text-right font-bold text-base"
+              class="px-3 sm:px-6 py-3 font-bold text-base text-right"
             >
               Total:
             </td>
 
-            <td class="px-3 sm:px-6 py-3 text-right font-bold text-base whitespace-nowrap">
+            <td class="px-3 sm:px-6 py-3 font-bold text-base text-right whitespace-nowrap">
               {{ formatCurrency(total) }}
             </td>
           </tr>
@@ -89,12 +89,12 @@ defineProps<{
           <tr>
             <td
               colspan="2"
-              class="px-3 sm:px-6 py-1 text-right font-bold"
+              class="px-3 sm:px-6 py-1 font-bold text-right"
             >
               Amount Paid:
             </td>
 
-            <td class="px-3 sm:px-6 py-1 text-right font-bold text-success whitespace-nowrap">
+            <td class="px-3 sm:px-6 py-1 font-bold text-success text-right whitespace-nowrap">
               {{ formatCurrency(paidAmount) }}
             </td>
           </tr>
@@ -102,12 +102,12 @@ defineProps<{
           <tr>
             <td
               colspan="2"
-              class="px-3 sm:px-6 py-2 text-right font-bold"
+              class="px-3 sm:px-6 py-2 font-bold text-right"
             >
               Balance Due:
             </td>
 
-            <td class="px-3 sm:px-6 py-2 text-right font-bold text-error whitespace-nowrap">
+            <td class="px-3 sm:px-6 py-2 font-bold text-error text-right whitespace-nowrap">
               {{ formatCurrency(balanceDue) }}
             </td>
           </tr>
