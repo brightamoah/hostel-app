@@ -4,10 +4,6 @@
       "type": "http",
       "url": "https://ui.nuxt.com/mcp"
     },
-    "Neon": {
-      "url": "https://mcp.neon.tech/mcp",
-      "type": "http"
-    },
     "context7": {
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
