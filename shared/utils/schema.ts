@@ -659,8 +659,8 @@ export type PaymentSchema = z.output<typeof paymentSchema>;
 const referenceSchema = z.string()
   .nonempty("Reference is required")
   .regex(
-    /^KH-\d+-\d{10,}-\d{8}-\d{4}$/,
-    "Reference must be in the format KH-KH-X-XXXXXXXXXX-XXXXXXXX-XXXX where X is a digit",
+    /^KH-\d+-\d+-\d{8}-\d{1,4}$/,
+    "Reference must be in the format KH-X-XXXXXXXXXXXXX-XXXXXXXX-XXXX where X is a number",
   );
 
 const verifyPaymentSchema = z.object({
