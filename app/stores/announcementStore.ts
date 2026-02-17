@@ -157,6 +157,8 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
   };
 
   const saveDraft = useDebounceFn(async (newState: Partial<CreateAnnouncementSchema>) => {
+    if (!user.value?.id) return;
+
     try {
       await $apiFetch("/api/announcement/draft", {
         method: "POST",
@@ -291,7 +293,17 @@ export const useAnnouncementStore = defineStore("announcementStore", () => {
   }
 
   if (import.meta.client) {
-    loadDraft();
+    watch(() => user.value?.id, (newId, oldId) => {
+      if (newId && newId !== oldId) {
+        loadDraft();
+      }
+      else {
+        announcementState.value = { ...defaultState };
+        editAnnouncementState.value = { ...defaultState };
+        editingId.value = null;
+        originalEditState.value = null;
+      }
+    }, { immediate: true });
   }
 
   return {

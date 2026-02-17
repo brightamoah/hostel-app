@@ -9,6 +9,8 @@ export default defineEventHandler(async (event) => {
 
   const KEY = `announcement-draft-${user.id}`;
 
+  console.log(`User ${user.id} accessed announcement draft with method ${event.method}${KEY}`);
+
   if (event.method === "GET") {
     const draft = await kv.get(KEY);
     return draft || null;
