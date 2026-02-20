@@ -1,4 +1,5 @@
 export { useComplaintRowColumn } from "./admin/complaintRowColumn";
+export { useAdminDashboardData } from "./admin/dashboard";
 export { useFetchBillingDataAdmin } from "./admin/fetchBillingDataAdmin";
 export { useFetchComplaintData } from "./admin/fetchComplaintData";
 export { useFetchMaintenanceData } from "./admin/fetchMaintenanceData";

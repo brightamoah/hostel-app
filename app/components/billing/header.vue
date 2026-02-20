@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useDateFormat } from "@vueuse/core";
+import { capitalize } from "vue";
 
 const { status } = defineProps<{
   invoiceNumber: string;
@@ -62,7 +63,7 @@ const billingStatus = computed(() => status);
         />
         Status:
         <UBadge
-          :label="billingStatus"
+          :label="capitalize(billingStatus)"
           :color="billingStatusColorMap[billingStatus]"
           variant="subtle"
           size="lg"

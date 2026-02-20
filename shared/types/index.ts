@@ -425,3 +425,104 @@ export type PaystackStatus
     | "success"
     | "failed"
     | "abandoned";
+export type DataRecord = { x: number | string; y: number | string | Date };
+
+export interface AdminDashboardData {
+  stats: Stats;
+  scopedStats: ScopedStats;
+  cardStats: CardStats;
+}
+
+export interface CardStats {
+  totalResidents: MonthlyRevenue;
+  occupancyRate: AvailableBeds;
+  availableBeds: AvailableBeds;
+  monthlyRevenue: MonthlyRevenue;
+}
+
+export interface AvailableBeds {
+  value: number;
+  percentage: number;
+  totalCapacity: number;
+  totalOccupied?: number;
+}
+
+export interface MonthlyRevenue {
+  value: number;
+  percentage: number;
+}
+
+export interface ScopedStats {
+  occupancy: ScopedStatsOccupancy;
+  financial: Financial;
+  operations: Operations;
+  revenueTrend: RevenueTrend[];
+}
+
+export interface Financial {
+  totalRevenue: number;
+  totalOutstanding: number;
+  overdueAmount: number;
+}
+
+export interface ScopedStatsOccupancy {
+  totalCapacity: number;
+  currentOccupancy: number;
+  totalRooms: number;
+  vacantRooms: number;
+}
+
+export interface Operations {
+  pendingComplaints: number;
+  pendingMaintenance: number;
+}
+
+export interface RevenueTrend {
+  month: string;
+  amount: number;
+}
+
+export interface Stats {
+  occupancy: StatsOccupancy;
+  students: Students;
+  finance: Finance;
+  tasks: Tasks;
+  visitors: Visitors;
+  issues: Issues;
+}
+
+export interface Finance {
+  expected: number;
+  collected: number;
+  pending: number;
+}
+
+export interface Issues {
+  openMaintenance: number;
+  openComplaints: number;
+  criticalMaintenance: number;
+}
+
+export interface StatsOccupancy {
+  total: number;
+  occupied: number;
+  vacant: number;
+  rate: number;
+}
+
+export interface Students {
+  total: number;
+  active: number;
+  males: number;
+  females: number;
+}
+
+export interface Tasks {
+  maintenance: number;
+  complaints: number;
+}
+
+export interface Visitors {
+  active: number;
+  pending: number;
+}

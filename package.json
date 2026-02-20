@@ -21,6 +21,8 @@
     "@nuxt/image": "^2.0.0",
     "@nuxt/ui": "^4.4.0",
     "@nuxtjs/seo": "3.3.0",
+    "@unovis/ts": "^1.6.4",
+    "@unovis/vue": "^1.6.4",
     "drizzle-orm": "^0.44.7",
     "eslint-plugin-format": "^1.1.0",
     "jspdf": "^4.0.0",
