@@ -5,18 +5,14 @@ export default defineEventHandler(async (event) => {
 
   try {
     const {
-      getDashboardStats,
-      getScopedDashboardStats,
+      getDashboardOverview,
       getCardStats,
     } = await statsQueries();
-
-    const stats = await getDashboardStats(adminData);
-    const scopedStats = await getScopedDashboardStats(adminData.hostelId);
+    const overview = await getDashboardOverview(adminData);
     const cardStats = await getCardStats(adminData.hostelId);
 
     return {
-      stats,
-      scopedStats,
+      overview,
       cardStats,
     };
   }

@@ -13,6 +13,7 @@ export function useAdminDashboardData() {
   });
 
   const cardStats = computed(() => data.value?.cardStats);
+  const overview = computed(() => data.value?.overview);
 
   const {
     canResend,
@@ -32,6 +33,7 @@ export function useAdminDashboardData() {
     coolDownTime,
     isLoading,
     canResend,
+    overview,
     refresh,
     handleRefresh,
   };

@@ -30,7 +30,7 @@ const {
     variant="subtle"
     color="neutral"
     orientation="horizontal"
-    class="h-auto"
+    class="w-full shrink-0"
   >
     <template #title>
       <h1 class="font-semibold text-xl">

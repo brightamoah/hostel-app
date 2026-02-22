@@ -12,6 +12,7 @@ const {
   canResend,
   coolDownTime,
   isLoading: refreshIsLoading,
+  overview,
   handleRefresh,
 } = useAdminDashboardData();
 
@@ -34,18 +35,18 @@ const cards = computed<StatsCard[]>(() => [
   },
   {
     id: 2,
-    title: "Room Occupancy",
+    title: "Bed Occupancy",
     icon: "i-lucide-house",
-    color: "success",
+    color: "info",
     value: `${cardStats.value?.occupancyRate.value ?? 0}%`,
     percentage: cardStats.value?.occupancyRate.totalOccupied,
     period: "monthly",
   },
   {
     id: 3,
-    title: "Available Rooms",
+    title: "Available Beds",
     icon: "i-lucide-door-open",
-    color: "info",
+    color: "success",
     value: cardStats.value?.availableBeds.value ?? 0,
     percentage: cardStats.value?.availableBeds.percentage,
     period: "monthly",
@@ -72,58 +73,48 @@ const cards = computed<StatsCard[]>(() => [
       <template #body>
         <DashboardAlert />
 
-        <DashboardCardSkeleton v-if="status === 'pending'" />
+        <template v-if="status === 'pending'">
+          <DashboardCardSkeleton />
 
-        <DashboardStatsCard
-          v-else
-          :cards
-        >
-          <template #description="{ card }">
-            <UProgress
-              v-if="card.id === 2"
-              v-model:model-value="card.percentage"
-              :max="cardStats?.occupancyRate.totalCapacity"
-              :color="card.color"
-            >
-              <template #status>
-                <span class="font-medium text-muted text-sm">
-                  {{ cardStats?.occupancyRate.totalOccupied || 0 }} of {{ cardStats?.occupancyRate.totalCapacity || 0 }} beds occupied
-                </span>
-              </template>
-            </UProgress>
+          <DashboardOverviewSkeleton />
+        </template>
 
-            <UProgress
-              v-if="card.id === 3"
-              v-model:model-value="card.value as number"
-              :max="cardStats?.availableBeds.totalCapacity"
-              :color="card.color"
-            >
-              <template #status>
-                <span class="font-medium text-muted text-sm">
-                  {{ cardStats?.availableBeds.value || 0 }} of {{ cardStats?.availableBeds.totalCapacity || 0 }} beds available
-                </span>
-              </template>
-            </UProgress>
-          </template>
-        </DashboardStatsCard>
+        <template v-else>
+          <DashboardStatsCard :cards>
+            <template #description="{ card }">
+              <UProgress
+                v-if="card.id === 2"
+                v-model:model-value="card.percentage"
+                :max="cardStats?.occupancyRate.totalCapacity"
+                :color="card.color"
+              >
+                <template #status>
+                  <span class="font-medium text-muted text-sm">
+                    {{ cardStats?.occupancyRate.totalOccupied || 0 }} of {{ cardStats?.occupancyRate.totalCapacity || 0 }} beds occupied
+                  </span>
+                </template>
+              </UProgress>
 
-        <!-- <DashboardStats
-          :period="period"
-          :range="range"
-        /> -->
+              <UProgress
+                v-if="card.id === 3"
+                v-model:model-value="card.value as number"
+                :max="cardStats?.availableBeds.totalCapacity"
+                :color="card.color"
+              >
+                <template #status>
+                  <span class="font-medium text-muted text-sm">
+                    {{ cardStats?.availableBeds.value || 0 }} of {{ cardStats?.availableBeds.totalCapacity || 0 }} beds available
+                  </span>
+                </template>
+              </UProgress>
+            </template>
+          </DashboardStatsCard>
 
-        <!-- <HomeStats
-          :period="period"
-          :range="range"
-        />
-        <HomeChart
-          :period="period"
-          :range="range"
-        />
-        <HomeSales
-          :period="period"
-          :range="range"
-        /> -->
+          <DashboardOverview
+            v-if="overview"
+            :overview
+          />
+        </template>
       </template>
     </UDashboardPanel>
   </div>

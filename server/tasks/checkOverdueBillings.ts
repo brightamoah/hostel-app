@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { and, inArray, sql } from "drizzle-orm";
 
 import { billing } from "../db/schema";

@@ -84,197 +84,176 @@ export async function statsQueries() {
     };
   };
 
-  const getScopedDashboardStats = async (hostelId?: number | null) => {
-    // Prepare conditions
-    const hostelCondition = hostelId ? eq(room.hostelId, hostelId) : undefined;
-    const billingHostelCondition = hostelId ? eq(billing.hostelId, hostelId) : undefined;
-    const complaintHostelCondition = hostelId ? eq(complaint.hostelId, hostelId) : undefined;
-    const maintenanceHostelCondition = hostelId ? eq(maintenanceRequest.hostelId, hostelId) : undefined;
+  const getDashboardOverview = async (admin: Admin) => {
+    const isScoped = admin.accessLevel !== "super";
+    const hostelCondition = isScoped ? eq(room.hostelId, admin.hostelId!) : undefined;
+    const billingHostelCondition = isScoped ? eq(billing.hostelId, admin.hostelId!) : undefined;
+    const complaintHostelCondition = isScoped ? eq(complaint.hostelId, admin.hostelId!) : undefined;
+    const maintenanceHostelCondition = isScoped ? eq(maintenanceRequest.hostelId, admin.hostelId!) : undefined;
+    const visitorHostelCondition = isScoped ? eq(visitor.hostelId, admin.hostelId!) : undefined;
 
-    // Prepare date for trend
+    // Occupancy Stats
+    const occupancyQuery = db.select({
+      totalRooms: sql<number>`COUNT(*)::int`,
+      occupiedRooms: sql<number>`SUM(CASE WHEN ${room.currentOccupancy} > 0 THEN 1 ELSE 0 END)::int`,
+      vacantRooms: sql<number>`SUM(CASE WHEN ${room.status} = 'vacant' THEN 1 ELSE 0 END)::int`,
+      maintenanceRooms: sql<number>`SUM(CASE WHEN ${room.status} = 'under maintenance' THEN 1 ELSE 0 END)::int`,
+      totalCapacity: sql<number>`COALESCE(SUM(${room.capacity}), 0)::int`,
+      currentOccupancy: sql<number>`COALESCE(SUM(${room.currentOccupancy}), 0)::int`,
+    })
+      .from(room)
+      .where(hostelCondition);
+
+    // Student Demographics
+    const studentQuery = isScoped
+      ? db.select({
+          total: count(student.id),
+          active: count(sql`CASE WHEN ${student.residencyStatus} = 'active' THEN 1 END`),
+          males: count(sql`CASE WHEN ${student.gender} = 'male' AND ${student.residencyStatus} = 'active' THEN 1 END`),
+          females: count(sql`CASE WHEN ${student.gender} = 'female' AND ${student.residencyStatus} = 'active' THEN 1 END`),
+        })
+          .from(student)
+          .innerJoin(allocation, eq(student.id, allocation.studentId))
+          .innerJoin(room, eq(allocation.roomId, room.id))
+          .where(and(eq(room.hostelId, admin.hostelId!), eq(allocation.status, "active")))
+      : db.select({
+          total: count(student.id),
+          active: count(sql`CASE WHEN ${student.residencyStatus} = 'active' THEN 1 END`),
+          males: count(sql`CASE WHEN ${student.gender} = 'male' AND ${student.residencyStatus} = 'active' THEN 1 END`),
+          females: count(sql`CASE WHEN ${student.gender} = 'female' AND ${student.residencyStatus} = 'active' THEN 1 END`),
+        })
+          .from(student);
+
+    // Financial Stats
+    const financialQuery = db.select({
+      totalRevenue: sql<number>`COALESCE(SUM(${payment.amount}), 0)::float`,
+    })
+      .from(payment)
+      .leftJoin(billing, eq(payment.billingId, billing.id))
+      .where(and(eq(payment.status, "completed"), billingHostelCondition));
+
+    const outstandingQuery = db.select({
+      totalExpected: sql<number>`COALESCE(SUM(${billing.amount}), 0)::float`,
+      totalCollected: sql<number>`COALESCE(SUM(${billing.paidAmount}), 0)::float`,
+      totalOutstanding: sql<number>`COALESCE(SUM(${billing.amount} - ${billing.paidAmount}), 0)::float`,
+      overdueAmount: sql<number>`COALESCE(SUM(CASE WHEN ${billing.status} = 'overdue' THEN (${billing.amount} - ${billing.paidAmount} + COALESCE(${billing.lateFee}, 0)) ELSE 0 END), 0)::float`,
+    })
+      .from(billing)
+      .where(billingHostelCondition);
+
+    // Maintenance & Complaints
+    const complaintsQuery = db.select({
+      pending: sql<number>`SUM(CASE WHEN ${complaint.status} = 'pending' THEN 1 ELSE 0 END)::int`,
+      inProgress: sql<number>`SUM(CASE WHEN ${complaint.status} = 'in-progress' THEN 1 ELSE 0 END)::int`,
+    })
+      .from(complaint)
+      .where(complaintHostelCondition);
+
+    const maintenanceQuery = db.select({
+      pending: sql<number>`SUM(CASE WHEN ${maintenanceRequest.status} = 'pending' THEN 1 ELSE 0 END)::int`,
+      inProgress: sql<number>`SUM(CASE WHEN ${maintenanceRequest.status} = 'in-progress' THEN 1 ELSE 0 END)::int`,
+      critical: sql<number>`SUM(CASE WHEN ${maintenanceRequest.priority} = 'emergency' AND ${maintenanceRequest.status} != 'completed' THEN 1 ELSE 0 END)::int`,
+    })
+      .from(maintenanceRequest)
+      .where(maintenanceHostelCondition);
+
+    // Visitors
+    const visitorsQuery = db.select({
+      active: sql<number>`SUM(CASE WHEN ${visitor.status} = 'checked-in' THEN 1 ELSE 0 END)::int`,
+      pending: sql<number>`SUM(CASE WHEN ${visitor.status} = 'pending' THEN 1 ELSE 0 END)::int`,
+    })
+      .from(visitor)
+      .where(visitorHostelCondition);
+
+    // 6. Revenue Trend (Last 6 Months)
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    const revenueTrendQuery = db.select({
+      month: sql<string>`TO_CHAR(DATE_TRUNC('month', ${payment.paymentDate}), 'Mon YYYY')`,
+      amount: sql<number>`COALESCE(SUM(${payment.amount}), 0)::float`,
+    })
+      .from(payment)
+      .leftJoin(billing, eq(payment.billingId, billing.id))
+      .where(and(
+        eq(payment.status, "completed"),
+        gte(payment.paymentDate, sixMonthsAgo),
+        billingHostelCondition,
+      ))
+      .groupBy(sql`DATE_TRUNC('month', ${payment.paymentDate})`)
+      .orderBy(sql`DATE_TRUNC('month', ${payment.paymentDate})`);
 
-    // Execute all queries in parallel
     const [
-      occupancyData,
-      financialData,
-      outstandingData,
-      issueData,
-      maintenanceData,
+      [occupancyData],
+      [studentData],
+      [financialData],
+      [outstandingData],
+      [complaintsData],
+      [maintenanceData],
+      [visitorsData],
       revenueTrend,
     ] = await Promise.all([
-      // 1. Occupancy Stats
-      db.select({
-        totalCapacity: sql<number>`COALESCE(SUM(${room.capacity}), 0)::int`,
-        currentOccupancy: sql<number>`COALESCE(SUM(${room.currentOccupancy}), 0)::int`,
-        totalRooms: sql<number>`COUNT(*)::int`,
-        vacantRooms: sql<number>`SUM(CASE WHEN ${room.status} = 'vacant' THEN 1 ELSE 0 END)::int`,
-      })
-        .from(room)
-        .where(hostelCondition),
-
-      // 2. Financial Stats - Revenue
-      db.select({
-        totalRevenue: sql<number>`COALESCE(SUM(${payment.amount}), 0)::float`,
-      })
-        .from(payment)
-        .leftJoin(billing, eq(payment.billingId, billing.id))
-        .where(and(
-          eq(payment.status, "completed"),
-          billingHostelCondition,
-        )),
-
-      // 3. Financial Stats - Outstanding
-      db.select({
-        totalOutstanding: sql<number>`COALESCE(SUM(${billing.amount} - ${billing.paidAmount}), 0)::float`,
-        overdueAmount: sql<number>`COALESCE(SUM(CASE WHEN ${billing.status} = 'overdue' THEN (${billing.amount} - ${billing.paidAmount} + COALESCE(${billing.lateFee}, 0)) ELSE 0 END), 0)::float`,
-      })
-        .from(billing)
-        .where(and(
-          sql`${billing.status} IN ('unpaid', 'partially paid', 'overdue')`,
-          billingHostelCondition,
-        )),
-
-      // 4. Operational Issues - Complaints
-      db.select({
-        pendingComplaints: sql<number>`SUM(CASE WHEN ${complaint.status} = 'pending' THEN 1 ELSE 0 END)::int`,
-      })
-        .from(complaint)
-        .where(complaintHostelCondition),
-
-      // 5. Operational Issues - Maintenance
-      db.select({
-        pendingMaintenance: sql<number>`SUM(CASE WHEN ${maintenanceRequest.status} = 'pending' THEN 1 ELSE 0 END)::int`,
-      })
-        .from(maintenanceRequest)
-        .where(maintenanceHostelCondition),
-
-      // 6. Revenue Trend
-      db.select({
-        month: sql<string>`TO_CHAR(DATE_TRUNC('month', ${payment.paymentDate}), 'Mon YYYY')`,
-        amount: sql<number>`COALESCE(SUM(${payment.amount}), 0)::float`,
-        sortDate: sql<Date>`DATE_TRUNC('month', ${payment.paymentDate})`,
-      })
-        .from(payment)
-        .leftJoin(billing, eq(payment.billingId, billing.id))
-        .where(and(
-          eq(payment.status, "completed"),
-          gte(payment.paymentDate, sixMonthsAgo),
-          billingHostelCondition,
-        ))
-        .groupBy(sql`DATE_TRUNC('month', ${payment.paymentDate})`)
-        .orderBy(sql`DATE_TRUNC('month', ${payment.paymentDate})`),
+      occupancyQuery,
+      studentQuery,
+      financialQuery,
+      outstandingQuery,
+      complaintsQuery,
+      maintenanceQuery,
+      visitorsQuery,
+      revenueTrendQuery,
     ]);
 
-    return {
-      occupancy: occupancyData[0],
-      financial: { ...financialData[0], ...outstandingData[0] },
-      operations: { ...issueData[0], ...maintenanceData[0] },
-      revenueTrend: revenueTrend.map(t => ({ month: t.month, amount: t.amount })),
-    };
-  };
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const filledRevenueTrend = Array.from({ length: 6 }).map((_, index) => {
+      // Create a timeline from 5 months ago up to the current month (6 months total)
+      const d = new Date();
+      d.setMonth(d.getMonth() - (5 - index));
 
-  const getDashboardStats = async (admin: Admin) => {
-    // Define scope based on admin access level
-    const hostelFilter = (table: any) =>
-      admin.accessLevel === "super" ? undefined : eq(table.hostelId, admin.hostelId!);
+      const monthStr = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
 
-    const [
-      roomStats,
-      studentStats,
-      financialStats,
-      [issueStats],
-      visitorStats,
-    ] = await Promise.all([
-      // Room Occupancy
-      db.select({
-        total: count(room.id),
-        occupied: count(sql`CASE WHEN ${room.currentOccupancy} > 0 THEN 1 END`),
-        vacant: count(sql`CASE WHEN ${room.status} = 'vacant' THEN 1 END`),
-        maintenance: count(sql`CASE WHEN ${room.status} = 'under maintenance' THEN 1 END`),
-        capacity: sql<number>`sum(${room.capacity})`,
-        currentOccupancy: sql<number>`sum(${room.currentOccupancy})`,
-      })
-        .from(room)
-        .where(hostelFilter(room)),
+      // Match with the database result, or default to 0
+      const found = (revenueTrend || []).find(t => t.month === monthStr);
 
-      // Student Demographics
-      db.select({
-        total: count(student.id),
-        active: count(sql`CASE WHEN ${student.residencyStatus} = 'active' THEN 1 END`),
-        males: count(sql`CASE WHEN ${student.gender} = 'male' THEN 1 END`),
-        females: count(sql`CASE WHEN ${student.gender} = 'female' THEN 1 END`),
-      })
-        .from(student), // Note: Student table might not have hostelId directly, usually linked via allocation
-      // For simplicity in this example assuming global or joining with allocation if strict scoping needed
-
-      // Financial (Revenue)
-      db.select({
-        totalExpected: sql<number>`sum(${billing.amount})`,
-        totalCollected: sql<number>`sum(${billing.paidAmount})`,
-        pending: sql<number>`sum(${billing.amount} - ${billing.paidAmount})`,
-      })
-        .from(billing)
-        .where(and(
-          hostelFilter(billing),
-          eq(billing.status, "unpaid"), // or logic for pending
-        )),
-
-      // Maintenance & Complaints
-      db.select({
-        openMaintenance: count(sql`CASE WHEN ${maintenanceRequest.status} IN ('pending', 'in-progress', 'assigned') THEN 1 END`),
-        openComplaints: count(sql`CASE WHEN ${complaint.status} IN ('pending', 'in-progress') THEN 1 END`),
-        criticalMaintenance: count(sql`CASE WHEN ${maintenanceRequest.priority} = 'emergency' AND ${maintenanceRequest.status} != 'completed' THEN 1 END`),
-      })
-        .from(maintenanceRequest)
-        .leftJoin(complaint, eq(maintenanceRequest.hostelId, complaint.hostelId)), // Approximate join for single query, better to split if huge            // actually better to run separate simple counts or promise.all them
-
-      // Visitors (Today)
-      db.select({
-        active: count(sql`CASE WHEN ${visitor.status} = 'checked-in' THEN 1 END`),
-        pending: count(sql`CASE WHEN ${visitor.status} = 'pending' THEN 1 END`),
-      })
-        .from(visitor)
-        .where(hostelFilter(visitor)),
-    ]);
-
-    // Re-query maintenance/complaints cleanly if the join above is messy
-    const maintenanceCount = await db
-      .select({ count: count() })
-      .from(maintenanceRequest)
-      .where(and(hostelFilter(maintenanceRequest), sql`${maintenanceRequest.status} != 'completed'`));
-
-    const complaintCount = await db
-      .select({ count: count() })
-      .from(complaint)
-      .where(and(hostelFilter(complaint), sql`${complaint.status} != 'resolved'`));
+      return {
+        month: monthStr,
+        amount: found ? Number(found.amount) : 0,
+      };
+    });
 
     return {
       occupancy: {
-        total: Number(roomStats[0]?.total || 0),
-        occupied: Number(roomStats[0]?.occupied || 0),
-        vacant: Number(roomStats[0]?.vacant || 0),
-        rate: roomStats[0]?.capacity ? (Number(roomStats[0].currentOccupancy) / Number(roomStats[0].capacity)) * 100 : 0,
+        ...occupancyData,
+        rate: occupancyData?.totalCapacity ? (Number(occupancyData.currentOccupancy) / Number(occupancyData.totalCapacity)) * 100 : 0,
       },
-      students: studentStats[0],
+      students: {
+        total: Number(studentData?.total || 0),
+        active: Number(studentData?.active || 0),
+        males: Number(studentData?.males || 0),
+        females: Number(studentData?.females || 0),
+      },
       finance: {
-        expected: Number(financialStats[0]?.totalExpected || 0),
-        collected: Number(financialStats[0]?.totalCollected || 0),
-        pending: Number(financialStats[0]?.pending || 0),
+        totalRevenue: Number(financialData?.totalRevenue || 0),
+        totalExpected: Number(outstandingData?.totalExpected || 0),
+        totalCollected: Number(outstandingData?.totalCollected || 0),
+        totalOutstanding: Number(outstandingData?.totalOutstanding || 0),
+        overdueAmount: Number(outstandingData?.overdueAmount || 0),
       },
       tasks: {
-        maintenance: maintenanceCount[0]?.count || 0,
-        complaints: complaintCount[0]?.count || 0,
+        pendingComplaints: Number(complaintsData?.pending || 0),
+        inProgressComplaints: Number(complaintsData?.inProgress || 0),
+        pendingMaintenance: Number(maintenanceData?.pending || 0),
+        inProgressMaintenance: Number(maintenanceData?.inProgress || 0),
+        criticalMaintenance: Number(maintenanceData?.critical || 0),
       },
-      visitors: visitorStats[0],
-      issues: issueStats,
+      visitors: {
+        active: Number(visitorsData?.active || 0),
+        pending: Number(visitorsData?.pending || 0),
+      },
+      revenueTrend: filledRevenueTrend,
     };
   };
 
   return {
-    getDashboardStats,
-    getScopedDashboardStats,
     getCardStats,
+    getDashboardOverview,
   };
 }

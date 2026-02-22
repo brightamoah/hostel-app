@@ -428,8 +428,7 @@ export type PaystackStatus
 export type DataRecord = { x: number | string; y: number | string | Date };
 
 export interface AdminDashboardData {
-  stats: Stats;
-  scopedStats: ScopedStats;
+  overview: Overview;
   cardStats: CardStats;
 }
 
@@ -452,62 +451,36 @@ export interface MonthlyRevenue {
   percentage: number;
 }
 
-export interface ScopedStats {
-  occupancy: ScopedStatsOccupancy;
-  financial: Financial;
-  operations: Operations;
+export interface Overview {
+  occupancy: Occupancy;
+  students: Students;
+  finance: Finance;
+  tasks: Tasks;
+  visitors: Visitors;
   revenueTrend: RevenueTrend[];
 }
 
-export interface Financial {
+export interface Finance {
   totalRevenue: number;
+  totalExpected: number;
+  totalCollected: number;
   totalOutstanding: number;
   overdueAmount: number;
 }
 
-export interface ScopedStatsOccupancy {
+export interface Occupancy {
+  totalRooms: number;
+  occupiedRooms: number;
+  vacantRooms: number;
+  maintenanceRooms: number;
   totalCapacity: number;
   currentOccupancy: number;
-  totalRooms: number;
-  vacantRooms: number;
-}
-
-export interface Operations {
-  pendingComplaints: number;
-  pendingMaintenance: number;
+  rate: number;
 }
 
 export interface RevenueTrend {
   month: string;
   amount: number;
-}
-
-export interface Stats {
-  occupancy: StatsOccupancy;
-  students: Students;
-  finance: Finance;
-  tasks: Tasks;
-  visitors: Visitors;
-  issues: Issues;
-}
-
-export interface Finance {
-  expected: number;
-  collected: number;
-  pending: number;
-}
-
-export interface Issues {
-  openMaintenance: number;
-  openComplaints: number;
-  criticalMaintenance: number;
-}
-
-export interface StatsOccupancy {
-  total: number;
-  occupied: number;
-  vacant: number;
-  rate: number;
 }
 
 export interface Students {
@@ -518,8 +491,11 @@ export interface Students {
 }
 
 export interface Tasks {
-  maintenance: number;
-  complaints: number;
+  pendingComplaints: number;
+  inProgressComplaints: number;
+  pendingMaintenance: number;
+  inProgressMaintenance: number;
+  criticalMaintenance: number;
 }
 
 export interface Visitors {
