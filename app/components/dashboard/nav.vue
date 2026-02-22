@@ -64,17 +64,6 @@ const { signout } = useAuthStore();
         :is-logged-in
         :handle-sign-out="signout"
       />
-
-      <!-- <UDropdownMenu
-        :items="items"
-        arrow
-      >
-        <UButton
-          icon="i-lucide-plus"
-          size="md"
-          class="rounded-full"
-        />
-      </UDropdownMenu> -->
     </template>
   </UDashboardNavbar>
 </template>

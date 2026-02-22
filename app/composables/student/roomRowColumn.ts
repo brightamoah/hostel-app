@@ -43,7 +43,7 @@ export function useStudentRoomRowColumn(
         const userId = user.value?.role === "student" ? user.value.id : undefined;
         if (!userId) return;
 
-        if (student.value.allocation.id) {
+        if (student.value?.allocation?.id) {
           toast.add({
             title: "Failed to Book Room",
             description: "You already have an active room allocation. Please contact administration for changes.",
