@@ -13,15 +13,10 @@ const { loggedIn: isLoggedIn, user } = useUserSession();
 
 const { signout } = useAuthStore();
 
-// const items = [[{
-//   label: "New mail",
-//   icon: "i-lucide-send",
-//   to: "/inbox",
-// }, {
-//   label: "New customer",
-//   icon: "i-lucide-user-plus",
-//   to: "/customers",
-// }]] satisfies DropdownMenuItem[][];
+const { filteredAnnouncements } = useAnnouncementData();
+const unreadCount = computed(() => {
+  return filteredAnnouncements.value?.filter(a => !a.isRead).length || 0;
+});
 </script>
 
 <template>
@@ -50,6 +45,13 @@ const { signout } = useAuthStore();
           <UChip
             color="error"
             inset
+            :show="unreadCount > 0"
+            :text="unreadCount"
+            size="2xl"
+            class="text-highlighted"
+            :ui="{
+              base: 'text-highlighted ',
+            }"
           >
             <UIcon
               name="i-lucide-bell"
