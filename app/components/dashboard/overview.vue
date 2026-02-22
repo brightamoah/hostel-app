@@ -101,7 +101,7 @@ const revenueData = computed<ChartData<"bar">>(() => {
       {
         label: "Monthly Revenue",
         data: revenueTrend.map(t => t.amount),
-        backgroundColor: "rgb(17, 105, 111)",
+        backgroundColor: "#3b82f6",
         borderRadius: 6,
         borderSkipped: false,
         maxBarThickness: 60,
