@@ -47,10 +47,10 @@ const unreadCount = computed(() => {
             inset
             :show="unreadCount > 0"
             :text="unreadCount"
-            size="2xl"
+            size="3xl"
             class="text-highlighted"
             :ui="{
-              base: 'text-highlighted ',
+              base: 'text-white text-center',
             }"
           >
             <UIcon

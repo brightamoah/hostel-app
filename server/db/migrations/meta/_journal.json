@@ -141,6 +141,13 @@
       "when": 1771112502078,
       "tag": "0019_db_cron_functions",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1771782596006,
+      "tag": "0020_update_cron_function_triggers",
+      "breakpoints": true
     }
   ]
 }

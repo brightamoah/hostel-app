@@ -208,8 +208,6 @@ export async function billingQueries() {
     reference: string,
     paymentMethod: PaymentMethodType,
     verifiedAmount: number,
-    // newPaidTotal?: number,
-    // newStatus: typeof billing.status.enumValues[number],
   ) => {
     await db.update(payment)
       .set({
@@ -220,46 +218,6 @@ export async function billingQueries() {
       })
       .where(eq(payment.transactionReference, reference));
   };
-
-  // async function verifyPayment(
-  //   billingId: number,
-  //   reference: string,
-  //   paymentMethod: PaymentMethodType,
-  //   verifiedAmount: number,
-  //   newPaidTotal: number,
-  //   newStatus: typeof billing.status.enumValues[number],
-  // ) {
-  //   const { db } = useDB();
-
-  //   await db.transaction(async (tx) => {
-  //     const [currentBilling] = await tx
-  //       .select()
-  //       .from(billing)
-  //       .where(eq(billing.id, billingId))
-  //       .limit(1);
-
-  //     if (!currentBilling) throw new Error("Billing record not found.");
-
-  //     await tx.insert(payment).values({
-  //       billingId,
-  //       studentId: currentBilling.studentId,
-  //       amount: verifiedAmount.toString(),
-  //       transactionReference: reference,
-  //       paymentMethod,
-  //       status: "completed",
-  //       paymentDate: new Date(),
-  //     });
-
-  //     await tx
-  //       .update(billing)
-  //       .set({
-  //         paidAmount: newPaidTotal.toString(),
-  //         status: newStatus,
-  //         updatedAt: new Date(),
-  //       })
-  //       .where(eq(billing.id, billingId));
-  //   });
-  // }
 
   return {
     getBillingById,
@@ -272,7 +230,6 @@ export async function billingQueries() {
     createPaymentIntent,
     markPaymentAsFailed,
     processSuccessfulPayment,
-    // verifyPayment,
   };
 }
 
