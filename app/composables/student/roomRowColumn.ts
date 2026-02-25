@@ -31,14 +31,14 @@ export function useStudentRoomRowColumn(
     const modal = overlay.create(ConfirmationModal);
     const close = modal.close;
 
-    const allocationExists = !!student.value?.allocation?.id && student.value.allocation.status === "active";
+    const allocationExists = !!student.value?.allocation?.id && ["active", "pending"].includes(student.value.allocation.status);
 
     modal.open({
       title: `Book Room ${room.roomNumber} in ${room.hostel?.name} Hostel`,
       confirmLabel: "Book Room",
       description: `This action will reserve room ${room.roomNumber} for you.`,
       renderTrigger: false,
-      body: `Are you sure you want to proceed with booking room ${room.roomNumber}? \n After booking the room, you have five(5) days to make 60% payment to confirm your allocation.`,
+      body: `Are you sure you want to proceed with booking room ${room.roomNumber}? \n After booking the room, you have three(3) days to make 60% payment to confirm your allocation.`,
       isLoading,
       confirmColor: "primary",
       onConfirm: async () => {
@@ -48,7 +48,7 @@ export function useStudentRoomRowColumn(
         if (allocationExists) {
           toast.add({
             title: "Failed to Book Room",
-            description: "You already have an active room allocation. Please contact administration for changes.",
+            description: `You already have an ${student.value?.allocation?.status.toLocaleUpperCase()} room allocation. Please contact administration for changes.`,
             color: "error",
             icon: "i-lucide-circle-alert",
             duration: 8000,

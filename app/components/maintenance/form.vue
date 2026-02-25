@@ -29,9 +29,9 @@ const roomOptions = computed(() => {
   const room = [rooms.value];
 
   return room[0]
-    ? room.map(r => ({
-        label: `${capitalize(r.hostel.name)} - Room ${r.roomNumber} (${getOrdinalString(r.floor)} Floor)`,
-        value: r.id,
+    ? room.map(room => ({
+        label: `${capitalize(room?.hostel.name ?? "")} - Room ${room?.roomNumber} (${getOrdinalString(room?.floor ?? 0)} Floor)`,
+        value: room?.id,
       }))
     : [];
 });

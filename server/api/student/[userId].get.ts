@@ -29,22 +29,22 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const hostelId = student.studentRecord.allocation?.room?.hostelId;
+    const hostelId = student?.studentRecordWithBestAllocation?.allocation?.room?.hostelId;
 
-    let rooms: RoomInHostel[] = [];
+    let roomsInHostel: RoomInHostel[] = [];
 
     if (hostelId) {
-      rooms = await getRoomsInHostel(hostelId);
+      roomsInHostel = await getRoomsInHostel(hostelId);
     }
 
     return {
-      student: student.studentRecord,
+      student: student?.studentRecordWithBestAllocation,
       totalBilled: student.totalBilled,
       totalPaid: student.totalPaid,
       balance: student.outstandingBalance,
       totalVisitors: student.totalVisitors,
       pendingMaintenance: student.pendingMaintenanceCount,
-      rooms,
+      rooms: roomsInHostel,
     };
   }
   catch (error) {

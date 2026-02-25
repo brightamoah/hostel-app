@@ -17,13 +17,6 @@ export default defineEventHandler(async (event) => {
 
     const { priority, ...rest } = body.data;
 
-    if (priority === "") {
-      throw createError({
-        statusCode: 400,
-        message: "Priority is required and cannot be empty.",
-      });
-    }
-
     const { createComplaint } = await complaintQueries();
 
     const result = await createComplaint({
@@ -31,15 +24,13 @@ export default defineEventHandler(async (event) => {
       ...rest,
     });
 
-    const { id, createdAt, status } = result;
-
     return {
       success: true,
       message: "New Complaint created successfully",
       data: {
-        id,
-        createdAt,
-        status,
+        id: result?.id,
+        createdAt: result?.createdAt,
+        status: result?.status,
       },
     };
   }

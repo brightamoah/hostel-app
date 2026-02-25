@@ -12,6 +12,10 @@ export const useRoomStore = defineStore("roomStore", () => {
     : `roomData:${user.value?.role}`,
   );
 
+  const billingKey = computed(() => user.value?.role === "admin"
+    ? `billingData:${user.value?.adminData?.accessLevel}`
+    : `billingData:${user.value?.id}`);
+
   const isModalOpen = ref<boolean>(false);
 
   const isLoading = ref<boolean>(false);
@@ -185,7 +189,10 @@ export const useRoomStore = defineStore("roomStore", () => {
         icon: "i-lucide-circle-check-big",
       });
 
-      await refreshNuxtData();
+      Promise.all([
+        refreshNuxtData(roomDataKey.value),
+        refreshNuxtData(billingKey.value),
+      ]);
     }
     catch (error) {
       const message = (error as any)?.data?.message;

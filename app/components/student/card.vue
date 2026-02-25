@@ -146,7 +146,7 @@ function getLabel(id: string) {
       <StudentRoom
         v-if="card.id === 'room'"
         :room-details
-        :room-val
+        :room-val="roomVal!"
       />
 
       <StudentVisitor v-else-if="card.id === 'visitors'" />

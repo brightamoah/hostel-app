@@ -2,7 +2,7 @@ import type { CookieRef } from "#app";
 
 type DashboardContext = {
   roommates: ComputedRef<Roommate[]>;
-  room: ComputedRef<StudentRoom>;
+  room: ComputedRef<StudentRoom | null>;
   visitors: ComputedRef<StudentVisitor[]>;
 };
 

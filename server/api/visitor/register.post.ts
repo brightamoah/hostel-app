@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const student = studentData.studentRecord;
+    const student = studentData.studentRecordWithBestAllocation;
 
     if (!student.allocation || !student.allocation.room || !student.allocation.room.hostel) {
       throw createError({

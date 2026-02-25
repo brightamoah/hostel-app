@@ -29,13 +29,6 @@ export default defineEventHandler(async (event) => {
       allowedGender,
     } = body.data;
 
-    if (roomType === "" || status === "" || allowedGender === "") {
-      throw createError({
-        statusCode: 400,
-        message: "Room type, status, and allowed gender must be provided",
-      });
-    }
-
     const existingRoom = await getExistingRoomByRoomNumberAndHostel(roomNumber, hostelId);
 
     if (existingRoom) {

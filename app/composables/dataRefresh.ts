@@ -5,42 +5,53 @@ export function useDataRefresh(
 ) {
   const REFRESH_COOL_DOWN_SECONDS = 120;
 
-  const coolDownTime = useCookie<number>(cacheName, {
+  const coolDownEndTime = useCookie<number>(cacheName, {
     default: () => 0,
     maxAge: 60 * 60 * 24 * 7,
     sameSite: "lax",
   });
 
+  const coolDownTime = ref<number>(0);
+
   const isLoading = ref<boolean>(false);
-  const canResend = computed(() => coolDownTime.value === 0 && !isLoading.value);
+  const canResend = computed(() => coolDownTime.value <= 0 && !isLoading.value);
 
   let timer: ReturnType<typeof setInterval> | null = null;
 
+  function updateCoolDown() {
+    const now = Math.floor(Date.now() / 1000);
+    const remaining = coolDownEndTime.value - now;
+    coolDownTime.value = remaining > 0 ? remaining : 0;
+    if (remaining <= 0 && timer) {
+      clearInterval(timer);
+      timer = null;
+    }
+  }
+
   function startCoolDown(seconds: number) {
-    if (timer) clearInterval(timer);
+    const now = Math.floor(Date.now() / 1000);
+    coolDownEndTime.value = now + seconds;
+    updateCoolDown();
 
-    coolDownTime.value = seconds;
-
-    timer = setInterval(() => {
-      if (coolDownTime.value > 0) {
-        coolDownTime.value -= 1;
-      }
-
-      else {
-        clearInterval(timer!);
-        timer = null;
-        coolDownTime.value = 0;
-      }
-    }, 1000);
+    if (!timer) {
+      timer = setInterval(updateCoolDown, 1000);
+    }
   }
 
   if (import.meta.client) {
     onMounted(() => {
-      if (coolDownTime.value! > 0) startCoolDown(coolDownTime.value!);
+      updateCoolDown();
+
+      if (coolDownTime.value > 0 && !timer) {
+        timer = setInterval(updateCoolDown, 1000);
+      }
     });
 
     onBeforeUnmount(() => {
-      if (timer) clearInterval(timer);
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
     });
   }
 
@@ -53,19 +64,12 @@ export function useDataRefresh(
 
     isLoading.value = true;
 
-    // Prevent repeated refreshes while cool down is active unless forced
-    if (!force && coolDownTime.value > 0) {
-      isLoading.value = false;
-      return false;
-    }
-
     try {
       await refresh();
-      startCoolDown(REFRESH_COOL_DOWN_SECONDS);
+      if (!force) startCoolDown(REFRESH_COOL_DOWN_SECONDS);
       return true;
     }
     catch (err) {
-      // Log and rethrow so callers can handle errors
       console.error(`${[context]} refresh failed`, err);
       throw err;
     }

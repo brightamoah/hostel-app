@@ -59,6 +59,8 @@ export function useComplaintRowColumn(
       action,
       isLoading,
       update: async () => {
+        if (!complaintStatusResponseState.value.status || !complaintStatusResponseState.value.responseText) return;
+
         await complaintStore.updateStatusAndAddResponse({
           complaintId: complaint.id,
           status: complaintStatusResponseState.value.status,
@@ -67,6 +69,8 @@ export function useComplaintRowColumn(
         close();
       },
       addResponse: async () => {
+        if (!complaintStatusResponseState.value.responseText) return;
+
         await complaintStore.addComplaintResponse({
           complaintId: complaint.id,
           responseText: complaintStatusResponseState.value.responseText,

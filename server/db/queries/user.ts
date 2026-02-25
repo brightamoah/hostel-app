@@ -1,7 +1,7 @@
 import type { Admin, FailedAttempts, UserWithRelations } from "~~/shared/types";
 
 import { useDB } from "~~/server/utils/db";
-import { and, asc, count, desc, eq, gt, inArray, isNotNull, lt, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, inArray, isNotNull, lt, ne, sql } from "drizzle-orm";
 
 import { admin, allocation, billing, loginAttempts, maintenanceRequest, room, student, user, visitor, visitorLogs } from "../schema";
 
@@ -110,6 +110,37 @@ const studentWithRelations = {
               with: {
                 user: {
                   columns: {
+                    name: true,
+                    email: true,
+                    image: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+} as const;
+
+const bestAllocationWithRelations = {
+  with: {
+    room: {
+      with: {
+        hostel: true,
+        allocations: {
+          with: {
+            student: {
+              columns: {
+                id: true,
+                residencyStatus: true,
+                phoneNumber: true,
+              },
+              with: {
+                user: {
+                  columns: {
+                    id: true,
                     name: true,
                     email: true,
                     image: true,
@@ -444,6 +475,21 @@ export async function userQueries() {
 
     const studentId = studentRecord.id;
 
+    const bestAllocation = await db.query.allocation.findFirst({
+      where: eq(allocation.studentId, studentId),
+      orderBy: [
+        asc(sql`CASE WHEN ${allocation.status} IN ('active', 'pending') THEN 1 ELSE 2 END`),
+        desc(allocation.allocationDate),
+        desc(allocation.id),
+      ],
+      ...bestAllocationWithRelations,
+    });
+
+    const studentRecordWithBestAllocation = {
+      ...studentRecord,
+      allocation: bestAllocation,
+    };
+
     const [[billingStats], [maintenanceStats], [visitorStats]] = await Promise.all([
       db
         .select({
@@ -452,7 +498,10 @@ export async function userQueries() {
         })
 
         .from(billing)
-        .where(eq(billing.studentId, studentId)),
+        .where(and(
+          eq(billing.studentId, studentId),
+          ne(billing.status, "cancelled"),
+        )),
 
       db
         .select({ count: count() })
@@ -478,7 +527,7 @@ export async function userQueries() {
     const totalVisitors = visitorStats?.count || 0;
 
     return {
-      studentRecord,
+      studentRecordWithBestAllocation,
       totalBilled,
       totalPaid,
       outstandingBalance,

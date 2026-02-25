@@ -32,29 +32,38 @@ export default defineEventHandler(async (event) => {
       roomId,
     } = body.data;
 
-    if (issueType === "" || priority === "") {
-      throw createError({
-        statusCode: 400,
-        message: "Issue Type and Priority are required fields and cannot be empty.",
-      });
-    }
-
-    const { getStudentByUserId } = await userQueries();
+    const { getStudentForDashboardByUserId } = await userQueries();
     const { createMaintenance } = await maintenanceQueries();
 
-    const student = await getStudentByUserId(user.id);
+    const studentData = await getStudentForDashboardByUserId(user.id);
 
-    if (!student) {
+    if (!studentData) {
       throw createError({
         statusCode: 404,
         message: "Student Not Found: Unable to retrieve student data.",
       });
     }
 
+    const student = studentData.studentRecordWithBestAllocation;
+
     if (studentId !== student.id) {
       throw createError({
         statusCode: 403,
-        message: "You cannot create a request for another student.",
+        message: "You cannot create a maintenance request for another student.",
+      });
+    }
+
+    if (!student.allocation || !student.allocation.room || !student.allocation.room.hostel) {
+      throw createError({
+        statusCode: 403,
+        message: "Access denied: You must have an active room allocation to create a maintenance request.",
+      });
+    }
+
+    if (student.allocation.status !== "active" || student.residencyStatus !== "active") {
+      throw createError({
+        statusCode: 403,
+        message: "Access denied: Only active hostel residents can create a maintenance request.",
       });
     }
 
