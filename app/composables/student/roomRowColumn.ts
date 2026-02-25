@@ -31,6 +31,8 @@ export function useStudentRoomRowColumn(
     const modal = overlay.create(ConfirmationModal);
     const close = modal.close;
 
+    const allocationExists = !!student.value?.allocation?.id && student.value.allocation.status === "active";
+
     modal.open({
       title: `Book Room ${room.roomNumber} in ${room.hostel?.name} Hostel`,
       confirmLabel: "Book Room",
@@ -43,7 +45,7 @@ export function useStudentRoomRowColumn(
         const userId = user.value?.role === "student" ? user.value.id : undefined;
         if (!userId) return;
 
-        if (student.value?.allocation?.id) {
+        if (allocationExists) {
           toast.add({
             title: "Failed to Book Room",
             description: "You already have an active room allocation. Please contact administration for changes.",
