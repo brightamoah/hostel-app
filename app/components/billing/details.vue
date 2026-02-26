@@ -114,7 +114,7 @@ async function handleDownload() {
     :dismissible="false"
     :ui="{
       footer: 'justify-end',
-      content: 'w-[80%] max-w-4xl h-auto rounded-lg shadow-lg ring ring-default overflow-hidden',
+      content: 'max-w-4xl h-auto rounded-lg shadow-lg ring ring-default overflow-hidden',
       title: 'font-newsreader text-xl font-semibold',
       description: 'text-base text-muted',
       close: 'cursor-pointer',

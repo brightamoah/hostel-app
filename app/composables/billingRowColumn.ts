@@ -199,8 +199,63 @@ export function useBillingRowColumn(
       {
         id: "actions",
         header: "Actions",
-        cell: ({ row }) =>
-          h(
+        cell: ({ row }) => {
+          // const billing = row.original;
+
+          // if (user.value?.role === "student") {
+          //   const actions = [];
+
+          //   actions.push(
+          //     h(UButton, {
+          //       icon: "i-lucide-eye",
+          //       color: "neutral",
+          //       variant: "ghost",
+          //       title: "View Details",
+          //       class: "cursor-pointer",
+          //       onClick: () => openBillingDetails(billing),
+          //     }),
+          //   );
+
+          //   if (["unpaid", "partially paid", "overdue"].some(status => billing.status.toLowerCase().includes(status))) {
+          //     actions.push(
+          //       h(UButton, {
+          //         icon: "lucide-credit-card",
+          //         color: "primary",
+          //         label: "Make Payment",
+          //         variant: "subtle",
+          //         title: "Make Payment",
+          //         class: "cursor-pointer",
+          //         onClick: () => openPaymentModal(billing),
+          //       }),
+          //     );
+          //   }
+
+          //   return h("div", { class: "flex items-center justify-end gap-2" }, actions);
+          // }
+
+          // h(
+          //   "div",
+          //   { class: "text-center" },
+          //   [
+          //     h(UDropdownMenu, {
+          //       arrow: true,
+          //       content: {
+          //         align: "center",
+          //       },
+          //       items: getRowItems(row),
+          //       ui: {
+          //         item: "cursor-pointer rounded",
+          //       },
+          //     }, () =>
+          //       h(UButton, {
+          //         icon: "i-lucide-ellipsis-vertical",
+          //         color: "neutral",
+          //         variant: "ghost",
+          //         class: "ml-auto cursor-pointer",
+          //       })),
+          //   ],
+          // );
+          return h(
             "div",
             { class: "text-center" },
             [
@@ -221,7 +276,9 @@ export function useBillingRowColumn(
                   class: "ml-auto cursor-pointer",
                 })),
             ],
-          ),
+          );
+        },
+
       },
 
     );
