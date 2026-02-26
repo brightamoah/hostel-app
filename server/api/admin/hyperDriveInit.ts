@@ -10,12 +10,13 @@ export default defineEventHandler(async (event) => {
 
   if (import.meta.dev) {
     connectionString = config.databaseUrl;
+    console.log(`Local db connection ${connectionString}`);
   }
   else {
     connectionString = cloudflare.env.HYPERDRIVE.connectionString;
+    console.log(`Hyperdrive db connection ${connectionString}`);
   }
 
-  connectionString = config.databaseUrl;
   const client = postgres(connectionString, {
     prepare: false,
   });
