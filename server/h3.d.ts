@@ -2,6 +2,7 @@
 
 interface CloudflareEnv {
   KV: KVNamespace;
+  HYPERDRIVE: Hyperdrive;
 }
 
 declare module "h3" {

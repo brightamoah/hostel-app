@@ -23,6 +23,8 @@ const EnvSchema = z.object({
   NUXT_PAYSTACK_SECRET_KEY: z.string(),
   NUXT_PAYSTACK_PUBLIC_KEY: z.string(),
   NUXT_PAYSTACK_BASE_URL: z.url(),
+  NUXT_CLOUDFLARE_HYPERDRIVE_ID: z.string(),
+  NUXT_cLOUDFLARE_PREVIEW_HYPERDRIVE_ID: z.string(),
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;

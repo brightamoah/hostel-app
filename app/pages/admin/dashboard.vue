@@ -61,6 +61,37 @@ const cards = computed<StatsCard[]>(() => [
     period: "monthly",
   },
 ]);
+
+const description = "Admin Dashboard for Kings Hostel Management System. View key metrics, manage rooms, and oversee hostel operations with ease.";
+const image = "/images/admin-dashboard.png";
+const url = "https://kings-hostel-management-preview.brightamoah.workers.dev/admin/dashboard";
+
+useHead({
+  titleTemplate: `Kings Hostel Management | ${title.value}`,
+  meta: [
+    { name: "viewport", content: "width=device-width, initial-scale=1.0" },
+    { name: "charset", content: "utf-8" },
+    { name: "color-scheme", content: "light dark" },
+  ],
+  link: [
+    { rel: "icon", type: "image/x-icon", href: "/fav.svg" },
+    { rel: "canonical", href: url },
+  ],
+});
+
+useSeoMeta({
+  title,
+  description,
+  ogTitle: title,
+  ogDescription: description,
+  ogImage: image,
+  ogUrl: url,
+  ogType: "website",
+  twitterCard: "summary_large_image",
+  twitterTitle: title,
+  twitterDescription: description,
+  twitterImage: image,
+});
 </script>
 
 <template>

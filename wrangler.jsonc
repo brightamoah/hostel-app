@@ -43,6 +43,12 @@
       "preview_id": "fcde2b26d7fd4718ba6e68ec5d596f56"
     }
   ],
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "0c0ac66022964e20a9314d1d546904b1"
+    }
+  ],
   "vars": {},
   "env": {
     "preview": {
@@ -54,6 +60,12 @@
         {
           "binding": "CACHE",
           "id": "fcde2b26d7fd4718ba6e68ec5d596f56"
+        }
+      ],
+      "hyperdrive": [
+        {
+          "binding": "HYPERDRIVE",
+          "id": "242cb187eb704d519cb54dd00f60ee6f"
         }
       ],
       "vars": {},
