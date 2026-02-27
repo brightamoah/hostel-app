@@ -46,7 +46,8 @@
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",
-      "id": "0c0ac66022964e20a9314d1d546904b1"
+      "id": "0c0ac66022964e20a9314d1d546904b1",
+      "localConnectionString": "postgresql://7756256f63f6431f8485f1e478d31731:c5d7c91b7373a7a77621fdab363240e2@87096a4180dda02d4ee079d39c95614b.hyperdrive.local:5432/242cb187eb704d519cb54dd00f60ee6f?sslmode=disable"
     }
   ],
   "vars": {},
