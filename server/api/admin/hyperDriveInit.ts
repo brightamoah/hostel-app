@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
     const db = drizzle(client);
 
     // Example query to verify connection
-    const result = await db.execute(sql`SELECT * From billing`);
+    const result = await db.execute(sql`SELECT NOW() AS current_time`);
 
     return {
       success: true,
