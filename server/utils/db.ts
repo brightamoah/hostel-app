@@ -12,12 +12,10 @@ type ContextSource = {
   };
 };
 
-let _localDb: PostgresJsDatabase<typeof schema> | null = null;
+let _db: PostgresJsDatabase<typeof schema> | null = null;
 
 export function useDB(eventOrContext?: ContextSource | H3Event) {
-  if (import.meta.dev && _localDb) {
-    return { db: _localDb };
-  }
+  if (_db) return { db: _db };
 
   const runtimeConfig = useRuntimeConfig();
   let connectionString: string | undefined;
@@ -42,16 +40,12 @@ export function useDB(eventOrContext?: ContextSource | H3Event) {
     prepare: false,
   });
 
-  const db = drizzle(client, {
+  _db = drizzle(client, {
     schema,
     casing: "snake_case",
   });
 
-  if (import.meta.dev) {
-    _localDb = db;
-  }
-
-  return { db };
+  return { db: _db };
 }
 
 export type DB = ReturnType<typeof useDB>["db"];
