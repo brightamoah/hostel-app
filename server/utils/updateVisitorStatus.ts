@@ -1,4 +1,5 @@
 import type { CalendarDate } from "@internationalized/date";
+import type { H3Event } from "h3";
 
 import { getLocalTimeZone, parseAbsolute, parseDate, toCalendarDate, today } from "@internationalized/date";
 import { eq } from "drizzle-orm";
@@ -6,9 +7,14 @@ import { eq } from "drizzle-orm";
 import { visitorQueries } from "../db/queries";
 import { visitor } from "../db/schema";
 
-export async function updateVisitorStatus(visitorId: number, status: "approved" | "denied", admin: Admin) {
-  const { db } = useDB();
-  const { getVisitorById } = await visitorQueries();
+export async function updateVisitorStatus(
+  visitorId: number,
+  status: "approved" | "denied",
+  admin: Admin,
+  event: H3Event,
+) {
+  const { db } = useDB(event);
+  const { getVisitorById } = await visitorQueries(event);
 
   const visitorToUpdate = await getVisitorById(visitorId, admin);
 

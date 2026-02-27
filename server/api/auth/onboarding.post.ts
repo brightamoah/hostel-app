@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const { db } = useDB();
+    const { db } = useDB(event);
 
     const rawBody = await readBody(event);
 

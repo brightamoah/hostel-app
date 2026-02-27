@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const { getUserByIds, deleteUsersByIds } = await userQueries();
+    const { getUserByIds, deleteUsersByIds } = await userQueries(event);
 
     const usersToDelete = await getUserByIds(uniqueIds);
 

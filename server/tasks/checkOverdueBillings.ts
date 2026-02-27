@@ -8,8 +8,8 @@ export default defineTask({
     name: "checkOverdueBillings",
     description: "Mark unpaid and partially paid bills as overdue if past their due date",
   },
-  async run() {
-    const { db } = useDB();
+  async run({ context }) {
+    const { db } = useDB({ context });
 
     console.log("Running task: Checking for overdue billings...");
 
@@ -27,6 +27,9 @@ export default defineTask({
         .returning({ id: billing.id }); ;
 
       const count = result.length;
+
+      console.log("Task completed: Check overdue billings - Success. Marked", count, "bill(s) as overdue.");
+
       return { result: `Success. Marked ${count} bill(s) as overdue.` };
     }
     catch (error) {

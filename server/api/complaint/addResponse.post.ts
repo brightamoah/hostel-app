@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
 
     const { responseText, complaintId } = body.data;
 
-    const { addComplaintResponse, getComplaintByIdNoScope } = await complaintQueries();
+    const { addComplaintResponse, getComplaintByIdNoScope } = await complaintQueries(event);
 
     const complaint = await getComplaintByIdNoScope(complaintId);
 

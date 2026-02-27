@@ -7,9 +7,9 @@ export default defineEventHandler(async (event) => {
     const {
       getComplaintStatusCount,
       getAllComplaints,
-    } = await complaintQueries();
+    } = await complaintQueries(event);
 
-    const { getAdminByUserId } = await userQueries();
+    const { getAdminByUserId } = await userQueries(event);
 
     const adminMakingRequest = await getAdminByUserId(
       userId,

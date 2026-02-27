@@ -20,8 +20,8 @@ export default defineEventHandler(async (event) => {
 
     const { studentId, amount, academicPeriod, description, dueDate, type, sendNotification } = body.data;
 
-    const { createBilling } = await billingQueries();
-    const { getAllcoationByStudentId } = await roomQueries();
+    const { createBilling } = await billingQueries(event);
+    const { getAllcoationByStudentId } = await roomQueries(event);
 
     const now = today(getLocalTimeZone());
 

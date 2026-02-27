@@ -1,4 +1,5 @@
 import type { Admin } from "~~/shared/types";
+import type { H3Event } from "h3";
 
 import { useDB } from "~~/server/utils/db";
 import { and, asc, countDistinct, eq, gt, inArray, sql } from "drizzle-orm";
@@ -11,8 +12,8 @@ const roomWithRelations = {
   },
 } as const;
 
-export async function roomQueries() {
-  const { db } = useDB();
+export async function roomQueries(event: H3Event) {
+  const { db } = useDB(event);
 
   const getAllRooms = async () => {
     const rooms = await db

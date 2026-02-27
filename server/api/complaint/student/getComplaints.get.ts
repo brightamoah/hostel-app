@@ -15,8 +15,8 @@ export default defineEventHandler(async (event) => {
   try {
     const userId = user.id;
 
-    const { getStudentByUserId } = await userQueries();
-    const { getStudentComplaints } = await complaintQueries();
+    const { getStudentByUserId } = await userQueries(event);
+    const { getStudentComplaints } = await complaintQueries(event);
 
     const student = await getStudentByUserId(userId);
 

@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
 
     const { ids } = body.data;
 
-    const { getVisitorByIds, deleteVisitorsByIds } = await visitorQueries();
+    const { getVisitorByIds, deleteVisitorsByIds } = await visitorQueries(event);
 
     const visitorsToDelete = await getVisitorByIds(ids);
 

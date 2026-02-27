@@ -1,4 +1,5 @@
 import type { Admin, ComplaintActionTaken, ComplaintInsert, ComplaintStatus } from "~~/shared/types";
+import type { H3Event } from "h3";
 
 import { useDB } from "~~/server/utils/db";
 import { and, countDistinct, desc, eq, sql } from "drizzle-orm";
@@ -35,8 +36,8 @@ const complaintWithRelations = {
   },
 } as const;
 
-export async function complaintQueries() {
-  const { db } = useDB();
+export async function complaintQueries(event: H3Event) {
+  const { db } = useDB(event);
 
   const getAllComplaints = async (admin: Admin) => {
     if (admin.accessLevel === "super") {

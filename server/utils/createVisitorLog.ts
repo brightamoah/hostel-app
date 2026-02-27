@@ -1,11 +1,18 @@
+import type { H3Event } from "h3";
+
 import { eq } from "drizzle-orm";
 
 import { visitorQueries } from "../db/queries";
 import { visitor, visitorLogs } from "../db/schema";
 
-export async function createVisitorLog(visitorId: number, action: VisitorLog["action"], admin: Admin) {
-  const { db } = useDB();
-  const { getVisitorById } = await visitorQueries();
+export async function createVisitorLog(
+  visitorId: number,
+  action: VisitorLog["action"],
+  admin: Admin,
+  event: H3Event,
+) {
+  const { db } = useDB(event);
+  const { getVisitorById } = await visitorQueries(event);
 
   return await db.transaction(async (tx) => {
     const visitorRecord = await getVisitorById(visitorId, admin);

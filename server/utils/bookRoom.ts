@@ -1,3 +1,5 @@
+import type { H3Event } from "h3";
+
 import { and, eq, inArray, sql } from "drizzle-orm";
 
 import { allocation, billing, room, student } from "../db/schema";
@@ -5,9 +7,10 @@ import { allocation, billing, room, student } from "../db/schema";
 export async function bookRoom(
   studentId: number,
   roomId: number,
+  event: H3Event,
   endDate?: Date,
 ) {
-  const { db } = useDB();
+  const { db } = useDB(event);
 
   const now = new Date();
   const allocationDate = now.toISOString();
@@ -29,27 +32,31 @@ export async function bookRoom(
     .transaction(async (tx) => {
       const [hasOverdueBills, existingAllocation, studentRecord] = await Promise.all([
         tx
-          .query
-          .billing
-          .findFirst({
-            columns: { id: true },
-            where: and(
-              eq(billing.studentId, studentId),
-              eq(billing.status, "overdue"),
-            ),
-          }),
+          .select({ id: billing.id })
+          .from(billing)
+          .where(and(
+            eq(billing.studentId, studentId),
+            eq(billing.status, "overdue"),
+          ))
+          .limit(1)
+          .then(rows => rows[0]),
 
-        tx.query.allocation.findFirst({
-          where: and(
+        tx
+          .select()
+          .from(allocation)
+          .where(and(
             eq(allocation.studentId, studentId),
             inArray(allocation.status, ["active", "pending"]),
-          ),
-        }),
+          ))
+          .limit(1)
+          .then(rows => rows[0]),
 
-        tx.query.student.findFirst({
-          columns: { gender: true },
-          where: eq(student.id, studentId),
-        }),
+        tx
+          .select({ gender: student.gender })
+          .from(student)
+          .where(eq(student.id, studentId))
+          .limit(1)
+          .then(rows => rows[0]),
       ]);
 
       if (hasOverdueBills) {

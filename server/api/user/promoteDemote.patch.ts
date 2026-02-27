@@ -41,7 +41,7 @@ export default defineEventHandler(async (event) => {
       getAdminByUserId,
       getUserById,
       createOrUpdateAdminForUser,
-    } = await userQueries();
+    } = await userQueries(event);
 
     const adminMakingRequest = await getAdminByUserId(
       currentUserId,

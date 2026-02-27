@@ -1,11 +1,13 @@
+import type { H3Event } from "h3";
+
 import { userQueries } from "../db/queries/user";
 import { loginAttempts } from "../db/schema";
 
 const MAX_FAILED_ATTEMPTS_PER_IP = 10;
 const MAX_FAILED_ATTEMPTS_PER_USER = 5;
 
-export async function checkUserLockedOutByIp(ip: string) {
-  const { getFailedAttemptsCount, recordLoginAttempt } = await userQueries();
+export async function checkUserLockedOutByIp(ip: string, event: H3Event): Promise<void> {
+  const { getFailedAttemptsCount, recordLoginAttempt } = await userQueries(event);
 
   const ipFailedAttempts = await getFailedAttemptsCount(
     loginAttempts.ip,
@@ -23,8 +25,8 @@ export async function checkUserLockedOutByIp(ip: string) {
   }
 }
 
-export async function checkUserLockOutByUserId(userId: number, ip: string): Promise<void> {
-  const { getFailedAttemptsCount, recordLoginAttempt } = await userQueries();
+export async function checkUserLockOutByUserId(userId: number, ip: string, event: H3Event): Promise<void> {
+  const { getFailedAttemptsCount, recordLoginAttempt } = await userQueries(event);
 
   const userFailedCount = await getFailedAttemptsCount(
     loginAttempts.ip,

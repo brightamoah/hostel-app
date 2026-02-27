@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
       markPaymentAsFailed,
       getBillingById,
 
-    } = await billingQueries();
+    } = await billingQueries(event);
 
     const existingPayment = await checkExistingPayment(reference);
 

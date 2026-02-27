@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const { createAnnouncement } = await announcementQueries();
+    const { createAnnouncement } = await announcementQueries(event);
 
     const { content, priority, targetAudience, title, targetHostelId, targetRoomId, targetUserId } = body.data;
 

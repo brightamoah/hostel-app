@@ -8,8 +8,8 @@ export default defineEventHandler(async (event) => {
   });
 
   try {
-    const { getStudentForDashboardByUserId } = await userQueries();
-    const { getRoomsInHostel } = await roomQueries();
+    const { getStudentForDashboardByUserId } = await userQueries(event);
+    const { getRoomsInHostel } = await roomQueries(event);
 
     const userId = Number(getRouterParam(event, "userId"));
 

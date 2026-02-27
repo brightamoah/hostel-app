@@ -15,9 +15,9 @@ export function handleError(
   const err = error as StructuredError;
 
   // Get Cloudflare-specific context
-  const cloudflareContext = event?.context.cloudflare || {};
-  const requestId = cloudflareContext.cf?.requestId || "unknown";
-  const cfRay = cloudflareContext.cf?.cfRay || "unknown";
+  const cloudflareContext = event?.context.cloudflare;
+  const requestId = cloudflareContext?.cf?.requestId || "unknown";
+  const cfRay = cloudflareContext?.cf?.cfRay || "unknown";
 
   // Structured log for Cloudflare observability
   const logData = {

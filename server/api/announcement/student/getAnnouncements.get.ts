@@ -4,8 +4,8 @@ export default defineEventHandler(async (event) => {
   const { userId } = await studentSessionCheck(event);
 
   try {
-    const { getAllAnnouncementForStudent } = await announcementQueries();
-    const { getStudentWithRelations } = await userQueries();
+    const { getAllAnnouncementForStudent } = await announcementQueries(event);
+    const { getStudentWithRelations } = await userQueries(event);
 
     const studentMakingRequest = await getStudentWithRelations(userId);
 

@@ -1,4 +1,5 @@
 import type { Admin, BillingInsert } from "~~/shared/types";
+import type { H3Event } from "h3";
 
 import { and, eq, ne, sql } from "drizzle-orm";
 
@@ -28,8 +29,8 @@ const billingWithRelations = {
 
 type PaymentMethodType = typeof paymentMethod.enumValues[number];
 
-export async function billingQueries() {
-  const { db } = useDB();
+export async function billingQueries(event: H3Event) {
+  const { db } = useDB(event);
 
   const getBillingById = async (billingId: number) => {
     return await db

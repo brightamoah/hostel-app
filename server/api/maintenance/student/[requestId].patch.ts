@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const { updateMaintenance, getMaintenanceByIdForStudent } = await maintenanceQueries();
+    const { updateMaintenance, getMaintenanceByIdForStudent } = await maintenanceQueries(event);
 
     const updatedMaintenance = await updateMaintenance(
       maintenanceId,

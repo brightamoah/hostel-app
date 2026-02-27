@@ -21,8 +21,8 @@ export default defineEventHandler(async (event) => {
 
     const { responseText, maintenanceId } = body.data;
 
-    const { addMaintenanceResponse, findMaintenanceRequestById } = await maintenanceQueries();
-    const { getAdminByUserId, getStudentByUserId } = await userQueries();
+    const { addMaintenanceResponse, findMaintenanceRequestById } = await maintenanceQueries(event);
+    const { getAdminByUserId, getStudentByUserId } = await userQueries(event);
 
     const request = await findMaintenanceRequestById(maintenanceId);
 

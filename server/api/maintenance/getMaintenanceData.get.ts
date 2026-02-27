@@ -4,8 +4,8 @@ export default defineEventHandler(async (event) => {
   const { userId } = await adminSessionCheck(event);
 
   try {
-    const { getAdminByUserId } = await userQueries();
-    const { getAllMaintenanceRequests, getMaintenanceStatusCount } = await maintenanceQueries();
+    const { getAdminByUserId } = await userQueries(event);
+    const { getAllMaintenanceRequests, getMaintenanceStatusCount } = await maintenanceQueries(event);
 
     const adminMakingRequest = await getAdminByUserId(
       userId,

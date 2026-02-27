@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
 
     const { action } = body.data;
 
-    const { updateAnnouncementReadStatus } = await announcementQueries();
+    const { updateAnnouncementReadStatus } = await announcementQueries(event);
 
     await updateAnnouncementReadStatus(
       id,

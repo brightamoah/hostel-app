@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
       getUserByEmail,
       getAdminByUserId,
       recordLoginAttempt,
-    } = await userQueries();
+    } = await userQueries(event);
 
     const body = await readValidatedBody(event, body => loginSchema.safeParse(body));
 
@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    await checkUserLockedOutByIp(ip);
+    await checkUserLockedOutByIp(ip, event);
 
     const currentUser = await getUserByEmail(normalizedEmail);
 
@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    await checkUserLockOutByUserId(currentUser.id, ip);
+    await checkUserLockOutByUserId(currentUser.id, ip, event);
 
     const isValid = await verifyPasswordWorker(currentUser.password, password);
 

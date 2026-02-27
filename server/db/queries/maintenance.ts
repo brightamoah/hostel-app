@@ -1,4 +1,5 @@
 import type { Admin, MaintenanceCreate, MaintenanceEdit, MaintenanceStatus } from "~~/shared/types";
+import type { H3Event } from "h3";
 
 import { useDB } from "~~/server/utils/db";
 import { and, count, countDistinct, desc, eq, sql } from "drizzle-orm";
@@ -35,8 +36,8 @@ const maintenanceWithRelations = {
   },
 } as const;
 
-export async function maintenanceQueries() {
-  const { db } = useDB();
+export async function maintenanceQueries(event: H3Event) {
+  const { db } = useDB(event);
 
   const getAllMaintenanceRequests = async (admin: Admin) => {
     if (admin.accessLevel === "super") {

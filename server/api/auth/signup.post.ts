@@ -12,8 +12,8 @@ export default defineEventHandler(async (event) => {
 
     const runtimeConfig = useRuntimeConfig(event);
 
-    const { db } = useDB();
-    const { getUserByEmail } = await userQueries();
+    const { db } = useDB(event);
+    const { getUserByEmail } = await userQueries(event);
 
     const body = await readValidatedBody(event, body => baseSignupSchema.safeParse(body));
 

@@ -1,5 +1,6 @@
 import type { Admin, AnnouncementInsert } from "~~/shared/types";
 import type { sql } from "drizzle-orm";
+import type { H3Event } from "h3";
 
 import { useDB } from "~~/server/utils/db";
 import { and, desc, eq, or } from "drizzle-orm";
@@ -37,8 +38,8 @@ const announcementWithRelations = {
 type SQl = typeof sql;
 type AnnouncementColumns = typeof announcement._.columns;
 
-export async function announcementQueries() {
-  const { db } = useDB();
+export async function announcementQueries(event: H3Event) {
+  const { db } = useDB(event);
 
   const createAnnouncement = async (data: AnnouncementInsert) => {
     const [newAnnouncement] = await db

@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
 
     const userId = user.id;
 
-    const { getUserById } = await userQueries();
+    const { getUserById } = await userQueries(event);
 
     const freshUser = await getUserById(userId);
 

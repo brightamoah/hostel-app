@@ -38,8 +38,8 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const { getStudentForDashboardByUserId } = await userQueries();
-    const { createVisitor } = await visitorQueries();
+    const { getStudentForDashboardByUserId } = await userQueries(event);
+    const { createVisitor } = await visitorQueries(event);
 
     const studentData = await getStudentForDashboardByUserId(user.id);
 

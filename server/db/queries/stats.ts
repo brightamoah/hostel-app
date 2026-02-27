@@ -1,4 +1,5 @@
 import type { Admin } from "~~/shared/types";
+import type { H3Event } from "h3";
 
 import { and, count, eq, gte, sql } from "drizzle-orm";
 
@@ -13,8 +14,8 @@ import {
   visitor,
 } from "../schema";
 
-export async function statsQueries() {
-  const { db } = useDB();
+export async function statsQueries(event: H3Event) {
+  const { db } = useDB(event);
 
   const getCardStats = async (hostelId?: number | null) => {
     const roomCondition = hostelId ? eq(room.hostelId, hostelId) : undefined;

@@ -1,4 +1,5 @@
 import type { Admin, VisitorCreate } from "~~/shared/types";
+import type { H3Event } from "h3";
 
 import { useDB } from "~~/server/utils/db";
 import { and, count, desc, eq, inArray, or, sql } from "drizzle-orm";
@@ -77,8 +78,8 @@ const visitorWithRelations = {
   },
 } as const;
 
-export async function visitorQueries() {
-  const { db } = useDB();
+export async function visitorQueries(event: H3Event) {
+  const { db } = useDB(event);
 
   const getVisitorsForSuperAdmin = async () => {
     return await db.query.visitor.findMany({

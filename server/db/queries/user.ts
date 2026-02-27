@@ -1,4 +1,5 @@
 import type { Admin, FailedAttempts, UserWithRelations } from "~~/shared/types";
+import type { H3Event } from "h3";
 
 import { useDB } from "~~/server/utils/db";
 import { and, asc, count, desc, eq, gt, inArray, isNotNull, lt, ne, sql } from "drizzle-orm";
@@ -155,8 +156,8 @@ const bestAllocationWithRelations = {
   },
 } as const;
 
-export async function userQueries() {
-  const { db } = useDB();
+export async function userQueries(event: H3Event) {
+  const { db } = useDB(event);
 
   /**
    * Updates the `lastLogin` field for a user to the current date and time.

@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event) => {
   const { adminData } = await adminSessionCheck(event);
-  const { db } = useDB();
+  const { db } = useDB(event);
 
   try {
     const isScoped = adminData.accessLevel !== "super";

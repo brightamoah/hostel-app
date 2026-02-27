@@ -24,8 +24,8 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const { updateStatusAndAddResponse, getComplaintById } = await complaintQueries();
-    const { getAdminByUserId } = await userQueries();
+    const { updateStatusAndAddResponse, getComplaintById } = await complaintQueries(event);
+    const { getAdminByUserId } = await userQueries(event);
 
     const adminMakingRequest = await getAdminByUserId(
       userId,

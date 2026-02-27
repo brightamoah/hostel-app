@@ -9,6 +9,10 @@ declare module "h3" {
   interface H3EventContext {
     cloudflare: {
       env: CloudflareEnv;
+      cf: {
+        requestId: string;
+        cfRay: string;
+      };
     };
   }
 }

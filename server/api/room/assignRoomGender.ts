@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const { db } = useDB();
+    const { db } = useDB(event);
     await db.update(room)
       .set({ allowedGender: "male" })
       .where(

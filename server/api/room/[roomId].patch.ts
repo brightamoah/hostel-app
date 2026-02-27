@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   await adminSessionCheck(event);
 
   try {
-    const { editRoomById, getRoomById, getExistingRoomByRoomNumberAndHostel } = await roomQueries();
+    const { editRoomById, getRoomById, getExistingRoomByRoomNumberAndHostel } = await roomQueries(event);
 
     const body = await readValidatedBody(event, body => editRoomSchema.safeParse(body));
 

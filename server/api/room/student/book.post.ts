@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const { getStudentByUserId } = await userQueries();
+    const { getStudentByUserId } = await userQueries(event);
 
     const { roomId, userId, endDate } = body.data;
 
@@ -32,7 +32,12 @@ export default defineEventHandler(async (event) => {
 
     const studentId = student.id;
 
-    const allocation = await bookRoom(studentId, roomId, endDate);
+    const allocation = await bookRoom(
+      studentId,
+      roomId,
+      event,
+      endDate,
+    );
 
     return {
       success: true,

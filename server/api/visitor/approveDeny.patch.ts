@@ -22,7 +22,12 @@ export default defineEventHandler(async (event) => {
 
     const { visitorId, status } = body.data;
 
-    const updatedVisitor = await updateVisitorStatus(visitorId, status, adminData);
+    const updatedVisitor = await updateVisitorStatus(
+      visitorId,
+      status,
+      adminData,
+      event,
+    );
 
     return {
       success: true,

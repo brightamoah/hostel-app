@@ -9,7 +9,7 @@ import { getEmailTemplate } from "~/utils/emailTemplate";
 
 export default defineEventHandler(async (event) => {
   try {
-    const { db } = useDB();
+    const { db } = useDB(event);
 
     const runtimeConfig = useRuntimeConfig(event);
 
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    const { getUserByEmail } = await userQueries();
+    const { getUserByEmail } = await userQueries(event);
 
     const existingUser = await getUserByEmail(normalizedEmail);
 

@@ -4,8 +4,8 @@ export default defineEventHandler(async (event) => {
   const { userId } = await adminSessionCheck(event);
 
   try {
-    const { getAdminByUserId } = await userQueries();
-    const { getAllAnnouncementsForAdmin } = await announcementQueries();
+    const { getAdminByUserId } = await userQueries(event);
+    const { getAllAnnouncementsForAdmin } = await announcementQueries(event);
 
     const adminMakingRequest = await getAdminByUserId(
       userId,

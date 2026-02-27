@@ -32,8 +32,8 @@ export default defineEventHandler(async (event) => {
       roomId,
     } = body.data;
 
-    const { getStudentForDashboardByUserId } = await userQueries();
-    const { createMaintenance } = await maintenanceQueries();
+    const { getStudentForDashboardByUserId } = await userQueries(event);
+    const { createMaintenance } = await maintenanceQueries(event);
 
     const studentData = await getStudentForDashboardByUserId(user.id);
 

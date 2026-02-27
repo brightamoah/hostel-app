@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
   const { adminData } = await adminSessionCheck(event);
 
   try {
-    const { getUsers } = await userQueries();
+    const { getUsers } = await userQueries(event);
 
     const data = await getUsers(adminData);
 

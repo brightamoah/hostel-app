@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
     const {
       getStudentScopedBillings,
       getStudentBillingStatusCount,
-    } = await billingQueries();
+    } = await billingQueries(event);
 
     const {
       totalPaid,

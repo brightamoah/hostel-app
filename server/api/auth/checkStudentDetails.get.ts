@@ -4,7 +4,7 @@ import { handleError } from "~~/server/utils/errorHandler";
 export default defineEventHandler(async (event) => {
   try {
     const session = await getUserSession(event);
-    const { getOnboardedStudent } = await userQueries();
+    const { getOnboardedStudent } = await userQueries(event);
 
     if (!session.user || !session.user.emailVerified || session.user.role !== "student") {
       return {

@@ -20,13 +20,13 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const { db } = useDB();
+  const { db } = useDB(event);
   const runtimeConfig = useRuntimeConfig();
 
   const {
     getAdminByUserId,
     checkIfUserExists,
-  } = await userQueries();
+  } = await userQueries(event);
 
   const creatorAdminDetails = await getAdminByUserId(creator.id);
 

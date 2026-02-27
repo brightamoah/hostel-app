@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
 
     const { billingId, amount, email, phoneNumber, totalAmount } = body.data;
 
-    const { getBillingById, createPaymentIntent } = await billingQueries();
+    const { getBillingById, createPaymentIntent } = await billingQueries(event);
     const billing = await getBillingById(billingId);
 
     if (!billing) {

@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
       data.content = sanitizeHtmlContent(data.content);
     }
 
-    const { editAnnouncement, getAnnouncementById } = await announcementQueries();
+    const { editAnnouncement, getAnnouncementById } = await announcementQueries(event);
 
     const updatedAnnouncement = await editAnnouncement(
       announcementId,
