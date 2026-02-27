@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+// import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import type { H3Event } from "h3";
 
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -13,32 +13,26 @@ type ContextSource = {
   };
 };
 
-let _db: PostgresJsDatabase<typeof schema> | null = null;
-let _activeUrl: string | null = null;
+// let _db: PostgresJsDatabase<typeof schema> | null = null;
 
 export function useDB(eventOrContext?: ContextSource | H3Event) {
   const runtimeConfig = useRuntimeConfig();
 
   let connectionString: string | undefined;
 
-  if (eventOrContext && "context" in eventOrContext) {
-    const cfEnv = eventOrContext.context.cloudflare?.env;
-    if (cfEnv?.HYPERDRIVE?.connectionString) {
-      connectionString = cfEnv.HYPERDRIVE.connectionString;
-      console.log("Connected to ");
-    }
+  if (import.meta.dev) {
+    connectionString = runtimeConfig.databaseUrl;
+    console.log(`Connected to database in development ${connectionString}`);
   }
-
-  if (!connectionString) connectionString = runtimeConfig.databaseUrl as string;
+  else {
+    connectionString = eventOrContext?.context?.cloudflare?.env.HYPERDRIVE.connectionString;
+    console.log(`Connected to hyperdrive in production ${connectionString}`);
+  }
 
   if (!connectionString) {
     throw new Error(
       "Database connection string not found. Ensure HYPERDRIVE is bound in production or NUXT_DATABASE_URL is set.",
     );
-  }
-
-  if (_db && _activeUrl === connectionString) {
-    return { db: _db };
   }
 
   console.log(`Initializing new DB connection. Using Hyperdrive: ${connectionString.includes("hyperdrive")}`);
@@ -49,12 +43,10 @@ export function useDB(eventOrContext?: ContextSource | H3Event) {
     idle_timeout: 20,
   });
 
-  _db = drizzle(client, {
+  const _db = drizzle(client, {
     schema,
     casing: "snake_case",
   });
-
-  _activeUrl = connectionString;
 
   return { db: _db };
 }
