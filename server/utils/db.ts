@@ -11,19 +11,10 @@ type ContextSource = {
   };
 };
 
-export function useDB(eventOrContext?: ContextSource | H3Event) {
+export function useDB(_eventOrContext?: ContextSource | H3Event) {
   const runtimeConfig = useRuntimeConfig();
 
-  let connectionString: string | undefined;
-
-  if (import.meta.dev) {
-    connectionString = runtimeConfig.databaseUrl;
-    console.log("Development connected directly to the db");
-  }
-  else if ("context" in (eventOrContext || {}) && eventOrContext?.context.cloudflare) {
-    connectionString = eventOrContext.context.cloudflare.env.HYPERDRIVE.connectionString;
-    console.log("Production connected to the db via HyperDrive");
-  }
+  const connectionString: string = runtimeConfig.databaseUrl;
 
   const sql = neon(connectionString!);
   const db = drizzle(sql, {
