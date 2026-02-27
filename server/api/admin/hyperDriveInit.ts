@@ -22,13 +22,15 @@ export default defineEventHandler(async (event) => {
   try {
     const db = drizzle(client);
 
-    // Example query to verify connection
     const result = await db.execute(sql`SELECT NOW() AS current_time`);
+
+    const listTables = await db.execute(sql`SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'`);
 
     return {
       success: true,
       time: result,
       hyperdrive: "connected",
+      tables: listTables,
     };
   }
   catch (e) {
