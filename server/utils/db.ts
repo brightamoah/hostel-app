@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import type { H3Event } from "h3";
 
@@ -13,18 +14,18 @@ type ContextSource = {
 };
 
 let _db: PostgresJsDatabase<typeof schema> | null = null;
+let _activeUrl: string | null = null;
 
 export function useDB(eventOrContext?: ContextSource | H3Event) {
-  if (_db) return { db: _db };
-
   const runtimeConfig = useRuntimeConfig();
+
   let connectionString: string | undefined;
 
   if (eventOrContext && "context" in eventOrContext) {
     const cfEnv = eventOrContext.context.cloudflare?.env;
     if (cfEnv?.HYPERDRIVE?.connectionString) {
       connectionString = cfEnv.HYPERDRIVE.connectionString;
-      console.log(`connected to cloudflare hyperdrive  ${connectionString}`);
+      console.log("Connected to ");
     }
   }
 
@@ -36,14 +37,24 @@ export function useDB(eventOrContext?: ContextSource | H3Event) {
     );
   }
 
+  if (_db && _activeUrl === connectionString) {
+    return { db: _db };
+  }
+
+  console.log(`Initializing new DB connection. Using Hyperdrive: ${connectionString.includes("hyperdrive")}`);
+
   const client = postgres(connectionString, {
     prepare: false,
+    max: 1,
+    idle_timeout: 20,
   });
 
   _db = drizzle(client, {
     schema,
     casing: "snake_case",
   });
+
+  _activeUrl = connectionString;
 
   return { db: _db };
 }
